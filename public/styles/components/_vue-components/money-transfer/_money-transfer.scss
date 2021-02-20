@@ -1,0 +1,12 @@
+
+.money-transfer {
+    .no-transfer-possible {
+        color: red;
+        text-align: center;
+    }
+
+    .submit-budget-transfer:disabled {
+        cursor: not-allowed;
+        pointer-events: all !important;
+    }
+}

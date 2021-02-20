@@ -1,0 +1,22 @@
+
+.account-detail {
+    position: relative;
+
+    .account-detail-body {
+        .budget-view-table {
+            th, td {
+                width: 16.66666%;
+            }
+        }
+
+        .expense-view-table {
+            th, td {
+                width: 20%;
+            }
+        }
+
+        .no-expenses, .no-revenues {
+            text-align: center;
+        }
+    }
+}

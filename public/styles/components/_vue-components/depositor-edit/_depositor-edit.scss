@@ -1,0 +1,21 @@
+
+.depositor-edit {
+    .depositor-accounts {
+        position: relative;
+
+        .depositor-accounts-heading {
+            position: relative;
+            margin: 6rem 0;
+
+            .depositor-accounts-headline {
+                background-color: #fff;
+                left: 5%;
+                letter-spacing: .3rem;
+                padding: 0 1rem;
+                position: absolute;
+                text-transform: uppercase;
+                top: -1.25rem;
+            }
+        }
+    }
+}

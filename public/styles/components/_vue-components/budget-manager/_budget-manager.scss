@@ -1,0 +1,14 @@
+
+.budget-manager {
+    .available-amount {
+        .available-amount-value {
+            text-align: right;
+        }
+    }
+
+    .no-transfer-possible {
+        color: #f00;
+        padding: 2rem 0;
+        text-align: center;
+    }
+}

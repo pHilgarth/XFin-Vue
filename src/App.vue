@@ -1,26 +1,25 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="xfin-container">
+    <div class="xfin-header" style="text-align:center;font-size:2.5rem;">[LOGO]</div>
+    <div class="xfin-body">
+      <div class="xfin-sidebar">
+        <ul class="xfin-menu">
+          <li>
+            <router-link to="/">Kontenübersicht</router-link>
+          </li>
+          <li>Dummy</li>
+          <li>Dummy</li>
+        </ul>
+      </div>
+      <div class="xfin-content">
+        <div class="xfin-component">
+          <router-view></router-view>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
-
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
-</script>
-
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  @import "../public/styles/styles";
 </style>

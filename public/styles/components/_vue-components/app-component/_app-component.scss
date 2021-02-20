@@ -1,0 +1,46 @@
+
+.xfin-container {
+  .xfin-header {
+    background-color: $color-background-primary;
+    color: $color-font-primary;
+    height: 5vh;
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    z-index: 999;
+  }
+
+  .xfin-body {
+    display: flex;
+    margin-top: 5vh;
+
+    .xfin-sidebar {
+      background-color: $color-background-primary;
+      color: $color-font-primary;
+      font-size: 2rem;
+      height: 95vh;
+      position: fixed;
+      width: 12.5vw;
+
+      a {
+        color: $color-font-primary;
+      }
+    }
+
+    .xfin-content {
+      height: 100%;
+      margin-left: 12.5vw;
+      width: 87.5vw;
+
+      .xfin-component {
+        display: flex;
+        width: 100%;
+
+        & > * {
+          padding: 5rem 5rem 0;
+          width: 100%;
+        }
+      }
+    }
+  }
+}

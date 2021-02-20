@@ -1,0 +1,33 @@
+
+.month-switch {
+    border-top: 1px solid #235baf;
+    color: #fff;
+
+    ul {
+        align-items: flex-start;
+        display: flex;
+        font-size: 1.6rem;
+        justify-content: space-evenly;
+        list-style-type: none;
+        padding: 0;
+        width: 100%;
+        
+        li {
+            background-color: #235baf;
+            letter-spacing: .2rem;
+            padding: 1rem 0;
+            text-align: center;
+            width: 8.3333333%;
+
+            &.active {
+                background-color: #3f72bf;
+                box-shadow: 2px 3px 5px 0px rgba(0, 0, 0, .5);
+                transform: scale(1.05);
+            }
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+}
