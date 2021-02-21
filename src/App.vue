@@ -1,6 +1,6 @@
 <template>
   <div class="xfin-container">
-    <div class="xfin-header" style="text-align:center;font-size:2.5rem;">[LOGO]</div>
+    <div class="xfin-header">[LOGO]</div>
     <div class="xfin-body">
       <div class="xfin-sidebar">
         <ul class="xfin-menu">
