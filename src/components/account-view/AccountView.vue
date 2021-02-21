@@ -65,16 +65,11 @@ import CardComponent from "../_shared/card-component/CardComponent";
   >>> Import Services
 
 -------------------------------------------------------------------------------------------*/
-//import { DepositorService } from "../../services/depositor-service.js";
 import { NumberService } from "../../services/number-service.js";
 
 export default {
   components: {
     CardComponent,
-  },
-  
-  updated() {
-    console.log('updated');
   },
 
   data() {
