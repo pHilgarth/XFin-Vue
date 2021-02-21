@@ -73,15 +73,18 @@ export default {
     CardComponent,
   },
   
+  updated() {
+    console.log('updated');
+  },
+
   data() {
     return {
-      depositors: this.getDepositors()//DepositorService.getDepositors(),
+      depositors: this.getDepositors(true),
     };
   },
 
   methods: {
-    getDepositors()
-    {
+    getDepositors(includeAccounts = false) {
       fetch('http://localhost:2905/api/depositors?includeAccounts=true').then((response) =>
       {
         if (response.ok)
@@ -100,20 +103,22 @@ export default {
         {
           const bankAccounts = [];
 
-          for (const bankAccountId in data[depositorId].bankAccounts) {
-            bankAccounts.push(
-            {
-              id:               data[depositorId].bankAccounts[bankAccountId].id,
-              depositorId:      data[depositorId].bankAccounts[bankAccountId].depositorId,
-              balance:          data[depositorId].bankAccounts[bankAccountId].balance,
-              accountNumber:    data[depositorId].bankAccounts[bankAccountId].accountNumber,
-              iban:             data[depositorId].bankAccounts[bankAccountId].iban,
-              bic:              data[depositorId].bankAccounts[bankAccountId].bic,
-              bank:             data[depositorId].bankAccounts[bankAccountId].bank,
-              accountType:      data[depositorId].bankAccounts[bankAccountId].accountType
-            });
+          if (includeAccounts) {
+            for (const bankAccountId in data[depositorId].bankAccounts) {
+              bankAccounts.push(
+              {
+                id:               data[depositorId].bankAccounts[bankAccountId].id,
+                depositorId:      data[depositorId].bankAccounts[bankAccountId].depositorId,
+                balance:          data[depositorId].bankAccounts[bankAccountId].balance,
+                accountNumber:    data[depositorId].bankAccounts[bankAccountId].accountNumber,
+                iban:             data[depositorId].bankAccounts[bankAccountId].iban,
+                bic:              data[depositorId].bankAccounts[bankAccountId].bic,
+                bank:             data[depositorId].bankAccounts[bankAccountId].bank,
+                accountType:      data[depositorId].bankAccounts[bankAccountId].accountType
+              });
+            }
           }
-
+        
           depositors.push(
           {
             id:             data[depositorId].id,
@@ -122,10 +127,9 @@ export default {
           });
         }
         
-        console.log(this.depositors);
         this.depositors = depositors;
-        console.log(this.depositors);
       });
+      //return DepositorService.getDepositors(true)
     },
 
     formatCurrency(value) {
