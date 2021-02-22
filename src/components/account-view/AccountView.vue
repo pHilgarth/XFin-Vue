@@ -2,7 +2,13 @@
 <template>
   <div class="account-view">
     <h1 class="account-view-headline">Kontenübersicht</h1>
-    <section class="account-view-body">
+    <section class="loading" v-if="loading">
+      <div>Daten werden geladen ...</div>
+    </section>
+    <section class="loading-error" v-else-if="!depositors">
+      <div class="fetching-error">Fehler beim Laden der Kontoinhaber!</div>
+    </section>
+    <section class="account-view-body" v-else>
       <card-component
         v-for="depositor in depositors"
         :key="depositor.id"
@@ -65,6 +71,8 @@ import CardComponent from "../_shared/card-component/CardComponent";
   >>> Import Services
 
 -------------------------------------------------------------------------------------------*/
+//import getLeagueLeaders from "../../services/depositor-service.js";
+import { DepositorService } from "../../services/depositor-service";
 import { NumberService } from "../../services/number-service.js";
 
 export default {
@@ -75,56 +83,15 @@ export default {
   data() {
     return {
       depositors: this.getDepositors(true),
+      loading: true,
     };
   },
 
   methods: {
-    getDepositors(includeAccounts = false) {
-      fetch('http://localhost:2905/api/depositors?includeAccounts=true').then((response) =>
-      {
-        if (response.ok)
-        {
-          return response.json();
-        }
-        else
-        {
-          return "NOTHING HERE";
-        }
-      }).then((data) =>
-      {
-        const depositors = [];
+    async getDepositors(includeAccounts = false) {
+      this.depositors = await DepositorService.getDepositors(includeAccounts);
 
-        for (const depositorId in data)
-        {
-          const bankAccounts = [];
-
-          if (includeAccounts) {
-            for (const bankAccountId in data[depositorId].bankAccounts) {
-              bankAccounts.push(
-              {
-                id:               data[depositorId].bankAccounts[bankAccountId].id,
-                depositorId:      data[depositorId].bankAccounts[bankAccountId].depositorId,
-                balance:          data[depositorId].bankAccounts[bankAccountId].balance,
-                accountNumber:    data[depositorId].bankAccounts[bankAccountId].accountNumber,
-                iban:             data[depositorId].bankAccounts[bankAccountId].iban,
-                bic:              data[depositorId].bankAccounts[bankAccountId].bic,
-                bank:             data[depositorId].bankAccounts[bankAccountId].bank,
-                accountType:      data[depositorId].bankAccounts[bankAccountId].accountType
-              });
-            }
-          }
-        
-          depositors.push(
-          {
-            id:             data[depositorId].id,
-            name:           data[depositorId].name,
-            bankAccounts:   bankAccounts
-          });
-        }
-        
-        this.depositors = depositors;
-      });
-      //return DepositorService.getDepositors(true)
+      this.loading = false;
     },
 
     formatCurrency(value) {
