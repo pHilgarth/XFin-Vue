@@ -2,8 +2,7 @@
 <template>
   <div class="xfin-card">
     <div
-      class="xfin-card-header"
-      :class="cardHeaderClassList"
+      :class="'xfin-card-header' + cardHeaderClassList"
       @click="cardExpanded = !cardExpanded"
     >
       <button
@@ -32,35 +31,22 @@
 export default {
   computed: {
     cardHeaderClassList() {
-      return this.cardExpanded ? "expanded" : "";
+      return this.cardExpanded ? " expanded" : "";
     },
   },
 
   data() {
     return {
-      cardExpanded: this.cardExpandedProp,
+      cardExpanded: this.cardConfig.cardExpanded,
+      cardHeadline: this.cardConfig.cardHeadline,
+      cardId: this.cardConfig.cardId,
     }
   },
 
   props: {
-    cardExpandedProp: {
-      type: Boolean,
-      required: true,
-    },
-
-    cardHeadline: {
-      type: String,
-      required: true,
-    },
-
-    cardName: {
-      type: String,
-      required: true,
-    },
-
-    cardId: {
-        type: String,
-        required: true,
+    cardConfig: {
+      type: Object,
+      required: true
     }
   },
 };

@@ -9,13 +9,8 @@
       <div class="fetching-error">Fehler beim Laden der Kontoinhaber!</div>
     </section>
     <section class="account-view-body" v-else>
-      <card-component
-        v-for="depositor in depositors"
-        :key="depositor.id"
-        cardName="depositor"
-        :cardId="'depositor-' + depositor.id"
-        :cardHeadline="depositor.name"
-        :cardExpandedProp="false">
+      <card-component v-for="depositor in depositors" :key="depositor.id" :cardConfig="configureCard(depositor)">
+        <table-component :tableConfig="configureTable"></table-component>
         <table>
           <thead>
             <tr>
@@ -88,6 +83,14 @@ export default {
   },
 
   methods: {
+    configureCard(depositor) {
+      return {
+        cardExpanded: false,
+        cardHeadline: depositor.name,
+        cardId: "depositor-" + depositor.id
+      }
+    },
+
     async getDepositors(includeAccounts = false) {
       this.depositors = await DepositorService.getDepositors(includeAccounts);
 
