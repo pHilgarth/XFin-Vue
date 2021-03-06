@@ -1,8 +1,8 @@
 
-const baseUrl = "http://localhost:2905/api/depositors";
+const baseUrl = "http://localhost:2905/api/accountHolders";
 
-export const DepositorService = {
-  async getDepositors(includeAccounts) {
+export const AccountHolderService = {
+  async getAccountHolders(includeAccounts) {
     let url = baseUrl;
 
     if (includeAccounts) {

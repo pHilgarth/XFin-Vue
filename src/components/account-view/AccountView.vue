@@ -5,11 +5,11 @@
     <section class="loading" v-if="loading">
       <div>Daten werden geladen ...</div>
     </section>
-    <section class="loading-error" v-else-if="!depositors">
+    <section class="loading-error" v-else-if="!accountHolders">
       <div class="fetching-error">Fehler beim Laden der Kontoinhaber!</div>
     </section>
     <section class="account-view-body" v-else>
-      <card-component v-for="depositor in depositors" :key="depositor.id" :cardConfig="configureCard(depositor)">
+      <card-component v-for="accountHolder in accountHolders" :key="accountHolder.id" :cardConfig="configureCard(accountHolder)">
         <table-component :tableConfig="configureTable"></table-component>
         <table>
           <thead>
@@ -21,7 +21,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="bankAccount in depositor.bankAccounts" :key="bankAccount.id">
+            <tr v-for="bankAccount in accountHolder.bankAccounts" :key="bankAccount.id">
               <td>
                 <router-link :to="'/accounts/' + bankAccount.accountNumber">{{
                   bankAccount.accountNumber
@@ -43,8 +43,8 @@
           </tbody>
         </table>
       </card-component>
-      <div class="account-view-add-depositor">
-        <router-link to="/edit-depositors/0" class="xfin-button">
+      <div class="account-view-add-account-holder">
+        <router-link to="/edit-accountHolders/0" class="xfin-button">
           Kontoinhaber hinzufügen
         </router-link>
       </div>
@@ -66,8 +66,7 @@ import CardComponent from "../_shared/card-component/CardComponent";
   >>> Import Services
 
 -------------------------------------------------------------------------------------------*/
-//import getLeagueLeaders from "../../services/depositor-service.js";
-import { DepositorService } from "../../services/depositor-service";
+import { AccountHolderService } from "../../services/account-holder-service";
 import { NumberService } from "../../services/number-service.js";
 
 export default {
@@ -77,22 +76,22 @@ export default {
 
   data() {
     return {
-      depositors: this.getDepositors(true),
+      accountHolders: this.getAccountHolders(true),
       loading: true,
     };
   },
 
   methods: {
-    configureCard(depositor) {
+    configureCard(accountHolder) {
       return {
         cardExpanded: false,
-        cardHeadline: depositor.name,
-        cardId: "depositor-" + depositor.id
+        cardHeadline: accountHolder.name,
+        cardId: "accountHolder-" + accountHolder.id
       }
     },
 
-    async getDepositors(includeAccounts = false) {
-      this.depositors = await DepositorService.getDepositors(includeAccounts);
+    async getAccountHolders(includeAccounts = false) {
+      this.accountHolders = await AccountHolderService.getAccountHolders(includeAccounts);
 
       this.loading = false;
     },
