@@ -1,4 +1,3 @@
-
 <template>
   <div class="xfin-card">
     <div
@@ -6,8 +5,7 @@
       @click="cardExpanded = !cardExpanded"
     >
       <button
-        class="btn xfin-card-header-btn"
-        :class="{ collapsed: !cardExpanded }"
+        :class="'btn xfin-card-header-btn ' + { collapsed: !cardExpanded }"
         type="button"
         data-toggle="collapse"
         :data-target="'#' + cardId"
