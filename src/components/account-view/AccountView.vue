@@ -10,7 +10,6 @@
     </section>
     <section class="account-view-body" v-else>
       <card-component v-for="accountHolder in accountHolders" :key="accountHolder.id" :cardConfig="configureCard(accountHolder)">
-        <table-component :tableConfig="configureTable"></table-component>
         <table>
           <thead>
             <tr>
@@ -53,19 +52,8 @@
 </template>
 
 <script>
-/*-------------------------------------------------------------------------------------------
-
-  >>> Import Components
-
--------------------------------------------------------------------------------------------*/
 import CardComponent from "../_shared/card-component/CardComponent";
 
-
-/*-------------------------------------------------------------------------------------------
-
-  >>> Import Services
-
--------------------------------------------------------------------------------------------*/
 import { AccountHolderService } from "../../services/account-holder-service";
 import { NumberService } from "../../services/number-service.js";
 
