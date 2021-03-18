@@ -58,13 +58,17 @@ import { AccountHolderService } from "../../services/account-holder-service";
 import { NumberService } from "../../services/number-service.js";
 
 export default {
+  beforeMount() {
+    this.getAccountHolders(true);
+  },
+
   components: {
     CardComponent,
   },
 
   data() {
     return {
-      accountHolders: this.getAccountHolders(true),
+      accountHolders: [],
       loading: true,
     };
   },
