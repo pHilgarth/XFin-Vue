@@ -1,4 +1,3 @@
-
 export const NumberService = {
     formatCurrency(value) {
         let currencyFormat = new Intl.NumberFormat("de-DE", {
