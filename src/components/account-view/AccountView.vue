@@ -43,7 +43,7 @@
         </table>
       </card-component>
       <div class="account-view-add-account-holder">
-        <router-link to="/edit-accountHolders/0" class="xfin-button">
+        <router-link to="/accountHolders/0" class="xfin-button">
           Kontoinhaber hinzufügen
         </router-link>
       </div>
@@ -55,7 +55,7 @@
 import CardComponent from "../_shared/card-component/CardComponent";
 
 import { AccountHolderService } from "../../services/account-holder-service";
-import { NumberService } from "../../services/number-service.js";
+import { NumberService } from "../../services/number-service";
 
 export default {
   beforeMount() {

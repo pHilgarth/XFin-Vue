@@ -1,56 +1,39 @@
-/*---------------------------------------------------------------------------------------
-
-    >>> Forms
-
-----------------------------------------------------------------------------------------*/
-
 .xfin-form {
     font-size: 2rem;
     width: 50%;
 
-/*--------------------------------------------
-    >>> Forms -- Form Section
----------------------------------------------*/
-
-    .xfin-form-section {
-        padding-bottom: 3rem;
+    &__section {
+        margin-bottom: 3rem;
         
-        &.first-has-heading,
-        &:not(:first-child) {
-            border-top: 1px solid #ddd;
-            padding-top: 3rem;
-        }
-
-/*--------------------------------------------
-    >>> Forms -- Form Section Heading
----------------------------------------------*/
-
-        .xfin-form-section-heading {
-            position: relative;
-
-            h2 {
-                background-color: #fff;
-                left: 5%;
-                letter-spacing: 3px;
-                padding: 0 1rem;
-                position: absolute;
-                text-transform: uppercase;
-                top: -4.25rem;
-            }
+        &:not(:last-child) {
+            border-bottom: 1px solid #ddd;
         }
     }
 
-/*--------------------------------------------
-    >>> Forms -- Form Group
----------------------------------------------*/
+    &__group {
+        margin: 3rem 0;
+    }
+
+    &__control {
+        border-radius: .5rem;
+        border-width: .1rem;
+        padding: .3rem 1.5rem;
+
+        &.has-errors {
+            border: 1px solid $color-form-errors;
+        }
+    }
+
+    &__error {
+        color: $color-form-errors;
+        font-size: 1.6rem;
+        margin: 0;
+        padding: 01rem 1rem;
+    }
 
     .form-group {
         align-items: center;
         margin: 2rem 0;
-
-/*--------------------------------------------
-    >>> Forms -- Form Group -- Dropdown
----------------------------------------------*/
 
         &.xfin-form-group-select {
             margin-bottom: 5rem;
@@ -68,6 +51,11 @@
                 border: 1px solid $color-form-errors;
                 outline: none;
             }
+
+            // TODO - find a better color or just leave it black
+            // option.new-account {
+            //     color: $color-new-account-option;
+            // }
         }
 
         label {
@@ -92,4 +80,7 @@
             }
         }
     }
+}
+.error {
+    color: crimson;
 }
