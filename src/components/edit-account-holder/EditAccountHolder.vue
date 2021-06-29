@@ -57,6 +57,8 @@
 
     import { AccountHolderService } from '@/services/account-holder-service';
 
+    import { bicValidator, ibanValidator } from '@/custom-validators/custom-validators';
+
     export default {
         beforeMount() {
             this.getAccountHolder(true);
@@ -125,8 +127,8 @@
         validations() {
             return {
                 name: { required },
-                iban: { required },
-                bic: { required },
+                iban: { required, ibanValidator },
+                bic: { required, bicValidator },
                 bank: { required },
             }
         }
