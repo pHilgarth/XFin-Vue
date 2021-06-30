@@ -4,10 +4,7 @@
 
     &__section {
         margin-bottom: 3rem;
-        
-        &:not(:last-child) {
-            border-bottom: 1px solid #ddd;
-        }
+        border-bottom: 1px solid #ddd;
     }
 
     &__group {
@@ -21,6 +18,14 @@
 
         &.has-errors {
             border: 1px solid $color-form-errors;
+        }
+    }
+
+    &__button {
+        margin-bottom: 3rem;
+
+        &.btn-submit-account {
+            margin-left: 1.5rem;
         }
     }
 

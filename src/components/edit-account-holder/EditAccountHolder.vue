@@ -13,11 +13,12 @@
             <div class="xfin-form__section">
                 <div class="form-group row">
                     <label class="xfin-form__label col-3" for="name">Name:</label>
-                    <input id="name" :class="{'xfin-form__control col-4': true, 'has-errors': v$.name.$error}" type="text" v-model="v$.name.$model" @blur="v$.name.$touch" />
+                    <input id="name" :class="{'xfin-form__control col-4': true, 'has-errors': v$.name.$error}" type="text" v-model="v$.name.$model" @blur="v$.name.$touch" @keyup="enforceMaxLength('name', 15)" />
                     <p class="xfin-form__error" v-if="v$.name.$error">Bitte gib einen Namen an!</p>
                 </div>
             </div>
             <div class="xfin-form__section">
+                <p class="xfin-form__notices--accounts">{{accountNotice}}</p>
                 <div class="form-group row">
                     <label class="xfin-form__label col-3" for="account">Konto:</label>
                     <select class="xfin-form__control xfin-form__select col-4" v-model="selectedAccountIndex">
@@ -26,25 +27,30 @@
                     </select>
                 </div>
                 <div class="form-group row">
-                    <label class="xfin-form__label col-3" for="name">IBAN:</label>
-                    <input id="name" class="xfin-form__control col-4" type="text" v-model="iban" @blur="v$.iban.$touch" />
+                    <label class="xfin-form__label col-3" for="iban">IBAN:</label>
+                    <input id="iban" :class="{'xfin-form__control col-4': true, 'has-errors': v$.iban.$error}" type="text" v-model="iban" @blur="v$.iban.$touch" />
                     <p class="xfin-form__error" v-if="v$.iban.$error">Bitte gib eine gültige IBAN an!</p>
                 </div>
                 <div class="form-group row">
-                    <label class="xfin-form__label col-3" for="name">BIC:</label>
-                    <input id="name" class="xfin-form__control col-4" type="text" v-model="bic" @blur="v$.bic.$touch" />
+                    <label class="xfin-form__label col-3" for="bic">BIC:</label>
+                    <input id="bic" :class="{'xfin-form__control col-4': true, 'has-errors': v$.bic.$error}" type="text" v-model="bic" @blur="v$.bic.$touch" />
                     <p class="xfin-form__error" v-if="v$.bic.$error">Bitte gib einen gültigen BIC an!</p>
                 </div>
                 <div class="form-group row">
-                    <label class="xfin-form__label col-3" for="name">Bank:</label>
-                    <input id="name" class="xfin-form__control col-4" type="text" v-model="bank" @blur="v$.bank.$touch" />
+                    <label class="xfin-form__label col-3" for="bank">Bank:</label>
+                    <input id="bank" :class="{'xfin-form__control col-4': true, 'has-errors': v$.bank.$error}" type="text" v-model="bank" @blur="v$.bank.$touch" @keyup="enforceMaxLength('bank', 30)" />
                     <p class="xfin-form__error" v-if="v$.bank.$error">Bitte gib eine Bank an!</p>
                 </div>
                 <div class="form-group row">
-                    <label class="xfin-form__label col-3" for="name">Beschreibung</label>
-                    <input id="name" class="xfin-form__control col-4" type="text" placeholder="(optional)" v-model="description" />
+                    <label class="xfin-form__label col-3" for="description">Beschreibung</label>
+                    <input id="description" class="xfin-form__control col-4" type="text" placeholder="(optional)" v-model="description" @keyup="enforceMaxLength('description', 15)" />
                 </div>
-                <button class="xfin-button btn btn-primary" @click.prevent="addAccount" >Konto hinzufügen</button>
+                <div class="form-group row">
+                    <label class="xfin-form__label col-3" for="balance">Kontostand</label>
+                    <input id="balance" :class="{'xfin-form__control col-4': true, 'has-errors': v$.balance.$error}" type="text" v-model="balance" @blur="v$.balance.$touch" />
+                    <p class="xfin-form__error" v-if="v$.balance.$error">Bitte gib einen gültigen Konstostand an!</p>
+                </div>
+                <button class="xfin-form__button btn btn-primary btn-submit-account" @click.prevent="addAccount" >Konto hinzufügen</button>
             </div>
         </form>
     </section>
@@ -57,7 +63,7 @@
 
     import { AccountHolderService } from '@/services/account-holder-service';
 
-    import { bicValidator, ibanValidator } from '@/custom-validators/custom-validators';
+    import { bicValidator, ibanValidator, balanceValidator } from '@/custom-validators/custom-validators';
 
     export default {
         beforeMount() {
@@ -66,6 +72,7 @@
         data() {
             return {
                 accountHolder: null,
+                accountNotice: '',
                 selectedAccountIndex: -1,
                 loading: true,
 
@@ -74,6 +81,7 @@
                 bic: '',
                 bank: '',
                 description: '',
+                balance: '',
             }
         },
 
@@ -88,12 +96,19 @@
                     });
 
                     this.selectedAccountIndex = this.accountHolder.bankAccounts.length - 1;
+                    this.accountNotice = 'Konto erfolgreich angelegt. Um ein weiteres Konto anzulegen, wähle "+ Neues Konto"';
                 }
             },
 
             calculateAccountNumber() {
                 return this.iban.substring(12).replace(/^0+/, '');
 
+            },
+
+            enforceMaxLength(field, length) {
+                if (this[field].length > length) {
+                    this[field] = this[field].slice(0, length);
+                }
             },
 
             async getAccountHolder(includeAccounts = false) {
@@ -112,6 +127,7 @@
                 this.v$.iban.$touch();
                 this.v$.bic.$touch();
                 this.v$.bank.$touch();
+                this.v$.balance.$touch();
 
                 if (!this.v$.$errors.length) {
                     return true;
@@ -130,6 +146,7 @@
                 iban: { required, ibanValidator },
                 bic: { required, bicValidator },
                 bank: { required },
+                balance: { required, balanceValidator }
             }
         }
     }
