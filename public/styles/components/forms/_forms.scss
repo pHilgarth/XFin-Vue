@@ -8,7 +8,12 @@
     }
 
     &__group {
-        margin: 3rem 0;
+        align-items: center;
+        margin: 2rem 0;
+
+        &.accounts {
+            margin-bottom: 4rem;
+        }
     }
 
     &__control {
@@ -24,7 +29,7 @@
     &__button {
         margin-bottom: 3rem;
 
-        &.btn-submit-account {
+        &.btn-submit-account, &.btn-edit-account {
             margin-left: 1.5rem;
         }
     }
@@ -36,9 +41,12 @@
         padding: 01rem 1rem;
     }
 
+    &__notices__close {
+        cursor: pointer;
+    }
+
     .form-group {
-        align-items: center;
-        margin: 2rem 0;
+
 
         &.xfin-form-group-select {
             margin-bottom: 5rem;
