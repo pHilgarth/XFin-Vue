@@ -5,15 +5,15 @@
     &__section {
         margin-bottom: 3rem;
         border-bottom: 1px solid #ddd;
+        
+        &.account-data {
+            border: none;
+        }
     }
 
     &__group {
         align-items: center;
         margin: 2rem 0;
-
-        &.accounts {
-            margin-bottom: 4rem;
-        }
     }
 
     &__control {
@@ -39,10 +39,6 @@
         font-size: 1.6rem;
         margin: 0;
         padding: 01rem 1rem;
-    }
-
-    &__notices__close {
-        cursor: pointer;
     }
 
     .form-group {
