@@ -14,5 +14,9 @@ export const NumberService = {
 
         //we add a leading zero to day and month and then get the last two chars, only if day or month is below 10 we have leading zeros
         return `${('0' + date.getDate()).slice(-2)}.${'0' + (date.getMonth() + 1)}.${date.getFullYear()}`
+    },
+
+    getAccountNumber(iban) {
+        return iban.substring(12).replace(/^0+/, "");
     }
 }

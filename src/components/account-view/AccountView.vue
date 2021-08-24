@@ -26,7 +26,7 @@
                   bankAccount.accountNumber
                 }}</router-link>
               </td>
-              <td>{{ bankAccount.accountType }}</td>
+              <td>{{ bankAccount.description }}</td>
               <td :class="{ negative: bankAccount.balance < 0 }">{{ formatCurrency(bankAccount.balance) }}</td>
               <td>
                 <select @change="getAccountAction($event, account)">
@@ -41,6 +41,7 @@
             </tr>
           </tbody>
         </table>
+        <router-link :to="'/accountHolders/' + accountHolder.id" class="xfin-button">Kontoinhaber bearbeiten</router-link>
       </card-component>
       <div class="account-view-add-account-holder">
         <router-link to="/accountHolders/0" class="xfin-button">
@@ -84,6 +85,12 @@ export default {
 
     async getAccountHolders(includeAccounts = false) {
       this.accountHolders = await AccountHolderService.getAccountHolders(includeAccounts);
+
+      this.accountHolders.forEach(accountHolder => {
+        accountHolder.bankAccounts.forEach(bankAccount => {
+          bankAccount.accountNumber = NumberService.getAccountNumber(bankAccount.iban);
+        });
+      });
 
       this.loading = false;
     },
