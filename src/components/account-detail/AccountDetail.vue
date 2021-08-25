@@ -1,7 +1,7 @@
 <template>
   <div class="account-detail">
     <h1 class="account-detail-headline">
-      Detailansicht ({{ $route.params.accountNumber }})
+      Detailansicht ({{ $route.params.id }})
     </h1>
     <section class="loading" v-if="loading">
       <div>Daten werden geladen ...</div>
@@ -13,7 +13,7 @@
       <month-switch @month-switched="updateView"></month-switch>
       <revenue-section :revenues="account.revenues" :proportionPreviousMonth="account.proportionPreviousMonth"></revenue-section>
 
-      <budget-section :costCenters="costCenters"></budget-section>
+      <budget-section :transactionCategories="transactionCategories"></budget-section>
 
       <expense-section :expenses="account.expenses"></expense-section>
     </section>
@@ -28,13 +28,15 @@ import RevenueSection from './revenue-section/RevenueSection';
 import MonthSwitch from '../_shared/month-switch/MonthSwitch';
 
 import { BankAccountService } from '../../services/bank-account-service.js';
-import { CostCenterService } from '../../services/cost-center-service.js';
+import { TransactionCategoryService } from '../../services/transaction-category-service.js';
 import { NumberService } from '../../services/number-service.js';
 
 export default {
   beforeMount() {
-    this.getAccount(true);
-    this.getCostCenters(false);
+    const simpleBankAccount = false;
+    this.getAccount(simpleBankAccount);
+
+    this.getTransactionCategories(false);
   },
 
   components: {
@@ -47,7 +49,7 @@ export default {
   data() {
     return {
       account: null,
-      costCenters: null,
+      transactionCategories: null,
       loading: true
     };
   },
@@ -57,20 +59,20 @@ export default {
       return NumberService.formatCurrency(value);
     },
 
-    async getAccount(includeTransactions, month) {
+    async getAccount(simple, month) {
       const year = new Date().getFullYear();
       month = month !== undefined ? month : new Date().getMonth();
 
-      this.account =  await BankAccountService.getBankAccount(this.$route.params.accountNumber, includeTransactions, year, month);
+      this.account =  await BankAccountService.getBankAccount(this.$route.params.accountNumber, simple, year, month);
       console.log(this.account);
       this.loading = false;
     },
 
-    async getCostCenters(includeTransactions, month) {
+    async getTransactionCategories(simple, month) {
       const year = new Date().getFullYear();
       month = month !== undefined ? month : new Date().getMonth();
 
-      this.costCenters = await CostCenterService.getCostCenters(this.$route.params.accountNumber, includeTransactions, year, month);
+      this.transactionCategories = await TransactionCategoryService.getTransactionCategories(this.$route.params.accountNumber, simple, year, month);
     },
 
     updateExpensesTable(month) {
@@ -90,7 +92,7 @@ export default {
 
     updateView(month) {
       this.getAccount(true, month);
-      this.getCostCenters(false, month);
+      this.getTransactionCategories(false, month);
       //this.updateRevenuesTable(month);
     }
   },

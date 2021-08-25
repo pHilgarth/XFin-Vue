@@ -12,7 +12,7 @@ const router = createRouter({
     history: createWebHistory(),
     routes: [
         { path: '/', component: AccountView },
-        { path: '/accounts/:accountNumber', component: AccountDetail },
+        { path: '/accounts/:id', component: AccountDetail },
         { path: '/accountHolders/0', component: CreateAccountHolder },
         { path: '/accountHolders/:id', component: UpdateAccountHolder },
     ]

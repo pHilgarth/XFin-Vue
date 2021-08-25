@@ -2,27 +2,27 @@
 
 const baseUrl = "http://localhost:2905/api/transactionCategories";
 
-export const CostCenterService = {
+export const TransactionCategoryService = {
     // addExpense(expense) {
-    //     const _costCenter = this.costCenters.find(el => el.name === expense.source.costCenter);
+    //     const _transactionCategory = this.transactionCategories.find(el => el.name === expense.source.transactionCategory);
 
-    //     _costCenter.expenses.push(expense);
+    //     _transactionCategory.expenses.push(expense);
     // },
 
     // addExternalRevenue(revenue) {
-    //     this.costCenters[0].revenues.push(revenue);
+    //     this.transactionCategories[0].revenues.push(revenue);
     // },
 
     // addRevenue(revenue) {
-    //     const costCenter = this.costCenters.find(el => el.name === revenue.target.costCenter);
+    //     const transactionCategory = this.transactionCategories.find(el => el.name === revenue.target.transactionCategory);
 
-    //     costCenter.revenues.push(revenue);
+    //     transactionCategory.revenues.push(revenue);
     // },
 
-    // getBudget(accountNumber, costCenter, month) {
+    // getBudget(accountNumber, transactionCategory, month) {
     //     let revenuesTotal = 0;
 
-    //     costCenter.revenues.forEach(revenue => {
+    //     transactionCategory.revenues.forEach(revenue => {
     //         if (revenue.target.account.accountNumber === accountNumber && revenue.month <= month) {
     //             revenuesTotal += revenue.amount;
     //         }
@@ -30,7 +30,7 @@ export const CostCenterService = {
 
     //     let expensesTotal = 0;
 
-    //     costCenter.expenses.forEach(expense => {
+    //     transactionCategory.expenses.forEach(expense => {
     //         if (expense.source.account.accountNumber === accountNumber && expense.type === 'transfer') {
     //             expensesTotal += expense.amount;
     //         }
@@ -39,19 +39,19 @@ export const CostCenterService = {
     //     return revenuesTotal - expensesTotal;
     // },
 
-    // getCostCenterNames() {
-    //     let costCenters = [];
+    // getTransactionCategoryNames() {
+    //     let transactionCategories = [];
 
-    //     for (let i = 1; i < this.costCenters.length; i++) {
-    //         const costCenter = this.costCenters[i];
+    //     for (let i = 1; i < this.transactionCategories.length; i++) {
+    //         const transactionCategory = this.transactionCategories[i];
 
-    //         costCenters.push(costCenter.name);
+    //         transactionCategories.push(transactionCategory.name);
     //     }
 
-    //     return costCenters;
+    //     return transactionCategories;
     // },
 
-    async getCostCenters(accountNumber, includeTransactions, year, month) {
+    async getTransactionCategories(accountNumber, includeTransactions, year, month) {
         const url = `${baseUrl}/${accountNumber}?includeTransactions=${includeTransactions}&year=${year}&month=${++month}`
 
         try {
@@ -69,21 +69,21 @@ export const CostCenterService = {
         }
     },
 
-    // getCostCentersByAccount(accountNumber) {
+    // getTransactionCategoriesByAccount(accountNumber) {
     //     if (!accountNumber) {
     //         accountNumber = AccountHolderService.depositors[0].accounts[0].accountNumber;
     //     }
 
-    //     // get only the costCenters of the specified account! Only the revenues and expenses of this account and this costCenter
+    //     // get only the transactionCategories of the specified account! Only the revenues and expenses of this account and this transactionCategory
     //     // calculate the balance properly
 
-    //     let costCenters = [];
+    //     let transactionCategories = [];
 
-    //     this.costCenters.forEach(costCenterItem => {
-    //         let costCenter = {};
+    //     this.transactionCategories.forEach(transactionCategoryItem => {
+    //         let transactionCategory = {};
 
-    //         let revenues = costCenterItem.revenues.filter(revenue => revenue.target.account.accountNumber === accountNumber);
-    //         let expenses = costCenterItem.expenses.filter(expense => expense.source.account.accountNumber === accountNumber);
+    //         let revenues = transactionCategoryItem.revenues.filter(revenue => revenue.target.account.accountNumber === accountNumber);
+    //         let expenses = transactionCategoryItem.expenses.filter(expense => expense.source.account.accountNumber === accountNumber);
 
     //         let revenuesTotal = 0;
     //         let expensesTotal = 0;
@@ -96,19 +96,19 @@ export const CostCenterService = {
     //             expensesTotal += expense.amount;
     //         })
 
-    //         costCenter.balance = revenuesTotal - expensesTotal;
-    //         costCenter.name = costCenterItem.name;
+    //         transactionCategory.balance = revenuesTotal - expensesTotal;
+    //         transactionCategory.name = transactionCategoryItem.name;
 
-    //         costCenters.push(costCenter);
+    //         transactionCategories.push(transactionCategory);
     //     });
 
-    //     return costCenters;
+    //     return transactionCategories;
     // },
 
-    // getExpensesTotal(accountNumber, costCenter, month) {
+    // getExpensesTotal(accountNumber, transactionCategory, month) {
     //     let expensesTotal = 0;
 
-    //     costCenter.expenses.forEach(expense => {
+    //     transactionCategory.expenses.forEach(expense => {
     //         if (expense.source.account.accountNumber === accountNumber && expense.month === month && expense.type !== 'transfer') {
     //             expensesTotal += expense.amount;
     //         }
@@ -117,10 +117,10 @@ export const CostCenterService = {
     //     return expensesTotal;
     // },
 
-    // getProportionPrevMonth(accountNumber, costCenter, month) {
+    // getProportionPrevMonth(accountNumber, transactionCategory, month) {
     //     let revenuesTotal = 0;
 
-    //     costCenter.revenues.forEach(revenue => {
+    //     transactionCategory.revenues.forEach(revenue => {
     //         if (revenue.target.account.accountNumber === accountNumber && revenue.month < month) {
     //             revenuesTotal += revenue.amount;
     //         }
@@ -128,7 +128,7 @@ export const CostCenterService = {
 
     //     let expensesTotal = 0;
 
-    //     costCenter.expenses.forEach(expense => {
+    //     transactionCategory.expenses.forEach(expense => {
     //         if (expense.source.account.accountNumber === accountNumber && expense.month < month) {
     //             expensesTotal += expense.amount;
     //         } 
@@ -137,10 +137,10 @@ export const CostCenterService = {
     //     return revenuesTotal - expensesTotal;
     // },
 
-    // getRevenuesTotal(accountNumber, costCenter, month) {
+    // getRevenuesTotal(accountNumber, transactionCategory, month) {
     //     let revenuesTotal = 0;
         
-    //     costCenter.revenues.forEach(revenue => {
+    //     transactionCategory.revenues.forEach(revenue => {
     //         if (revenue.target.account.accountNumber === accountNumber && revenue.month === month) {
     //             revenuesTotal += revenue.amount;
     //         }
@@ -148,7 +148,7 @@ export const CostCenterService = {
 
     //     let internalExpensesTotal = 0;
 
-    //     costCenter.expenses.forEach(expense => {
+    //     transactionCategory.expenses.forEach(expense => {
 
     //         if (expense.source.account.accountNumber === accountNumber && expense.month === month && expense.type === 'transfer') {
     //             internalExpensesTotal += expense.amount;

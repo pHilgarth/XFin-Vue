@@ -12,13 +12,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="costCenter in costCenters" :key="costCenter.id">
-              <td>{{ costCenter.name }}</td>
-              <td :class="{ negative: (Number)(costCenter.proportionPreviousMonth) < 0}">{{ formatCurrency(costCenter.proportionPreviousMonth) }}</td>
-              <td>{{ formatCurrency(costCenter.revenuesTotal) }}</td>
-              <td :class="{ negative: (Number)(costCenter.budget) < 0 }">{{ formatCurrency(costCenter.budget) }}</td>
-              <td>{{ formatCurrency(Math.abs(costCenter.expensesTotal)) }}</td>
-              <td :class="{ negative: (Number)(costCenter.balance) < 0 }">{{ formatCurrency(costCenter.balance) }}</td>
+            <tr v-for="transactionCategory in transactionCategories" :key="transactionCategory.id">
+              <td>{{ transactionCategory.name }}</td>
+              <td :class="{ negative: (Number)(transactionCategory.proportionPreviousMonth) < 0}">{{ formatCurrency(transactionCategory.proportionPreviousMonth) }}</td>
+              <td>{{ formatCurrency(transactionCategory.revenuesTotal) }}</td>
+              <td :class="{ negative: (Number)(transactionCategory.budget) < 0 }">{{ formatCurrency(transactionCategory.budget) }}</td>
+              <td>{{ formatCurrency(Math.abs(transactionCategory.expensesTotal)) }}</td>
+              <td :class="{ negative: (Number)(transactionCategory.balance) < 0 }">{{ formatCurrency(transactionCategory.balance) }}</td>
             </tr>
             <tr class="total">
               <td>Summen</td>
@@ -36,7 +36,7 @@
 <script>
 import CardComponent from '../../_shared/card-component/CardComponent';
 
-import { CostCenterService } from '../../../services/cost-center-service';
+import { TransactionCategoryService } from '../../../services/transaction-category-service';
 import { NumberService } from '../../../services/number-service';
 
 export default {
@@ -57,24 +57,24 @@ export default {
           return NumberService.formatCurrency(value)
         },
 
-        getBalanceClass(costCenter) {
+        getBalanceClass(transactionCategory) {
           console.log('Bruh');
-          return { negative: (Number)(costCenter.proportionPreviousMonth) < 0 }
+          return { negative: (Number)(transactionCategory.proportionPreviousMonth) < 0 }
         },
 
-        getCostCenters(month) {
+        getTransactionCategories(month) {
             if (!month) {
                month = new Date().getMonth();
             }
 
-            return CostCenterService.getCostCenters(this.$route.params.accountNumber, month);
+            return TransactionCategoryService.getTransactionCategories(this.$route.params.accountNumber, month);
         },
 
         getBalanceTotal(format) {
           let balanceTotal = 0;
 
-          this.costCenters.forEach(costCenter => {
-            balanceTotal += costCenter.balance;
+          this.transactionCategories.forEach(transactionCategory => {
+            balanceTotal += transactionCategory.balance;
           });
 
           if (format) {
@@ -88,8 +88,8 @@ export default {
         getBudgetTotal(format) {
           let budgetTotal = 0;
 
-          this.costCenters.forEach(costCenter => {
-            budgetTotal += costCenter.budget;
+          this.transactionCategories.forEach(transactionCategory => {
+            budgetTotal += transactionCategory.budget;
           });
 
           if (format) {
@@ -103,8 +103,8 @@ export default {
         getExpensesTotal() {
           let expensesTotal = 0;
 
-          this.costCenters.forEach(costCenter => {
-            expensesTotal += Math.abs(costCenter.expensesTotal);
+          this.transactionCategories.forEach(transactionCategory => {
+            expensesTotal += Math.abs(transactionCategory.expensesTotal);
           });
 
           return this.formatCurrency(expensesTotal);
@@ -113,8 +113,8 @@ export default {
         getProportionTotal(format) {
           let proportionTotal = 0;
 
-          this.costCenters.forEach(costCenter => {
-            proportionTotal += costCenter.proportionPreviousMonth;
+          this.transactionCategories.forEach(transactionCategory => {
+            proportionTotal += transactionCategory.proportionPreviousMonth;
           });
 
           if (format) {
@@ -128,8 +128,8 @@ export default {
         getRevenuesTotal(format) {
           let revenuesTotal = 0;
 
-          this.costCenters.forEach(costCenter => {
-            revenuesTotal += costCenter.revenuesTotal;
+          this.transactionCategories.forEach(transactionCategory => {
+            revenuesTotal += transactionCategory.revenuesTotal;
           });
 
           if (format) {
@@ -142,7 +142,7 @@ export default {
     },
 
     props: {
-      costCenters: {
+      transactionCategories: {
         type: Object,
         required: true
       }

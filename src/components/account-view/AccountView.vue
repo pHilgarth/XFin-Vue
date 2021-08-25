@@ -22,7 +22,7 @@
           <tbody>
             <tr v-for="bankAccount in accountHolder.bankAccounts" :key="bankAccount.id">
               <td>
-                <router-link :to="'/accounts/' + bankAccount.accountNumber">{{
+                <router-link :to="'/accounts/' + bankAccount.id">{{
                   bankAccount.accountNumber
                 }}</router-link>
               </td>

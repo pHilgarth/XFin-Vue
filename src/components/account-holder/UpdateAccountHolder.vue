@@ -66,7 +66,7 @@
             <div class="xfin-form__group row">
               <label class="xfin-form__label col-3" for="bank">Bank:</label>
               <input id="bank" :class="{ 'xfin-form__control col-4': true, 'has-errors': v$.bank.$error }" :disabled="!pendingAccountCreation && !pendingAccountEdit"
-                type="text" v-model="bank" @blur="v$.bank.$touch" @keyup="enforceMaxLength('bank', 30)" />
+                type="text" v-model="bank" @blur="v$.bank.$touch" @keyup="enforceMaxLength('bank', 50)" />
               <p class="xfin-form__error" v-if="v$.bank.$error">
                 Bitte gib eine Bank an!
               </p>
