@@ -1,4 +1,3 @@
-
 <template>
     <card-component :cardConfig="configureCard()">
         <table>
@@ -6,25 +5,25 @@
             <tr>
               <th>Datum</th>
               <th>Quelle</th>
-              <th>Typ</th>
+              <th>Verwendungszweck</th>
               <th>Betrag</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="revenue in filteredRevenues" :key="revenue.id">
+            <tr v-for="revenue in revenues" :key="revenue.id">
               <td>{{ formatDate(revenue.date) }}</td>
-              <td>{{ revenue.counterPartAccountNumber || revenue.externalParty?.name || 'Kontoinitialisierung' }}</td>
-              <td>{{ translate(revenue.transactionType) }}</td>
+              <td>{{ revenue.counterParty }}</td>
+              <td>{{ revenue.reference }}</td>
               <td>{{ formatCurrency(revenue.amount) }}</td>
             </tr>
-            <tr v-if="filteredRevenues.length === 0">
+            <tr v-if="revenues.length === 0">
               <td colspan="4" class="no-revenues">
                 Keine Einnahmen vorhanden!
               </td>
             </tr>
             <tr class="subtotal">
               <td colspan="3">Einnahmen gesamt</td>
-              <td>{{ getRevenueSum(true) }}</td>
+              <td>{{ getRevenuesSum(true) }}</td>
             </tr>
             <tr class="balance-previous-month">
               <td colspan="3">
@@ -48,20 +47,13 @@
 </template>
 
 <script>
-import CardComponent from '../../_shared/card-component/CardComponent';
+import CardComponent from '@/components/_shared/card-component/CardComponent';
 
-import { NumberService } from '../../../services/number-service';
-import { TranslationService } from '../../../services/translation-service';
+import { NumberService } from '@/services/number-service';
 
 export default {
   components: {
     CardComponent
-  },
-
-  computed: {
-    filteredRevenues() {
-      return this.revenues.filter(r => r.bankAccountNumber !== r.counterPartAccountNumber);
-    }
   },
 
   methods: {
@@ -83,17 +75,17 @@ export default {
 
     getBudget(format) {
       if (format) {
-        return this.formatCurrency(this.proportionPreviousMonth + this.getRevenueSum(false));
+        return this.formatCurrency(this.proportionPreviousMonth + this.getRevenuesSum(false));
       }
       else {
-        return this.proportionPreviousMonth + this.getRevenueSum(false);
+        return this.proportionPreviousMonth + this.getRevenuesSum(false);
       }
     },
 
-    getRevenueSum(formatCurrency) {
+    getRevenuesSum(formatCurrency) {
       let revenuesTotal = 0;
 
-      this.filteredRevenues.forEach(revenue => {
+      this.revenues.forEach(revenue => {
         revenuesTotal += revenue.amount;
       });
 
@@ -103,10 +95,6 @@ export default {
       else {
         return revenuesTotal;
       }
-    },
-
-    translate(value) {
-      return TranslationService.translate(value);
     },
 
     updateTable(month) {

@@ -34,10 +34,9 @@
 </template>
 
 <script>
-import CardComponent from '../../_shared/card-component/CardComponent';
+import CardComponent from '@/components/_shared/card-component/CardComponent';
 
-import { TransactionCategoryService } from '../../../services/transaction-category-service';
-import { NumberService } from '../../../services/number-service';
+import { NumberService } from '@/services/number-service';
 
 export default {
     components: {
@@ -58,17 +57,16 @@ export default {
         },
 
         getBalanceClass(transactionCategory) {
-          console.log('Bruh');
           return { negative: (Number)(transactionCategory.proportionPreviousMonth) < 0 }
         },
 
-        getTransactionCategories(month) {
-            if (!month) {
-               month = new Date().getMonth();
-            }
+        // getTransactionCategories(month) {
+        //     if (!month) {
+        //        month = new Date().getMonth();
+        //     }
 
-            return TransactionCategoryService.getTransactionCategories(this.$route.params.accountNumber, month);
-        },
+        //     return TransactionCategoryService.getTransactionCategories(this.$route.params.accountNumber, month);
+        // },
 
         getBalanceTotal(format) {
           let balanceTotal = 0;

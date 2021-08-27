@@ -51,8 +51,8 @@ export const TransactionCategoryService = {
     //     return transactionCategories;
     // },
 
-    async getTransactionCategories(accountNumber, includeTransactions, year, month) {
-        const url = `${baseUrl}/${accountNumber}?includeTransactions=${includeTransactions}&year=${year}&month=${++month}`
+    async getTransactionCategories(id, year, month) {
+        const url = `${baseUrl}/${id}?year=${year}&month=${++month}`
 
         try {
         return await fetch(url).then((response) => {

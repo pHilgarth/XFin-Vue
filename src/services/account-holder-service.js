@@ -6,19 +6,19 @@ export const AccountHolderService = {
     let url = `${baseUrl}?includeAccounts=${includeAccounts}`;
 
     try {
-      return await fetch(url).then((response) => {console.log(response);
+      return await fetch(url).then((response) => {
         if (response.ok) {
           if (response.status === 204) {
             return [];
           }
           return response.json();
         }
-      }).then((data) => {console.log(data);
+      }).then((data) => {
         if (data != undefined) {
           return data;
         }
       });
-    } catch (error) {console.log(error);
+    } catch (error) {
       return null;
     }
   },

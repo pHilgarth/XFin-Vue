@@ -53,10 +53,11 @@
 </template>
 
 <script>
-import CardComponent from "../_shared/card-component/CardComponent";
+import CardComponent from "@/components/_shared/card-component/CardComponent";
 
-import { AccountHolderService } from "../../services/account-holder-service";
-import { NumberService } from "../../services/number-service";
+import { AccountHolderService } from "@/services/account-holder-service";
+import { NumberService } from "@/services/number-service";
+
 
 export default {
   beforeMount() {
@@ -86,11 +87,11 @@ export default {
     async getAccountHolders(includeAccounts = false) {
       this.accountHolders = await AccountHolderService.getAccountHolders(includeAccounts);
 
-      this.accountHolders.forEach(accountHolder => {
-        accountHolder.bankAccounts.forEach(bankAccount => {
-          bankAccount.accountNumber = NumberService.getAccountNumber(bankAccount.iban);
-        });
-      });
+      // this.accountHolders.forEach(accountHolder => {
+      //   accountHolder.bankAccounts.forEach(bankAccount => {
+      //     bankAccount.accountNumber = NumberService.getAccountNumber(bankAccount.iban);
+      //   });
+      // });
 
       this.loading = false;
     },

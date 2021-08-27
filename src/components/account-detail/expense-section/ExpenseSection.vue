@@ -7,16 +7,16 @@
               <th>Datum</th>
               <th>Kostenstelle</th>
               <th>Zahlungsempfänger</th>
-              <th>Typ</th>
+              <th>Verwendungszweck</th>
               <th>Betrag</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="expense in filteredExpenses" :key="expense.id">
+            <tr v-for="expense in expenses" :key="expense.id">
               <td>{{ formatDate(expense.date) }}</td>
-              <td>{{ expense.transactionCategory.name }}</td>
-              <td>{{ expense.counterPartAccountNumber || expense.externalParty?.name || 'Kontoinitialisierung' }}</td>
-              <td>{{ translate(expense.transactionType) }}</td>
+              <td>{{ expense.transactionCategoryName }}</td>
+              <td>{{ expense.counterParty }}</td>
+              <td>{{ expense.reference }}</td>
               <td>{{ formatCurrency(Math.abs(expense.amount)) }}</td>
             </tr>
             <tr v-if="expenses.length === 0">
@@ -26,7 +26,7 @@
             </tr>
             <tr class="total">
               <td colspan="4">Summe</td>
-              <td>{{ expenseSum }}</td>
+              <td>{{ getExpensesSum(true) }}</td>
             </tr>
           </tbody>
         </table>
@@ -34,29 +34,13 @@
 </template>
 
 <script>
-import CardComponent from '../../_shared/card-component/CardComponent';
+import CardComponent from '@/components/_shared/card-component/CardComponent';
 
-import { NumberService } from '../../../services/number-service'; 
-import { TranslationService } from '../../../services/translation-service';
+import { NumberService } from '@/services/number-service';
 
 export default {
   components: {
     CardComponent
-  },
-
-  computed: {
-    expenseSum() {
-      let expensesTotal = 0;
-
-      this.filteredExpenses.forEach(expense => {
-        expensesTotal += Math.abs(expense.amount);
-      });
-
-      return this.formatCurrency(expensesTotal);
-    },
-    filteredExpenses() {
-      return this.expenses.filter(e => e.bankAccountNumber !== e.counterPartAccountNumber);
-    }
   },
 
   methods: {
@@ -76,8 +60,19 @@ export default {
       return NumberService.formatDate(value);
     },
 
-    translate(value) {
-      return TranslationService.translate(value);
+    getExpensesSum(formatCurrency) {
+      let expensesTotal = 0;
+
+      this.expenses.forEach(expense => {
+        expensesTotal += expense.amount;
+      });
+
+      if (formatCurrency) {
+        return this.formatCurrency(Math.abs(expensesTotal));
+      }
+      else {
+        return expensesTotal;
+      }
     },
 
     updateTable(month) {
