@@ -60,14 +60,6 @@ export default {
           return { negative: (Number)(transactionCategory.proportionPreviousMonth) < 0 }
         },
 
-        // getTransactionCategories(month) {
-        //     if (!month) {
-        //        month = new Date().getMonth();
-        //     }
-
-        //     return TransactionCategoryService.getTransactionCategories(this.$route.params.accountNumber, month);
-        // },
-
         getBalanceTotal(format) {
           let balanceTotal = 0;
 

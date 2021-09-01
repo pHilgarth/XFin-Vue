@@ -29,7 +29,7 @@
               <td>{{ bankAccount.description }}</td>
               <td :class="{ negative: bankAccount.balance < 0 }">{{ formatCurrency(bankAccount.balance) }}</td>
               <td>
-                <select @change="getAccountAction($event, account)">
+                <select @change="getAccountAction($event, bankAccount)">
                   <option>Aktion wählen ...</option>
                   <option id="new-revenue">Einnahme eintragen</option>
                   <option id="new-expense">Ausgabe eintragen</option>
@@ -103,7 +103,7 @@ export default {
     getAccountAction(event, account) {
       let optionId = event.target.selectedOptions[0].id;
 
-      this.$router.push('/' + optionId + '/' + account.accountNumber);
+      this.$router.push('/' + optionId + '/' + account.id);
     },
   },
 };

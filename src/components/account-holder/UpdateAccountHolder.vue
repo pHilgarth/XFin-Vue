@@ -114,14 +114,14 @@ import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
 import { AccountHolderService } from "@/services/account-holder-service";
-import { BankAccountService } from "@/services/bank-account-service";
+import { InternalBankAccountService } from "@/services/internal-bank-account-service";
 import { NumberService } from "@/services/number-service.js";
 
 import {
   bicValidator,
   ibanValidator,
   balanceValidator,
-  accountsValidator,
+  dropDownValidator,
 } from "@/custom-validators/custom-validators";
 
 export default {
@@ -161,7 +161,7 @@ export default {
           balance: parseFloat(this.balance.replaceAll(".", "").replace(",", ".")),
         }
         
-        const createdBankAccount = await BankAccountService.createBankAccount(newBankAccount);
+        const createdBankAccount = await InternalBankAccountService.createInternalBankAccount(newBankAccount);
 
         if (createdBankAccount) {
           this.accountHolder.bankAccounts.push(newBankAccount);
@@ -334,7 +334,7 @@ export default {
           }
         }
 
-        await BankAccountService.updateBankAccount(updatedBankAccount.id, jsonPatchDocument);
+        await InternalBankAccountService.updateInternalBankAccount(updatedBankAccount.id, jsonPatchDocument);
 
         this.pendingAccountEdit = false;
       }
@@ -371,7 +371,7 @@ export default {
       bic: { required, bicValidator },
       bank: { required },
       balance: { required, balanceValidator },
-      selectedAccountIndex: { accountsValidator },
+      selectedAccountIndex: { dropDownValidator },
     };
   },
 };

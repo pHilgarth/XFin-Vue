@@ -51,7 +51,23 @@ export const TransactionCategoryService = {
     //     return transactionCategories;
     // },
 
-    async getTransactionCategories(id, year, month) {
+    async getTransactionCategories() {
+        try {
+        return await fetch(baseUrl).then((response) => {
+            if (response.ok) {
+            return response.json();
+            }
+        }).then((data) => {
+            if (data != undefined) {
+            return data;
+            }
+        });
+        } catch (error) {
+        return null;
+        }
+    },
+
+    async getTransactionCategoriesByAccount(id, year, month) {
         const url = `${baseUrl}/${id}?year=${year}&month=${++month}`
 
         try {

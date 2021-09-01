@@ -97,14 +97,14 @@ import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
 import { AccountHolderService } from "@/services/account-holder-service";
-import { BankAccountService } from "@/services/bank-account-service";
+import { InternalBankAccountService } from "@/services/internal-bank-account-service";
 import { NumberService } from "@/services/number-service.js";
 
 import {
   bicValidator,
   ibanValidator,
   balanceValidator,
-  accountsValidator,
+  dropDownValidator,
 } from "@/custom-validators/custom-validators";
 
 export default {
@@ -184,7 +184,7 @@ export default {
             for (const bankAccount of this.bankAccounts) {
                 bankAccount.accountHolderId = newAccountHolder.id;
 
-                await BankAccountService.createBankAccount(bankAccount);
+                await InternalBankAccountService.createInternalBankAccount(bankAccount);
             }
 
             this.$router.push('/');
@@ -257,7 +257,7 @@ export default {
       bic: { required, bicValidator },
       bank: { required },
       balance: { required, balanceValidator },
-      selectedAccountIndex: { accountsValidator },
+      selectedAccountIndex: { dropDownValidator },
     };
   },
 };

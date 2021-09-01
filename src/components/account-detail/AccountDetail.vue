@@ -27,7 +27,7 @@
 
 import MonthSwitch from '@/components/_shared/month-switch/MonthSwitch';
 
-import { BankAccountService } from '@/services/bank-account-service.js';
+import { InternalBankAccountService } from '@/services/internal-bank-account-service.js';
 import { TransactionCategoryService } from '@/services/transaction-category-service.js';
 import { NumberService } from '@/services/number-service.js';
 
@@ -64,7 +64,7 @@ export default {
       const year = new Date().getFullYear();
       month = month !== undefined ? month : new Date().getMonth();
 
-      this.account =  await BankAccountService.getBankAccount(this.$route.params.id, simple, year, month);
+      this.account =  await InternalBankAccountService.getInternalBankAccount(this.$route.params.id, simple, year, month);
       this.accountNumber = this.account.accountNumber;
       this.loading = false;
     },
@@ -73,7 +73,7 @@ export default {
       const year = new Date().getFullYear();
       month = month !== undefined ? month : new Date().getMonth();
 
-      this.transactionCategories = await TransactionCategoryService.getTransactionCategories(this.$route.params.id, year, month);
+      this.transactionCategories = await TransactionCategoryService.getTransactionCategoriesByAccount(this.$route.params.id, year, month);
     },
 
     updateView(month) {
