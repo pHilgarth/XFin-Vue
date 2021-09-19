@@ -4,6 +4,10 @@
     box-shadow: 0 0 .5rem rgba(0, 0, 0, .5);
     margin-bottom: 5rem;
 
+    &.collapsed .xfin-card-header .xfin-card-header-icon .icon-bar:first-child {
+        height: 3rem;
+    }
+
     .xfin-card-header {
         background-color: $color-background-primary;
         border-radius: .5rem;
@@ -60,9 +64,13 @@
     }
 
     .xfin-card-body {
-        &.show {
-            padding-bottom: 2rem;
-            transition: padding-bottom .25s;
-          }
+        max-height: 1000px;
+        overflow: hidden;
+        transition: max-height 1s;
+
+        &.collapsed {
+            max-height: 0;
+            transition: max-height 1s;
+        }
     }
 }

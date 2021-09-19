@@ -7,7 +7,9 @@
           <li>
             <router-link to="/">Kontenübersicht</router-link>
           </li>
-          <li>Dummy</li>
+          <li>
+            <router-link to="/budget-manager">Budgetmanager</router-link>
+          </li>
           <li>Dummy</li>
         </ul>
       </div>

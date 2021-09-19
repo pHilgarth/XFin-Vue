@@ -1,0 +1,22 @@
+<template>
+    <tbody>
+        <MoleculeTableRow v-for="(row, index) in config.rows" :key="index" :config="row" atom="tableData"/>
+    </tbody>
+</template>
+
+<script>
+import MoleculeTableRow from "@/components/molecules/MoleculeTableRow";
+
+export default {
+    components: {
+        MoleculeTableRow,
+    },
+
+    props: {
+        config: {
+            type: Object,
+            required: true,
+        },
+    },
+}
+</script>

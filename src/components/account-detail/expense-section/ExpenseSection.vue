@@ -1,6 +1,6 @@
 
 <template>
-    <card-component :cardConfig="configureCard()">
+  <OrganismCollapsible :config="configureCard()">
         <table class="expense-view-table">
           <thead>
             <tr>
@@ -30,23 +30,23 @@
             </tr>
           </tbody>
         </table>
-      </card-component>
+  </OrganismCollapsible>
 </template>
 
 <script>
-import CardComponent from '@/components/_shared/card-component/CardComponent';
+import OrganismCollapsible from '@/components/organisms/OrganismCollapsible';
 
 import { NumberService } from '@/services/number-service';
 
 export default {
   components: {
-    CardComponent
+    OrganismCollapsible
   },
 
   methods: {
     configureCard() {
       return {
-        cardExpanded: false,
+        collapsed: true,
         cardHeadline: "Ausgaben",
         cardId: "expenses-card"
       }

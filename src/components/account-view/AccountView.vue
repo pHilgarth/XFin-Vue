@@ -1,48 +1,19 @@
 
 <template>
   <div class="account-view">
-    <h1 class="account-view-headline">Kontenübersicht</h1>
-    <section class="loading" v-if="loading">
-      <div>Daten werden geladen ...</div>
-    </section>
-    <section class="loading-error" v-else-if="!accountHolders">
-      <div class="fetching-error">Fehler beim Laden der Kontoinhaber!</div>
-    </section>
+    <AtomHeadline tag="h1" content="Kontenübersicht" />
+    <MoleculeLoading v-if="loading || !accountHolders" :loadingError="!loading && !accountHolders" />
+    
     <section class="account-view-body" v-else>
-      <card-component v-for="accountHolder in accountHolders" :key="accountHolder.id" :cardConfig="configureCard(accountHolder)">
-        <table>
-          <thead>
-            <tr>
-              <th>Konto</th>
-              <th>Kontotyp</th>
-              <th>Kontostand</th>
-              <th>Aktion</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="bankAccount in accountHolder.bankAccounts" :key="bankAccount.id">
-              <td>
-                <router-link :to="'/accounts/' + bankAccount.id">{{
-                  bankAccount.accountNumber
-                }}</router-link>
-              </td>
-              <td>{{ bankAccount.description }}</td>
-              <td :class="{ negative: bankAccount.balance < 0 }">{{ formatCurrency(bankAccount.balance) }}</td>
-              <td>
-                <select @change="getAccountAction($event, bankAccount)">
-                  <option>Aktion wählen ...</option>
-                  <option id="new-revenue">Einnahme eintragen</option>
-                  <option id="new-expense">Ausgabe eintragen</option>
-                  <option id="budget-manager">Budget verwalten</option>
-                  <option>Fixkostenverwaltung</option>
-                  <option id="money-transfer">Geld umbuchen</option>
-                </select>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <router-link :to="'/accountHolders/' + accountHolder.id" class="xfin-button">Kontoinhaber bearbeiten</router-link>
-      </card-component>
+      <OrganismCollapsible v-for="accountHolder in accountHolders" :key="accountHolder.id" :config="configureCollapsible(accountHolder)" />
+      
+      <div style="border:1px solid red;margin: 10px 0;padding:10px 0;font-size:16px;">
+        <router-link v-for="accountHolder in accountHolders" :key="accountHolder.id" :to="'/accountHolders/' + accountHolder.id">
+          Kontoinhaber bearbeiten
+        </router-link>
+      </div>
+
+
       <div class="account-view-add-account-holder">
         <router-link to="/accountHolders/0" class="xfin-button">
           Kontoinhaber hinzufügen
@@ -53,7 +24,9 @@
 </template>
 
 <script>
-import CardComponent from "@/components/_shared/card-component/CardComponent";
+import AtomHeadline from "@/components/atoms/AtomHeadline";
+import MoleculeLoading from "@/components/molecules/MoleculeLoading";
+import OrganismCollapsible from "@/components/organisms/OrganismCollapsible";
 
 import { AccountHolderService } from "@/services/account-holder-service";
 import { NumberService } from "@/services/number-service";
@@ -65,7 +38,9 @@ export default {
   },
 
   components: {
-    CardComponent,
+    AtomHeadline,
+    MoleculeLoading,
+    OrganismCollapsible,
   },
 
   data() {
@@ -76,34 +51,78 @@ export default {
   },
 
   methods: {
-    configureCard(accountHolder) {
+    configureCollapsible(accountHolder) {
       return {
-        cardExpanded: false,
-        cardHeadline: accountHolder.name,
-        cardId: "accountHolder-" + accountHolder.id
-      }
+          collapsed: true,
+          title: accountHolder.name,
+          content: {
+             component: 'OrganismTable',
+             props: {
+               config: this.configureTable(accountHolder),
+             },
+           },
+      };
+    },
+
+    configureTable(accountHolder) {
+      const rows = [];
+
+      accountHolder.bankAccounts.forEach(bankAccount => {
+        const balance = this.formatCurrency(bankAccount.balance);
+        const negative = bankAccount.balance < 0 ? true : false;
+
+        const row = {
+          fields: [
+            {
+              component: {
+                tag: 'router-link',
+                content: bankAccount.accountNumber,
+              },
+              props: { to: `/accounts/${bankAccount.id}` },
+            },
+            { content: bankAccount.description },
+            {
+              content: balance,
+              props: { class: negative ? 'negative' : '' },
+            },
+            {
+              component: {
+                tag: 'MoleculeActionSelect',
+              },
+              props: {
+                config: {
+                  bankAccountId: bankAccount.id
+                  },
+              },
+            },
+          ],
+        };
+
+        rows.push(row);
+      });
+
+      return {
+        tableHead: {
+          fields: [
+            { content: 'Konto' },
+            { content: 'Kontotyp' },
+            { content: 'Kontostand' },
+            { content: 'Aktion' },
+          ]
+        },
+        tableBody: {
+          rows: rows
+        },
+      };
     },
 
     async getAccountHolders(includeAccounts = false) {
       this.accountHolders = await AccountHolderService.getAccountHolders(includeAccounts);
-
-      // this.accountHolders.forEach(accountHolder => {
-      //   accountHolder.bankAccounts.forEach(bankAccount => {
-      //     bankAccount.accountNumber = NumberService.getAccountNumber(bankAccount.iban);
-      //   });
-      // });
-
       this.loading = false;
     },
 
     formatCurrency(value) {
       return NumberService.formatCurrency(value);
-    },
-
-    getAccountAction(event, account) {
-      let optionId = event.target.selectedOptions[0].id;
-
-      this.$router.push('/' + optionId + '/' + account.id);
     },
   },
 };
