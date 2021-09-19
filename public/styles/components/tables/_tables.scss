@@ -23,12 +23,20 @@ table {
         }
 
         td {
-            padding: 1rem .5rem;
+            padding: 1rem 1.5rem;
+
+            &.align-right {
+                text-align: right;
+            }
         }
     }
 
     th {
-        padding: 2rem 0;
+        padding: 2rem 1.5rem;
         width: 25%;
+
+        &.align-right {
+            text-align: right;
+        }
     }
 }

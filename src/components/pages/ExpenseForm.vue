@@ -1,11 +1,11 @@
 <template>
-  <div class="revenue-form">
-    <section class="revenue-form-body">
-      <h1>Einnahme eintragen</h1>
-      <h2>{{ this.sources }}</h2>
-      <h3>{{ selectedAccountId }}</h3>
-      <h3>{{ selectedSourceBankAccountId }}</h3>
-      <h3>{{ selectedCategoryId }}</h3>
+  <div class="expense-form">
+    <section class="expense-form-body">
+      <h1>Ausgabe eintragen</h1>
+      <!-- TODO -->
+      <h2 class="dev-hint">
+        start using vuetify to implement a combobox for source selection
+      </h2>
       <form class="xfin-form">
         <div class="xfin-form__section">
           <div class="xfin-form__group row">
@@ -17,26 +17,26 @@
             </select>
           </div>
           <div class="xfin-form__group row">
-            <label class="xfin-form__label col-3" for="source">Quelle:</label>
-            <select id="source" class="xfin-form__control xfin-form__select col-4" v-model="selectedSourceIndex" @change="changeSource"
-                    v-if="sources.length && !pendingSourceCreation">
-              <option v-for="(source, index) in sources" :key="index" :value="index">
-                {{ source.name }}
+            <label class="xfin-form__label col-3" for="target">Empfänger:</label>
+            <select id="target" class="xfin-form__control xfin-form__select col-4" v-model="selectedTargetIndex" @change="changeTarget"
+                    v-if="targets.length && !pendingTargetCreation">
+              <option v-for="(target, index) in targets" :key="index" :value="index">
+                {{ target.name }}
               </option>
             </select>
-            <input v-else id="source" :class="{'xfin-form__control col-4': true,  'has-errors': v$.newSource.$error}" type="text" placeholder="(Neue Quelle)"
-                    v-model="newSource" />
-            <button class="xfin-form__button btn btn-primary" @click.prevent="toggleSourceCreation" v-if="sources.length">
-              {{ pendingSourceCreation ? "&times;" : "&plus;" }}
+            <input v-else id="target" :class="{'xfin-form__control col-4': true,  'has-errors': v$.newTarget.$error}" type="text" placeholder="(Neuer Empfänger)"
+                    v-model="newTarget" />
+            <button class="xfin-form__button btn btn-primary" @click.prevent="toggleTargetCreation" v-if="targets.length">
+              {{ pendingTargetCreation ? "&times;" : "&plus;" }}
             </button>
-            <button class="xfin-form__button btn btn-primary" @click.prevent="saveSource" v-if="pendingSourceCreation">
+            <button class="xfin-form__button btn btn-primary" @click.prevent="saveTarget" v-if="pendingTargetCreation">
               Speichern
             </button>
-            <p class="xfin-form__error" v-if="(pendingSourceCreation || !sources.length) && v$.newSource.$error">
-              Bitte gib eine Quelle an!
+            <p class="xfin-form__error" v-if="(pendingTargetCreation || !targets.length) && v$.newTarget.$error">
+              Bitte gib einen Empfänger an!
             </p>
-            <p class="xfin-form__error" v-if="unsavedSource">
-              Bitte speichere die Quelle!
+            <p class="xfin-form__error" v-if="unsavedTarget">
+              Bitte speichere den Empfänger!
             </p>
           </div>
         </div> 
@@ -58,15 +58,15 @@
               </p>
             </div>
           <div class="xfin-form__group row">
-            <label class="xfin-form__label col-3" for="source">Kategorie:</label>
+            <label class="xfin-form__label col-3" for="target">Kategorie:</label>
             <select id="category" class="xfin-form__control xfin-form__select col-4" v-model="selectedCategoryIndex" @change="changeCategory">
               <option v-for="(category, index) in categories" :key="index" :value="index">
                 {{ category.name }}
               </option>
             </select>
           </div>
-            <button class="xfin-form__button btn btn-primary btn-submit-revenue" @click.prevent="saveRevenue">
-              Einnahme speichern
+            <button class="xfin-form__button btn btn-primary btn-submit-expense" @click.prevent="saveExpense">
+              Ausgabe speichern
             </button>
           </div>
         </div>
@@ -103,20 +103,20 @@ export default {
       picked: 'transfer',
       selectedAccountIndex: 1,
       selectedAccountId: null,
-      selectedSourceIndex: 0,
-      selectedSourceBankAccountId: null,
+      selectedTargetIndex: 0,
+      selectedTargetBankAccountId: null,
       selectedCategoryIndex: 0,
       selectedCategoryId: null,
 
       accountHolders: null,
       categories: null,
       bankAccountOptions: [],
-      sources: [],
-      initialSourcesLength: 0,
+      targets: [],
+      initialTargetsLength: 0,
 
-      pendingSourceCreation: false,
-      unsavedSource: false,
-      newSource: ''
+      pendingTargetCreation: false,
+      unsavedTarget: false,
+      newTarget: ''
     };
   },
 
@@ -129,8 +129,8 @@ export default {
       this.selectedCategoryId = this.categories[this.selectedCategoryIndex].id;
     },
 
-    changeSource() {
-      this.selectedSourceBankAccountId = this.sources[this.selectedSourceIndex].externalBankAccountId;
+    changeTarget() {
+      this.selectedTargetBankAccountId = this.targets[this.selectedTargetIndex].externalBankAccountId;
     },
 
     async getBankAccountOptions() {
@@ -156,14 +156,14 @@ export default {
     },
 
     async getExternalParties() {
-      this.sources = await ExternalPartyService.getExternalParties();
-      this.selectedSourceBankAccountId = this.sources[0].externalBankAccountId;
+      this.targets = await ExternalPartyService.getExternalParties();
+      this.selectedTargetBankAccountId = this.targets[0].externalBankAccountId;
 
-      if (this.sources.length === 0) {
-        this.newSourceInputActive = true;
+      if (this.targets.length === 0) {
+        this.newTargetInputActive = true;
       }
       else {
-        this.initialSourcesLength = this.sources.length;
+        this.initialTargetsLength = this.targets.length;
       }
     },
 
@@ -172,13 +172,13 @@ export default {
       this.selectedCategoryId = this.categories[0].id;
     },
 
-    async saveRevenue() {
-      this.v$.newSource.$reset();
+    async saveExpense() {
+      this.v$.newTarget.$reset();
 
-      if (!this.sources.length) {
-        if (this.validateSourceField() & this.validateRevenueFields()) {
+      if (!this.targets.length) {
+        if (this.validateTargetField() & this.validateExpenseFields()) {
           const externalParty = {
-            name: this.newSource
+            name: this.newTarget
           };
           const createdExternalParty = await ExternalPartyService.createExternalParty(externalParty);
 
@@ -194,7 +194,7 @@ export default {
           const externalTransaction = {
             externalBankAccountId: externalBankAccountId,
             dateString: currentDate,
-            amount: amount * -1,
+            amount: amount,
             reference: this.reference
           };
           const createdExternalTransaction = await ExternalTransactionService.createExternalTransaction(externalTransaction);
@@ -203,7 +203,7 @@ export default {
             internalBankAccountId: this.selectedAccountId,
             transactionCategoryId: this.selectedCategoryId,
             dateString: currentDate,
-            amount: amount,
+            amount: amount * -1,
             reference: this.reference,
             counterPartTransactionToken: createdExternalTransaction.transactionToken,
             transactionToken: createdExternalTransaction.counterPartTransactionToken
@@ -212,16 +212,16 @@ export default {
         }
       }
       else {
-        if (this.pendingSourceCreation) {
-          this.unsavedSource = true;
-          this.validateRevenueFields();
+        if (this.pendingTargetCreation) {
+          this.unsavedTarget = true;
+          this.validateExpenseFields();
         }
-        else if (this.validateRevenueFields()) {
+        else if (this.validateExpenseFields()) {
           let externalBankAccountId;
 
-          if (this.sources.length !== this.initialSourcesLength) {
+          if (this.targets.length !== this.initialTargetsLength) {
             const externalParty = {
-              name: this.newSource
+              name: this.newTarget
             };
             const createdExternalParty = await ExternalPartyService.createExternalParty(externalParty);
             
@@ -233,7 +233,7 @@ export default {
             externalBankAccountId = createdExternalBankAccount.id;
           }
           else {
-            externalBankAccountId = this.selectedSourceBankAccountId;
+            externalBankAccountId = this.selectedTargetBankAccountId;
           }
 
           const currentDate = new Date().toISOString();
@@ -242,7 +242,7 @@ export default {
           const externalTransaction = {
             externalBankAccountId: externalBankAccountId,
             dateString: currentDate,
-            amount: amount * -1,
+            amount: amount ,
             reference: this.reference
           };
           const createdExternalTransaction = await ExternalTransactionService.createExternalTransaction(externalTransaction);
@@ -251,7 +251,7 @@ export default {
             internalBankAccountId: this.selectedAccountId,
             transactionCategoryId: this.selectedCategoryId,
             dateString: currentDate,
-            amount: amount,
+            amount: amount * -1,
             reference: this.reference,
             counterPartTransactionToken: createdExternalTransaction.transactionToken,
             transactionToken: createdExternalTransaction.counterPartTransactionToken
@@ -261,36 +261,36 @@ export default {
       }
     },
 
-  saveSource() {
-    this.unsavedSource = false;
-    if (this.validateSourceField()) {
-      if (this.sources.length > this.initialSourcesLength) {
-        this.sources.pop();
+  saveTarget() {
+    this.unsavedTarget = false;
+    if (this.validateTargetField()) {
+      if (this.targets.length > this.initialTargetsLength) {
+        this.targets.pop();
       }
 
-      this.sources.push({
+      this.targets.push({
         id: -1,
-        name: this.newSource
+        name: this.newTarget
       });
       
-      this.unsavedSource = false;
+      this.unsavedTarget = false;
 
-      this.pendingSourceCreation = false;
-      this.selectedSourceIndex = this.sources.length - 1;
+      this.pendingTargetCreation = false;
+      this.selectedTargetIndex = this.targets.length - 1;
     }
   },
 
-    toggleSourceCreation() {
-      this.pendingSourceCreation = !this.pendingSourceCreation;
-      this.unsavedSource = false;
+    toggleTargetCreation() {
+      this.pendingTargetCreation = !this.pendingTargetCreation;
+      this.unsavedTarget = false;
 
-      if (!this.pendingSourceCreation) {
-        this.selectedSourceIndex = 0;
-        this.newSource = '';
+      if (!this.pendingTargetCreation) {
+        this.selectedTargetIndex = 0;
+        this.newTarget = '';
       }
     },
 
-    validateRevenueFields() {
+    validateExpenseFields() {
       this.v$.amount.$touch();
       this.v$.reference.$touch();
 
@@ -299,10 +299,10 @@ export default {
       }
     },
 
-    validateSourceField() {
-      this.v$.newSource.$touch();
+    validateTargetField() {
+      this.v$.newTarget.$touch();
 
-      if (!this.v$.newSource.$errors.length) {
+      if (!this.v$.newTarget.$errors.length) {
         return true;
       }
     }
@@ -318,7 +318,7 @@ export default {
     return {
       amount: { required, amountValidator },
       reference: { required },
-      newSource: { required }
+      newTarget: { required }
     };
   },
 };

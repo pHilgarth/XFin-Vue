@@ -77,8 +77,8 @@ export default {
               component: {
                 tag: 'router-link',
                 content: bankAccount.accountNumber,
+                props: { to: `/accounts/${bankAccount.id}` },
               },
-              props: { to: `/accounts/${bankAccount.id}` },
             },
             { content: bankAccount.description },
             {
@@ -88,11 +88,7 @@ export default {
             {
               component: {
                 tag: 'MoleculeActionSelect',
-              },
-              props: {
-                config: {
-                  bankAccountId: bankAccount.id
-                  },
+                props: { config: { bankAccountId: bankAccount.id } },
               },
             },
           ],

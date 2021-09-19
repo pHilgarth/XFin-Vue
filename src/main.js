@@ -1,14 +1,16 @@
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
-import AccountView from './components/account-view/AccountView';
-import AccountDetail from './components/account-detail/AccountDetail';
-import BudgetManager from './components/budget-manager/BudgetManager';
-import UpdateAccountHolder from './components/account-holder/UpdateAccountHolder';
-import CreateAccountHolder from './components/account-holder/CreateAccountHolder';
-import RevenueForm from './components/revenue-form/RevenueForm';
-import ExpenseForm from './components/expense-form/ExpenseForm';
+import AccountView from './components/pages/AccountView';
+import AccountDetail from './components/pages/AccountDetail';
+import RevenueForm from './components/pages/RevenueForm';
+import ExpenseForm from './components/pages/ExpenseForm';
+import BudgetManager from './components/pages/BudgetManager';
+import UpdateAccountHolder from './components/pages/UpdateAccountHolder';
+import CreateAccountHolder from './components/pages/CreateAccountHolder';
+
 import OrganismTable from './components/organisms/OrganismTable';
+
 import MoleculeActionSelect from './components/molecules/MoleculeActionSelect';
 
 import App from './App';

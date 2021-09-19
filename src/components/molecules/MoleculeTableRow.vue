@@ -1,6 +1,6 @@
 <template>
     <tr v-if="atom === 'tableHead'" v-bind="config.props">
-        <AtomTableHeader v-for="(field, index) in config.fields" :key="index" :content="field.content" />
+        <AtomTableHeader v-for="(field, index) in config.fields" :key="index" :config="field" />
     </tr>
     <tr v-else-if="atom === 'tableData'" v-bind="config.props">
         <AtomTableData v-for="(field, index) in config.fields" :key="index" :config="field" />

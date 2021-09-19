@@ -1,11 +1,14 @@
 <template>
-    <th>{{ content }}</th>
+    <th v-bind="config.props">{{ config.content }}</th>
 </template>
 
 <script>
 export default {
     props: {
-        content: { required: true },
+        config: {
+            type: Object,
+            required: true
+        },
     },
 }
 </script>

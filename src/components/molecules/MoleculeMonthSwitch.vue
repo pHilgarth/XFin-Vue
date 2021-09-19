@@ -1,4 +1,3 @@
-
 <template>
   <div class="month-switch">
     <ul>

@@ -1,5 +1,4 @@
 <template>
-  <span class="dev-hint">right now it's not possible to pass attribute values to a &lt;td&gt; element, like class or id - see MoleculeTableRow for reference how to do this</span>
   <table>
     <MoleculeTableHead v-if="config.tableHead" :config="config.tableHead" />
     <MoleculeTableBody v-if="config.tableBody" :config="config.tableBody" />
@@ -26,16 +25,15 @@
                 content: <string> || component: <object>,       --> define either 'content' or 'component' - never both!
                                                                 --> see further down for an example of a defined 'component'
 
-                props: <object>,                                --> define every attribute which should be bind to as properties of the 'props' object
+                props: <object>,                                --> define every attribute of the <td> element which should be bind to in that object
                                                                 --> i.e. class, id, ...
-                                                                --> if 'component' is defined instead of 'content', the 'props' object also takes the
-                                                                --> props of the given component
               },
               {
                 component: {
                     tag: <string>,                              --> the value of 'tag' has to match a globally registered component
                                                                 --> see main.js for all globally registered components
-                    (content: <string>)                         --> optional
+                    (content: <string>),                        --> optional
+                    props: <object>                             --> the props needed for the given component
                 },
                 props: <object>,
               },  
