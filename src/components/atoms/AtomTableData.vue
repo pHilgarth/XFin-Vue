@@ -1,4 +1,5 @@
 <template>
+    <span class="dev-hint">this component is unsing the v-html directive - make sure it always gets trusted content!</span>
     <td v-if="config.content" v-html="config.content" v-bind="config.props"></td>
 
     <td v-else-if="config.component" v-bind="config.props">

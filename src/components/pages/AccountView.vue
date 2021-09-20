@@ -2,6 +2,12 @@
 <template>
   <div class="account-view">
     <AtomHeadline tag="h1" content="Kontenübersicht" />
+    <div class="dev-hint important">
+      <p>Kostenstelle "Nicht zugewiesen:</p>
+      <p>Diese Kostenstelle dient nur dazu, freies Budget zu "lagern". Einnahmen werden auf "Nicht zugewiesen" gebucht, wenn keine Kostenstelle angegeben wird. <b>TODO</b></p>
+      <p>Ausgaben von "Nicht zugewiesen" dürfen nicht möglich sein - allerdings gibt es die Möglichkeit, bei einer Ausgabe eine KS auszuwählen und Geld von "Nicht zugewiesen" zu verwenden (via Checkbox "Freies Budget verwenden") <b>TODO</b></p>
+      <p>intern wird dann Geld auf die ausgewählte KS umgebucht und schließlich damit eine Ausgabe getätigt <b>TODO</b></p>
+    </div>
     <MoleculeLoading v-if="loading || !accountHolders" :loadingError="!loading && !accountHolders" />
     
     <section class="account-view-body" v-else>
