@@ -12,6 +12,7 @@ import CreateAccountHolder from './components/pages/CreateAccountHolder';
 import OrganismTable from './components/organisms/OrganismTable';
 
 import MoleculeActionSelect from './components/molecules/MoleculeActionSelect';
+import MoleculeCard from './components/molecules/MoleculeCard';
 
 import App from './App';
 
@@ -31,7 +32,9 @@ const router = createRouter({
 const app = createApp(App);
 
 app.component('OrganismTable', OrganismTable);
+
 app.component('MoleculeActionSelect', MoleculeActionSelect);
+app.component('MoleculeCard', MoleculeCard);
 
 app.use(router);
 app.mount('#app');
