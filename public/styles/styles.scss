@@ -4,7 +4,13 @@
 
 @import "utilities/utilities";
 
-//TODO - delete this, when finished
+//TODO - make the dev-hints visible again, check the app for them, and delete them if the issues are fixed
 .dev-hint {
     color: red;
+    display: none;
+
+    &.important {
+        display: block;
+        font-size: 1.4rem;
+    }
 }
