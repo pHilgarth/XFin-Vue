@@ -1,13 +1,14 @@
 <template>
-  <div class="xfin-card" :class="{ 'collapsed': collapsed }">
+  <div class="xfin-collapsible" :class="{ 'collapsed': collapsed }">
     <MoleculeCollapsibleHeader :title="title" @state-switched="collapsed = !collapsed" />
     <MoleculeCollapsibleBody :collapsed="collapsed">
-      <article v-for="(content, index) in config.content" :key="index">
+      <template v-for="(content, index) in config.content" :key="index">
+        <span class="dev-hint">this component is unsing the v-html directive - make sure it always gets trusted content!</span>
         <div v-if="content.content" v-html="content.content" v-bind="content.props"></div>
-        <div v-else-if="content.component" v-bind="content.props">
+        <template v-else-if="content.component" v-bind="content.props">
           <component :is="content.component.tag" v-bind="content.component.props" />
-        </div> 
-      </article>
+        </template> 
+      </template>
     </MoleculeCollapsibleBody>
 
   </div>

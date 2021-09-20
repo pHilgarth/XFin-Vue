@@ -1,11 +1,9 @@
 <template>
-    <div class="xfin-card-header" @click="$emit('state-switched')">
-      <button class="btn xfin-card-header-btn">
-        {{ title }}
-      </button>
-      <div class="xfin-card-header-icon">
-        <div class="icon-bar"></div>
-        <div class="icon-bar"></div>
+    <div class="xfin-collapsible__header" @click="$emit('state-switched')">
+      <span class="xfin-collapsible__title">{{ title }}</span>
+      <div class="xfin-collapsible__state">
+        <div class="bar"></div>
+        <div class="bar"></div>
       </div>
     </div>
 </template>
