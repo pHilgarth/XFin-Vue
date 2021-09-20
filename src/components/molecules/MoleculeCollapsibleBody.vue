@@ -1,7 +1,7 @@
 <template>
-    <div class="xfin-card-body" :class="{ ' collapsed': collapsed }">
+    <section class="xfin-card-body" :class="{ ' collapsed': collapsed }">
       <slot></slot>
-    </div>
+    </section>
 </template>
 
 <script>

@@ -55,12 +55,16 @@ export default {
       return {
           collapsed: true,
           title: accountHolder.name,
-          content: {
-             component: 'OrganismTable',
-             props: {
-               config: this.configureTable(accountHolder),
-             },
-           },
+          content: [
+            {
+              component: {
+                tag: 'OrganismTable',
+                props: {
+                  config: this.configureTable(accountHolder),
+                },
+              }
+            }
+          ],
       };
     },
 

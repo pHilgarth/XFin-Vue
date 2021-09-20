@@ -2,7 +2,12 @@
   <div class="xfin-card" :class="{ 'collapsed': collapsed }">
     <MoleculeCollapsibleHeader :title="title" @state-switched="collapsed = !collapsed" />
     <MoleculeCollapsibleBody :collapsed="collapsed">
-      <component :is="config.content.component" v-bind="config.content.props" />
+      <article v-for="(content, index) in config.content" :key="index">
+        <div v-if="content.content" v-html="content.content" v-bind="content.props"></div>
+        <div v-else-if="content.component" v-bind="content.props">
+          <component :is="content.component.tag" v-bind="content.component.props" />
+        </div> 
+      </article>
     </MoleculeCollapsibleBody>
 
   </div>
@@ -14,10 +19,19 @@
     config: {
       collapsed:  <boolean>,    --> defines the default state of the Collapsible
       title:      <string>,     --> defines the visible headline in the top bar of the Collapsible (visible when collapsed and expanded)
-      content: {
-          component: <string>,  --> this has to match a globally registered component (see main.js for all globally registered components)
-          props: <object>,      --> if the component referenced in 'component' expects props, define them as properties of the 'props' object
+      content: [
+        {
+          content: <string> || component: <object>,   --> either a simple string (optional with html) or an object to render a component
+                                                      --> see next sample object for the required component properties
+          props: <object>,                            --> every attribute to bind to along with the desired value (i.e. class: amount < 0 ? 'negative' : '')
         },
+        {
+          component: {
+            tag: <string>                             --> has to match a globally registered component name (see main.js for all globally registered components)
+            props: <object>                           --> the props expected by the given component
+          }
+        }
+      ]
     };
 */
 

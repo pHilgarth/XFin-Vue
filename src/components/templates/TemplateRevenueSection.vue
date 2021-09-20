@@ -24,12 +24,16 @@ export default {
       return {
         collapsed: true,
         title: "Einnahmen",
-        content: {
-          component: "OrganismTable",
-          props: {
-            config: this.configureTable(),
-          },
-        },
+        content: [
+          {
+            component: {
+              tag: "OrganismTable",
+              props: {
+                config: this.configureTable(),
+              },
+            }
+          }
+        ],
       };
     },
 
