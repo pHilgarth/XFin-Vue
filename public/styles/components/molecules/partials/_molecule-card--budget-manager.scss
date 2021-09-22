@@ -1,3 +1,39 @@
 .xfin-card.budget-manager {
+    align-items: center;
     display: flex;
+
+    &.changed {
+        border: 2px solid $color-background-secondary;
+    }
+
+    i {
+        position: absolute;
+        cursor: pointer;
+        transition: all .5s;
+        top: 50%;
+        transform: translateY(-50%);
+
+        &.reset {
+            font-size: 3rem;
+            left: .5rem;
+
+            &:hover {
+                transform: translateY(-50%) rotate(-360deg);
+            }
+        }
+
+        &.save {
+            font-size: 2.7rem;
+            left: 5rem;
+
+            &:hover {
+                transform: translateY(-50%) rotateY(360deg);
+            }
+        }
+
+        &:hover {
+            color: $color-background-secondary;
+            transition: all .5s;
+        }
+    }
 }

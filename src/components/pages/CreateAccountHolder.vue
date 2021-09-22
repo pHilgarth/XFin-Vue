@@ -1,5 +1,9 @@
 <template>
   <div class="create-account-holder">
+    <p class="dev-hint important">
+  wenn ein neuer kontoinhaber erstellt wird und somit neue Konten, werden auch die Initialisierungstransaktionen erstellt, da ist die Id für die Category allerdings 0
+  diese muss beim erstellen eines neuen kontos immer die id von "Nicht zugewiesen" sein<br />da tritt noch ein Fehler auf <b>TODO</b>
+</p>
     <section class="create-account-holder-body">
       <h1>Kontoinhaber hinzufügen</h1>
       <form class="xfin-form">
@@ -50,7 +54,7 @@
             <div class="xfin-form__group row">
               <label class="xfin-form__label col-3" for="bank">Bank:</label>
               <input id="bank" :class="{'xfin-form__control col-4': true, 'has-errors': v$.bank.$error }" :disabled="!pendingAccountCreation && !pendingAccountEdit"
-                type="text" v-model="bank" @blur="v$.bank.$touch" @keyup="enforceMaxLength('bank', 30)" />
+                type="text" v-model="bank" @blur="v$.bank.$touch" @keyup="enforceMaxLength('bank', 255)" />
               <p class="xfin-form__error" v-if="v$.bank.$error">
                 Bitte gib eine Bank an!
               </p>

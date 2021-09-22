@@ -1,0 +1,16 @@
+.budget-manager__total {
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 0;
+
+    span {
+        &:first-child {
+            float: left
+        }
+
+        &:last-child {
+            float: right;
+            padding-right: 4rem;
+        }
+    }
+}

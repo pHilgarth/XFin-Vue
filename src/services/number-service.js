@@ -1,11 +1,10 @@
 export const NumberService = {
-    formatCurrency(value) {
+    formatCurrency(value, includeCurrency = true) {
         let currencyFormat = new Intl.NumberFormat("de-DE", {
             style: "currency",
             currency: "EUR",
-          });
-    
-          return currencyFormat.format(value);
+          });    
+          return includeCurrency ? currencyFormat.format(value) : currencyFormat.format(value).slice(0, -2);
     },
 
     formatDate(value) {

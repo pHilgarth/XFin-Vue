@@ -9,6 +9,7 @@ import BudgetManager from './components/pages/BudgetManager';
 import UpdateAccountHolder from './components/pages/UpdateAccountHolder';
 import CreateAccountHolder from './components/pages/CreateAccountHolder';
 
+import OrganismBudgetList from './components/organisms/OrganismBudgetList';
 import OrganismTable from './components/organisms/OrganismTable';
 
 import MoleculeActionSelect from './components/molecules/MoleculeActionSelect';
@@ -31,6 +32,7 @@ const router = createRouter({
 
 const app = createApp(App);
 
+app.component('OrganismBudgetList', OrganismBudgetList);
 app.component('OrganismTable', OrganismTable);
 
 app.component('MoleculeActionSelect', MoleculeActionSelect);

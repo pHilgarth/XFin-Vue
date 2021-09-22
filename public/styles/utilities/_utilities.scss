@@ -1,3 +1,7 @@
 .negative {
     color: red;
+
+    &:disabled {
+        color: #ff7373;
+    }
 }

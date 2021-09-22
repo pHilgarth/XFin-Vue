@@ -3,6 +3,8 @@
     <h1 class="account-detail-headline">
       Detailansicht ({{ accountNumber }})
     </h1>
+    <p class="dev-hint important">wenn kontointern umgebucht wird, und die Abgänge auf einer KS die Zugänge übersteigen, stehen negative Einnahmen dran - evtl. gibt es hier eine andere Lösung? <b>TODO</b></p>
+    <p class="dev-hint important">negative Einnahmen sehen einfach komisch aus</p>
     <section class="loading" v-if="loading">
       <div>Daten werden geladen ...</div>
     </section>
