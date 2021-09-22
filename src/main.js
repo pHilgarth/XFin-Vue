@@ -17,6 +17,9 @@ import MoleculeCard from './components/molecules/MoleculeCard';
 
 import App from './App';
 
+//TODO - delete this component, it is/was just for testing purposes
+import TestForm from './components/pages/TestForm';
+
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -27,6 +30,9 @@ const router = createRouter({
         { path: '/new-revenue/:id', component: RevenueForm },
         { path: '/new-expense/:id', component: ExpenseForm },
         { path: '/budget-manager', component: BudgetManager },
+        //TODO - delete this component, it is/was just for testing purposes
+        { path: '/testform', component: TestForm },
+
     ]
 });
 

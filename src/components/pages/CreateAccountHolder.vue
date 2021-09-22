@@ -1,94 +1,187 @@
 <template>
   <div class="create-account-holder">
     <p class="dev-hint important">
-  wenn ein neuer kontoinhaber erstellt wird und somit neue Konten, werden auch die Initialisierungstransaktionen erstellt, da ist die Id für die Category allerdings 0
-  diese muss beim erstellen eines neuen kontos immer die id von "Nicht zugewiesen" sein<br />da tritt noch ein Fehler auf <b>TODO</b>
-</p>
+      wenn ein neuer kontoinhaber erstellt wird und somit neue Konten, werden
+      auch die Initialisierungstransaktionen erstellt, da ist die Id für die
+      Category allerdings 0 diese muss beim erstellen eines neuen kontos immer
+      die id von "Nicht zugewiesen" sein<br />da tritt noch ein Fehler auf
+      <b>TODO</b>
+    </p>
     <section class="create-account-holder-body">
-      <h1>Kontoinhaber hinzufügen</h1>
+      <AtomHeadline :content="'Kontoinhaber hinzufügen'" :tag="'h1'" />
       <form class="xfin-form">
         <div class="xfin-form__section">
           <div class="xfin-form__group row">
-            <label class="xfin-form__label col-3" for="name">Name:</label>
-            <input id="name" :class="{'xfin-form__control col-4': true, 'has-errors': v$.name.$error}"
-              type="text" v-model="name" @blur="v$.name.$touch" @keyup="enforceMaxLength('name', 15)" />
-            <p class="xfin-form__error" v-if="v$.name.$error">
-              Bitte gib einen Namen an!
-            </p>
+            <AtomLabel :props="{ class: 'xfin-form__label col-3', for: 'name' }" text="Name:" />
+
+            <AtomInputText v-model="name" @blur="v$.name.$touch()"
+              :props="{
+                class: `xfin-form__control ${v$.name.$error ? 'has-errors' : ''}`,
+                id: 'name'}" />
+
+            <AtomParagraph text="Bitte gib einen Namen an!" :props="{ class: 'xfin-form__error' }" v-if="v$.name.required.$invalid && v$.name.$dirty" />
+            <AtomParagraph text="Der Name darf nicht länger als 15 Zeichen sein!" :props="{ class: 'xfin-form__error' }"
+                            v-if="v$.name.maxLength.$invalid && v$.name.$dirty" />
+
           </div>
         </div>
         <div class="xfin-form__section">
           <div class="xfin-form__group row">
             <label class="xfin-form__label col-3" for="account">Konto:</label>
-            <label class="xfin-form__label col-4" v-if="pendingAccountCreation">(Neues Konto)</label>
-            <select class="xfin-form__control xfin-form__select col-4" v-model="selectedAccountIndex" @change="loadAccountData"
-              v-if="bankAccounts.length && !pendingAccountCreation" :disabled="pendingAccountEdit">
-              <option v-for="(account, index) in bankAccounts" :key="index" :value="index">
+            <label class="xfin-form__label col-4" v-if="pendingAccountCreation"
+              >(Neues Konto)</label
+            >
+            <select
+              class="xfin-form__control xfin-form__select col-4"
+              v-model="selectedAccountIndex"
+              @change="loadAccountData"
+              v-if="bankAccounts.length && !pendingAccountCreation"
+              :disabled="pendingAccountEdit"
+            >
+              <option
+                v-for="(account, index) in bankAccounts"
+                :key="index"
+                :value="index"
+              >
                 {{ account.accountNumber }}
               </option>
             </select>
-            <button class="xfin-form__button btn btn-primary" @click.prevent="toggleAccountCreation" v-if="!pendingAccountEdit">
+            <button
+              class="xfin-form__button btn btn-primary"
+              @click.prevent="toggleAccountCreation"
+              v-if="!pendingAccountEdit"
+            >
               {{ pendingAccountCreation ? "&times;" : "&plus;" }}
             </button>
             <p class="xfin-form__error" v-if="v$.selectedAccountIndex.$error">
               Bitte erstelle mindestens ein Konto!
             </p>
           </div>
-          <div class="xfin-form__section account-data" v-if="pendingAccountCreation || bankAccounts.length">
+          <div
+            class="xfin-form__section account-data"
+            v-if="pendingAccountCreation || bankAccounts.length"
+          >
             <div class="xfin-form__group row">
               <label class="xfin-form__label col-3" for="iban">IBAN:</label>
-              <input id="iban" :class="{ 'xfin-form__control col-4': true, 'has-errors': v$.iban.$error }" :disabled="!pendingAccountCreation && !pendingAccountEdit"
-                type="text" v-model="iban" @blur="v$.iban.$touch" />
+              <input
+                id="iban"
+                :class="{
+                  'xfin-form__control col-4': true,
+                  'has-errors': v$.iban.$error,
+                }"
+                :disabled="!pendingAccountCreation && !pendingAccountEdit"
+                type="text"
+                v-model="iban"
+                @blur="v$.iban.$touch"
+              />
               <p class="xfin-form__error" v-if="v$.iban.$error">
                 Bitte gib eine gültige IBAN an!
               </p>
             </div>
             <div class="xfin-form__group row">
               <label class="xfin-form__label col-3" for="bic">BIC:</label>
-              <input id="bic" :class="{'xfin-form__control col-4': true,  'has-errors': v$.bic.$error}" :disabled="!pendingAccountCreation && !pendingAccountEdit"
-                type="text" v-model="bic" @blur="v$.bic.$touch" />
+              <input
+                id="bic"
+                :class="{
+                  'xfin-form__control col-4': true,
+                  'has-errors': v$.bic.$error,
+                }"
+                :disabled="!pendingAccountCreation && !pendingAccountEdit"
+                type="text"
+                v-model="bic"
+                @blur="v$.bic.$touch"
+              />
               <p class="xfin-form__error" v-if="v$.bic.$error">
                 Bitte gib einen gültigen BIC an!
               </p>
             </div>
             <div class="xfin-form__group row">
               <label class="xfin-form__label col-3" for="bank">Bank:</label>
-              <input id="bank" :class="{'xfin-form__control col-4': true, 'has-errors': v$.bank.$error }" :disabled="!pendingAccountCreation && !pendingAccountEdit"
-                type="text" v-model="bank" @blur="v$.bank.$touch" @keyup="enforceMaxLength('bank', 255)" />
+              <input
+                id="bank"
+                :class="{
+                  'xfin-form__control col-4': true,
+                  'has-errors': v$.bank.$error,
+                }"
+                :disabled="!pendingAccountCreation && !pendingAccountEdit"
+                type="text"
+                v-model="bank"
+                @blur="v$.bank.$touch"
+                @keyup="enforceMaxLength('bank', 255)"
+              />
               <p class="xfin-form__error" v-if="v$.bank.$error">
                 Bitte gib eine Bank an!
               </p>
             </div>
             <div class="xfin-form__group row">
-              <label class="xfin-form__label col-3" for="description">Beschreibung</label>
-              <input id="description" class="xfin-form__control col-4" :disabled="!pendingAccountCreation && !pendingAccountEdit" type="text" placeholder="(optional)"
-                v-model="description" @keyup="enforceMaxLength('description', 15)" />
+              <label class="xfin-form__label col-3" for="description"
+                >Beschreibung</label
+              >
+              <input
+                id="description"
+                class="xfin-form__control col-4"
+                :disabled="!pendingAccountCreation && !pendingAccountEdit"
+                type="text"
+                placeholder="(optional)"
+                v-model="description"
+                @keyup="enforceMaxLength('description', 15)"
+              />
             </div>
             <div class="xfin-form__group row">
-              <label class="xfin-form__label col-3" for="balance">Kontostand</label>
-              <input id="balance" :class="{ 'xfin-form__control col-4': true, 'has-errors': v$.balance.$error }"
-                :disabled="!pendingAccountCreation && !pendingAccountEdit" type="text" v-model="balance" @blur="v$.balance.$touch" />
+              <label class="xfin-form__label col-3" for="balance"
+                >Kontostand</label
+              >
+              <input
+                id="balance"
+                :class="{
+                  'xfin-form__control col-4': true,
+                  'has-errors': v$.balance.$error,
+                }"
+                :disabled="!pendingAccountCreation && !pendingAccountEdit"
+                type="text"
+                v-model="balance"
+                @blur="v$.balance.$touch"
+              />
               <p class="xfin-form__error" v-if="v$.balance.$error">
                 Bitte gib einen gültigen Konstostand an!
               </p>
             </div>
-            <button class="xfin-form__button btn btn-primary btn-submit-account" @click.prevent="addAccount" v-if="selectedAccountIndex == -1">
+            <button
+              class="xfin-form__button btn btn-primary btn-submit-account"
+              @click.prevent="addAccount"
+              v-if="selectedAccountIndex == -1"
+            >
               Konto speichern
             </button>
-            <button class="xfin-form__button btn btn-primary btn-edit-account" v-else @click.prevent="toggleAccountEdit">
+            <button
+              class="xfin-form__button btn btn-primary btn-edit-account"
+              v-else
+              @click.prevent="toggleAccountEdit"
+            >
               {{ !pendingAccountEdit ? "Konto bearbeiten" : "Abbrechen" }}
             </button>
-            <button class="xfin-form__button btn btn-primary btn-update-account" v-if="selectedAccountIndex != -1 && pendingAccountEdit"
-              @click.prevent="updateAccount">
+            <button
+              class="xfin-form__button btn btn-primary btn-update-account"
+              v-if="selectedAccountIndex != -1 && pendingAccountEdit"
+              @click.prevent="updateAccount"
+            >
               Änderungen speichern
             </button>
-            <button class="xfin-form__button btn btn-primary btn-delete-account" title="Konto entfernen" v-if="selectedAccountIndex != -1 && !pendingAccountEdit"
-              @click.prevent="deleteAccount">
+            <button
+              class="xfin-form__button btn btn-primary btn-delete-account"
+              title="Konto entfernen"
+              v-if="selectedAccountIndex != -1 && !pendingAccountEdit"
+              @click.prevent="deleteAccount"
+            >
               [Trash]
             </button>
           </div>
         </div>
-        <button class="xfin-form__button btn btn-primary btn-submit-form" @click.prevent="saveAccountHolder" :disabled="pendingAccountCreation || pendingAccountEdit">
+        <button
+          class="xfin-form__button btn btn-primary btn-submit-form"
+          @click.prevent="saveAccountHolder"
+          :disabled="pendingAccountCreation || pendingAccountEdit"
+        >
           Kontoinhaber speichern
         </button>
       </form>
@@ -98,7 +191,12 @@
 
 <script>
 import { useVuelidate } from "@vuelidate/core";
-import { required } from "@vuelidate/validators";
+import { required, maxLength } from "@vuelidate/validators";
+
+import AtomHeadline from "@/components/atoms/AtomHeadline";
+import AtomInputText from "@/components/atoms/AtomInputText";
+import AtomLabel from "@/components/atoms/AtomLabel";
+import AtomParagraph from "@/components/atoms/AtomParagraph";
 
 import { AccountHolderService } from "@/services/account-holder-service";
 import { InternalBankAccountService } from "@/services/internal-bank-account-service";
@@ -112,6 +210,13 @@ import {
 } from "@/custom-validators/custom-validators";
 
 export default {
+  components: {
+    AtomHeadline,
+    AtomInputText,
+    AtomLabel,
+    AtomParagraph,
+  },
+
   data() {
     return {
       selectedAccountIndex: -1,
@@ -138,7 +243,9 @@ export default {
           bic: this.bic.toUpperCase(),
           bank: this.bank,
           description: this.description,
-          balance: parseFloat(this.balance.replaceAll(".", "").replace(",", "."))
+          balance: parseFloat(
+            this.balance.replaceAll(".", "").replace(",", ".")
+          ),
         });
 
         this.pendingAccountCreation = false;
@@ -154,12 +261,6 @@ export default {
       this.loadAccountData();
     },
 
-    enforceMaxLength(field, length) {
-      if (this[field].length > length) {
-        this[field] = this[field].slice(0, length);
-      }
-    },
-
     loadAccountData() {
       if (this.selectedAccountIndex == -1) {
         this.iban = "";
@@ -173,8 +274,12 @@ export default {
         this.iban = this.bankAccounts[this.selectedAccountIndex].iban;
         this.bic = this.bankAccounts[this.selectedAccountIndex].bic;
         this.bank = this.bankAccounts[this.selectedAccountIndex].bank;
-        this.description = this.bankAccounts[this.selectedAccountIndex].description;
-        this.balance = this.bankAccounts[this.selectedAccountIndex].balance.toString().replace('.', ',');
+        this.description =
+          this.bankAccounts[this.selectedAccountIndex].description;
+        this.balance = NumberService.formatCurrency(
+          this.bankAccounts[this.selectedAccountIndex].balance,
+          false
+        );
       }
     },
 
@@ -182,16 +287,20 @@ export default {
       this.v$.$touch();
 
       if (!this.v$.$errors.length) {
-        const newAccountHolder = await AccountHolderService.createAccountHolder( { name: this.name } );
+        const newAccountHolder = await AccountHolderService.createAccountHolder(
+          { name: this.name }
+        );
 
         if (newAccountHolder) {
-            for (const bankAccount of this.bankAccounts) {
-                bankAccount.accountHolderId = newAccountHolder.id;
+          for (const bankAccount of this.bankAccounts) {
+            bankAccount.accountHolderId = newAccountHolder.id;
 
-                await InternalBankAccountService.createInternalBankAccount(bankAccount);
-            }
+            await InternalBankAccountService.createInternalBankAccount(
+              bankAccount
+            );
+          }
 
-            this.$router.push('/');
+          this.$router.push("/");
         }
       }
     },
@@ -209,7 +318,7 @@ export default {
     },
 
     toggleAccountEdit() {
-      this.pendingAccountEdit = !this.pendingAccountEdit
+      this.pendingAccountEdit = !this.pendingAccountEdit;
 
       if (!this.pendingAccountEdit) {
         this.loadAccountData();
@@ -225,7 +334,9 @@ export default {
         bankAccount.bic = this.bic.toUpperCase();
         bankAccount.bank = this.bank;
         bankAccount.description = this.description;
-        bankAccount.balance = parseFloat(this.balance.replaceAll(".", "").replace(",", "."));
+        bankAccount.balance = parseFloat(
+          this.balance.replaceAll(".", "").replace(",", ".")
+        );
 
         this.pendingAccountEdit = false;
 
@@ -238,10 +349,6 @@ export default {
       this.v$.bic.$touch();
       this.v$.bank.$touch();
       this.v$.balance.$touch();
-
-      if (this.$route.params.id == 0) {
-        this.v$.balance.$touch();
-      }
 
       if (!this.v$.$errors.length) {
         return true;
@@ -256,7 +363,10 @@ export default {
 
   validations() {
     return {
-      name: { required },
+      name: {
+        required,
+        maxLength: maxLength(15),
+      },
       iban: { required, ibanValidator },
       bic: { required, bicValidator },
       bank: { required },

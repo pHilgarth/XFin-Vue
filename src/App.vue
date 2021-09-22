@@ -10,7 +10,10 @@
           <li>
             <router-link to="/budget-manager">Budgetmanager</router-link>
           </li>
-          <li>Dummy</li>
+          <li>
+            <!-- TODO - delete this link, the component is/was just for testing purposes -->
+            <router-link to="/testform">Test-Form</router-link>
+          </li>
         </ul>
       </div>
       <div class="xfin-content">
