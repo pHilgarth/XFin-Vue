@@ -9,6 +9,7 @@
       <p>intern wird dann Geld auf die ausgewählte KS umgebucht und schließlich damit eine Ausgabe getätigt <b>TODO</b></p>
       <br />
       <p>Interne Geldtransfers von Konto nach Konto werden über Einnahmen / Ausgaben verbucht - die entsprechenden Forms müssen angepasst werden, damit auch eigene Konten ausgewählt werden können <b>TODO</b></p>
+      <p>Error Handling fehlt noch weitestgehend, einfach überall nochmal drüber gucken, wo man noch optimieren muss ( vor allem bei den api calls )</p>
     </div>
     <MoleculeLoading v-if="loading || !accountHolders" :loadingError="!loading && !accountHolders" />
     
@@ -41,6 +42,7 @@ import { NumberService } from "@/services/number-service";
 
 
 export default {
+  //TODO - try using created hook for API calls
   beforeMount() {
     this.getAccountHolders(true);
   },
