@@ -1,0 +1,141 @@
+/////////////////////////////////
+// Animation Menu Bars         //
+/////////////////////////////////
+
+// Menu Bar Top
+@keyframes firstLineToCross {
+    0% {
+        top: 0;
+        left: 0;
+        transform: translate(0,0) rotate(0deg);
+    }
+
+    50% {
+        top: 6px;
+        left: 0;
+        transform: translate(0,-50%) rotate(0deg);
+    }
+
+    100% {
+        top: 6px;
+        left: 50%;
+        transform: translate(-50%,-50%) rotate(45deg);
+    }
+}
+
+@keyframes firstLineToBars {
+    0% {
+        top: 6px;
+        left: 50%;
+        transform: translate(-50%,-50%) rotate(45deg);
+    }
+
+    50% {
+        top: 6px;
+        left: 0;
+        transform: translate(0,-50%) rotate(0deg);
+    }
+
+    100% {
+        top: 0;
+        left: 0;
+        transform: translate(0,0) rotate(0deg);
+    }
+}
+
+
+@keyframes secondLineToCross {
+    0% {
+        opacity: 1;
+        top: 6px;
+        transform: translate(0, -50%);
+    }
+
+    100% {
+        opacity: 0;
+        top: 6px;
+        transform: translate(0, -50%);
+    }
+}
+
+@keyframes secondLineToBars {
+    0% {
+        opacity: 0;
+        top: 6px;
+        transform: translate(0, -50%);
+    }
+
+    100% {
+        opacity: 1;
+        top: 6px;
+        transform: translate(0, -50%);
+    }
+}
+
+// Menu Bar Bottom
+@keyframes thirdLineToCross {
+    0% {
+        top: 12px;
+        left: 0;
+        transform: translate(0,0) rotate(0deg);
+    }
+
+    50% {
+        top: 6px;
+        left: 0;
+        transform: translate(0,-50%) rotate(0deg);
+    }
+
+    100% {
+        top: 6px;
+        left: 50%;
+        transform: translate(-50%,-50%) rotate(-45deg);
+    }
+}
+
+@keyframes thirdLineToBars {
+    0% {
+        top: 6px;
+        left: 50%;
+        transform: translate(-50%,-50%) rotate(-45deg);
+    }
+
+    50% {
+        top: 6px;
+        left: 0;
+        transform: translate(0,-50%) rotate(0deg);
+    }
+
+    100% {
+        top: 12px;
+        left: 0;
+        transform: translate(0,0) rotate(0deg);
+    }
+}
+
+
+// Effect hover
+@keyframes lineHorizontal {
+    from {
+        width: 0;
+    }
+    to {
+        width: 12px;
+    }
+}
+@keyframes lineVertical {
+    from {
+        height: 0;
+    }
+    to {
+        height: 12px;
+    }
+}
+@keyframes backgroundFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 0.6;
+    }
+}

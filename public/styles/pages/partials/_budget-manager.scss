@@ -1,7 +1,9 @@
 .budget-manager__total {
-    font-size: 2rem;
     font-weight: bold;
     padding: 0;
+    @include rem((
+        font-size: 20px,
+    ));
 
     span {
         &:first-child {
@@ -10,7 +12,9 @@
 
         &:last-child {
             float: right;
-            padding-right: 4rem;
+            @include rem((
+                padding-right: 40px
+            ));
         }
     }
 }

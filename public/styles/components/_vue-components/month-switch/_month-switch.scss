@@ -6,15 +6,17 @@
     ul {
         align-items: flex-start;
         display: flex;
-        font-size: 1.6rem;
         justify-content: space-evenly;
         list-style-type: none;
         padding: 0;
         width: 100%;
+        @include rem((
+            font-size: 16px,
+        ));
         
         li {
             background-color: #235baf;
-            letter-spacing: .2rem;
+            letter-spacing: 2px;
             padding: 1rem 0;
             text-align: center;
             width: 8.3333333%;

@@ -5,3 +5,7 @@
         color: #ff7373;
     }
 }
+
+.has-errors {
+    border: 1px solid $color__form-errors;
+}

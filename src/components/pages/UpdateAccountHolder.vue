@@ -122,7 +122,7 @@ import {
   ibanValidator,
   balanceValidator,
   dropDownValidator,
-} from "@/custom-validators/custom-validators";
+} from "@/validation/custom-validators";
 
 export default {
   beforeMount() {

@@ -1,10 +1,12 @@
 
 table {
     border-collapse: collapse;
-    font-size: 2rem;
     margin: 0 auto;
-    margin-bottom: 1rem;
     width: 90%;
+    @include rem((
+        font-size: 20px,
+        margin-bottom: 10px,
+    ));
 
     thead tr {
         border: none;
@@ -23,7 +25,9 @@ table {
         }
 
         td {
-            padding: 1rem 1.5rem;
+            @include rem((
+                padding: 10px 15px,
+            ));
 
             &.align-right {
                 text-align: right;
@@ -32,8 +36,10 @@ table {
     }
 
     th {
-        padding: 2rem 1.5rem;
         width: 25%;
+        @include rem((
+            padding: 20px 15px,
+        ));
 
         &.align-right {
             text-align: right;

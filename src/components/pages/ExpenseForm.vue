@@ -86,7 +86,7 @@ import { InternalTransactionService } from "@/services/internal-transaction-serv
 import { ExternalTransactionService } from "@/services/external-transaction-service";
 import { TransactionCategoryService } from '@/services/transaction-category-service.js';
 
-import { amountValidator } from "@/custom-validators/custom-validators";
+import { amountValidator } from "@/validation/custom-validators";
 
 export default {
   beforeMount() {

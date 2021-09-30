@@ -1,33 +1,43 @@
 
 .xfin-collapsible {
-    border-radius: .5rem;
     box-shadow: 0 0 .5rem rgba(0, 0, 0, .5);
-    margin-bottom: 5rem;
+    @include rem((
+        border-radius: 5px,
+        margin-bottom: 50px,
+    ));
 
     &.collapsed .bar:first-child {
-        height: 3rem;
+        @include rem((
+            height: 30px,
+        ));
     }
 
     &__header {
-        background-color: $color-background-primary;
-        border-radius: .5rem;
+        background-color: $color__primary;
         cursor: pointer;
         position: relative;
         transition: all .5s;
+        @include rem((
+            border-radius: 5px,
+        ));
 
         &.expanded {
-            border-radius: .5rem .5rem 0 0;
             transition: all .5s;
+            @include rem((
+                border-radius: 5px 5px 0 0,
+            ));
         }
     }
 
     &__title {
         color: #fff;
         display: inline-block;
-        font-size: 2.5rem;
-        padding: 1rem;
         text-align: left;
         width: 100%;
+        @include rem((
+            font-size: 25px,
+            padding: 10px,
+        ));
 
         &:focus, &:hover {
             box-shadow: none;
@@ -43,9 +53,11 @@
 
         .bar {
             background-color: #fff;
-            height: .1rem;
+            height: 1px;
             transition: all .2s;
-            width: 3rem;
+            @include rem((
+                width: 30px,
+            ));
             
             &:first-child {
                 height: 0;
@@ -53,15 +65,17 @@
                 position: absolute;
                 top: 50%;
                 transform: translate(-50%, -50%);
-                width: .1rem;
+                width: 1px;
             }
         }
     }
 
     &__body {
-        max-height: 1000px;
         overflow: hidden;
         transition: max-height 1s;
+        @include rem((
+            max-height: 1000px,
+        ));
 
         &.collapsed {
             max-height: 0;

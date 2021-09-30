@@ -1,9 +1,11 @@
 
 .account-view-add-account-holder {
-    background-color: $color-background-secondary;
-    border-radius: .5rem;
+    background-color: $color__secondary;
     display: inline-block;
-    font-size: 1.25rem;
     letter-spacing: 1px;
-    padding: 1rem;
+    @include rem((
+        border-radius: 5px,
+        font-size: 12px,
+        padding: 10px,
+    ));
 }

@@ -1,0 +1,21 @@
+// A Sass Map for all Breakpoints you need. But keep it simple! Just add Sizes that you need several times.
+$breakpoints: (
+    xs: 0,
+    sm: 576px,
+    md: 768px,
+    lg: 992px,
+    xl: 1200px,
+    xxl: 1400px
+);
+
+$transition: 0.15s;
+
+//$imgPath: '/wp-content/themes/lights-on/assets/src/img/';
+//$fontPath: '/wp-content/themes/lights-on/assets/src/fonts/';
+
+$rem-baseline: 16px !default;
+$rem-fallback: true !default;
+
+//TODO - here is an error, just copied from WP Master
+// $box-shadow: 0 2px 34px 10px rgb(111 111 111 / 20%);
+// $box-shadow-dropdown: 0 1px 1px 0 rgb(0 0 0 / 5%), 0 2px 5px 0 rgb(0 0 0 / 25%);

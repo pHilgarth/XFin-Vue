@@ -1,0 +1,145 @@
+@mixin rem($properties, $values...) {
+	@if type-of($properties) == "map" {
+		@each $property in map-keys($properties) {
+			@include rem($property, map-get($properties, $property));
+		}
+	}
+	@else {
+		@each $property in $properties {
+            #{$property}: rem-convert(rem, $values...);
+		}
+	}
+}
+
+@mixin breakpoint($breakpoint,$direction: $media-direction) {
+  // Es wird gecheckt ob der Wert in der Sass Map vorhanden ist
+  @if map-has-key($breakpoints, $breakpoint) {
+
+    // Ausgabe
+    @media (#{$direction}-width: #{map-get($breakpoints, $breakpoint)}) {
+      @content;
+    }
+  }
+
+    // Wenn ihr oben einen Wert eingetragen habt wird hier gecheckt ob ihr einen Einheit angehängt habt. Falls nicht wird px genutzt.
+  @else if unitless($breakpoint) {
+    $breakpoint: $breakpoint + 0px;
+
+    // Ausgabe
+    @media (#{$direction}-width: $breakpoint) {
+      @content;
+    }
+  }
+}
+
+
+// ========================================
+// Fluid typography
+// ========================================
+@mixin fluid-type($properties, $min-vw, $max-vw, $min-font-size, $max-font-size) {
+  $u1: unit($min-vw);
+  $u2: unit($max-vw);
+  $u3: unit($min-font-size);
+  $u4: unit($max-font-size);
+
+  @if $u1 == $u2 and $u1 == $u3 and $u1 == $u4 {
+    & {
+      @each $property in $properties {
+        #{$property}: $min-font-size;
+
+        @media screen and (min-width: $min-vw) {
+          #{$property}: calc(#{$min-font-size} + #{strip-unit($max-font-size - $min-font-size)} * ((100vw - #{$min-vw}) / #{strip-unit($max-vw - $min-vw)}));
+        }
+        @media screen and (min-width: $max-vw) {
+          #{$property}: $max-font-size;
+        }
+      }
+    }
+  }
+}
+
+@mixin hyphens($value) {
+  -webkit-hyphens: $value;
+  -moz-hyphens: $value;
+  -ms-hyphens: $value;
+  hyphens: $value;
+}
+
+
+
+// ========================================
+// Animationen
+// ========================================
+@mixin transition($args...) {
+    -webkit-transition: $args;
+    -moz-transition: $args;
+    -ms-transition: $args;
+    -o-transition: $args;
+    transition: $args;
+}
+
+@mixin transition-delay($delay) {
+    -webkit-transition-delay: $delay;
+    -moz-transition-delay: $delay;
+    -ms-transition-delay: $delay;
+    -o-transition-delay: $delay;
+    transition-delay: $delay;
+}
+
+@mixin image-scale($scale) {
+    -webkit-transform: scale($scale);
+    -ms-transform: scale($scale);
+    transform: scale($scale);
+}
+
+@mixin translate($xVal, $yVal, $zVal: null) {
+    -webkit-transform: translate($xVal, $yVal, $zVal);
+    -moz-transform: translate($xVal, $yVal, $zVal);
+    -ms-transform: translate($xVal, $yVal, $zVal);
+    -o-transform: translate($xVal, $yVal, $zVal);
+    transform: translate($xVal, $yVal, $zVal);
+}
+
+@mixin animation($args...) {
+    -webkit-animation: $args;
+    -moz-animation: $args;
+    -o-animation: $args;
+    animation: $args;
+}
+
+
+// ========================================
+/* Seitenverhältnisse
+    (https://css-tricks.com/snippets/sass/maintain-aspect-ratio-mixin/)
+    Bespiel:
+
+    html:
+    <div class="sixteen-nine">
+      <div class="aspect-ratio-content">
+        insert content here
+        this will maintain a 16:9 aspect ratio
+      </div>
+    </div>
+
+    scss:
+    .sixteen-nine {
+      @include aspect-ratio(16, 9);
+    }
+*/
+// ========================================
+@mixin aspect-ratio($width, $height) {
+    position: relative;
+    &:before {
+        display: block;
+        content: "";
+        width: 100%;
+        padding-top: ($height / $width) * 100%;
+    }
+    > .aspect-ratio-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+}

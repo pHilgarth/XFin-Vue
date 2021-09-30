@@ -1,23 +1,23 @@
 <template>
-  <div class="xfin-container">
-    <div class="xfin-header">[LOGO]</div>
-    <div class="xfin-body">
-      <div class="xfin-sidebar">
-        <ul class="xfin-menu">
-          <li>
-            <router-link to="/">Kontenübersicht</router-link>
+  <div class="xfin">
+    <div class="xfin__header">[LOGO]</div>
+    <div class="xfin__body">
+      <div class="xfin__sidebar">
+        <ul class="xfin__menu">
+          <li :class="selectedMenuItem == 1 ? 'active' : ''" data-route="/" data-index="1" @click="routeToComponent">
+            Kontenübersicht
           </li>
-          <li>
-            <router-link to="/budget-manager">Budgetmanager</router-link>
+          <li :class="selectedMenuItem == 2 ? 'active' : ''" data-route="/budget-manager" data-index="2" @click="routeToComponent">
+            Budgetmanager
           </li>
-          <li>
+          <li :class="selectedMenuItem == 3 ? 'active' : ''" data-route="/testform" data-index="3" @click="routeToComponent">
             <!-- TODO - delete this link, the component is/was just for testing purposes -->
-            <router-link to="/testform">Test-Form</router-link>
+            Test-Form
           </li>
         </ul>
       </div>
-      <div class="xfin-content">
-        <div class="xfin-component">
+      <div class="xfin__content">
+        <div class="xfin__component">
           <router-view></router-view>
         </div>
       </div>
@@ -25,6 +25,22 @@
   </div>
 </template>
 
+<script>
+export default {
+  data() {
+    return {
+      selectedMenuItem: 1,
+    };
+  },
+
+  methods: {
+    routeToComponent(event) {
+      this.selectedMenuItem = event.target.dataset.index;
+      this.$router.push(event.target.dataset.route);
+    }
+  }
+}
+</script>
 <style lang="scss">
   @import "../public/styles/styles";
 </style>

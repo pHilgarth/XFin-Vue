@@ -5,16 +5,18 @@
 
         .account-holder-accounts-heading {
             position: relative;
-            margin: 6rem 0;
+            @include rem((margin: 60px 0));
 
             .account-holder-accounts-headline {
                 background-color: #fff;
                 left: 5%;
-                letter-spacing: .3rem;
-                padding: 0 1rem;
+                letter-spacing: 3px;
                 position: absolute;
                 text-transform: uppercase;
-                top: -1.25rem;
+                @include rem((
+                    padding: 0 10px,
+                    top: -12px
+                ));
             }
         }
     }

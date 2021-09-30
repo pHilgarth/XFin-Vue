@@ -2,5 +2,9 @@
     display: flex;
     padding: 0;
 
-    input { margin-right: 1rem; }
+    input {
+        @include rem((
+            margin-right: 10px,
+        ));
+    }
 }

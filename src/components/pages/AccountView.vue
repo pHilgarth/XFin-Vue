@@ -1,6 +1,7 @@
 
 <template>
   <div class="account-view">
+    <OrganismNewAccountHolder v-if="modalOpened" @close="modalOpened = false" />
     <AtomHeadline tag="h1" content="Kontenübersicht" />
     <div class="dev-hint important">
       <p>Kostenstelle "Nicht zugewiesen:</p>
@@ -10,6 +11,9 @@
       <br />
       <p>Interne Geldtransfers von Konto nach Konto werden über Einnahmen / Ausgaben verbucht - die entsprechenden Forms müssen angepasst werden, damit auch eigene Konten ausgewählt werden können <b>TODO</b></p>
       <p>Error Handling fehlt noch weitestgehend, einfach überall nochmal drüber gucken, wo man noch optimieren muss ( vor allem bei den api calls )</p>
+      <p>Atom Props testen (id, class, additionalProps, etc. ... )</p>
+      <p>scss und classes prüfen, welche brauche ich, bzw. kann ich die gesetzen classes vereinfachen, etc....</p>
+      <p>implement smart scss z-indices</p>
     </div>
     <MoleculeLoading v-if="loading || !accountHolders" :loadingError="!loading && !accountHolders" />
     
@@ -22,20 +26,29 @@
         </router-link>
       </div>
 
+      <router-link to="/new-account-holder">
+        Kontoinhaber hinzufügen
+      </router-link>
 
-      <div class="account-view-add-account-holder">
-        <router-link to="/accountHolders/0" class="xfin-button">
-          Kontoinhaber hinzufügen
-        </router-link>
-      </div>
+<div class="form-floating mb-3">
+  <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+  <label for="floatingInput">Email address</label>
+</div>
+<div class="form-floating">
+  <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+  <label for="floatingPassword">Password</label>
+</div>
     </section>
   </div>
 </template>
 
 <script>
 import AtomHeadline from "@/components/atoms/AtomHeadline";
+
 import MoleculeLoading from "@/components/molecules/MoleculeLoading";
+
 import OrganismCollapsible from "@/components/organisms/OrganismCollapsible";
+import OrganismNewAccountHolder from "@/components/organisms/OrganismNewAccountHolder";
 
 import { AccountHolderService } from "@/services/account-holder-service";
 import { NumberService } from "@/services/number-service";
@@ -51,12 +64,14 @@ export default {
     AtomHeadline,
     MoleculeLoading,
     OrganismCollapsible,
+    OrganismNewAccountHolder,
   },
 
   data() {
     return {
       accountHolders: [],
       loading: true,
+      modalOpened: false,
     };
   },
 

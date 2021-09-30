@@ -8,7 +8,9 @@
 
     .no-transfer-possible {
         color: #f00;
-        padding: 2rem 0;
         text-align: center;
+        @include rem((
+            padding: 20px 0,
+        ));
     }
 }

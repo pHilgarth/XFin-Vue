@@ -1,15 +1,19 @@
 <template>
-    <label v-bind="props">{{ text }}</label>
+    <label :id="id" :class="classList" :for="target" v-bind="additionalProps">{{ text }}</label>
 </template>
 
 <script>
 export default {
     props: {
-        props: { type: Object },
-        text: {
-            type: String,
-            required: true
-        },
+        id:                 { type: String },
+        classList:          { type: String },
+        target:             { type: String },
+        text:               {
+                                type: String,
+                                required: true
+                            },
+
+        additionalProps:    { type: Object },
     },
 };
 </script>

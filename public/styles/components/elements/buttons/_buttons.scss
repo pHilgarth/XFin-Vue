@@ -1,10 +1,11 @@
 
 .xfin-button {
-    color: $color-font-primary;
+    //background-color: $color__buttons--background;
+    color: $color__font--dark;
     text-decoration: none;
 
     &:hover {
-        color: $color-font-primary;
+        color: $color__font--dark;
         text-decoration: none;
     }
 }

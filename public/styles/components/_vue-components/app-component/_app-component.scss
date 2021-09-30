@@ -1,8 +1,8 @@
 
-.xfin-container {
-  .xfin-header {
-    background-color: $color-background-primary;
-    color: $color-font-primary;
+.xfin {
+  &__header {
+    background-color: $color__primary;
+    color: $color__font--dark;
     height: 5vh;
     position: fixed;
     top: 0;
@@ -10,37 +10,62 @@
     z-index: 999;
   }
 
-  .xfin-body {
+  &__body {
     display: flex;
     margin-top: 5vh;
+  }
 
-    .xfin-sidebar {
-      background-color: $color-background-primary;
-      color: $color-font-primary;
-      font-size: 2rem;
-      height: 95vh;
-      position: fixed;
-      width: 12.5vw;
+  &__sidebar {
+    background-color: $color__primary;
+    height: 95vh;
+    position: fixed;
+    width: 12.5vw;
+    z-index: z('sidebar');
+    @include rem((
+      font-size: 20px,
+    ));
+  }
 
-      a {
-        color: $color-font-primary;
+  &__menu {
+    list-style: none;
+    padding: 0;
+
+    li {
+      background-color: $color__white;
+      border: solid $color__borders;
+      border-width: 1px 1px 0 0;
+      cursor: pointer;
+      @include rem((
+        padding: 10px,
+      ));
+
+      &:hover, &.active {
+        background-color: $color__secondary;
+        border-color: $color__secondary;
+        color: $color__font--light;
       }
     }
+    
+    a {
+      color: $color__font--dark;
+      text-decoration: none;
+    }
+  }
 
-    .xfin-content {
-      height: 100%;
-      margin-left: 12.5vw;
-      width: 87.5vw;
+  &__content {
+    height: 100%;
+    margin-left: 12.5vw;
+    width: 87.5vw;
+  }
 
-      .xfin-component {
-        display: flex;
-        width: 100%;
+  &__component {
+    display: flex;
+    width: 100%;
 
-        & > * {
-          padding: 5rem 5rem 0;
-          width: 100%;
-        }
-      }
+    & > * {
+      @include rem((
+        padding: 50px 50px 0,
+      ));
     }
   }
 }

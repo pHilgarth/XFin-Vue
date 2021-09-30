@@ -1,18 +1,18 @@
 <template>
-    <p v-bind="props">{{ text }}</p>
+    <p :id="id" :class="classList" v-bind="props">{{ text }}</p>
 </template>
 
 <script>
 export default {
     props: {
-        props: {
-            type: Object,
-            required: false,
-        },
-        text: {
-            type: String,
-            required: false,
-        },
+        id:                 { type: String },
+        classList:          { type: String },
+        text:               {
+                                type: String,
+                                required: true,
+                            },
+
+        additionalProps:    { type: Object },
     },
 };
 </script>

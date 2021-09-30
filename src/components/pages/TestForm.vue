@@ -8,10 +8,16 @@
 
         <h2>{{ v$.name }}</h2>
         <button @click="touchme">i am the night please touch me</button>
+        <p>{{ testvalue }}</p>
+        <input type="text" v-model="testvalue" />
+
+
+        <TestComp @testing="buttonClicked" />
     </div>
 </template>
 
 <script>
+import TestComp from './test/TestComp';
 import AtomInputText from '@/components/atoms/AtomInputText';
 import AtomParagraph from "@/components/atoms/AtomParagraph";
 
@@ -20,6 +26,7 @@ import { required, maxLength } from "@vuelidate/validators";
 
 export default {
     components: {
+        TestComp,
         AtomInputText,
         AtomParagraph,
     },
@@ -27,7 +34,16 @@ export default {
     data() {
         return {
             name: '',
+            testvalue: 'this is testvalue',
         };
+    },
+
+    watch: {
+        testvalue(newValue, oldValue) {
+            console.error('shit');
+            console.log(`testvalue was changed from ${oldValue} to ${newValue} and now I change it to THIS`);
+            this.testvalue = 'this'; 
+        },
     },
 
     setup() {
@@ -46,6 +62,10 @@ export default {
     },
 
     methods: {
+        buttonClicked(event) {
+            alert(event);
+        },
+
         touchme() {
             this.v$.$touch();
 

@@ -1,12 +1,24 @@
 <template>
-        <input v-bind="additionalProps" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" type="text" @blur="$emit('blur')" />
+  <input
+    type="text"
+    :id="id"
+    :class="classList"
+    :value="value"
+    :placeholder="placeholder"
+    v-bind="additionalProps"
+  />
 </template>
 
 <script>
 export default {
-    props: {
-        modelValue: { type: String, required: true },
-        additionalProps: { type: Object },
-    },
+  props: {
+    id:               { type: String },
+    classList:        { type: String },
+    value:            { type: String, required: true },
+    disabled:         { type: Boolean },
+    placeholder:      { type: String },
+                      
+    additionalProps:  { type: Object },
+  },
 };
 </script>

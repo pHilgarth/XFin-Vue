@@ -1,10 +1,14 @@
 .xfin-card {
-    border-radius: .5rem;
     box-shadow: 0 0 .5rem rgba(0, 0, 0, .5);
-    padding: 1.5rem;
-    margin: 1rem;
+    @include rem((
+        border-radius: 5px,
+        padding: 15px,
+        margin: 10x,
+    ));
 
     &__content {
-        font-size: 2rem;
+        @include rem((
+            font-size: 20px,
+        ));
     }
 }
