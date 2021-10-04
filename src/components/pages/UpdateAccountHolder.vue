@@ -121,7 +121,6 @@ import {
   bicValidator,
   ibanValidator,
   balanceValidator,
-  dropDownValidator,
 } from "@/validation/custom-validators";
 
 export default {
@@ -371,7 +370,6 @@ export default {
       bic: { required, bicValidator },
       bank: { required },
       balance: { required, balanceValidator },
-      selectedAccountIndex: { dropDownValidator },
     };
   },
 };

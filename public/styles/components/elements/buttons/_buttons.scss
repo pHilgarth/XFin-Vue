@@ -8,4 +8,15 @@
         color: $color__font--dark;
         text-decoration: none;
     }
+
+    &--light {
+        border-bottom: 1px solid transparent;
+        color: $color__buttons--light;
+        cursor: pointer;
+        display: inline-block;
+
+        &:hover {
+            border-bottom: 1px solid $color__buttons--light;
+        }
+    }
 }

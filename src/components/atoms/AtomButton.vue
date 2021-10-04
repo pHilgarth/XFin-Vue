@@ -1,5 +1,5 @@
 <template>
-    <button :id="id" :class="classList" v-bind="additionalProps">{{ text }}</button>
+    <button :id="id" :class="classList" :disabled="disabled" v-bind="additionalProps">{{ text }}</button>
 </template>
 
 <script>
@@ -11,6 +11,7 @@ export default {
                                 type: String,
                                 required: true,
                             },
+        disabled:           { type: Boolean },
         additionalProps:    { type: Object },
     },
 };

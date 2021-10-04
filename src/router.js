@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-import AccountView from './components/pages/AccountView';
 import AccountDetail from './components/pages/AccountDetail';
-import RevenueForm from './components/pages/RevenueForm';
-import ExpenseForm from './components/pages/ExpenseForm';
+import AccountView from './components/pages/AccountView';
 import BudgetManager from './components/pages/BudgetManager';
-import UpdateAccountHolder from './components/pages/UpdateAccountHolder';
+import ExpenseForm from './components/pages/ExpenseForm';
 import NewAccountHolder from './components/pages/NewAccountHolder';
+import RevenueForm from './components/pages/RevenueForm';
+import UpdateAccountHolder from './components/pages/UpdateAccountHolder';
 //TODO - delete this component, it is/was just for testing purposes
 import TestForm from './components/pages/TestForm';
 

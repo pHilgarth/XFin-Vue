@@ -1,5 +1,5 @@
 <template>
-    <p :id="id" :class="classList" v-bind="props">{{ text }}</p>
+    <p :id="id" :class="classList" v-bind="additionalProps">{{ text }}</p>
 </template>
 
 <script>

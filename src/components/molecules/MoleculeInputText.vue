@@ -1,8 +1,9 @@
 <template>
     <div class="form-floating pb-5" :class="classList">
-        <AtomInputText :id="field.toLowerCase()" :classList="`xfin-form__control form-control col-4 ${hasErrors}`" :value="modelValue" :disabled="disabled" :placeholder="field"
-            @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
-        <AtomLabel :target="field.toLowerCase()" :text="field" />
+        <AtomInputText  :id="field.toLowerCase()" :classList="`xfin-form__control form-control col-4 ${hasErrors}`" :value="modelValue"
+                        :disabled="disabled" :placeholder="field" @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
+                        
+        <AtomLabel classList="xfin-form__label" :target="field.toLowerCase()" :text="`${field}${optional ? '' : ' <i>*</i>'}`" />
 
         <template v-for="(error, index) in validation?.$errors" :key="index">
             <AtomParagraph classList="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
@@ -36,7 +37,8 @@ export default {
                             }
                         },
         modelValue:     { type: String, required: true },
-        disabled:       { type: Boolean, required: true },
+        disabled:       { type: Boolean },
+        optional:       { type: Boolean },
         validation:     { type: Object },
         // Validation has to be the vuelidate object of the property (i.e. v$.name)
     },

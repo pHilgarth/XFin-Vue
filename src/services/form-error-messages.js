@@ -1,10 +1,12 @@
 export const errorMessages = {
     //name errors
     name_required:          'Bitte gib einen Namen ein!',
-    name_maxLength_15:      'Der Name darf nicht länger als 15 Zeichen sein!',
+    name_maxLength:         'Der Name darf nicht länger als 15 Zeichen sein!',
+    name_nameDuplicate:     'Dieser Name existiert bereits!',
 
     //iban errors
-    iban:                   'Bitte gib eine gültige IBAN ein!',
+    iban_ibanValidator:     'Bitte gib eine gültige IBAN ein!',
+    iban_ibanDuplicate:     'Diese IBAN existiert bereits!',
 
     //bic errors
     bic:                    'Bitte gib einen gültigen BIC ein!',

@@ -1,8 +1,16 @@
 $color__primary:                #222222;
 $color__secondary:              #235baf;
+
+$color__black:                  #000000;
 $color__light-gray:             #cccccc;
+$color__red:                    #f04124;
 $color__white:                  #ffffff;
-$color__font--dark:             #000000;
-$color__font--light:            $color__white;
-$color__form-errors:            #f04124;
+
 $color__borders:                $color__light-gray;
+
+$color__buttons--light:         $color__secondary;
+$color__font--dark:             $color__black;
+$color__font--light:            $color__white;
+
+$color__form__errors:           $color__red;
+$color__form__required:         $color__red;

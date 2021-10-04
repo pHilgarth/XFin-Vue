@@ -4,6 +4,7 @@
     :id="id"
     :class="classList"
     :value="value"
+    :disabled="disabled"
     :placeholder="placeholder"
     v-bind="additionalProps"
   />

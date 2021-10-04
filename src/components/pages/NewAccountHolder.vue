@@ -1,6 +1,7 @@
 <template>
-  <div class="new-account-holder" :class="showForm ? 'form-active' : ''">
-    <div class="new-account-holder__main">
+  <div class="new-account-holder">
+    <MoleculeLoading v-if="loading || !accountHolders" :loadingError="!loading && !accountHolders" />
+    <div v-else-if="!showForm" class="new-account-holder__main">
       <p class="dev-hint important">
         wenn ein neuer kontoinhaber erstellt wird und somit neue Konten, werden
         auch die Initialisierungstransaktionen erstellt, da ist die Id für die
@@ -8,215 +9,186 @@
         die id von "Nicht zugewiesen" sein<br />da tritt noch ein Fehler auf
         <b>TODO</b>
       </p>
-      <AtomHeadline tag="h1" text="Kontoinhaber hinzufügen" />
+      <p class="dev-hint important">doppelte IBAN verhindern -> serverseitig testen</p>
+      <p class="dev-hint important" >doppelte Namen verhindern! (serverseitig prüfen)</p><h4>{{ v$ }}</h4>
+      <AtomHeadline tag="h1" text="Kontoinhaber hinzufügen" /><h2>{{ accountHolders }}</h2>
       <section>
-        <MoleculeInputText  classList="new-account-holder__name" field="Name" :hasErrors="hasErrors('name')" :disabled="disabled" v-model="name"
-                            @blur="v$.name.$touch()" :validation="v$.name" />
+        <MoleculeInputText  classList="new-account-holder__name" field="Name" :hasErrors="nameHasErrors" v-model="name" @blur="v$.name.$touch()"
+                            :validation="v$.name" />
 
         <div class="new-account-holder__accounts">
           <AtomHeadline classList="new-account-holder__accounts-headline" tag="h4" text="Konten:" />
-          <AtomButtonLight classList="new-account-holder__new-account" text="&plus; Neues Konto anlegen" @click="showForm = true"/>
+          <AtomButtonLight classList="xfin-button--light" text="&plus; Neues Konto anlegen" @click="showForm = true"/>
+
+          <div v-if="bankAccounts.length" class="new-account-holder__account-items">
+            <template v-for="(account, index) in bankAccounts" :key="index">
+              <div class="new-account-holder__account">
+                <AtomDelete :data-index="index" @click="deleteAccount"/>
+                <span class="new-account-holder__account-number">{{ account.accountNumber }}</span>
+                <AtomButtonLight classList="new-account-holder__edit xfin-button--light" :data-index="index" text="Bearbeiten" @click="editAccount" />
+              </div>
+            </template>
+          </div>
         </div>
       </section>
     </div>
-    <div class="new-account-holder__form">
-      <OrganismAccountForm v-if="showForm" />
+    <div v-else class="new-account-holder__form">
+      <OrganismAccountForm @cancel="showForm = false" @save="saveAccount" :formData="formData"/>
     </div>
   </div>
 </template>
 
 <script>
 import { useVuelidate } from "@vuelidate/core";
-import { accountHolderValidation } from "@/validation/validations";
+//import { required, maxLength } from "@vuelidate/validators";
+import { accountHolderValidation } from '@/validation/validations';
+import { nameDuplicateValidator } from '@/validation/custom-validators';
+
 
 import AtomButtonLight from "@/components/atoms/AtomButtonLight";
+import AtomDelete from "@/components/atoms/AtomDelete";
 import AtomHeadline from "@/components/atoms/AtomHeadline";
 
 import MoleculeInputText from "@/components/molecules/MoleculeInputText";
+import MoleculeLoading from "@/components/molecules/MoleculeLoading";
 
 import OrganismAccountForm from "@/components/organisms/OrganismAccountForm";
 
 import { AccountHolderService } from "@/services/account-holder-service";
-import { InternalBankAccountService } from "@/services/internal-bank-account-service";
+//import { InternalBankAccountService } from "@/services/internal-bank-account-service";
 import { NumberService } from "@/services/number-service.js";
 
 export default {
+
+  created() {
+    console.log('created');
+    this.getAccountHolders();
+  },
+
   components: {
     AtomButtonLight,
+    AtomDelete,
     AtomHeadline,
     MoleculeInputText,
+    MoleculeLoading,
     OrganismAccountForm,
   },
 
   data() {
     return {
-      selectedAccountIndex: -1,
-
-      pendingAccountCreation: false,
-      pendingAccountEdit: false,
-
       name: "",
-      iban: "",
-      bic: "",
-      bank: "",
-      description: "",
-      balance: "",
       bankAccounts: [],
+      formData: null,
+      accountHolders: null,
 
+      validationTest: accountHolderValidation,
+
+      loading: true,
       showForm: false,
     };
   },
 
   computed: {
-    disabled() {
-      return !this.pendingAccountCreation && !this.pendingAccountEdit;
+    nameHasErrors() {
+      return this.v$.name.$error ? "has-errors" : "";
     },
   },
 
   watch: {
-    name() { this.v$.name.$touch(); },
-    iban() { this.v$.iban.$touch(); },
-    bic() { this.v$.bic.$touch(); },
-    balance() { this.v$.balance.$touch(); },
+    name() {
+      this.v$.name.$touch();
+    },
+    showForm() {
+      if (this.showForm) {
+        if (!this.formData) {
+          this.formData = {
+            ibans: this.bankAccounts.map((b) => b.iban),
+          };
+        }
+      } else {
+        this.formData = null;
+      }
+    },
   },
 
   methods: {
-    activateForm() {
-
+    deleteAccount(event) {
+      //TODO - show modal to confirm deletion
+      console.log(this.bankAccounts);
+      this.bankAccounts.splice(event.target.dataset.index, 1);
+      console.log(this.bankAccounts);
     },
 
-    addAccount() {
-      if (this.validateAccountFields()) {
-        this.bankAccounts.push({
-          accountNumber: NumberService.getAccountNumber(this.iban),
-          iban: this.iban.toUpperCase(),
-          bic: this.bic.toUpperCase(),
-          bank: this.bank,
-          description: this.description,
-          balance: parseFloat(
-            this.balance.replaceAll(".", "").replace(",", ".")
-          ),
-        });
+    editAccount(event) {
+      this.formData = {
+        account: this.bankAccounts[event.target.dataset.index],
+        ibans: this.bankAccounts.map((b) => b.iban),
+      };
+      this.showForm = true;
+    },
 
-        this.pendingAccountCreation = false;
-        this.selectedAccountIndex = this.bankAccounts.length - 1;
-        this.loadAccountData();
+    async getAccountHolders(includeAccounts = false) {
+      this.accountHolders = await AccountHolderService.getAccountHolders(includeAccounts);
+      
+      if (this.accountHolders.length) {
+        this.validationTest.name.nameDuplicate = nameDuplicateValidator(this.accountHolders.map(a => a.name));
       }
+      this.loading = false;
     },
 
-    deleteAccount() {
-      this.bankAccounts.splice(this.selectedAccountIndex, 1);
+    saveAccount(event) {
+      const newBankAccount = {
+        accountNumber: NumberService.getAccountNumber(event.iban),
+        iban: event.iban,
+        bic: event.bic,
+        bank: event.bank,
+        description: event.description,
+        balance: event.balance,
+      };
 
-      this.selectedAccountIndex = this.bankAccounts.length ? 0 : -1;
-      this.loadAccountData();
-    },
-
-    hasErrors(property) {
-      //property has to match a validator in this components validations function
-      return this.v$[property].$error ? 'has-errors' : '';
-    },
-
-    loadAccountData() {
-      if (this.selectedAccountIndex == -1) {
-        this.iban = "";
-        this.bic = "";
-        this.bank = "";
-        this.description = "";
-        this.balance = "";
-
-        this.v$.$reset();
+      if (event.accountNumber) {
+        this.bankAccounts[
+          this.bankAccounts.findIndex(
+            (b) => b.accountNumber === event.accountNumber
+          )
+        ] = newBankAccount;
       } else {
-        this.iban = this.bankAccounts[this.selectedAccountIndex].iban;
-        this.bic = this.bankAccounts[this.selectedAccountIndex].bic;
-        this.bank = this.bankAccounts[this.selectedAccountIndex].bank;
-        this.description =
-          this.bankAccounts[this.selectedAccountIndex].description;
-        this.balance = NumberService.formatCurrency(
-          this.bankAccounts[this.selectedAccountIndex].balance,
-          false
-        );
-      }
-    },
-
-    async saveAccountHolder() {
-      this.v$.$touch();
-
-      if (!this.v$.$errors.length) {
-        const newAccountHolder = await AccountHolderService.createAccountHolder(
-          { name: this.name }
-        );
-
-        if (newAccountHolder) {
-          for (const bankAccount of this.bankAccounts) {
-            bankAccount.accountHolderId = newAccountHolder.id;
-
-            await InternalBankAccountService.createInternalBankAccount(
-              bankAccount
-            );
-          }
-
-          this.$router.push("/");
-        }
-      }
-    },
-
-    toggleAccountCreation() {
-      this.pendingAccountCreation = !this.pendingAccountCreation;
-
-      if (this.pendingAccountCreation || !this.bankAccounts.length) {
-        this.selectedAccountIndex = -1;
-      } else {
-        this.selectedAccountIndex = 0;
+        this.bankAccounts.push(newBankAccount);
       }
 
-      this.loadAccountData();
+      this.showForm = false;
     },
-
-    toggleAccountEdit() {
-      this.pendingAccountEdit = !this.pendingAccountEdit;
-
-      if (!this.pendingAccountEdit) {
-        this.loadAccountData();
-      }
-    },
-
-    updateAccount() {
-      if (this.validateAccountFields()) {
-        const bankAccount = this.bankAccounts[this.selectedAccountIndex];
-
-        bankAccount.accountNumber = NumberService.getAccountNumber(this.iban);
-        bankAccount.iban = this.iban.toUpperCase();
-        bankAccount.bic = this.bic.toUpperCase();
-        bankAccount.bank = this.bank;
-        bankAccount.description = this.description;
-        bankAccount.balance = parseFloat(
-          this.balance.replaceAll(".", "").replace(",", ".")
-        );
-
-        this.pendingAccountEdit = false;
-
-        this.loadAccountData();
-      }
-    },
-
-    validateAccountFields() {
-      this.v$.iban.$touch();
-      this.v$.bic.$touch();
-      this.v$.balance.$touch();
-
-      if (!this.v$.$errors.length) {
-        return true;
-      }
-    },
+    // async saveAccountHolder() {
+    //   this.v$.$touch();
+    //   if (!this.v$.$errors.length) {
+    //     const newAccountHolder = await AccountHolderService.createAccountHolder(
+    //       { name: this.name }
+    //     );
+    //     if (newAccountHolder) {
+    //       for (const bankAccount of this.bankAccounts) {
+    //         bankAccount.accountHolderId = newAccountHolder.id;
+    //         await InternalBankAccountService.createInternalBankAccount(
+    //           bankAccount
+    //         );
+    //       }
+    //       this.$router.push("/");
+    //     }
+    //   }
+    // },
   },
 
   setup() {
-    return {
-      v$: useVuelidate(),
-    };
+    return { v$: useVuelidate(), };
   },
 
-  validations() { return accountHolderValidation; },
-
+  validations() { return this.validationTest;
+    // return {
+    //   name: {
+    //     required,
+    //     maxLength: maxLength(15),
+    //     nameDuplicate: nameDuplicateValidator(this.accountHolders.map(a => a.name)),
+    //   },
+    // };
+  },
 };
 </script>

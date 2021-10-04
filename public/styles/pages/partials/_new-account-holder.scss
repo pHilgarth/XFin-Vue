@@ -1,16 +1,8 @@
 .new-account-holder {
     display: flex;
     overflow: hidden;
-    padding-left: 0;
-    padding-right: 0;
     width: 50%;
-    transition: transform 5s ease-in-out;
-    z-index: z('component');
-    
-    &.form-active > * {
-        transform: translateX(-100%);
-        transition: transform 5s ease-in-out;
-    }
+    z-index: z("component");
 
     & > * {
         min-width: 100%;
@@ -19,35 +11,83 @@
 
     &__name {
         border-bottom: 1px solid #cccccc;
-        @include rem((
-            margin-bottom: 20px,
-        ));
+        @include rem(
+            (
+                margin-bottom: 20px,
+            )
+        );
     }
 
     &__accounts {
         border-bottom: 1px solid #cccccc;
-        @include rem((
-            margin-bottom: 20px,
-            padding-bottom: 20px,
-        ));
+        @include rem(
+            (
+                margin-bottom: 20px,
+                padding-bottom: 20px,
+            )
+        );
     }
 
     &__accounts-headline {
+        @include rem(
+            (
+                margin-bottom: 30px,
+            )
+        );
+    }
+
+    &__account-items {
+        display: flex;
         @include rem((
-            margin-bottom: 30px,
+            margin-top: 30px,
         ));
     }
 
-    &__new-account {
-        border-bottom: 1px solid transparent;
-        color: $color__secondary;
+    &__account {
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
         cursor: pointer;
-        display: inline-block;
+        position: relative;
+        @include rem(
+            (
+                border-radius: 5px,
+                height: 150px,
+                width: 150px,
+                font-size: 24px,
+                margin-right: 10px,
+            )
+        );
 
-
-
-        &:hover {
-            border-bottom: 1px solid $color__secondary;
+        &:hover .new-account-holder__edit {
+            opacity: 1;
+            transition: opacity .2s;
         }
+    }
+
+    &__delete {
+        position: absolute;
+        @include rem((
+            line-height: 10px,
+            top: 10px,
+            right: 10px,
+        ));
+    }
+
+    &__account-number {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    &__edit {
+        position: absolute;
+        bottom: 15%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity .2s;
+        @include rem((
+            font-size: 12px
+        ))
     }
 }
