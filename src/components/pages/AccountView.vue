@@ -48,7 +48,6 @@ import AtomHeadline from "@/components/atoms/AtomHeadline";
 import MoleculeLoading from "@/components/molecules/MoleculeLoading";
 
 import OrganismCollapsible from "@/components/organisms/OrganismCollapsible";
-import OrganismNewAccountHolder from "@/components/organisms/OrganismNewAccountHolder";
 
 import { AccountHolderService } from "@/services/account-holder-service";
 import { NumberService } from "@/services/number-service";
@@ -63,7 +62,6 @@ export default {
     AtomHeadline,
     MoleculeLoading,
     OrganismCollapsible,
-    OrganismNewAccountHolder,
   },
 
   data() {

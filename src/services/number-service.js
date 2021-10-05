@@ -1,4 +1,8 @@
 export const NumberService = {
+    amountToString(value) {
+        return value.toString().replaceAll(',', '').replace('.', ',');
+    },
+
     formatCurrency(value, includeCurrency = true) {
         let currencyFormat = new Intl.NumberFormat("de-DE", {
             style: "currency",

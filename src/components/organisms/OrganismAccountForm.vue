@@ -1,6 +1,6 @@
 <template>
     <div class="account-form">
-        <h1>Konto hinzufügen</h1><h3>{{ formData || 'null' }}</h3><h6>{{ v$.iban }}</h6>
+        <h1>Konto hinzufügen</h1>{{ formData || 'null' }}
         <form class="xfin-form">
             <MoleculeInputText field="IBAN" :hasErrors="ibanErrors" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" />
             <MoleculeInputText field="BIC" :hasErrors="bicErrors" v-model="bic" @blur="v$.bic.$touch()" :validation="v$.bic" />
@@ -19,8 +19,9 @@ import { useVuelidate } from '@vuelidate/core';
 import { accountValidation } from '@/validation/validations';
 import { ibanDuplicateValidator } from '@/validation/custom-validators';
 
-import AtomButton from '@/components/atoms/AtomButton';
+import { NumberService} from '@/services/number-service';
 
+import AtomButton from '@/components/atoms/AtomButton';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 
 export default {
@@ -29,8 +30,14 @@ export default {
     delete accountValidation.iban.ibanDuplicate;
 
     //i need to instantiate the ibanDuplicate validator in here, because only here I can pass the ibans array
-    //I have to check for duplicates only if I'm creating a new account -> if i dont have account data that means, I'm creating a new account
-    if (!this.formData?.account) {
+    if (!this.formData.account) {
+      accountValidation.iban.ibanDuplicate = ibanDuplicateValidator(this.formData?.ibans);
+    }
+    else {
+      const ibanIndex = this.formData.ibans.findIndex(i => i === this.formData.account.iban);
+      let ibans = this.formData.ibans;
+      ibans.splice(ibanIndex, 1);
+
       accountValidation.iban.ibanDuplicate = ibanDuplicateValidator(this.formData?.ibans);
     }
   },
@@ -46,30 +53,32 @@ export default {
 
   data() {
     return {
-      accountNumber: this.formData?.account?.accountNumber || null,
-      balance: this.formData?.account?.balance || '',
-      bank: this.formData?.account?.bank || '',
-      description: this.formData?.account?.description || '',
-      bic: this.formData?.account?.bic || '',
-      iban: this.formData?.account?.iban || '',
-      ibans: this.formData?.account?.ibans || [],
+      accountNumber:  this.formData?.account?.accountNumber || null,
+      balance:        this.formData?.account
+                        ? NumberService.amountToString(this.formData.account.balance)
+                        : '',
+      bank:           this.formData?.account?.bank || '',
+      description:    this.formData?.account?.description || '',
+      bic:            this.formData?.account?.bic || '',
+      iban:           this.formData?.account?.iban || '',
+      ibans:          this.formData?.account?.ibans || [],
     };
   },
 
   computed: {
-    balanceErrors() { return this.v$.balance.$error ? 'has-errors' : ''; },
-    bicErrors() { return this.v$.bic.$error ? 'has-errors' : ''; },
-    ibanErrors() { return this.v$.iban.$error || this.ibans.includes(this.iban) ? 'has-errors' : ''; },
+    balanceErrors() { return this.v$.balance.$error; },
+    bicErrors()     { return this.v$.bic.$error; },
+    ibanErrors()    { return this.v$.iban.$error || this.ibans.includes(this.iban); },
   },
 
   watch: {
-    iban() { this.v$.iban.$touch(); },
-    bic() { this.v$.bic.$touch(); },
-    balance() { this.v$.balance.$touch(); },
+    iban()          { this.v$.iban.$touch(); },
+    bic()           { this.v$.bic.$touch(); },
+    balance()       { this.v$.balance.$touch(); },
   },
 
   setup() {
-    return { v$: useVuelidate(), };
+    return          { v$: useVuelidate(), };
   },
 
   validations() { return accountValidation; },
@@ -78,7 +87,7 @@ export default {
     async save() {
       this.$emit('save', {
         accountNumber: this.accountNumber,
-        balance: this.balance,
+        balance: NumberService.parseFloat(this.balance),
         bank: this.bank,
         description: this.description,
         bic: this.bic,

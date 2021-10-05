@@ -51,6 +51,10 @@ export const InternalBankAccountService = {
         if (response.ok) {
           return response.json();
         }
+        else if (response.status === 409) {
+          console.log(409)
+          return { duplicate: true };
+        }
       }).then((data) => {
         if (data != undefined) {
           return data;

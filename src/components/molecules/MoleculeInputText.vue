@@ -1,7 +1,8 @@
 <template>
     <div class="form-floating pb-5" :class="classList">
-        <AtomInputText  :id="field.toLowerCase()" :classList="`xfin-form__control form-control col-4 ${hasErrors}`" :value="modelValue"
-                        :disabled="disabled" :placeholder="field" @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
+        <AtomInputText  :id="field.toLowerCase()" :disabled="disabled" :placeholder="field" :value="modelValue"
+                        :classList="`xfin-form__control form-control col-4 ${hasErrors ? 'has-errors' : ''}`"
+                        @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
                         
         <AtomLabel classList="xfin-form__label" :target="field.toLowerCase()" :text="`${field}${optional ? '' : ' <i>*</i>'}`" />
 
@@ -26,16 +27,10 @@ export default {
                             required: true,
                             validator(value) {
                                 //matches a single camelCase word
-                                return value.match(/^[a-zA-Z]+$/)
+                                return value.match(/^[a-zA-Z]+$/);
                             }
                         },
-        hasErrors:      {
-                            type: String,
-                            validator(value) {
-                                //matches "has-errors" or ""
-                                return value.match(/^(has-errors){0,1}/)
-                            }
-                        },
+        hasErrors:      { type: Boolean },
         modelValue:     { type: String, required: true },
         disabled:       { type: Boolean },
         optional:       { type: Boolean },

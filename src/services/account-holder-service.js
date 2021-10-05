@@ -57,13 +57,16 @@ export const AccountHolderService = {
         if (response.ok) {
           return response.json();
         }
+        else if (response.status === 409) {
+          return { duplicate: true };
+        }
       }).then((data) => {
-        if (data != undefined) {
+        if (data !== undefined) {
           return data;
         }
       });
     } catch (error) {
-      return null;
+      return error;
     }
   },
 

@@ -1,7 +1,6 @@
 <template>
   <div class="new-account-holder">
-    <MoleculeLoading v-if="loading || !accountHolders" :loadingError="!loading && !accountHolders" />
-    <div v-else-if="!showForm" class="new-account-holder__main">
+    <div v-if="!showForm" class="new-account-holder__main">
       <p class="dev-hint important">
         wenn ein neuer kontoinhaber erstellt wird und somit neue Konten, werden
         auch die Initialisierungstransaktionen erstellt, da ist die Id für die
@@ -9,12 +8,15 @@
         die id von "Nicht zugewiesen" sein<br />da tritt noch ein Fehler auf
         <b>TODO</b>
       </p>
-      <p class="dev-hint important">doppelte IBAN verhindern -> serverseitig testen</p>
-      <p class="dev-hint important" >doppelte Namen verhindern! (serverseitig prüfen)</p><h4>{{ v$ }}</h4>
-      <AtomHeadline tag="h1" text="Kontoinhaber hinzufügen" /><h2>{{ accountHolders }}</h2>
+      <p class="dev-hint important">doppelte IBANS verhindern => serverseitig muss noch getestet werden, ob die Konten bereits bei anderen AccHolders bereits existieren</p>
+      <AtomHeadline tag="h1" text="Kontoinhaber hinzufügen" />
       <section>
-        <MoleculeInputText  classList="new-account-holder__name" field="Name" :hasErrors="nameHasErrors" v-model="name" @blur="v$.name.$touch()"
-                            :validation="v$.name" />
+        <MoleculeInputText  classList="new-account-holder__name" field="Name" :hasErrors="nameHasErrors || duplicateName"
+                            :validation="v$.name" v-model="name" @blur="v$.name.$touch()"/>
+
+        <teleport v-if="duplicateName" to=".new-account-holder__name">
+          <AtomParagraph classList="xfin-form__error" text="Dieser Name wird bereits verwendet!"/>
+        </teleport>
 
         <div class="new-account-holder__accounts">
           <AtomHeadline classList="new-account-holder__accounts-headline" tag="h4" text="Konten:" />
@@ -27,9 +29,13 @@
                 <span class="new-account-holder__account-number">{{ account.accountNumber }}</span>
                 <AtomButtonLight classList="new-account-holder__edit xfin-button--light" :data-index="index" text="Bearbeiten" @click="editAccount" />
               </div>
+              <p v-if="duplicateAccount?.index === index">
+                Dieses Konto existiert bereits!
+              </p>
             </template>
           </div>
         </div>
+        <button class="xfin-button" @click="saveAccountHolder">Kontoinhaber speichern</button>
       </section>
     </div>
     <div v-else class="new-account-holder__form">
@@ -40,37 +46,28 @@
 
 <script>
 import { useVuelidate } from "@vuelidate/core";
-//import { required, maxLength } from "@vuelidate/validators";
 import { accountHolderValidation } from '@/validation/validations';
-import { nameDuplicateValidator } from '@/validation/custom-validators';
-
 
 import AtomButtonLight from "@/components/atoms/AtomButtonLight";
 import AtomDelete from "@/components/atoms/AtomDelete";
 import AtomHeadline from "@/components/atoms/AtomHeadline";
+import AtomParagraph from '@/components/atoms/AtomParagraph';
 
 import MoleculeInputText from "@/components/molecules/MoleculeInputText";
-import MoleculeLoading from "@/components/molecules/MoleculeLoading";
 
 import OrganismAccountForm from "@/components/organisms/OrganismAccountForm";
 
 import { AccountHolderService } from "@/services/account-holder-service";
-//import { InternalBankAccountService } from "@/services/internal-bank-account-service";
-import { NumberService } from "@/services/number-service.js";
+import { InternalBankAccountService } from "@/services/internal-bank-account-service";
+import { NumberService } from "@/services/number-service";
 
 export default {
-
-  created() {
-    console.log('created');
-    this.getAccountHolders();
-  },
-
   components: {
     AtomButtonLight,
     AtomDelete,
     AtomHeadline,
+    AtomParagraph,
     MoleculeInputText,
-    MoleculeLoading,
     OrganismAccountForm,
   },
 
@@ -79,10 +76,9 @@ export default {
       name: "",
       bankAccounts: [],
       formData: null,
-      accountHolders: null,
 
-      validationTest: accountHolderValidation,
-
+      duplicateName: false,
+      duplicateAccount: null,
       loading: true,
       showForm: false,
     };
@@ -90,7 +86,7 @@ export default {
 
   computed: {
     nameHasErrors() {
-      return this.v$.name.$error ? "has-errors" : "";
+      return this.v$.name.$error;
     },
   },
 
@@ -127,15 +123,6 @@ export default {
       this.showForm = true;
     },
 
-    async getAccountHolders(includeAccounts = false) {
-      this.accountHolders = await AccountHolderService.getAccountHolders(includeAccounts);
-      
-      if (this.accountHolders.length) {
-        this.validationTest.name.nameDuplicate = nameDuplicateValidator(this.accountHolders.map(a => a.name));
-      }
-      this.loading = false;
-    },
-
     saveAccount(event) {
       const newBankAccount = {
         accountNumber: NumberService.getAccountNumber(event.iban),
@@ -158,37 +145,34 @@ export default {
 
       this.showForm = false;
     },
-    // async saveAccountHolder() {
-    //   this.v$.$touch();
-    //   if (!this.v$.$errors.length) {
-    //     const newAccountHolder = await AccountHolderService.createAccountHolder(
-    //       { name: this.name }
-    //     );
-    //     if (newAccountHolder) {
-    //       for (const bankAccount of this.bankAccounts) {
-    //         bankAccount.accountHolderId = newAccountHolder.id;
-    //         await InternalBankAccountService.createInternalBankAccount(
-    //           bankAccount
-    //         );
-    //       }
-    //       this.$router.push("/");
-    //     }
-    //   }
-    // },
+
+    async saveAccountHolder() {
+      const newAccountHolder = await AccountHolderService.createAccountHolder({ name: this.name });
+
+      if (newAccountHolder.duplicate) {
+        this.duplicateName = true;
+      }
+      else {
+          for (let i = 0; i < this.bankAccounts.length; i++) {
+            const bankAccount = this.bankAccounts[i];
+            bankAccount.accountHolderId = newAccountHolder.id;
+            const createdBankAccount = await InternalBankAccountService.createInternalBankAccount(bankAccount);
+
+            if (createdBankAccount.duplicate) {
+              console.log(i);
+              this.duplicateAccount = { index: i };
+              console.log(this.duplicateAccount);
+              break;
+            }
+          }
+      }
+    },
   },
 
   setup() {
     return { v$: useVuelidate(), };
   },
 
-  validations() { return this.validationTest;
-    // return {
-    //   name: {
-    //     required,
-    //     maxLength: maxLength(15),
-    //     nameDuplicate: nameDuplicateValidator(this.accountHolders.map(a => a.name)),
-    //   },
-    // };
-  },
+  validations() { return accountHolderValidation; },
 };
 </script>
