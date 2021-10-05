@@ -53,7 +53,7 @@ export default {
 
   computed: {
     budgetNegative() {
-      return this.parseFloat(this.freeBudget) < 0;
+      return NumberService.parseFloat(this.freeBudget) < 0;
     },
   },
 
@@ -61,7 +61,7 @@ export default {
       return {
           freeBudget: this.transactionCategories[0].balance,
           total: this.transactionCategories.reduce(
-            (a, b) =>{ return this.parseFloat(a.balance) + this.parseFloat(b.balance) }),
+            (a, b) =>{ return NumberService.parseFloat(a.balance) + NumberService.parseFloat(b.balance) }),
       };
   },
 
@@ -71,14 +71,14 @@ export default {
         let decimals = value.split(',')[1]?.length || 0;
 
         const numValue = value !== ''
-          ? this.parseFloat(value)
+          ? NumberService.parseFloat(value)
           : 0;
 
         const numCategoryValue = category.balance !== ''
-          ? this.parseFloat(category.balance)
+          ? NumberService.parseFloat(category.balance)
           : 0;
 
-        const numFreeBudget = this.parseFloat(this.freeBudget);
+        const numFreeBudget = NumberService.parseFloat(this.freeBudget);
 
         this.freeBudget = this.formatCurrency(numFreeBudget + (numCategoryValue - numValue), false);
         category.balance = this.formatCurrency(value, false, decimals);
@@ -96,7 +96,7 @@ export default {
           let sliceAmount = 2 - decimals;
           sliceAmount = sliceAmount === 2 && value.toString().indexOf(',') === -1 ? sliceAmount + 1 : sliceAmount;
 
-          value = typeof value === "number" ? value : this.parseFloat(value);
+          value = typeof value === "number" ? value : NumberService.parseFloat(value);
 
           let result = NumberService.formatCurrency(value, includeCurrency);
           result = decimals < 2 ? result.slice(0, sliceAmount * -1) : result;
@@ -107,16 +107,12 @@ export default {
         return NumberService.formatCurrency(value, includeCurrency)
     },
 
-    parseFloat(value) {
-      return parseFloat(value.replaceAll(".", "").replace(",", "."));
-    },
-
     resetCategory(category) {
       this.calculateFreeBudget(category.originalBalance, category, false);
     },
 
     async saveCategory(category) {
-      const amount = this.parseFloat(category.balance) - this.parseFloat(category.originalBalance)
+      const amount = NumberService.parseFloat(category.balance) - NumberService.parseFloat(category.originalBalance)
       const currentDate = new Date().toISOString();
 
       const internalTransaction = {

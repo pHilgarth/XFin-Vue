@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import { NumberService } from '@/services/number-service';
+
 export default {
     emits: [ 'amount-changed' ],
 
@@ -25,7 +27,7 @@ export default {
             const lengthBefore = event.target.value.length;
 
             if (this.validateInput(event)) {
-                const negative = parseFloat(event.target.value.replaceAll(".", "").replace(",", ".")) < 0 ? true : false;
+                const negative = NumberService(parseFloat(event.target.value)) < 0 ? true : false;
                 let value = negative ? event.target.value.slice(1) : event.target.value;
 
                 //after every input, we format the value

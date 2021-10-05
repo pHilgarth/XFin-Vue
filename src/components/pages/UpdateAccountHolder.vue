@@ -115,7 +115,7 @@ import { required } from "@vuelidate/validators";
 
 import { AccountHolderService } from "@/services/account-holder-service";
 import { InternalBankAccountService } from "@/services/internal-bank-account-service";
-import { NumberService } from "@/services/number-service.js";
+import { NumberService } from "@/services/number-service";
 
 import {
   bicValidator,
@@ -157,7 +157,7 @@ export default {
           bic: this.bic.toUpperCase(),
           bank: this.bank,
           description: this.description,
-          balance: parseFloat(this.balance.replaceAll(".", "").replace(",", ".")),
+          balance: NumberService.parseFloat(this.balance),
         }
         
         const createdBankAccount = await InternalBankAccountService.createInternalBankAccount(newBankAccount);

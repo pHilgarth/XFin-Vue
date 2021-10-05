@@ -17,5 +17,9 @@ export const NumberService = {
 
     getAccountNumber(iban) {
         return iban.substring(12).replace(/^0+/, "");
+    },
+
+    parseFloat(value) {
+        return parseFloat(value.replaceAll(".", "").replace(",", "."));
     }
 }

@@ -79,6 +79,8 @@
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
+import { NumberService} from '@/services/number-service';
+
 import { AccountHolderService } from "@/services/account-holder-service";
 import { ExternalBankAccountService } from "@/services/external-bank-account-service";
 import { ExternalPartyService } from "@/services/external-party-service";
@@ -189,7 +191,7 @@ export default {
 
           const externalBankAccountId = createdExternalBankAccount.id;
           const currentDate = new Date().toISOString();
-          const amount = parseFloat(this.amount.replaceAll(".", "").replace(",", "."));
+          const amount = NumberService.parseFloat(this.amount);
 
           const externalTransaction = {
             externalBankAccountId: externalBankAccountId,
@@ -237,7 +239,7 @@ export default {
           }
 
           const currentDate = new Date().toISOString();
-          const amount = parseFloat(this.amount.replaceAll(".", "").replace(",", "."));
+          const amount = NumberService.parseFloat(this.amount);
 
           const externalTransaction = {
             externalBankAccountId: externalBankAccountId,
