@@ -2,7 +2,7 @@
 const baseUrl = "http://localhost:2905/api/internalBankAccounts";
 
 export const InternalBankAccountService = {
-  async getInternalBankAccount(id, simple, year, month) {
+  async getById(id, simple, year, month) {
 
     const url = `${baseUrl}/${id}?simple=${simple}&year=${year}&month=${++month}`
 
@@ -21,9 +21,12 @@ export const InternalBankAccountService = {
     }
   },
 
-  async getInternalBankAccounts() {
+  async getByIban(iban) {
+
+    const url = `${baseUrl}/iban/${iban}`
+
     try {
-      return await fetch(baseUrl).then((response) => {
+      return await fetch(url).then((response) => {
         if (response.ok) {
           return response.json();
         }
@@ -37,7 +40,7 @@ export const InternalBankAccountService = {
     }
   },
 
-  async createInternalBankAccount(bankAccount) {
+  async create(bankAccount) {
     const postObject = {
       method: 'POST',
       headers: {
@@ -65,7 +68,7 @@ export const InternalBankAccountService = {
     }
   },
 
-  async updateInternalBankAccount(accountNumber, jsonPatchDocument) {
+  async update(accountNumber, jsonPatchDocument) {
     const url = `${baseUrl}/${accountNumber}`
 
     const postObject = {

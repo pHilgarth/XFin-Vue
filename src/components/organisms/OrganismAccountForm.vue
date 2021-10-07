@@ -19,6 +19,7 @@ import { useVuelidate } from '@vuelidate/core';
 import { accountValidation } from '@/validation/validations';
 import { ibanDuplicateValidator } from '@/validation/custom-validators';
 
+import { InternalBankAccountService } from '@/services/internal-bank-account-service';
 import { NumberService} from '@/services/number-service';
 
 import AtomButton from '@/components/atoms/AtomButton';
@@ -85,14 +86,21 @@ export default {
 
   methods: {
     async save() {
-      this.$emit('save', {
-        accountNumber: this.accountNumber,
-        balance: NumberService.parseFloat(this.balance),
-        bank: this.bank,
-        description: this.description,
-        bic: this.bic,
-        iban: this.iban,
-        });
+      const duplicate = await InternalBankAccountService.getByIban(this.iban);
+
+      if (!duplicate) {
+        this.$emit('save', {
+          accountNumber: this.accountNumber,
+          balance: NumberService.parseFloat(this.balance),
+          bank: this.bank,
+          description: this.description,
+          bic: this.bic,
+          iban: this.iban,
+          });
+      }
+      else {
+        //TODO - implement error message
+      }
     },
   },
 };
