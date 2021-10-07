@@ -137,7 +137,7 @@ export default {
 
     async getBankAccountOptions() {
       const includeBankAccounts = true;
-      this.accountHolders = await AccountHolderService.getAccountHolders(includeBankAccounts);
+      this.accountHolders = await AccountHolderService.getAll(includeBankAccounts);
 
       if (this.accountHolders) {
         this.accountHolders.forEach(accountHolder => {
@@ -210,7 +210,7 @@ export default {
             counterPartTransactionToken: createdExternalTransaction.transactionToken,
             transactionToken: createdExternalTransaction.counterPartTransactionToken
           };
-          await InternalTransactionService.createInternalTransaction(internalTransaction);
+          await InternalTransactionService.create(internalTransaction);
         }
       }
       else {
@@ -258,7 +258,7 @@ export default {
             counterPartTransactionToken: createdExternalTransaction.transactionToken,
             transactionToken: createdExternalTransaction.counterPartTransactionToken
           };
-          await InternalTransactionService.createInternalTransaction(internalTransaction);
+          await InternalTransactionService.create(internalTransaction);
         }
       }
     },

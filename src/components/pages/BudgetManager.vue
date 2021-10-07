@@ -97,7 +97,7 @@ export default {
 
         async getAccountHolders() {
             const includeAccounts = true;
-            this.accountHolders = await AccountHolderService.getAccountHolders(includeAccounts);
+            this.accountHolders = await AccountHolderService.getAll(includeAccounts);
             this.loading = false;
         },
 

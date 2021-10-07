@@ -147,7 +147,7 @@ export default {
     },
 
     async saveAccountHolder() {
-      const newAccountHolder = await AccountHolderService.createAccountHolder({ name: this.name });
+      const newAccountHolder = await AccountHolderService.create({ name: this.name });
 
       if (newAccountHolder.duplicate) {
         this.duplicateName = true;
@@ -156,7 +156,7 @@ export default {
           for (let i = 0; i < this.bankAccounts.length; i++) {
             const bankAccount = this.bankAccounts[i];
             bankAccount.accountHolderId = newAccountHolder.id;
-            const createdBankAccount = await InternalBankAccountService.createInternalBankAccount(bankAccount);
+            const createdBankAccount = await InternalBankAccountService.create(bankAccount);
 
             if (createdBankAccount.duplicate) {
               console.log(i);

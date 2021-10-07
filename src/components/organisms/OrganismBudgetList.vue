@@ -122,7 +122,7 @@ export default {
         amount: amount,
       };
       
-      const createdTransaction = await InternalTransactionService.createInternalTransaction(internalTransaction);
+      const createdTransaction = await InternalTransactionService.create(internalTransaction);
 
       const counterPartTransaction = {
         internalBankAccountId: category.bankAccountId,
@@ -133,7 +133,7 @@ export default {
         counterPartTransactionToken: createdTransaction.transactionToken,
       };
 
-      /*const createdCounterPartTransaction = */await InternalTransactionService.createInternalTransaction(counterPartTransaction);
+      /*const createdCounterPartTransaction = */await InternalTransactionService.create(counterPartTransaction);
 
       category.dirty = false;
       category.originalBalance = category.balance;

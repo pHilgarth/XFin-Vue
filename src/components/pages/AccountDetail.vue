@@ -59,7 +59,7 @@ export default {
       const year = new Date().getFullYear();
       month = month !== undefined ? month : new Date().getMonth();
 
-      this.account =  await InternalBankAccountService.getInternalBankAccount(this.$route.params.id, simple, year, month);
+      this.account =  await InternalBankAccountService.getById(this.$route.params.id, simple, year, month);
       this.accountNumber = this.account.accountNumber;
       this.loading = false;
     },

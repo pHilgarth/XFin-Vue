@@ -4,7 +4,7 @@
 const baseUrl = "http://localhost:2905/api/accountHolders";
 
 export const AccountHolderService = {
-  async getAccountHolders(includeAccounts) {
+  async getAll(includeAccounts) {
     let url = `${baseUrl}?includeAccounts=${includeAccounts}`;
 
     try {
@@ -25,7 +25,7 @@ export const AccountHolderService = {
     }
   },
 
-  async getAccountHolder(id, includeAccounts, simpleBankAccounts) {
+  async get(id, includeAccounts, simpleBankAccounts) {
     let url = `${baseUrl}/${id}?includeAccounts=${includeAccounts}&simple=${simpleBankAccounts}`;
 
     try {
@@ -43,7 +43,7 @@ export const AccountHolderService = {
     }
   },
 
-  async createAccountHolder(accountHolder) {
+  async create(accountHolder) {
     const postObject = {
       method: 'POST',
       headers: {
@@ -70,7 +70,7 @@ export const AccountHolderService = {
     }
   },
 
-  async updateAccountHolder(accountHolder) {
+  async update(accountHolder) {
     const url = `${baseUrl}/${accountHolder.id}`
     const postObject = {
       method: 'PUT',

@@ -160,7 +160,7 @@ export default {
           balance: NumberService.parseFloat(this.balance),
         }
         
-        const createdBankAccount = await InternalBankAccountService.createInternalBankAccount(newBankAccount);
+        const createdBankAccount = await InternalBankAccountService.create(newBankAccount);
 
         if (createdBankAccount) {
           this.accountHolder.bankAccounts.push(newBankAccount);
@@ -238,7 +238,7 @@ export default {
       const includeAccounts = true;
       const simpleBankAccounts = true;
 
-      this.accountHolder = await AccountHolderService.getAccountHolder(this.$route.params.id, includeAccounts, simpleBankAccounts);
+      this.accountHolder = await AccountHolderService.get(this.$route.params.id, includeAccounts, simpleBankAccounts);
 
       if (this.accountHolder) {
           this.accountHolder.bankAccounts.forEach(bankAccount => {
@@ -281,7 +281,7 @@ export default {
           name: this.name,
         };
 
-        const updatedAccountHolder = await AccountHolderService.updateAccountHolder(accountHolderUpdate);
+        const updatedAccountHolder = await AccountHolderService.update(accountHolderUpdate);
 
         if (updatedAccountHolder != null) {
           this.accountHolder.name = this.name;
@@ -333,7 +333,7 @@ export default {
           }
         }
 
-        await InternalBankAccountService.updateInternalBankAccount(updatedBankAccount.id, jsonPatchDocument);
+        await InternalBankAccountService.update(updatedBankAccount.id, jsonPatchDocument);
 
         this.pendingAccountEdit = false;
       }

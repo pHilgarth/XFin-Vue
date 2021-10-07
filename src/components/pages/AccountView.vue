@@ -139,7 +139,7 @@ export default {
     },
 
     async getAccountHolders(includeAccounts = false) {
-      this.accountHolders = await AccountHolderService.getAccountHolders(includeAccounts);
+      this.accountHolders = await AccountHolderService.getAll(includeAccounts);
       this.loading = false;
     },
 
