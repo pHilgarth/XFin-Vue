@@ -24,14 +24,14 @@
 
           <div v-if="bankAccounts.length" class="new-account-holder__account-items">
             <template v-for="(account, index) in bankAccounts" :key="index">
-              <div class="new-account-holder__account">
+              <div :class="`new-account-holder__account ${duplicateAccount?.index === index ? 'duplicate' : ''}`">
                 <AtomDelete :data-index="index" @click="deleteAccount"/>
                 <span class="new-account-holder__account-number">{{ account.accountNumber }}</span>
                 <AtomButtonLight classList="new-account-holder__edit xfin-button--light" :data-index="index" text="Bearbeiten" @click="editAccount" />
+                <p class="new-account-holder__duplicate-account xfin-form__error" v-if="duplicateAccount?.index === index">
+                  Dieses Konto existiert bereits!
+                </p>
               </div>
-              <p v-if="duplicateAccount?.index === index">
-                Dieses Konto existiert bereits!
-              </p>
             </template>
           </div>
         </div>

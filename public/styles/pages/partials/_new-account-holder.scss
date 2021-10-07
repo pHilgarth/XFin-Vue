@@ -61,6 +61,10 @@
             opacity: 1;
             transition: opacity .2s;
         }
+
+        &.duplicate {
+            margin-bottom: 40px;
+        }
     }
 
     &__delete {
@@ -88,6 +92,16 @@
         transition: opacity .2s;
         @include rem((
             font-size: 12px
-        ))
+        ));
+    }
+
+    &__duplicate-account {
+        font-size: 12px;
+        position: absolute;
+        bottom: 0;
+        margin: 0;
+        text-align: center;
+        transform: translateY(100%);
+        padding-top: 10px;
     }
 }
