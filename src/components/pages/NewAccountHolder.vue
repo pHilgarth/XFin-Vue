@@ -24,7 +24,7 @@
 
           <div v-if="bankAccounts.length" class="new-account-holder__account-items">
             <template v-for="(account, index) in bankAccounts" :key="index">
-              <div :class="`new-account-holder__account ${duplicateAccount?.index === index ? 'duplicate' : ''}`">
+              <div class="new-account-holder__account">
                 <AtomDelete :data-index="index" @click="deleteAccount"/>
                 <span class="new-account-holder__account-number">{{ account.accountNumber }}</span>
                 <AtomButtonLight classList="new-account-holder__edit xfin-button--light" :data-index="index" text="Bearbeiten" @click="editAccount" />
@@ -35,7 +35,8 @@
             </template>
           </div>
         </div>
-        <button class="xfin-button" @click="saveAccountHolder">Kontoinhaber speichern</button>
+        <button class="xfin-button" @click="saveAccountHolder" :disabled="(v$.name.$invalid || duplicateName) || !bankAccounts.length">Kontoinhaber speichern</button>
+        
       </section>
     </div>
     <div v-else class="new-account-holder__form">
@@ -93,6 +94,7 @@ export default {
   watch: {
     name() {
       this.v$.name.$touch();
+      this.duplicateName = false;
     },
     showForm() {
       if (this.showForm) {
