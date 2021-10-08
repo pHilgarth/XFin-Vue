@@ -1,14 +1,17 @@
 <template>
     <div class="account-form">
         <h1>Konto hinzufügen</h1>{{ formData || 'null' }}
-        <form class="xfin-form">
-            <MoleculeInputText field="IBAN" :hasErrors="ibanErrors" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" />
+        <form class="xfin-account-form">
+            <MoleculeInputText field="IBAN" :hasErrors="ibanErrors || duplicate" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" />
+            <p class="xfin-account-form__duplicate-account xfin-form__error" v-if="duplicate">
+              Diese Iban existiert bereits!
+            </p>
             <MoleculeInputText field="BIC" :hasErrors="bicErrors" v-model="bic" @blur="v$.bic.$touch()" :validation="v$.bic" />
             <MoleculeInputText field="Bank" v-model="bank" :optional="true" />
             <MoleculeInputText field="Beschreibung" v-model="description" :optional="true" />
             <MoleculeInputText field="Kontostand" :hasErrors="balanceErrors" v-model="balance" @blur="v$.balance.$touch()" :validation="v$.balance" />
 
-            <AtomButton classList="xfin-form__button" text="Konto speichern" :disabled="v$.$silentErrors.length ? true : false" @click.prevent="save" />
+            <AtomButton classList="xfin-form__button" text="Konto speichern" :disabled="v$.$silentErrors.length || duplicate ? true : false" @click.prevent="save" />
             <AtomButton classList="xfin-form__button" text="Abbrechen" @click.prevent="$emit('cancel')" />
         </form>
     </div>
@@ -62,7 +65,9 @@ export default {
       description:    this.formData?.account?.description || '',
       bic:            this.formData?.account?.bic || '',
       iban:           this.formData?.account?.iban || '',
+
       ibans:          this.formData?.account?.ibans || [],
+      duplicate:      false,
     };
   },
 
@@ -73,7 +78,10 @@ export default {
   },
 
   watch: {
-    iban()          { this.v$.iban.$touch(); },
+    iban()          {
+      this.v$.iban.$touch();
+      this.duplicate = false
+    },
     bic()           { this.v$.bic.$touch(); },
     balance()       { this.v$.balance.$touch(); },
   },
@@ -99,7 +107,7 @@ export default {
           });
       }
       else {
-        //TODO - implement error message
+        this.duplicate = true;
       }
     },
   },
