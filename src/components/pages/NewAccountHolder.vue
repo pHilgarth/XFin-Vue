@@ -1,14 +1,6 @@
 <template>
   <div class="new-account-holder">
     <div v-if="!showForm" class="new-account-holder__main">
-      <p class="dev-hint important">
-        wenn ein neuer kontoinhaber erstellt wird und somit neue Konten, werden
-        auch die Initialisierungstransaktionen erstellt, da ist die Id für die
-        Category allerdings 0 diese muss beim erstellen eines neuen kontos immer
-        die id von "Nicht zugewiesen" sein<br />da tritt noch ein Fehler auf
-        <b>TODO</b>
-      </p>
-      <p class="dev-hint important">doppelte IBANS verhindern => serverseitig muss noch getestet werden, ob die Konten bereits bei anderen AccHolders bereits existieren</p>
       <AtomHeadline tag="h1" text="Kontoinhaber hinzufügen" />
       <section>
         <MoleculeInputText  classList="new-account-holder__name" field="Name" :hasErrors="nameHasErrors || duplicateName"
@@ -160,10 +152,10 @@ export default {
             bankAccount.accountHolderId = newAccountHolder.id;
             const createdBankAccount = await InternalBankAccountService.create(bankAccount);
 
-            if (createdBankAccount.duplicate) {
-              console.log(i);
-              this.duplicateAccount = { index: i };
-              console.log(this.duplicateAccount);
+            if (!createdBankAccount) {
+              //TODO - what if the account was created but the first account crashes? Then I have an accountHolder with no accounts.
+              //In AccountView I can show only accountHolders that have accounts
+              alert('error during account creation');
               break;
             }
           }
