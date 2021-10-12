@@ -1,7 +1,6 @@
 
 <template>
   <div class="account-view">
-    <OrganismNewAccountHolder v-if="modalOpened" @close="modalOpened = false" />
     <AtomHeadline tag="h1" content="Kontenübersicht" />
     <div class="dev-hint important">
       <p>Kostenstelle "Nicht zugewiesen:</p>
@@ -68,7 +67,6 @@ export default {
     return {
       accountHolders: [],
       loading: true,
-      modalOpened: false,
     };
   },
 
