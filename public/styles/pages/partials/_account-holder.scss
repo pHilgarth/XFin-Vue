@@ -1,4 +1,4 @@
-.new-account-holder {
+.new-account-holder, .update-account-holder {
     display: flex;
     overflow: hidden;
     width: 50%;
@@ -57,9 +57,11 @@
             )
         );
 
-        &:hover .new-account-holder__edit {
-            opacity: 1;
-            transition: opacity .2s;
+        &:hover {
+            .new-account-holder__edit, .update-account-holder__edit {
+                opacity: 1;
+                transition: opacity .2s;
+            }
         }
 
         &.duplicate {
