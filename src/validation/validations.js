@@ -9,8 +9,13 @@ export const accountHolderValidation = {
     },
 };
 
-export const accountValidation = {
+export const newAccountValidation = {
     iban:       { ibanValidator },
     bic:        { bicValidator },
     balance:    { balanceValidator },
+};
+
+export const existingAccountValidation = {
+    iban:       { ibanValidator },
+    bic:        { bicValidator },
 }
