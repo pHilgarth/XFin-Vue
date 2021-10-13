@@ -20,9 +20,6 @@
                 <AtomDelete :data-index="index" @click="deleteAccount"/>
                 <span class="new-account-holder__account-number">{{ account.accountNumber }}</span>
                 <AtomButtonLight classList="new-account-holder__edit xfin-button--light" :data-index="index" text="Bearbeiten" @click="editAccount" />
-                <p class="new-account-holder__duplicate-account xfin-form__error" v-if="duplicateAccount?.index === index">
-                  Dieses Konto existiert bereits!
-                </p>
               </div>
             </template>
           </div>
@@ -71,7 +68,6 @@ export default {
       formData: null,
 
       duplicateName: false,
-      duplicateAccount: null,
       loading: true,
       showForm: false,
     };
