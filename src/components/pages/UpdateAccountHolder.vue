@@ -1,176 +1,137 @@
 <template>
-  <div class="edit-account-holder">
-    <h1>Kontoinhaber bearbeiten</h1>
-    <section class="loading" v-if="loading">
-      <div>Daten werden geladen ...</div>
-    </section>
-    <section class="loading-error" v-else-if="!accountHolder">
-      <div class="fetching-error">Fehler beim Laden der Kontoinhaber!</div>
-    </section>
-    <section class="edit-account-holder-body" v-else>
-      <form class="xfin-form">
-        <div class="xfin-form__section">
-          <div class="xfin-form__group row">
-            <label class="xfin-form__label col-3" for="name">Name:</label>
-            <input id="name" :class="{ 'xfin-form__control col-4': true, 'has-errors': v$.name.$error }" type="text" :disabled="accountHolderNameDisabled"
-              v-model="name" @blur="v$.name.$touch" @keyup="enforceMaxLength('name', 15)" />
-            <button class="xfin-form__button btn btn-primary" @click.prevent="toggleAccountHolderNameField">
-              {{ accountHolderNameDisabled ? "[edit]" : "X" }}
-            </button>
-            <button
-              class="xfin-form__button btn btn-primary" @click.prevent="saveAccountHolderName" v-if="!accountHolderNameDisabled">
-              Speichern
-            </button>
-            <p class="xfin-form__error" v-if="v$.name.$error">
-              Bitte gib einen Namen an!
-            </p>
+  <div class="update-account-holder">
+
+    <div v-if="!showForm" class="update-account-holder__main">
+      <AtomHeadline tag="h1" text="Kontoinhaber bearbeiten" />
+      <section>
+        <MoleculeInputText  classList="update-account-holder__name" field="Name" :hasErrors="nameHasErrors || duplicateName"
+                            :validation="v$.name" v-model="name" @blur="v$.name.$touch()"/>
+
+        <teleport v-if="duplicateName" to=".update-account-holder__name">
+          <AtomParagraph classList="xfin-form__error" text="Dieser Name wird bereits verwendet!"/>
+        </teleport>
+
+        <div class="update-account-holder__accounts">
+          <AtomHeadline classList="update-account-holder__accounts-headline" tag="h4" text="Konten:" />
+          <AtomButtonLight classList="xfin-button--light" text="&plus; Neues Konto anlegen" @click="showForm = true"/>
+
+          <div v-if="updatedBankAccounts.length" class="update-account-holder__account-items">
+            <template v-for="(account, index) in updatedBankAccounts" :key="index">
+              <div class="update-account-holder__account">
+                <AtomDelete :data-index="index" @click="deleteAccount(index)"/>
+                <span class="update-account-holder__account-number">{{ account.accountNumber }}</span>
+                <AtomButtonLight classList="update-account-holder__edit xfin-button--light" :data-index="index" text="Bearbeiten" @click="editAccount" />
+              </div>
+            </template>
           </div>
         </div>
-        <div class="xfin-form__section">
-          <div class="xfin-form__group row">
-            <label class="xfin-form__label col-3" for="account">Konto:</label>
-            <label class="xfin-form__label col-4" v-if="pendingAccountCreation">
-              (Neues Konto)
-              </label>
-            <select class="xfin-form__control xfin-form__select col-4" v-model="selectedAccountIndex" @change="loadAccountData"
-                    v-if="bankAccounts.length && !pendingAccountCreation" :disabled="pendingAccountEdit">
-              <option v-for="(account, index) in bankAccounts" :key="index" :value="index">
-                {{ account.accountNumber }}
-              </option>
-            </select>
-            <button
-              class="xfin-form__button btn btn-primary" @click.prevent="draftAccount" :disabled="pendingAccountEdit">
-              {{ pendingAccountCreation ? "&times;" : "&plus;" }}
-            </button>
-            <p class="xfin-form__error" v-if="v$.selectedAccountIndex.$error">
-              Bitte erstelle mindestens ein Konto!
-            </p>
-          </div>
-          <div class="xfin-form__section account-data" v-if="pendingAccountCreation || bankAccounts.length">
-            <div class="xfin-form__group row">
-              <label class="xfin-form__label col-3" for="iban">IBAN:</label>
-              <input id="iban" :class="{ 'xfin-form__control col-4': true, 'has-errors': v$.iban.$error }" :disabled="!pendingAccountCreation && !pendingAccountEdit"
-                type="text" v-model="iban" @blur="v$.iban.$touch" />
-              <p class="xfin-form__error" v-if="v$.iban.$error">
-                Bitte gib eine gültige IBAN an!
-              </p>
-            </div>
-            <div class="xfin-form__group row">
-              <label class="xfin-form__label col-3" for="bic">BIC:</label>
-              <input id="bic" :class="{ 'xfin-form__control col-4': true, 'has-errors': v$.bic.$error }" :disabled="!pendingAccountCreation && !pendingAccountEdit"
-                type="text" v-model="bic" @blur="v$.bic.$touch" />
-              <p class="xfin-form__error" v-if="v$.bic.$error">
-                Bitte gib einen gültigen BIC an!
-              </p>
-            </div>
-            <div class="xfin-form__group row">
-              <label class="xfin-form__label col-3" for="bank">Bank:</label>
-              <input id="bank" :class="{ 'xfin-form__control col-4': true, 'has-errors': v$.bank.$error }" :disabled="!pendingAccountCreation && !pendingAccountEdit"
-                type="text" v-model="bank" @blur="v$.bank.$touch" @keyup="enforceMaxLength('bank', 50)" />
-              <p class="xfin-form__error" v-if="v$.bank.$error">
-                Bitte gib eine Bank an!
-              </p>
-            </div>
-            <div class="xfin-form__group row">
-              <label class="xfin-form__label col-3" for="description">
-                Beschreibung
-                </label>
-              <input id="description" class="xfin-form__control col-4" :disabled="!pendingAccountCreation && !pendingAccountEdit" type="text"
-                      placeholder="(optional)" v-model="description" @keyup="enforceMaxLength('description', 15)" />
-            </div>
-            <div class="xfin-form__group row" v-if="pendingAccountCreation">
-              <label class="xfin-form__label col-3" for="balance">
-                Kontostand
-                </label>
-              <input id="balance" :class="{ 'xfin-form__control col-4': true, 'has-errors': v$.balance.$error }"
-                      :disabled="!pendingAccountCreation && !pendingAccountEdit" type="text" v-model="balance" @blur="v$.balance.$touch" />
-              <p class="xfin-form__error" v-if="v$.balance.$error">
-                Bitte gib einen gültigen Konstostand an!
-              </p>
-            </div>
-            <button class="xfin-form__button btn btn-primary btn-submit-account" @click.prevent="addAccount" v-if="pendingAccountCreation">
-              Konto speichern
-            </button>
-            <button class="xfin-form__button btn btn-primary btn-edit-account" v-else @click.prevent="toggleEditAccount">
-              {{ !pendingAccountEdit ? "Konto bearbeiten" : "Abbrechen" }}
-            </button>
-            <button class="xfin-form__button btn btn-primary btn-update-account" v-if="pendingAccountEdit"
-                    @click.prevent="updateAccount">
-              Änderungen speichern
-            </button>
-            <button class="xfin-form__button btn btn-primary btn-delete-account" title="Konto entfernen" v-if="!pendingAccountCreation && !pendingAccountEdit"
-              @click.prevent="deleteAccount">
-              [Trash]
-            </button>
-          </div>
-        </div>
-      </form>
-    </section>
+        <button class="xfin-button" @click="saveChanges" :disabled="v$.name.$invalid || duplicateName || !updatedBankAccounts.length">
+          Kontoinhaber speichern
+        </button>
+
+      </section>
+    </div>
+    <div v-else class="update-account-holder__form">
+      <OrganismAccountForm :formData="formData" :newAccount="newAccount" @cancel="showForm = false" @save="saveAccount"/>
+    </div>
   </div>
 </template>
 
 <script>
-import { useVuelidate } from "@vuelidate/core";
-import { required } from "@vuelidate/validators";
+import { useVuelidate }                   from "@vuelidate/core";
+import { accountHolderValidation }        from '@/validation/validations';
 
-import { AccountHolderService } from "@/services/account-holder-service";
-import { InternalBankAccountService } from "@/services/internal-bank-account-service";
-import { NumberService } from "@/services/number-service";
+import AtomButtonLight                    from "@/components/atoms/AtomButtonLight";
+import AtomDelete                         from "@/components/atoms/AtomDelete";
+import AtomHeadline                       from "@/components/atoms/AtomHeadline";
+import AtomParagraph                      from '@/components/atoms/AtomParagraph';
 
-import {
-  bicValidator,
-  ibanValidator,
-  balanceValidator,
-} from "@/validation/custom-validators";
+import MoleculeInputText                  from "@/components/molecules/MoleculeInputText";
+
+import OrganismAccountForm                from "@/components/organisms/OrganismAccountForm";
+
+import { AccountHolderService }           from "@/services/account-holder-service";
+import { InternalBankAccountService }     from "@/services/internal-bank-account-service";
+import { NumberService }                  from "@/services/number-service";
 
 export default {
-  beforeMount() {
+  components: {
+    AtomButtonLight,
+    AtomDelete,
+    AtomHeadline,
+    AtomParagraph,
+    MoleculeInputText,
+    OrganismAccountForm,
+  },
+
+  created() {
     this.getAccountHolder();
   },
+
   data() {
     return {
-      accountHolder: null,
-      selectedAccountIndex: 0,
+      accountHolderId: 0,
 
-      accountHolderNameDisabled: false,
+      sourceName: '',
+      name: '',
+      duplicateName: false,
+      nameChanged: false,
+
+      sourceBankAccounts: [],
+      updatedBankAccounts: [],
+      accountsChanged: false,
+      formData: null,
+
       loading: true,
-      pendingAccountCreation: false,
-      pendingAccountEdit: false,
-
-      name: "",
-      iban: "",
-      bic: "",
-      bank: "",
-      description: "",
-      balance: "",
-      bankAccounts: [],
+      showForm: false,
+      newAccount: false,
     };
   },
 
-  methods: {
-    async addAccount() {
-      if (this.validateAccountFields()) {
-        const newBankAccount = {
-          accountHolderId: this.accountHolder.id,
-          accountNumber: NumberService.getAccountNumber(this.iban),
-          iban: this.iban.toUpperCase(),
-          bic: this.bic.toUpperCase(),
-          bank: this.bank,
-          description: this.description,
-          balance: NumberService.parseFloat(this.balance),
+  computed: {
+    nameHasErrors() {
+      return this.v$.name.$error;
+    },
+  },
+
+  watch: {
+    name() {
+      this.v$.name.$touch();
+      this.duplicateName = false;
+
+      this.nameChanged = this.name !== this.sourceName;
+    },
+
+    showForm() {
+      if (this.showForm) {
+        //if there is no formData, the user is creating a new account
+        if (!this.formData) {
+          this.formData = {
+            ibans: this.updatedBankAccounts.map((b) => b.iban),
+          };
+          this.newAccount = true;
         }
-        
-        const createdBankAccount = await InternalBankAccountService.create(newBankAccount);
+      } else {
+        this.formData = null;
+        this.newAccount = false;
+      }
+    },
+  },
 
-        if (createdBankAccount) {
-          this.accountHolder.bankAccounts.push(newBankAccount);
-          this.bankAccounts.push(newBankAccount);
-          this.selectedAccountIndex = this.bankAccounts.length - 1;
+  methods: {
+    checkForChanges(sourceAccount, bankAccount) {
+      const subset = ({iban, bic, bank, description}) => ({iban, bic, bank, description});
+      const sourceSubset = subset(sourceAccount);
+      const updateSubset = subset(bankAccount);
+      const changed = [];
 
-          this.pendingAccountCreation = false;
-          this.loadAccountData();
+      for (const prop in sourceSubset) {
+        if (sourceSubset[prop] !== updateSubset[prop]) {
+          changed.push(prop);
         }
       }
+
+      return changed;
     },
 
     //TODO - relocate this copy function into some kind of service - it's reusable
@@ -212,165 +173,152 @@ export default {
       return targetObject;
     },
 
-    deleteAccount() {
-      alert('not implemented yet!');
+    deleteAccount(index) {
+      const bankAccount = this.updatedBankAccounts[index];
+      //TODO - implement delete on existing accounts
+      if (bankAccount.id) {
+        alert(`delete account (${bankAccount.id}) - not yet implemented on existing accounts!`);
+      }
+      else {
+        this.updatedBankAccounts.splice(index, 1);
+        console.log(this.updatedBankAccounts);
+      }
     },
 
-    draftAccount() {
-      this.pendingAccountCreation = !this.pendingAccountCreation;
+    editAccount(event) {
+      const bankAccount = this.updatedBankAccounts[event.target.dataset.index];
 
-      if (this.pendingAccountCreation) {
-        this.selectedAccountIndex = -1;
-      } else {
-        this.selectedAccountIndex = 0;
+      if (!bankAccount.id) {
+        bankAccount.index = event.target.dataset.index;
       }
 
-      this.loadAccountData();
-    },
+      this.formData = {
+        account: bankAccount,
+        ibans: this.updatedBankAccounts.map((b) => b.iban),
+      };
 
-    enforceMaxLength(field, length) {
-      if (this[field].length > length) {
-        this[field] = this[field].slice(0, length);
-      }
+      this.newAccount = this.sourceBankAccounts.find(b => b.id === bankAccount.id) == null;
+      this.showForm = true;
     },
 
     async getAccountHolder() {
       const includeAccounts = true;
       const simpleBankAccounts = true;
 
-      this.accountHolder = await AccountHolderService.get(this.$route.params.id, includeAccounts, simpleBankAccounts);
+      const accountHolder = await AccountHolderService.get(this.$route.params.id, includeAccounts, simpleBankAccounts);
 
-      if (this.accountHolder) {
-          this.accountHolder.bankAccounts.forEach(bankAccount => {
-              bankAccount.accountNumber = NumberService.getAccountNumber(bankAccount.iban);
-          });
+      this.accountHolderId = accountHolder.id;
+      this.sourceName = accountHolder.name;
+      this.name = accountHolder.name;
 
-          this.bankAccounts = this.copyArray(this.accountHolder.bankAccounts);
-
-          this.accountHolderNameDisabled = true;
-          this.name = this.accountHolder.name;
-          this.loadAccountData();
-      }
+      this.sourceBankAccounts = accountHolder.bankAccounts;
+      this.updatedBankAccounts = this.copyArray(accountHolder.bankAccounts);
 
       this.loading = false;
     },
 
-    loadAccountData() {
-      if (this.selectedAccountIndex == -1) {
-        this.iban = "";
-        this.bic = "";
-        this.bank = "";
-        this.description = "";
-        this.balance = "";
+    saveAccount(event) {
+      const bankAccount = {
+        accountNumber:  NumberService.getAccountNumber(event.iban),
+        id:             event.id,
+        iban:           event.iban,
+        bic:            event.bic,
+        bank:           event.bank,
+        description:    event.description,
+      };
 
-        this.v$.$reset();
+      const sourceAccount = this.sourceBankAccounts.find(b => b.id === event.id);
+
+      //TODO - is it possible to rework this if else mess?
+      //if sourceAccount => the user updated an persisted account
+      if (sourceAccount) {
+        bankAccount.changed = this.checkForChanges(sourceAccount, bankAccount);
+
+        const index = this.updatedBankAccounts.findIndex(b => b.id === event.id);
+        this.updatedBankAccounts[index] = bankAccount;
+        //if not, he created or updated a new one
       } else {
-        this.iban = this.bankAccounts[this.selectedAccountIndex].iban;
-        this.bic = this.bankAccounts[this.selectedAccountIndex].bic;
-        this.bank = this.bankAccounts[this.selectedAccountIndex].bank;
-        this.description = this.bankAccounts[this.selectedAccountIndex].description;
-      }
-    },
+        bankAccount.balance = event.balance;
 
-    async saveAccountHolderName() {
-      this.v$.name.$touch();
-
-      if (!this.v$.name.$errors.length) {
-        const accountHolderUpdate = {
-          id: this.accountHolder.id,
-          name: this.name,
-        };
-
-        const updatedAccountHolder = await AccountHolderService.update(accountHolderUpdate);
-
-        if (updatedAccountHolder != null) {
-          this.accountHolder.name = this.name;
-        } else {
-          this.name = this.accountHolder.name;
+        //if !event.accountNumber => the user created a new account - add it to updatedBankAccounts
+        if (!event.index) {
+          bankAccount.newAccount = true;
+          this.updatedBankAccounts.push(bankAccount);
         }
-
-        this.accountHolderNameDisabled = true;
+        else {
+          this.updatedBankAccounts[event.index] = bankAccount;
+        }
       }
+      this.showForm = false;
+      this.accountsChanged = true;
     },
 
-    toggleAccountHolderNameField() {
-      this.accountHolderNameDisabled = !this.accountHolderNameDisabled;
+    async saveChanges() {
+      if (this.nameChanged) {
+        const updatedAccountHolder = await this.saveName();
 
-      if (this.accountHolderNameDisabled) {
-        this.name = this.accountHolder.name;
+        if (updatedAccountHolder.duplicate) {
+          this.duplicateName = true;
+          return;
+        }
       }
-    },
 
-    toggleEditAccount() {
-      this.pendingAccountEdit = !this.pendingAccountEdit;
+      if (this.accountsChanged) {
+        for (let i = 0; i < this.updatedBankAccounts.length; i++) {
+          const bankAccount = this.updatedBankAccounts[i];
+          const jsonPatch = [];
 
-      if (!this.pendingAccountEdit) {
-        this.loadAccountData();
-      }
-    },
-
-    async updateAccount() {
-      if (this.validateAccountFields()) {
-        const jsonPatchDocument = [];
-        const sourceBankAccount = this.accountHolder.bankAccounts[this.selectedAccountIndex];
-        let updatedBankAccount = this.bankAccounts[this.selectedAccountIndex];
-
-        updatedBankAccount.iban = this.iban.toUpperCase();
-        updatedBankAccount.bic = this.bic.toUpperCase();
-        updatedBankAccount.bank = this.bank;
-        updatedBankAccount.description = this.description;
-
-        for (const prop in updatedBankAccount) {
-          if (updatedBankAccount[prop] !== sourceBankAccount[prop]) {
-            //TODO - dont include revenues and expenses in bankAccount on accountholder view!
-            if (prop !== "revenues" && prop !== "expenses") {
-              jsonPatchDocument.push({
+          if (bankAccount.id && bankAccount.changed) {
+            for (const prop of bankAccount.changed) {
+              jsonPatch.push({
                 op: "replace",
                 path: `/${prop}`,
-                value: updatedBankAccount[prop],
+                value: bankAccount[prop],
               });
             }
+
+            await InternalBankAccountService.update(bankAccount.id, jsonPatch);
           }
+          else if (!bankAccount.id) {
+            bankAccount.accountHolderId = this.$route.params.id;
+
+            console.log(bankAccount);
+            const createdBankAccount = await InternalBankAccountService.create(bankAccount);
+            console.log(createdBankAccount);
+          }
+          //if bankAccount.newAccount => it's a newly created account
         }
-
-        await InternalBankAccountService.update(updatedBankAccount.id, jsonPatchDocument);
-
-        this.pendingAccountEdit = false;
+        // for (let i = 0; i < this.updatedBankAccounts.length; i++) {
+          // const updatedBankAccount = this.updatedBankAccounts[i];
+          //
+          // //const createdBankAccount = await InternalBankAccountService.create(updatedBankAccount);
+          //
+          // if (!createdBankAccount) {
+          //   //TODO - what if the account was created but the first account crashes? Then I have an accountHolder with no accounts.
+          //   //In AccountView I can show only accountHolders that have accounts
+          //   alert('error during account creation');
+          //   break;
+          // }
+        // }
       }
+
+      this.$router.push('/');
     },
 
-    validateAccountFields() {
-      this.v$.iban.$touch();
-      this.v$.bic.$touch();
-      this.v$.bank.$touch();
-      
-      if (this.pendingAccountCreation) {
-        this.v$.balance.$touch();
-      }
+    async saveName() {
+      const updatedAccountHolder = {
+        id: this.accountHolderId,
+        name: this.name,
+      };
 
-      if (this.$route.params.id == 0) {
-        this.v$.balance.$touch();
-      }
-
-      if (!this.v$.$errors.length) {
-        return true;
-      }
+      return await AccountHolderService.update(updatedAccountHolder);
     },
   },
+
   setup() {
-    return {
-      v$: useVuelidate(),
-    };
+    return { v$: useVuelidate(), };
   },
 
-  validations() {
-    return {
-      name: { required },
-      iban: { required, ibanValidator },
-      bic: { required, bicValidator },
-      bank: { required },
-      balance: { required, balanceValidator },
-    };
-  },
+  validations() { return accountHolderValidation; },
 };
 </script>

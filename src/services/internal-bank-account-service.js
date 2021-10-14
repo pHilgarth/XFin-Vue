@@ -21,9 +21,9 @@ export const InternalBankAccountService = {
     }
   },
 
-  async getByIban(iban) {
+  async getByIban(id, iban) {
 
-    const url = `${baseUrl}/iban/${iban}`
+    const url = `${baseUrl}/${id}/${iban}`
 
     try {
       return await fetch(url).then((response) => {

@@ -38,6 +38,8 @@
 
     &__account-items {
         display: flex;
+        flex-wrap: wrap;
+
         @include rem((
             margin-top: 30px,
         ));
@@ -54,6 +56,7 @@
                 width: 150px,
                 font-size: 24px,
                 margin-right: 10px,
+                margin-bottom: 10px,
             )
         );
 

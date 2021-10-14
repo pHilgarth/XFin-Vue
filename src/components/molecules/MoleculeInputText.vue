@@ -31,7 +31,7 @@ export default {
                             }
                         },
         hasErrors:      { type: Boolean },
-        modelValue:     { type: String, required: true },
+        modelValue:     { type: String },
         disabled:       { type: Boolean },
         optional:       { type: Boolean },
         validation:     { type: Object },

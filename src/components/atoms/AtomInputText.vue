@@ -15,7 +15,7 @@ export default {
   props: {
     id:               { type: String },
     classList:        { type: String },
-    value:            { type: String, required: true },
+    value:            { type: String },
     disabled:         { type: Boolean },
     placeholder:      { type: String },
                       
