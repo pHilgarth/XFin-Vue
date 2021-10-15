@@ -1,6 +1,6 @@
 <template>
     <div class="account-form">
-        <h1>Konto hinzufügen</h1><p>{{ v$.$silentErrors.length }}</p><p>{{ v$.$silentErrors }}</p><p>{{ duplicate }}</p>
+        <h1>Konto hinzufügen</h1>
         <form class="xfin-account-form">
             <MoleculeInputText field="IBAN" :hasErrors="ibanErrors || duplicate" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" />
             <p class="xfin-account-form__duplicate-account xfin-form__error" v-if="duplicate">
