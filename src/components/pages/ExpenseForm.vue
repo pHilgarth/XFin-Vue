@@ -1,7 +1,7 @@
 <template>
   <div class="expense-form">
     <section class="expense-form-body">
-      <h1>Ausgabe eintragen</h1>
+      <h1>Ausgabe eintragen</h1><p class="dev-hint important">beim laden der form tritt direkt ein fehler auf (console)</p>
       <!-- TODO -->
       <h2 class="dev-hint">
         start using vuetify to implement a combobox for source selection
