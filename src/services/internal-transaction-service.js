@@ -2,7 +2,7 @@
 const baseUrl = "http://localhost:2905/api/internalTransactions";
 
 export const InternalTransactionService = {
-  async createInternalTransaction(transaction) {
+  async create(transaction) {
     const postObject = {
       method: 'POST',
       headers: {
