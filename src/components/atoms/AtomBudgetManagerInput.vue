@@ -1,5 +1,5 @@
 <template>
-    <input type="text" class="text-right" :value="valueProp" @input="proceedInput" />
+    <input type="text" class="text-right" :value="valueProp" @input="processInput" />
 </template>
 
 <script>
@@ -22,12 +22,12 @@ export default {
     },
 
     methods: {
-        proceedInput(event) {
+        processInput(event) {
             const caretPosition = event.target.selectionStart;
             const lengthBefore = event.target.value.length;
 
             if (this.validateInput(event)) {
-                const negative = NumberService(parseFloat(event.target.value)) < 0 ? true : false;
+                const negative = NumberService.parseFloat(event.target.value) < 0;
                 let value = negative ? event.target.value.slice(1) : event.target.value;
 
                 //after every input, we format the value
