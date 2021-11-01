@@ -2,10 +2,16 @@
     &__control {
         border-radius: .5rem;
         border-width: .1rem;
+        box-shadow: none;
         @include rem((
             font-size: 20px,
             padding: 3px 15px,
         ));
+
+        &:focus {
+            box-shadow: none;
+            border-color: $color__secondary
+        }
     }
 
     &__button {
