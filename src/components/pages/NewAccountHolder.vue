@@ -139,6 +139,7 @@ export default {
     async saveAccountHolder() {
       const newAccountHolder = await AccountHolderService.create({ name: this.name });
 
+      //TODO - it's only checked, if newAccountHolder is a duplicate, not if there even is a newAccountHolder
       if (newAccountHolder.duplicate) {
         this.duplicateName = true;
       }
@@ -146,6 +147,8 @@ export default {
           for (let i = 0; i < this.bankAccounts.length; i++) {
             const bankAccount = this.bankAccounts[i];
             bankAccount.accountHolderId = newAccountHolder.id;
+            bankAccount.iban = bankAccount.iban.toUpperCase();
+            bankAccount.bic = bankAccount.bic.toUpperCase();
             const createdBankAccount = await InternalBankAccountService.create(bankAccount);
 
             if (!createdBankAccount) {
@@ -153,6 +156,9 @@ export default {
               //In AccountView I can show only accountHolders that have accounts
               alert('error during account creation');
               break;
+            }
+            else {
+              this.$router.push('/');
             }
           }
       }
