@@ -1,4 +1,5 @@
 <template>
+<!-- TODO rework class structure of elements (ie here its .account-form -xfin-account-form) - don't remove this comment before all classes in project are updated, deleted, etc....-->
     <div class="account-form">
         <h1>Konto hinzufügen</h1>
         <form class="xfin-account-form">
