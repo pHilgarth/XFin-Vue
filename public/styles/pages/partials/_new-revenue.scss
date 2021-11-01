@@ -1,0 +1,9 @@
+.new-revenue {
+    width: 50%;
+
+    &__account {
+        border-bottom: 1px solid $color__borders;
+        
+        @include rem(( margin-bottom: 20px ));
+    }
+}
