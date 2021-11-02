@@ -4,7 +4,7 @@
         border-width: .1rem;
         box-shadow: none;
         @include rem((
-            font-size: 20px,
+            font-size: 18px,
             padding: 3px 15px,
         ));
 
@@ -89,4 +89,8 @@
             }
         }
     }
+}
+
+.form-floating .xfin-form__control.form-select {
+    @include rem(( height: 62px ));
 }

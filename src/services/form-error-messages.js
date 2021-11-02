@@ -1,16 +1,22 @@
 export const errorMessages = {
-    //name errors
-    name_required:          'Bitte gib einen Namen ein!',
-    name_maxLength:         'Der Name darf nicht länger als 15 Zeichen sein!',
-    name_nameDuplicate:     'Dieser Name existiert bereits!',
+    //amount errors
+    amount:                 'Bitte gib einen gültigen Betrag ein!',
+
+    //balance errors
+    balance:                'Bitte gib einen gültigen Betrag ein!',
+
+    //bic errors
+    bic:                    'Bitte gib einen gültigen BIC ein!',
 
     //iban errors
     iban_ibanValidator:     'Bitte gib eine gültige IBAN ein!',
     iban_ibanDuplicate:     'Diese IBAN existiert bereits!',
 
-    //bic errors
-    bic:                    'Bitte gib einen gültigen BIC ein!',
+    //name errors
+    name_required:          'Bitte gib einen Namen ein!',
+    name_maxLength:         'Der Name darf nicht länger als 15 Zeichen sein!',
+    name_nameDuplicate:     'Dieser Name existiert bereits!',
 
-    //balance errors
-    balance:                'Bitte gib einen gültigen Betrag ein!',
+    //source errors
+    source:                 'Bitte gib eine Quelle an!',
 }

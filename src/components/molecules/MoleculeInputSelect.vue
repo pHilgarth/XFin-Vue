@@ -1,7 +1,7 @@
 <template>
-    <div class="form-floating pb-5" :class="classList" :id="id">
-        <AtomInputSelect classList="form-select" :id="field.toLowerCase()" :value="modelValue" :options="options" @input="$emit('update:modelValue', $event.target.value)" />
-        <AtomLabel classList="xfin-form__label" :target="field.toLowerCase()" text="Quelle" />
+    <div class="form-floating" :class="classList" :id="id">
+        <AtomInputSelect classList="form-select xfin-form__control" :id="field.toLowerCase()" :value="modelValue" :options="options" @input="$emit('update:modelValue', $event.target.value)" />
+        <AtomLabel classList="xfin-form__label" :target="field.toLowerCase()" :text="label" />
         <!-- <template v-for="(error, index) in validation?.$errors" :key="index">
             <AtomParagraph classList="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
         </template> -->
@@ -24,8 +24,7 @@ export default {
             required: true,
         },
         modelValue:     { type: String, required: true },
-        // validation:     { type: Object },
-        // Validation has to be the vuelidate object of the property (i.e. v$.name)
+        label:          { type: String, required: true },
     },
 
     components: {

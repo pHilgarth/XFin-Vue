@@ -3,14 +3,14 @@
     <div class="account-form">
         <h1>Konto hinzufügen</h1>
         <form class="xfin-account-form">
-            <MoleculeInputText field="IBAN" :hasErrors="ibanErrors || duplicate" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" />
+            <MoleculeInputText field="iban" :hasErrors="ibanErrors || duplicate" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" label="IBAN" />
             <p class="xfin-account-form__duplicate-account xfin-form__error" v-if="duplicate">
               Diese Iban existiert bereits!
             </p>
-            <MoleculeInputText field="BIC" :hasErrors="bicErrors" v-model="bic" @blur="v$.bic.$touch()" :validation="v$.bic" />
-            <MoleculeInputText field="Bank" v-model="bank" :optional="true" />
-            <MoleculeInputText field="Beschreibung" v-model="description" :optional="true" />
-            <MoleculeInputText v-if="newAccount" field="Kontostand" :hasErrors="balanceErrors" v-model="balance" @blur="v$.balance.$touch()" :validation="v$.balance" />
+            <MoleculeInputText field="bic" :hasErrors="bicErrors" v-model="bic" @blur="v$.bic.$touch()" :validation="v$.bic" label="BIC" />
+            <MoleculeInputText field="bank" v-model="bank" :optional="true" label="Bank" />
+            <MoleculeInputText field="description" v-model="description" :optional="true" label="Beschreibung" />
+            <MoleculeInputText v-if="newAccount" field="balance" :hasErrors="balanceErrors" v-model="balance" @blur="v$.balance.$touch()" :validation="v$.balance" label="Kontostand" />
 
             <AtomButton classList="xfin-form__button" text="Konto speichern" :disabled="v$.$silentErrors.length || duplicate ? true : false" @click.prevent="save" />
             <AtomButton classList="xfin-form__button" text="Abbrechen" @click.prevent="$emit('cancel')" />

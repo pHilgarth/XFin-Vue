@@ -1,10 +1,11 @@
 <template>
+<!-- TODO - rework all components using this Molecule to use the prop 'label' for the label text and a lowercase english word for the id and the labels for-attribute -->
     <div class="form-floating pb-5" :class="classList">
-        <AtomInputText  :id="field.toLowerCase()" :disabled="disabled" :placeholder="field" :value="modelValue"
+        <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :placeholder="label"
                         :classList="`xfin-form__control form-control col-4 ${hasErrors ? 'has-errors' : ''}`"
                         @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
                         
-        <AtomLabel classList="xfin-form__label" :target="field.toLowerCase()" :text="`${field}${optional ? '' : ' <i>*</i>'}`" />
+        <AtomLabel classList="xfin-form__label" :target="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
 
         <template v-for="(error, index) in validation?.$errors" :key="index">
             <AtomParagraph classList="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
@@ -30,6 +31,7 @@ export default {
                                 return value.match(/^[a-zA-Z]+$/);
                             }
                         },
+        label:          { type: String, required: true },
         hasErrors:      { type: Boolean },
         modelValue:     { type: String },
         disabled:       { type: Boolean },

@@ -1,11 +1,10 @@
 import { required, maxLength } from "@vuelidate/validators";
-import { bicValidator, ibanValidator, balanceValidator } from "@/validation/custom-validators";
+import { amountValidator, balanceValidator, bicValidator, ibanValidator, } from "@/validation/custom-validators";
 
 
 export const accountHolderValidation = {
     name: {
-        required,
-        maxLength: maxLength(15),
+        required, maxLength: maxLength(15),
     },
 };
 
@@ -18,4 +17,9 @@ export const newAccountValidation = {
 export const existingAccountValidation = {
     iban:       { ibanValidator },
     bic:        { bicValidator },
+}
+
+export const revenueValidation = {
+    amount:     { required, amountValidator },
+    source:     { required },
 }

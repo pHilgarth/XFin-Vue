@@ -6,98 +6,31 @@
       <!-- TODO - start using vuetify to implement a combobox for source selection-->
 
       <form class="xfin-account-form" v-if="bankAccountOptions">
-        <MoleculeInputSelect classList="new-revenue__account" :options="bankAccountOptions" field="account" v-model="selectedAccountNumber" />
+        <MoleculeInputSelect classList="new-revenue__account" :options="bankAccountOptions" field="account" v-model="selectedAccountNumber" label="Konto" />
+        <MoleculeInputSelect classList="new-revenue__category" :options="categoryOptions" field="category" v-model="selectedCategoryIndex" label="Kostenstelle" />
         
-        <!-- <MoleculeInputSelect :options="sources" field="source" v-if="sources.length && !pendingSourceCreation"/>
-        <MoleculeInputText v-else field="source" /> -->
+        <MoleculeInputSelect :options="sources" field="source" v-if="sources.length && !pendingSourceCreation"/>
+        <MoleculeInputText v-else field="source" :hasErrors="sourceErrors" v-model="source" :validation="v$.source" label="Quelle" @blur="v$.source.$touch()" />
         <!-- {{ sources.length }}
         {{ sources[0]}}
         {{ !pendingSourceCreation }} -->
 
-        <!-- <MoleculeInputText field="Verwendunszweck" v-model="reference" :optional="true" /> -->
-        <!-- <MoleculeInputText field="Betrag" :hasErrors="amountErrors" v-model="amount" @blur="v$.amount.$touch()" :validation="v$.amount" /> -->
-        <!-- <MoleculeInputSelect classList="new-revenue__category" :options="categoryOptions" field="account" /> -->
 
-<!--        <AtomButton classList="xfin-form__button" text="Konto speichern" :disabled="v$.$silentErrors.length || duplicate ? true : false" @click.prevent="save" />-->
-<!--        <AtomButton classList="xfin-form__button" text="Abbrechen" @click.prevent="$emit('cancel')" />-->
+        <MoleculeInputText field="reference" v-model="reference" :optional="true" label="Verwendungszweck" />
+        <MoleculeInputText field="amount" :hasErrors="amountErrors" v-model="amount" :validation="v$.amount" label="Betrag" @blur="v$.amount.$touch()" />
+
+       <AtomButton classList="xfin-form__button" text="Speichern" :disabled="v$.$silentErrors.length" @click.prevent="save" />
+
       </form>
-
-
-<!--      <form class="xfin-form">-->
-<!--        <div class="xfin-form__section">-->
-<!--          <div class="xfin-form__group row">-->
-<!--            <label class="xfin-form__label col-3" for="name">Konto:</label>-->
-<!--            <select class="xfin-form__control xfin-form__select col-4" v-model="selectedAccountIndex" @change="changeAccount">-->
-<!--              <option v-for="(option, index) in bankAccountOptions" :key="index" :value="index" :disabled="!parseInt(option.label)">-->
-<!--                {{ parseInt(option.label) ? `&nbsp;&nbsp;${option.label}` : option.label }}-->
-<!--              </option>-->
-<!--            </select>-->
-<!--          </div>-->
-<!--          <div class="xfin-form__group row">-->
-<!--            <label class="xfin-form__label col-3" for="source">Quelle:</label>-->
-<!--            <select id="source" class="xfin-form__control xfin-form__select col-4" v-model="selectedSourceIndex" @change="changeSource"-->
-<!--                    v-if="sources.length && !pendingSourceCreation">-->
-<!--              <option v-for="(source, index) in sources" :key="index" :value="index">-->
-<!--                {{ source.name }}-->
-<!--              </option>-->
-<!--            </select>-->
-<!--            <input v-else id="source" :class="{'xfin-form__control col-4': true,  'has-errors': v$.newSource.$error}" type="text" placeholder="(Neue Quelle)"-->
-<!--                    v-model="newSource" />-->
-<!--            <button class="xfin-form__button btn btn-primary" @click.prevent="toggleSourceCreation" v-if="sources.length">-->
-<!--              {{ pendingSourceCreation ? "&times;" : "&plus;" }}-->
-<!--            </button>-->
-<!--            <button class="xfin-form__button btn btn-primary" @click.prevent="saveSource" v-if="pendingSourceCreation">-->
-<!--              Speichern-->
-<!--            </button>-->
-<!--            <p class="xfin-form__error" v-if="(pendingSourceCreation || !sources.length) && v$.newSource.$error">-->
-<!--              Bitte gib eine Quelle an!-->
-<!--            </p>-->
-<!--            <p class="xfin-form__error" v-if="unsavedSource">-->
-<!--              Bitte speichere die Quelle!-->
-<!--            </p>-->
-<!--          </div>-->
-<!--        </div> -->
-<!--        <div class="xfin-form__section">-->
-<!--          <div class="xfin-form__section account-data">-->
-<!--            <div class="xfin-form__group row">-->
-<!--              <label class="xfin-form__label col-3" for="amount">Betrag:</label>-->
-<!--              <input id="amount" :class="{ 'xfin-form__control col-4': true, 'has-errors': v$.amount.$error }" type="text" v-model="amount" @blur="v$.amount.$touch" />-->
-<!--              <p class="xfin-form__error" v-if="v$.amount.$error">-->
-<!--                Bitte gib einen gültigen Betrag an!-->
-<!--              </p>-->
-<!--            </div>-->
-<!--            <div class="xfin-form__group row">-->
-<!--              <label class="xfin-form__label col-3" for="reference">Verwendungszweck:</label>-->
-<!--              <input id="reference" :class="{'xfin-form__control col-4': true,  'has-errors': v$.reference.$error}" type="text" v-model="reference"-->
-<!--                      @blur="v$.reference.$touch" />-->
-<!--              <p class="xfin-form__error" v-if="v$.reference.$error">-->
-<!--                Bitte gib einen Verwendungszweck an!-->
-<!--              </p>-->
-<!--            </div>-->
-<!--          <div class="xfin-form__group row">-->
-<!--            <label class="xfin-form__label col-3" for="source">Kategorie:</label>-->
-<!--            <select id="category" class="xfin-form__control xfin-form__select col-4" v-model="selectedCategoryIndex" @change="changeCategory">-->
-<!--              <option v-for="(category, index) in categories" :key="index" :value="index">-->
-<!--                {{ category.name }}-->
-<!--              </option>-->
-<!--            </select>-->
-<!--          </div>-->
-<!--            <button class="xfin-form__button btn btn-primary btn-submit-revenue" @click.prevent="saveRevenue">-->
-<!--              Einnahme speichern-->
-<!--            </button>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </form>-->
     </section>
   </div>
 </template>
 
 <script>
 import { useVuelidate } from "@vuelidate/core";
-import { required } from "@vuelidate/validators";
+import { revenueValidation } from "@/validation/validations";
 
 import { NumberService } from '@/services/number-service';
-
 import { AccountHolderService } from "@/services/account-holder-service";
 import { ExternalBankAccountService } from "@/services/external-bank-account-service";
 import { ExternalPartyService } from "@/services/external-party-service";
@@ -105,10 +38,8 @@ import { InternalTransactionService } from "@/services/internal-transaction-serv
 import { ExternalTransactionService } from "@/services/external-transaction-service";
 import { TransactionCategoryService } from '@/services/transaction-category-service.js';
 
-import { amountValidator } from "@/validation/custom-validators";
-
-//import AtomButton                       from '@/components/atoms/AtomButton';
-//import MoleculeInputText                from '@/components/molecules/MoleculeInputText';
+import AtomButton                       from '@/components/atoms/AtomButton';
+import MoleculeInputText                from '@/components/molecules/MoleculeInputText';
 import MoleculeInputSelect              from "@/components/molecules/MoleculeInputSelect";
 //import MoleculeInputText from "../molecules/MoleculeInputText";
 
@@ -120,16 +51,23 @@ export default {
   },
 
   components: {
-    //MoleculeInputText,
-    //AtomButton,
+    MoleculeInputText,
+    AtomButton,
     MoleculeInputSelect
+  },
+
+  computed: {
+    amountErrors() { return this.v$.amount.$error },
+    sourceErrors() { return this.v$.source.$error },
   },
 
   data() {
     return {
-      //TODO - order these members somehow
+      //TODO - refactor this
       amount: '',
       reference: '',
+      newSource: '',
+      selectedSource: null,
       
       selectedAccountNumber: '',
       selectedAccountId: 0,
@@ -148,7 +86,6 @@ export default {
 
       pendingSourceCreation: false,
       unsavedSource: false,
-      newSource: ''
     };
   },
 
@@ -224,7 +161,7 @@ export default {
     async getExternalParties() {
       this.sources = await ExternalPartyService.getExternalParties();
       if (this.sources.length === 0) {
-        this.newSourceInputActive = true;
+        //e
       }
       else {
         this.selectedSourceBankAccountId = this.sources[0].externalBankAccountId;
@@ -258,8 +195,8 @@ export default {
       }
     },
 
-    async saveRevenue() {
-      this.v$.newSource.$reset();
+    async save() {
+      //this.v$.newSource.$reset();
 
       if (!this.sources.length) {
         if (this.validateSourceField() & this.validateRevenueFields()) {
@@ -302,7 +239,7 @@ export default {
           this.unsavedSource = true;
           this.validateRevenueFields();
         }
-        else if (this.validateRevenueFields()) {
+        else {
           let externalBankAccountId;
 
           if (this.sources.length !== this.initialSourcesLength) {
@@ -376,15 +313,6 @@ export default {
       }
     },
 
-    validateRevenueFields() {
-      this.v$.amount.$touch();
-      this.v$.reference.$touch();
-
-      if (!this.v$.amount.$errors.length && !this.v$.reference.$errors.length) {
-        return true;
-      }
-    },
-
     validateSourceField() {
       this.v$.newSource.$touch();
 
@@ -400,12 +328,12 @@ export default {
     };
   },
 
-  validations() {
-    return {
-      amount: { required, amountValidator },
-      reference: { required },
-      newSource: { required }
-    };
+  validations() { return revenueValidation;
+    // return {
+    //   amount: { required, amountValidator },
+    //   reference: { required },
+    //   newSource: { required }
+    // };
   },
 };
 </script>

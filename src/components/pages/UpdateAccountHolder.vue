@@ -4,8 +4,8 @@
     <div v-if="!showForm" class="update-account-holder__main">
       <AtomHeadline tag="h1" text="Kontoinhaber bearbeiten" />
       <section>
-        <MoleculeInputText  classList="update-account-holder__name" field="Name" :hasErrors="nameHasErrors || duplicateName"
-                            :validation="v$.name" v-model="name" @blur="v$.name.$touch()"/>
+        <MoleculeInputText  classList="update-account-holder__name" field="name" :hasErrors="nameHasErrors || duplicateName"
+                            :validation="v$.name" v-model="name" label="Name" @blur="v$.name.$touch()"/>
 
         <teleport v-if="duplicateName" to=".update-account-holder__name">
           <AtomParagraph classList="xfin-form__error" text="Dieser Name wird bereits verwendet!"/>
