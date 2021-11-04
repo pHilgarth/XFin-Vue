@@ -4,6 +4,7 @@
     &__account {
         @include rem(( padding-bottom: 20px ));
     }
+
     &__category {
         border-bottom: 1px solid $color__borders;
 
@@ -11,5 +12,40 @@
             margin-bottom: 20px,
             padding-bottom: 20px,
         ));
+    }
+
+    &__source {
+        .xfin-form__error {
+            @include rem((
+                transform: translateX(240px),
+                padding-top: 8px,
+            ));
+        }
+    }
+
+    &__source-account {
+        display: flex;
+        justify-content: space-around;
+
+        @include rem(( padding: 0 40px ));
+    }
+
+    &__source-account-data {
+        display: flex;
+        align-items: center;
+        width: 45%;
+
+        label {
+            @include rem(( font-size: 14px ));
+        }
+
+        .xfin-form__error {
+            transform: translateY(100%);
+
+            @include rem((
+                font-size: 14px,
+                padding: 5px 0 0 50px,
+            ));
+        }
     }
 }

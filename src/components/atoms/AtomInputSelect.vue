@@ -1,5 +1,5 @@
 <template>
-  <select @change="optionChanged">
+  <select class="form-select xfin-form__control" @change="optionChanged">
     <option v-for="(option, index) in options" :key="index" :value="option.value" :disabled="option.disabled">
       {{ option.value }}
     </option>

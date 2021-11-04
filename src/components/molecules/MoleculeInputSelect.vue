@@ -1,10 +1,7 @@
 <template>
     <div class="form-floating" :class="classList" :id="id">
-        <AtomInputSelect classList="form-select xfin-form__control" :id="field.toLowerCase()" :value="modelValue" :options="options" @input="$emit('update:modelValue', $event.target.value)" />
-        <AtomLabel classList="xfin-form__label" :target="field.toLowerCase()" :text="label" />
-        <!-- <template v-for="(error, index) in validation?.$errors" :key="index">
-            <AtomParagraph classList="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
-        </template> -->
+        <AtomInputSelect :id="field" :value="modelValue" :options="options" @input="$emit('update:modelValue', $event.target.value)" />
+        <AtomLabel classList="xfin-form__label" :target="field" :text="label" />
     </div>
 </template>
 
@@ -23,7 +20,7 @@ export default {
             type: Array,
             required: true,
         },
-        modelValue:     { type: String, required: true },
+        modelValue:     { type: [String, Number], required: true },
         label:          { type: String, required: true },
     },
 

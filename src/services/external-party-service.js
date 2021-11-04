@@ -31,7 +31,7 @@ export const ExternalPartyService = {
       return await fetch(baseUrl).then((response) => {
         if (response.ok) {
           if (response.status === 204) {
-            return [];
+            return null;
           }
           return response.json();
         }

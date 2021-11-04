@@ -5,15 +5,14 @@
 <script>
 export default {
   props: {
-    id: { type: String },
-    classList: { type: String },
-    target: { type: String },
-    text: {
-      type: String,
-      required: true,
-    },
-
-    additionalProps: { type: Object },
+    id:                 { type: String },
+    classList:          { type: String },
+    target:             { type: String },
+    text:               {
+                          type: String,
+                          required: true,
+                        },
+    additionalProps:    { type: Object },
   },
 };
 </script>

@@ -20,6 +20,8 @@ export const existingAccountValidation = {
 }
 
 export const revenueValidation = {
-    amount:     { required, amountValidator },
-    source:     { required },
+    amount:             { required, amountValidator },
+    newSource:          { required },
+    newSourceIban:      { ibanValidator },
+    newSourceBic:       { bicValidator },
 }

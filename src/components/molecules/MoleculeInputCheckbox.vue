@@ -1,0 +1,45 @@
+<template>
+    <div class="form-check form-switch" :class="classList" :id="id">
+        <AtomInputCheckbox :id="field" :checked="modelValue" @input="$emit('update:modelValue', $event.target.checked)" />
+        <AtomLabel classList="xfin-form__label" :target="field" :text="label" />
+        <template v-for="(error, index) in validation?.$errors" :key="index">
+            <AtomParagraph classList="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
+        </template>
+    </div>
+</template>
+
+<script>
+import { errorMessages } from '@/services/form-error-messages';
+
+import AtomInputCheckbox from '@/components/atoms/AtomInputCheckbox';
+import AtomLabel from '@/components/atoms/AtomLabel';
+import AtomParagraph from '@/components/atoms/AtomParagraph';
+
+export default {
+    props: {
+        classList:          { type: String },
+        id:                 { type: String },
+        field:              { type: String },
+        modelValue:         { type: Boolean, required: true },
+        label:              { type: String, required: true },
+        validation:         { type: Object }
+    },
+
+    components: {
+        AtomInputCheckbox,
+        AtomLabel,
+        AtomParagraph
+    },
+
+    data() {
+        return { counter: 0 }
+    },
+
+    methods: {
+        getErrorMessage(property, validator) {
+            return  errorMessages[`${property}_${validator}`] ||
+                    errorMessages[property]
+        },
+    }
+};
+</script>

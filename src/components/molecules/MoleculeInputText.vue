@@ -1,6 +1,16 @@
 <template>
 <!-- TODO - rework all components using this Molecule to use the prop 'label' for the label text and a lowercase english word for the id and the labels for-attribute -->
-    <div class="form-floating pb-5" :class="classList">
+    <div v-if="small" :class="classList" :id="id">
+        <AtomLabel classList="xfin-form__label col-2" :target="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />                   
+        <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :classList="`xfin-from__control form-control form-control-sm ${hasErrors ? 'has-errors' : ''}`"
+                        @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
+
+        <template v-for="(error, index) in validation?.$errors" :key="index">
+            <AtomParagraph classList="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
+        </template>
+
+    </div>
+    <div v-else class="form-floating" :class="classList" :id="id">
         <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :placeholder="label"
                         :classList="`xfin-form__control form-control col-4 ${hasErrors ? 'has-errors' : ''}`"
                         @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
@@ -36,8 +46,9 @@ export default {
         modelValue:     { type: String },
         disabled:       { type: Boolean },
         optional:       { type: Boolean },
+        // validation has to be the vuelidate object of the property (i.e. v$.name)
         validation:     { type: Object },
-        // Validation has to be the vuelidate object of the property (i.e. v$.name)
+        small:          { type: Boolean }
     },
 
     components: {
@@ -46,12 +57,13 @@ export default {
         AtomParagraph,
     },
 
-    data() {
-        return { counter: 0 }
-    },
-
     methods: {
         getErrorMessage(property, validator) {
+            console.log(property);
+            console.log(validator);
+            console.log(errorMessages[`${property}_${validator}`]);
+            console.log(errorMessages[property]);
+
             return  errorMessages[`${property}_${validator}`] ||
                     errorMessages[property]
         }
