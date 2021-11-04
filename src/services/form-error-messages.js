@@ -17,8 +17,8 @@ export const errorMessages = {
     name_maxLength:         'Der Name darf nicht länger als 15 Zeichen sein!',
     name_nameDuplicate:     'Dieser Name existiert bereits!',
 
-    //newSource errors
-    newSource:              'Bitte gib eine Quelle an!',
-    newSourceIban:          'Bitte gib eine gültige IBAN ein!',
-    newSourceBic:           'Bitte gib einen gültigen BIC ein!',
+    //source errors
+    source:                 'Bitte gib eine Quelle an!',
+    sourceIban:             'Bitte gib eine gültige IBAN ein!',
+    sourceBic:              'Bitte gib einen gültigen BIC ein!',
 }

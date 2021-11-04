@@ -16,10 +16,7 @@
 
     &__source {
         .xfin-form__error {
-            @include rem((
-                transform: translateX(240px),
-                padding-top: 8px,
-            ));
+            @include rem(( padding-top: 8px ));
         }
     }
 

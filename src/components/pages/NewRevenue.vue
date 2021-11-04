@@ -9,13 +9,12 @@
                               @update:modelValue="changeCategory" />
 
         <div class="new-revenue__source">
-          <!-- <MoleculeInputSelect v-if="sources && !createNewSource" :options="sourceOptions" field="source" v-model="selectedSourceName" label="Quelle" /> -->
-          <!-- <MoleculeInputText  v-else :classList="showCheckbox ? 'pb-2' : 'pb-5'" field="newSource" :hasErrors="newSourceErrors" v-model="newSource" :validation="v$.newSource" label="Quelle"
-                              @blur="v$.newSource.$touch()" /> -->
-          <MoleculeInputAutoSuggest classList="pb-5" field="newSource" :hasErrors="newSourceErrors" v-model="newSource" :validation="v$.newSource" label="Quelle"
-                                    :items="sourceOptions" @blur="v$.newSource.$touch()" />{{ newSource }}
+          <MoleculeInputAutoSuggest classList="pb-5" field="source" :hasErrors="sourceErrors" v-model="source" :validation="v$.source" label="Quelle"
+                                    :items="sourceOptions" noItemsFallback="&plus; Neu hinzufügen" :alwaysShowFallback="true" @blur="v$.source.$touch()"
+                                    @itemPicked="pickItem" />
+
           <MoleculeInputCheckbox  v-if="showCheckbox" :classList="includeSourceAccount ? 'pb-1' : 'pb-5'" field="includeSourceAccount" v-model="includeSourceAccount"
-                                  label="Kontodaten hinzufügen" />
+                                  label="Bankdaten hinzufügen" :_switch="true" />
 
           <div v-if="includeSourceAccount" class="new-revenue__source-account pb-5">
             <MoleculeInputText  :small="true" classList="new-revenue__source-account-data pb-1" field="sourceIban" :hasErrors="newSourceIbanErrors"
@@ -31,6 +30,8 @@
                             @blur="v$.amount.$touch()" />
 
        <AtomButton classList="xfin-form__button" text="Speichern" :disabled="saveDisabled" @click.prevent="save" />
+       <p>{{ source || 'null or empty' }}</p>
+       <p>{{ selectedSource || 'null or empty' }}</p>
       </form>
     </section>
   </div>
@@ -73,19 +74,15 @@ export default {
 
   computed: {
     amountErrors() { return this.v$.amount.$error },
-    newSourceErrors() { return this.v$.newSource.$error },
+    sourceErrors() { return this.v$.source.$error },
     newSourceIbanErrors() { return this.v$.newSourceIban.$error },
     newSourceBicErrors() { return this.v$.newSourceBic.$error },
     showCheckbox() {
-      return this.selectedSource
-        ? !this.selectedSource.iban || !this.selectedSource.bic//.iban || !this.selectedSource?.bic;
-        : false;
+      return this.selectedSource && !this.selectedSource.id
     },
     saveDisabled() {
-      return !this.createNewSource
-      ? this.v$.amount.$silentErrors.length > 0
-      : !this.includeSourceAccount
-        ? this.v$.amount.$silentErrors.length > 0 || this.v$.newSource.$silentErrors.length > 0
+      return !this.includeSourceAccount
+        ? this.v$.amount.$silentErrors.length > 0 || !this.selectedSource
         : this.v$.$silentErrors.length > 0;
     }
   },
@@ -95,7 +92,7 @@ export default {
     selectedSource() {
 
     },
-    selectedSourceName() { this.selectedSource = this.sources.find(s => s.name === this.selectedSourceName); }, //fällt mit auto suggest raus
+    selectedSourceName() { this.selectedSource = this.sources.find(s => s.name === this.selectedSourceName); },
     newSource() { this.selectedSource = { name: this.newSource }; }
   },
 
@@ -113,16 +110,16 @@ export default {
       selectedCategoryName: null,
       selectedCategory: null,
 
-      selectedSourceName: null, // fällt mit Autosuggest component raus
+      //source is the v-model property for the input field - it refers to a sources name and is of type string
+      source: null,
+      //selectedSource is the actual sourceObject which contains the id and the externalBankAccountId if it's a persisted source
       selectedSource: null,
-      newSource: null,
       reference: '',
       amount: '',
 
-      createNewSource: false,
       includeSourceAccount: false,
-      newSourceIban: null,
-      newSourceBic: null,
+      sourceIban: null,
+      sourceBic: null,
     };
   },
 
@@ -215,6 +212,16 @@ export default {
       else {
         //TODO - throw error, do something
         console.log('no cats');
+      }
+    },
+
+    pickItem(event) {
+      if (event.target.textContent.includes('Neu hinzufügen')) {
+        this.selectedSource = { name: this.source };
+      }
+      else {
+        this.selectedSource = this.sources.find(s => s.name === event.target.textContent);
+        this.source = this.selectedSource.name;
       }
     },
 

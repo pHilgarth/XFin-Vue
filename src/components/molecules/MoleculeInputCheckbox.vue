@@ -1,5 +1,5 @@
 <template>
-    <div class="form-check form-switch" :class="classList" :id="id">
+    <div :class="`form-check ${_switch ? 'form-switch ' : ''}${classList}`" :id="id">
         <AtomInputCheckbox :id="field" :checked="modelValue" @input="$emit('update:modelValue', $event.target.checked)" />
         <AtomLabel classList="xfin-form__label" :target="field" :text="label" />
         <template v-for="(error, index) in validation?.$errors" :key="index">
@@ -22,7 +22,9 @@ export default {
         field:              { type: String },
         modelValue:         { type: Boolean, required: true },
         label:              { type: String, required: true },
-        validation:         { type: Object }
+        validation:         { type: Object },
+        //if true, component will render as a 'on-off'-switch
+        _switch:            { type: Boolean }
     },
 
     components: {

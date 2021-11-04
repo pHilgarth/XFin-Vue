@@ -2,18 +2,16 @@
     <div class="form-floating" :class="classList" :id="id">
     <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :placeholder="label"
                     :classList="`xfin-form__control form-control col-4 ${hasErrors ? 'has-errors' : ''}`"
+                    :additionalProps="{ autocomplete: 'off' }"
                     @blur="$emit('blur')" @input="onInput" />
                     
     <AtomLabel classList="xfin-form__label" :target="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
-    <ul style="list-style-type: none;">
-        <li v-for="(suggestion, index) in suggestions" :key="index">{{ suggestion }}</li>
-    </ul>
+    <!-- TODO - hide ul again, if input looses focus (on blur?) -->
+    <AtomUnorderedList classList="xfin__suggestions" v-if="suggestions && suggestions.length > 0" :items="suggestions" @itemClicked="pickItem" />
 
     <template v-for="(error, index) in validation?.$errors" :key="index">
         <AtomParagraph classList="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
     </template>
-    {{ modelValue }}
-    {{ items }}
 </div>
 </template>
 
@@ -21,43 +19,67 @@
 import AtomInputText from "@/components/atoms/AtomInputText";
 import AtomLabel from "@/components/atoms/AtomLabel";
 import AtomParagraph from "@/components/atoms/AtomParagraph";
+import AtomUnorderedList from '@/components/atoms/AtomUnorderedList';
 
 import { errorMessages } from "@/services/form-error-messages";
 export default {
     //TODO - refactor props - i might not need all of them - just copied from MoleculeInputText
     props: {
-        id:             { type: String },
-        classList:      { type: String },
-        field:          {
-                            type: String,
-                            required: true,
-                            validator(value) {
-                                //matches a single camelCase word
-                                return value.match(/^[a-zA-Z]+$/);
-                            }
-                        },
-        label:          { type: String, required: true },
-        hasErrors:      { type: Boolean },
-        modelValue:     { type: String },
-        disabled:       { type: Boolean },
-        optional:       { type: Boolean },
+        id:                 { type: String },
+        classList:          { type: String },
+        field:              {
+                                type: String,
+                                required: true,
+                                validator(value) {
+                                    //matches a single camelCase word
+                                    return value.match(/^[a-zA-Z]+$/);
+                                }
+                            },
+        label:              { type: String, required: true },
+        hasErrors:          { type: Boolean },
+        modelValue:         { type: String },
+        disabled:           { type: Boolean },
+        optional:           { type: Boolean },
         // validation has to be the vuelidate object of the property (i.e. v$.name)
-        validation:     { type: Object },
-        small:          { type: Boolean },
-        items:          { type: Array, required: true }
+        validation:         { type: Object },
+        small:              { type: Boolean },
+        items:              { type: Array, required: true },
+        noItemsFallback:    { type: String },
+        alwaysShowFallback: { type: Boolean },
     },
 
     components: {
         AtomInputText,
         AtomLabel,
         AtomParagraph,
+        AtomUnorderedList,
     },
 
-    watch: {
-        modelValue() {
-            this.suggestions = this.modelValue === '' ? [] : this.items.filter(i => i.startsWith(this.modelValue));
-        }
-    },
+    // watch: {
+    //     modelValue() {
+    //         if (this.showSuggestions) {
+    //             const filteredSuggestions = this.items.filter(i => i.startsWith(this.modelValue));
+
+    //             for (let i = 0; i < filteredSuggestions.length; i++) {
+    //                 const suggestion = filteredSuggestions[i];
+    //                 filteredSuggestions[i] = suggestion.replace(this.modelValue, `<strong>${this.modelValue}</strong>`);
+    //             }
+
+    //             if (this.alwaysShowFallback && !this.items.find(i => i === this.modelValue)) {
+    //                 filteredSuggestions.push(this.noItemsFallback);
+    //             }
+
+    //             this.suggestions = this.modelValue === ''
+    //                 ? []
+    //                 : filteredSuggestions.length > 0
+    //                     ? filteredSuggestions
+    //                     : [this.noItemsFallback];
+    //         }
+    //         else {
+    //             this.showSuggestions = true;
+    //         }
+    //     }
+    // },
 
     data() {
         return {
@@ -66,26 +88,41 @@ export default {
             //     'Berni', 'Bethlehem', 'Behindert',
             //     'Cool', 'Corny', 'Cornflakes',
             // ],
-            suggestions: []
+            suggestions: [],
         }
     },
 
     methods: {
         onInput(event) {
-            this.input = event.target.value;
-            this.suggestions = this.items.filter(i => i.startsWith(event.target.value));
+            const filteredSuggestions = this.items.filter(i => i.startsWith(event.target.value));
+
+            for (let i = 0; i < filteredSuggestions.length; i++) {
+                const suggestion = filteredSuggestions[i];
+                filteredSuggestions[i] = suggestion.replace(event.target.value, `<strong>${event.target.value}</strong>`);
+            }
+
+            if (this.alwaysShowFallback && !this.items.find(i => i === event.target.value)) {
+                filteredSuggestions.push(this.noItemsFallback);
+            }
+
+            this.suggestions = event.target.value === ''
+                ? []
+                : filteredSuggestions.length > 0
+                    ? filteredSuggestions
+                    : [this.noItemsFallback];
+            
             this.$emit('update:modelValue', event.target.value);
         },
 
         getErrorMessage(property, validator) {
-            console.log(property);
-            console.log(validator);
-            console.log(errorMessages[`${property}_${validator}`]);
-            console.log(errorMessages[property]);
-
             return  errorMessages[`${property}_${validator}`] ||
                     errorMessages[property]
+        },
+
+        pickItem(event) {
+            this.suggestions = [];
+            this.$emit('itemPicked', event);
         }
     }
 };
-</script>               
+</script>
