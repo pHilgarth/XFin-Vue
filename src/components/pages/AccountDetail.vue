@@ -14,6 +14,7 @@
     <section class="account-detail-body" v-else>
        <MoleculeMonthSwitch @month-switched="updateView" />
        <TemplateRevenueSection :account="account" />
+       <!-- TODO - not all entries are visible - the height of the collapsible is too low, the last entries are cut off-->
        <TemplateBudgetSection :transactionCategories="transactionCategories" />
        <TemplateExpenseSection :account="account" />
     </section>

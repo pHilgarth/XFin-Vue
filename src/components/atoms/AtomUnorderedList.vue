@@ -1,6 +1,7 @@
 <template>
     <ul :id="id" :class="classList">
-        <li v-for="(item, index) in items" :key="index" @click="$emit('itemClicked', $event)" v-html="item"></li>
+        <li v-for="(item, index) in items" :key="index" @click="$emit('itemClicked', $event)" @mouseenter="$emit('itemMouseenter')"
+            @mouseleave="$emit('itemMouseleave')" v-html="item"></li>
     </ul>
 </template>
 

@@ -2,7 +2,7 @@
 <!-- TODO - rework all components using this Molecule to use the prop 'label' for the label text and a lowercase english word for the id and the labels for-attribute -->
     <div v-if="small" :class="classList" :id="id">
         <AtomLabel classList="xfin-form__label col-2" :target="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />                   
-        <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :classList="`xfin-from__control form-control form-control-sm ${hasErrors ? 'has-errors' : ''}`"
+        <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :classList="`xfin-form__control form-control form-control-sm ${hasErrors ? 'has-errors' : ''}`"
                         @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
 
         <template v-for="(error, index) in validation?.$errors" :key="index">
@@ -59,11 +59,6 @@ export default {
 
     methods: {
         getErrorMessage(property, validator) {
-            console.log(property);
-            console.log(validator);
-            console.log(errorMessages[`${property}_${validator}`]);
-            console.log(errorMessages[property]);
-
             return  errorMessages[`${property}_${validator}`] ||
                     errorMessages[property]
         }

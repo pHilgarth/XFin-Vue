@@ -6,21 +6,21 @@
       <form class="xfin-account-form" v-if="categoryOptions">
         <MoleculeInputSelect  classList="new-revenue__account" :options="bankAccountOptions" field="account" v-model="selectedAccountNumber" label="Konto" />
         <MoleculeInputSelect  classList="new-revenue__category" :options="categoryOptions" field="category" v-model="selectedCategoryName" label="Kostenstelle"
-                              @update:modelValue="changeCategory" />
+                              @update:modelValue="selectedCategory = categories.find(c => c.name === $event)" />
 
         <div class="new-revenue__source">
-          <MoleculeInputAutoSuggest classList="pb-5" field="source" :hasErrors="sourceErrors" v-model="source" :validation="v$.source" label="Quelle"
-                                    :items="sourceOptions" noItemsFallback="&plus; Neu hinzufügen" :alwaysShowFallback="true" @blur="v$.source.$touch()"
+          <MoleculeInputAutoSuggest :classList="paddingAutoSuggest" field="source" :hasErrors="sourceErrors" v-model="source" :validation="v$.source" label="Quelle"
+                                    :items="sourceNames" noItemsFallback="&plus; Neu hinzufügen" :alwaysShowFallback="true" @blur="blurAutoSuggest"
                                     @itemPicked="pickItem" />
 
-          <MoleculeInputCheckbox  v-if="showCheckbox" :classList="includeSourceAccount ? 'pb-1' : 'pb-5'" field="includeSourceAccount" v-model="includeSourceAccount"
-                                  label="Bankdaten hinzufügen" :_switch="true" />
+          <MoleculeInputCheckbox  v-if="showCheckbox" :classList="includeSourceAccount ? 'pb-1' : 'pb-5'" field="includeSourceAccount"
+                                  v-model="includeSourceAccount" label="Bankdaten hinzufügen" :_switch="true" />
 
           <div v-if="includeSourceAccount" class="new-revenue__source-account pb-5">
-            <MoleculeInputText  :small="true" classList="new-revenue__source-account-data pb-1" field="sourceIban" :hasErrors="newSourceIbanErrors"
-                                v-model="newSourceIban" :validation="v$.newSourceIban" label="Iban" @blur="v$.newSourceIban.$touch()" />
-            <MoleculeInputText  :small="true" classList="new-revenue__source-account-data pb-1" field="sourceBic" :hasErrors="newSourceBicErrors"
-                                v-model="newSourceBic" :validation="v$.newSourceBic" label="Bic" @blur="v$.newSourceBic.$touch()" />
+            <MoleculeInputText  :small="true" classList="new-revenue__source-account-data pb-1" field="sourceIban" :hasErrors="sourceIbanErrors"
+                                v-model="sourceIban" :validation="v$.sourceIban" label="Iban" @blur="v$.sourceIban.$touch()" />
+            <MoleculeInputText  :small="true" classList="new-revenue__source-account-data pb-1" field="sourceBic" :hasErrors="sourceBicErrors"
+                                v-model="sourceBic" :validation="v$.sourceBic" label="Bic" @blur="v$.sourceBic.$touch()" />
           </div>
         </div>
 
@@ -38,8 +38,15 @@
 </template>
 
 <script>
+//TODO - refactor every component to use the same import structure: 1. third-party-libs 2. my components 3. my services
 import { useVuelidate }                 from '@vuelidate/core';
 import { revenueValidation }            from '@/validation/validations';
+
+import AtomButton                       from '@/components/atoms/AtomButton';
+import MoleculeInputAutoSuggest         from '@/components/molecules/MoleculeInputAutoSuggest';
+import MoleculeInputCheckbox            from '@/components/molecules/MoleculeInputCheckbox';
+import MoleculeInputSelect              from '@/components/molecules/MoleculeInputSelect';
+import MoleculeInputText                from '@/components/molecules/MoleculeInputText';
 
 import { NumberService }                from '@/services/number-service';
 import { AccountHolderService }         from '@/services/account-holder-service';
@@ -49,19 +56,29 @@ import { InternalTransactionService }   from '@/services/internal-transaction-se
 import { ExternalTransactionService }   from '@/services/external-transaction-service';
 import { TransactionCategoryService }   from '@/services/transaction-category-service.js';
 
-import AtomButton                       from '@/components/atoms/AtomButton';
-import MoleculeInputAutoSuggest         from '@/components/molecules/MoleculeInputAutoSuggest';
-import MoleculeInputCheckbox            from '@/components/molecules/MoleculeInputCheckbox';
-import MoleculeInputSelect              from '@/components/molecules/MoleculeInputSelect';
-import MoleculeInputText                from '@/components/molecules/MoleculeInputText';
-
 export default {
-  //TODO - render form only if all API calls are finished and succeeded - currently the form is rendered when categoryOptions != null
-  //TODO - so the form is still rendered, if i.e. there was an error fetching the accounts or externalParties
+  //TODO - maybe tweak this error handling?
   async created() {
-    await this.getBankAccountOptions();
-    await this.getExternalParties();
-    await this.getTransactionCategories();
+    let result = null;
+    result = await this.getAccountHolders();
+
+    if (result.success) {
+      result = await this.getExternalParties();
+    }
+    else {
+      console.error(result.error);
+    }
+
+    if (result.success) {
+      result = await this.getTransactionCategories();
+    }
+    else {
+      console.error(result.error);
+    }
+
+    if (!result.success) {
+      console.error(result.error);
+    }
   },
 
   components: {
@@ -75,25 +92,36 @@ export default {
   computed: {
     amountErrors() { return this.v$.amount.$error },
     sourceErrors() { return this.v$.source.$error },
-    newSourceIbanErrors() { return this.v$.newSourceIban.$error },
-    newSourceBicErrors() { return this.v$.newSourceBic.$error },
-    showCheckbox() {
+    sourceIbanErrors() { return this.v$.sourceIban.$error },
+    sourceBicErrors() { return this.v$.sourceBic.$error },
+
+    paddingAutoSuggest() {
       return this.selectedSource && !this.selectedSource.id
+        ? 'pb-1'
+        : 'pb-5';
     },
+
     saveDisabled() {
       return !this.includeSourceAccount
         ? this.v$.amount.$silentErrors.length > 0 || !this.selectedSource
-        : this.v$.$silentErrors.length > 0;
-    }
+        : this.v$.$silentErrors.length > 0 || !this.selectedSource;
+    },
+
+    showCheckbox() {
+      return this.selectedSource && !this.selectedSource.id
+    },
   },
 
   watch: {
     amount() { this.v$.amount.$touch(); },
-    selectedSource() {
+    sourceBic() { this.v$.sourceBic.$touch(); },
+    sourceIban() { this.v$.sourceIban.$touch(); },
 
+    source() {
+      if (!this.sources.find(s => s.name === this.source)) {
+        this.selectedSource = null;
+      }
     },
-    selectedSourceName() { this.selectedSource = this.sources.find(s => s.name === this.selectedSourceName); },
-    newSource() { this.selectedSource = { name: this.newSource }; }
   },
 
   data() {
@@ -103,7 +131,7 @@ export default {
       categories: null,
       categoryOptions: null,
       sources: null,
-      sourceOptions: null,
+      sourceNames: [],
 
       selectedAccountNumber: null,
       selectedAccount: null,
@@ -124,27 +152,15 @@ export default {
   },
 
   methods: {
-    changeCategory(event) {
-      this.selectedCategory = this.categories.find(c => c.name === event);
+    blurAutoSuggest() {
+      if (!this.selectedSource) {
+        this.source = '';
+      }
+
+      this.v$.source.$touch();
     },
 
-    // changeSource() {
-    //   this.selectedSourceBankAccountId = this.sources[this.selectedSourceIndex].externalBankAccountId;
-    // },
-
-    // findAccountId(accountNumber) {
-    //   for (let i = 0; i < this.accountHolders.length; i++) {
-    //     const accountHolder = this.accountHolders[i];
-    //     const account = accountHolder.bankAccounts.find(b => b.accountNumber == accountNumber);
-
-    //     if (account) {
-    //       this.selectedAccountId = account.id;
-    //       break;
-    //     }
-    //   }
-    // },
-
-    async getBankAccountOptions() {
+    async getAccountHolders() {
       const includeBankAccounts = true;
       this.accountHolders = await AccountHolderService.getAll(includeBankAccounts);
 
@@ -166,30 +182,41 @@ export default {
             //select the account which matches the id in the url
             if (bankAccount.id == this.$route.params.id) {
               this.selectedAccountNumber = bankAccount.accountNumber;
+              this.selectedAccount = bankAccount;
             }
           });
         });
+
+        return {
+          success: true,
+          error: null,
+        };
       }
       else {
-        //TODO - do I need some error handling here or is it already taken care of?
+        return {
+          success: false,
+          error: 'Error fetching accountHolders',
+        };
       }
     },
 
     async getExternalParties() {
       this.sources = await ExternalPartyService.getExternalParties();
-      if (!this.sources) {
-        this.createNewSource = true;
-      }
-      else {
-        // this.selectedSourceBankAccountId = this.sources[0].externalBankAccountId;
-
-        this.sourceOptions = [];
-
+      if (this.sources) {
         this.sources.forEach(source => {
-          this.sourceOptions.push(source.name);
+          this.sourceNames.push(source.name);
         });
 
-        //this.sources = sourceOptions;
+        return {
+          success: true,
+          error: null,
+        };
+      }
+      else {
+        return {
+          success: false,
+          error: 'Error fetching externalParties',
+        };
       }
     },
 
@@ -205,33 +232,45 @@ export default {
             disabled: false,
           });
         });
-        
+
         this.selectedCategoryName = this.categories[0].name;
         this.selectedCategory = this.categories[0];
+
+        return {
+          success: true,
+          error: null,
+        };
       }
       else {
-        //TODO - throw error, do something
-        console.log('no cats');
+        return {
+          success: false,
+          error: 'Error fetching transactionCategories',
+        };
       }
     },
 
     pickItem(event) {
-      if (event.target.textContent.includes('Neu hinzufügen')) {
-        this.selectedSource = { name: this.source };
+      //highlighting the match is realized by wrapping it in a <strong>-element, if the user clicks that part, we get the complete string from parentNode
+      const clickedItem = event.target.tagName.toLowerCase() === 'strong'
+        ? event.target.parentNode.innerText
+        : event.target.textContent;
+
+      if (clickedItem.includes('Neu hinzufügen')) {
+        this.selectedSource = { name: this.source.trim() };
       }
       else {
-        this.selectedSource = this.sources.find(s => s.name === event.target.textContent);
+        this.selectedSource = this.sources.find(s => s.name === clickedItem);
         this.source = this.selectedSource.name;
       }
     },
 
+    //TODO - refactor this method, split it up into multiple async functions
     async save() {
-      //this.v$.newSource.$reset();
       let externalBankAccountId = null;
 
-      if (this.createNewSource) {
+      if (!this.selectedSource.id) {
         const externalParty = {
-          name: this.newSource,
+          name: this.source,
         };
 
         const createdExternalParty = await ExternalPartyService.createExternalParty(externalParty);
@@ -239,20 +278,26 @@ export default {
         if (createdExternalParty) {
           const externalBankAccount = {
             externalPartyId: createdExternalParty.id,
-            iban: this.newSourceIban,
-            bic: this.newSourceBic,
+            iban: this.sourceIban?.toUpperCase(),
+            bic: this.sourceBic?.toUpperCase(),
           };
 
           const createdExternalBankAccount = await ExternalBankAccountService.createExternalBankAccount(externalBankAccount);
 
           if (createdExternalBankAccount) {
+
             externalBankAccountId = createdExternalBankAccount.id;
           }
+          else {
+            //TODO - error handling?
+          }
+        }
+        else {
+            //TODO - error handling?
         }
       }
       else {
-        //TODO - verify this - does a bankAccountId exist on selectedSource or is it called differently?
-        externalBankAccountId = this.selectedSource.bankAccountId;
+        externalBankAccountId = this.selectedSource.externalBankAccount.id;
       }
 
       const currentDate = new Date().toISOString();
@@ -284,16 +329,6 @@ export default {
         if (!internalTransaction) {
           //TODO - something went wrong - throw an error?
         }
-      }
-    },
-
-    toggleSourceCreation() {
-      this.createNewSource = !this.createNewSource;
-      this.unsavedSource = false;
-
-      if (!this.createNewSource) {
-        this.selectedSourceIndex = 0;
-        this.newSource = '';
       }
     },
   },

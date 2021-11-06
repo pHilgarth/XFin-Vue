@@ -1,18 +1,19 @@
 <template>
     <div class="form-floating" :class="classList" :id="id">
-    <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :placeholder="label"
-                    :classList="`xfin-form__control form-control col-4 ${hasErrors ? 'has-errors' : ''}`"
-                    :additionalProps="{ autocomplete: 'off' }"
-                    @blur="$emit('blur')" @input="onInput" />
-                    
-    <AtomLabel classList="xfin-form__label" :target="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
-    <!-- TODO - hide ul again, if input looses focus (on blur?) -->
-    <AtomUnorderedList classList="xfin__suggestions" v-if="suggestions && suggestions.length > 0" :items="suggestions" @itemClicked="pickItem" />
+        <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :placeholder="label"
+                        :classList="`xfin-form__control form-control col-4 ${hasErrors ? 'has-errors' : ''}`"
+                        :additionalProps="{ autocomplete: 'off' }"
+                        @blur="onBlur" @input="onInput" />
+                        
+        <AtomLabel classList="xfin-form__label" :target="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
+        <!-- TODO - hide ul again, if input looses focus (on blur?) -> this is almost done! But if I hover on an element and then press tab, the box wont disappear, thats a cornercase but maybe i can fix it. I would need to track if TAB was pressed i guess-->
+        <AtomUnorderedList  classList="xfin__suggestions" v-if="suggestions && suggestions.length > 0" :items="suggestions" @itemClicked="pickItem"
+                            @itemMouseenter="hoverOnItem = true" @itemMouseleave="hoverOnItem = false" @tabbedOut="tabbedOut = true" />
 
-    <template v-for="(error, index) in validation?.$errors" :key="index">
-        <AtomParagraph classList="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
-    </template>
-</div>
+        <template v-for="(error, index) in validation?.$errors" :key="index">
+            <AtomParagraph classList="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
+        </template>
+    </div>
 </template>
 
 <script>
@@ -55,57 +56,37 @@ export default {
         AtomUnorderedList,
     },
 
-    // watch: {
-    //     modelValue() {
-    //         if (this.showSuggestions) {
-    //             const filteredSuggestions = this.items.filter(i => i.startsWith(this.modelValue));
-
-    //             for (let i = 0; i < filteredSuggestions.length; i++) {
-    //                 const suggestion = filteredSuggestions[i];
-    //                 filteredSuggestions[i] = suggestion.replace(this.modelValue, `<strong>${this.modelValue}</strong>`);
-    //             }
-
-    //             if (this.alwaysShowFallback && !this.items.find(i => i === this.modelValue)) {
-    //                 filteredSuggestions.push(this.noItemsFallback);
-    //             }
-
-    //             this.suggestions = this.modelValue === ''
-    //                 ? []
-    //                 : filteredSuggestions.length > 0
-    //                     ? filteredSuggestions
-    //                     : [this.noItemsFallback];
-    //         }
-    //         else {
-    //             this.showSuggestions = true;
-    //         }
-    //     }
-    // },
-
     data() {
         return {
-            // items: [
-            //     'Aldi', 'Alkohol', 'Alfons',
-            //     'Berni', 'Bethlehem', 'Behindert',
-            //     'Cool', 'Corny', 'Cornflakes',
-            // ],
+            hoverOnItem: false,
             suggestions: [],
         }
     },
 
     methods: {
+        onBlur() {
+            if (!this.hoverOnItem) {
+                this.suggestions = [];
+                this.$emit('blur')
+            }               
+        },
+
         onInput(event) {
-            const filteredSuggestions = this.items.filter(i => i.startsWith(event.target.value));
+            const input = event.target.value.trim();
+
+            const filteredSuggestions = this.items.filter(i => i.toLowerCase().startsWith(input.toLowerCase()));
 
             for (let i = 0; i < filteredSuggestions.length; i++) {
                 const suggestion = filteredSuggestions[i];
-                filteredSuggestions[i] = suggestion.replace(event.target.value, `<strong>${event.target.value}</strong>`);
+                const match = suggestion.substring(0, input.length);                
+                filteredSuggestions[i] = suggestion.replace(match, `<strong>${match}</strong>`);
             }
 
-            if (this.alwaysShowFallback && !this.items.find(i => i === event.target.value)) {
+            if (this.alwaysShowFallback && !this.items.find(i => i.toLowerCase() === input.toLowerCase())) {
                 filteredSuggestions.push(this.noItemsFallback);
             }
 
-            this.suggestions = event.target.value === ''
+            this.suggestions = input === ''
                 ? []
                 : filteredSuggestions.length > 0
                     ? filteredSuggestions
