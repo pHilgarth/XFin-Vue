@@ -1,5 +1,0 @@
-Kontoinhaber hinzufügen (id 0) > Konto hinzufügen (+) > Abbrechen (x) >>> Form ist disabled
-feedback notification nach Änderung des Kontoinhaber Name
-dont include revenues and expenses in bankaccounts on accountholder view - not even empty arrays!
-in accountholder.vue => saveAccountHolder and updateAccountHolder are code duplicates!
-test creation of new accholder again, wont work no more
