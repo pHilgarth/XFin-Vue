@@ -1,5 +1,5 @@
 <template>
-  <OrganismTransaction transactionType="revenue" />
+  <OrganismTransaction transactionType="expense" />
 </template>
 
 <script>

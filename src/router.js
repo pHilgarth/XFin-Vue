@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import AccountDetail from './components/pages/AccountDetail';
 import AccountView from './components/pages/AccountView';
 import BudgetManager from './components/pages/BudgetManager';
-import ExpenseForm from './components/pages/ExpenseForm';
+import NewExpense from './components/pages/NewExpense';
 import NewAccountHolder from './components/pages/NewAccountHolder';
 import NewRevenue from './components/pages/NewRevenue';
 import UpdateAccountHolder from './components/pages/UpdateAccountHolder';
@@ -18,7 +18,7 @@ export const router = createRouter({
         { path: '/new-account-holder', component: NewAccountHolder },
         { path: '/accountHolders/:id', component: UpdateAccountHolder },
         { path: '/new-revenue/:id', component: NewRevenue },
-        { path: '/new-expense/:id', component: ExpenseForm },
+        { path: '/new-expense/:id', component: NewExpense },
         { path: '/budget-manager', component: BudgetManager },
         //TODO - delete this component, it is/was just for testing purposes
         { path: '/testform', component: TestForm },

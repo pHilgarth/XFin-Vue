@@ -13,7 +13,7 @@ export default {
     methods: {
         getAccountAction(event, id) {
         let optionId = event.target.selectedOptions[0].id;
-
+console.log(optionId);
         this.$router.push('/' + optionId + '/' + id);
         },
     },

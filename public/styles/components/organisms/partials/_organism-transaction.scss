@@ -1,4 +1,4 @@
-.new-revenue {
+.transaction {
     width: 50%;
 
     &__account {
@@ -14,20 +14,20 @@
         ));
     }
 
-    &__source {
+    &__counter-part {
         .xfin-form__error {
             @include rem(( padding-top: 8px ));
         }
     }
 
-    &__source-account {
+    &__counter-part-account {
         display: flex;
         justify-content: space-around;
 
         @include rem(( padding: 0 40px ));
     }
 
-    &__source-account-data {
+    &__counter-part-account-data {
         display: flex;
         align-items: center;
         width: 45%;

@@ -33,15 +33,8 @@ export default {
     props: {
         id:             { type: String },
         classList:      { type: String },
-        field:          {
-                            type: String,
-                            required: true,
-                            validator(value) {
-                                //matches a single camelCase word
-                                return value.match(/^[a-zA-Z]+$/);
-                            }
-                        },
-        label:          { type: String, required: true },
+        field:          { type: String, required: true, },
+        label:          { type: String, required: true, },
         hasErrors:      { type: Boolean },
         modelValue:     { type: String },
         disabled:       { type: Boolean },

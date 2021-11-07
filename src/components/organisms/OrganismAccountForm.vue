@@ -1,7 +1,7 @@
 <template>
 <!-- TODO rework class structure of elements (ie here its .account-form -xfin-account-form) - don't remove this comment before all classes in project are updated, deleted, etc....-->
     <div class="account-form">
-        <h1>Konto hinzufügen</h1>
+        <h1>Konto hinzufügen</h1><p>{{ v$ }}</p>
         <form class="xfin-account-form">
             <MoleculeInputText field="iban" :hasErrors="ibanErrors || duplicate" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" label="IBAN" />
             <p class="xfin-account-form__duplicate-account xfin-form__error" v-if="duplicate">
@@ -42,6 +42,7 @@ export default {
     if (this.newAccount) {
       newAccountValidation.iban.ibanDuplicate = ibanDuplicateValidator(this.formData.ibans);
 
+      //TODO - can I remove this commented section? Test, if everything works without it
       //i have to remove the validator because I only need it, when creating a new account
       //delete newAccountValidation.iban.ibanDuplicate;
 
