@@ -1,3 +1,6 @@
+<!-- TODO on new expense: check the available amount on the selected account and category -->
+<!-- TODO the available amount is infinite, if the user didnt set any settings -->
+<!-- TODO the user can configure the accounts so its not possible to spend more money than to an certain balance (gesperrtes Budget und so, nicht ins minus)-->
 <template>
   <div class="transaction">
     <section class="transaction-body">
