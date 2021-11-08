@@ -30,3 +30,7 @@ export const counterPartValidation = {
     counterPartIban:        { ibanValidator },
     counterPartBic:         { bicValidator },
 }
+
+export const accountSettingsValidation = {
+    threshold:              { amountValidator }
+}

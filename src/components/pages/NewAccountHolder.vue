@@ -13,7 +13,7 @@
 
         <div class="new-account-holder__accounts">
           <AtomHeadline classList="new-account-holder__accounts-headline" tag="h4" text="Konten:" />
-          <AtomButtonLight classList="xfin-button--light" text="&plus; Neues Konto anlegen" @click="showForm = true"/>
+          <AtomButtonLight classList="xfin-button--light" text="&plus; Neues Konto anlegen" @click="addAccount"/>
 
           <div v-if="bankAccounts.length" class="new-account-holder__account-items">
             <template v-for="(account, index) in bankAccounts" :key="index">
@@ -30,14 +30,13 @@
       </section>
     </div>
     <div v-else class="new-account-holder__form">
-      <OrganismAccountForm @cancel="showForm = false" @save="saveAccount" :formData="formData"/>
+      <OrganismAccountForm @cancel="showForm = false" @save="saveAccount" :formData="formData" :headline="formHeadline"/>
     </div>
   </div>
 </template>
 
 <script>
 import { useVuelidate } from "@vuelidate/core";
-import { accountHolderValidation } from '@/validation/validations';
 
 import AtomButtonLight from "@/components/atoms/AtomButtonLight";
 import AtomDelete from "@/components/atoms/AtomDelete";
@@ -51,6 +50,8 @@ import OrganismAccountForm from "@/components/organisms/OrganismAccountForm";
 import { AccountHolderService } from "@/services/account-holder-service";
 import { InternalBankAccountService } from "@/services/internal-bank-account-service";
 import { NumberService } from "@/services/number-service";
+
+import { accountHolderValidation } from '@/validation/validations';
 
 export default {
   components: {
@@ -67,6 +68,7 @@ export default {
       name: "",
       bankAccounts: [],
       formData: null,
+      formHeadline: null,
 
       duplicateName: false,
       loading: true,
@@ -99,14 +101,18 @@ export default {
   },
 
   methods: {
+    addAccount() {
+      this.formHeadline = 'Konto hinzufügen';
+      this.showForm = true;
+    },
+
     deleteAccount(event) {
       //TODO - show modal to confirm deletion
-      console.log(this.bankAccounts);
       this.bankAccounts.splice(event.target.dataset.index, 1);
-      console.log(this.bankAccounts);
     },
 
     editAccount(event) {
+      this.formHeadline = 'Konto bearbeiten';
       this.formData = {
         account: this.bankAccounts[event.target.dataset.index],
         ibans: this.bankAccounts.map((b) => b.iban),

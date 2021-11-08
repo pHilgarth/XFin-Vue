@@ -13,7 +13,7 @@
 
         <div class="update-account-holder__accounts">
           <AtomHeadline classList="update-account-holder__accounts-headline" tag="h4" text="Konten:" />
-          <AtomButtonLight classList="xfin-button--light" text="&plus; Neues Konto anlegen" @click="showForm = true"/>
+          <AtomButtonLight classList="xfin-button--light" text="&plus; Neues Konto anlegen" @click="addAccount"/>
 
           <div v-if="updatedBankAccounts.length" class="update-account-holder__account-items">
             <template v-for="(account, index) in updatedBankAccounts" :key="index">
@@ -32,7 +32,7 @@
       </section>
     </div>
     <div v-else class="update-account-holder__form">
-      <OrganismAccountForm :formData="formData" :newAccount="newAccount" @cancel="showForm = false" @save="saveAccount"/>
+      <OrganismAccountForm :formData="formData" :newAccount="newAccount" @cancel="showForm = false" @save="saveAccount" :headline="formHeadline" />
     </div>
   </div>
 </template>
@@ -81,6 +81,7 @@ export default {
       updatedBankAccounts: [],
       accountsChanged: false,
       formData: null,
+      fomrHeadline: null,
 
       loading: true,
       showForm: false,
@@ -119,6 +120,11 @@ export default {
   },
 
   methods: {
+    addAccount() {
+      this.formHeadline = 'Konto hinzufügen';
+      this.showForm = true;
+    },
+
     checkForChanges(sourceAccount, bankAccount) {
       const subset = ({iban, bic, bank, description}) => ({iban, bic, bank, description});
       const sourceSubset = subset(sourceAccount);
@@ -186,6 +192,7 @@ export default {
     },
 
     editAccount(event) {
+      this.formHeadline = 'Konto bearbeiten';
       const bankAccount = this.updatedBankAccounts[event.target.dataset.index];
 
       if (!bankAccount.id) {

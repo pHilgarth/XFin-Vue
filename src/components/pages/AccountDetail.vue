@@ -22,6 +22,7 @@
 </template>
 
 <script>
+//TODO - wtf are templates? Shouldnt these be organisms?
 import TemplateBudgetSection from "@/components/templates/TemplateBudgetSection";
 import TemplateExpenseSection from "@/components/templates/TemplateExpenseSection";
 import TemplateRevenueSection from "@/components/templates/TemplateRevenueSection";
@@ -59,7 +60,7 @@ export default {
     async getAccount(simple, month) {
       const year = new Date().getFullYear();
       month = month !== undefined ? month : new Date().getMonth();
-
+//TODO - need some error handling here, if the API call failed
       this.account =  await InternalBankAccountService.getById(this.$route.params.id, simple, year, month);
       this.accountNumber = this.account.accountNumber;
       this.loading = false;

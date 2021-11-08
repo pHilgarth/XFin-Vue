@@ -1,9 +1,10 @@
 <template>
 <!-- TODO rework class structure of elements (ie here its .account-form -xfin-account-form) - don't remove this comment before all classes in project are updated, deleted, etc....-->
     <div class="account-form">
-        <h1>Konto hinzufügen</h1><p>{{ v$ }}</p>
+      <AtomHeadline tag="h1" :text="headline" />
         <form class="xfin-account-form">
-            <MoleculeInputText field="iban" :hasErrors="ibanErrors || duplicate" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" label="IBAN" />
+          <!-- TODO - add padding-classes to every molecule, atom, etc .... check every form and add it where its missing -->
+            <MoleculeInputText classList="pb-5" field="iban" :hasErrors="ibanErrors || duplicate" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" label="IBAN" />
             <p class="xfin-account-form__duplicate-account xfin-form__error" v-if="duplicate">
               Diese Iban existiert bereits!
             </p>
@@ -29,6 +30,7 @@ import { InternalBankAccountService }   from '@/services/internal-bank-account-s
 import { NumberService}                 from '@/services/number-service';
 
 import AtomButton                       from '@/components/atoms/AtomButton';
+import AtomHeadline                     from '@/components/atoms/AtomHeadline';
 import MoleculeInputText                from '@/components/molecules/MoleculeInputText';
 
 export default {
@@ -36,7 +38,9 @@ export default {
     if (this.formData.account) {
       const ibanIndex = this.formData.ibans.findIndex(i => i === this.formData.account.iban);
       let ibans = this.formData.ibans;
+      console.log(this.formData.ibans);
       ibans.splice(ibanIndex, 1);
+      console.log(this.formData.ibans);
     }
 
     if (this.newAccount) {
@@ -65,12 +69,15 @@ export default {
 
   components: {
     AtomButton,
+    AtomHeadline,
     MoleculeInputText,
   },
 
   props: {
+    //TODO - create a documentation for what formData should look like
     formData:         { type: Object, required: true },
     newAccount:       { type: Boolean, default: true },
+    headline:         { type: String, required: true },
   },
 
   data() {

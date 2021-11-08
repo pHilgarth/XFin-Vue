@@ -1,3 +1,4 @@
+<!-- TODO - can I make the options dynamically? They're hardcoded in here ...-->
 <template>
     <select @change="getAccountAction($event, config.bankAccountId)">
         <option>Aktion wählen ...</option>
@@ -5,6 +6,7 @@
         <option id="new-expense">Ausgabe eintragen</option>
         <option id="budget-manager">Budget verwalten</option>
         <option>Fixkostenverwaltung</option>
+        <option id="account-settings">Einstellungen</option>
     </select>
 </template>
 
@@ -13,7 +15,6 @@ export default {
     methods: {
         getAccountAction(event, id) {
         let optionId = event.target.selectedOptions[0].id;
-console.log(optionId);
         this.$router.push('/' + optionId + '/' + id);
         },
     },
