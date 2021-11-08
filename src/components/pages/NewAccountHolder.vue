@@ -1,4 +1,5 @@
 <!-- TODO - newAccountHolder and UpdateAccountHolder are similar - maybe create another component, as I did for newRevenue and newExpense -->
+<!-- TODO - dont render content before data is not loaded (div v-if=dataLoaded)-->
 <template>
   <div class="new-account-holder">
     <div v-if="!showForm" class="new-account-holder__main">
@@ -42,13 +43,12 @@ import AtomButtonLight from "@/components/atoms/AtomButtonLight";
 import AtomDelete from "@/components/atoms/AtomDelete";
 import AtomHeadline from "@/components/atoms/AtomHeadline";
 import AtomParagraph from '@/components/atoms/AtomParagraph';
-
 import MoleculeInputText from "@/components/molecules/MoleculeInputText";
-
 import OrganismAccountForm from "@/components/organisms/OrganismAccountForm";
 
 import { AccountHolderService } from "@/services/account-holder-service";
 import { InternalBankAccountService } from "@/services/internal-bank-account-service";
+import { InternalTransactionService }   from '@/services/internal-transaction-service';
 import { NumberService } from "@/services/number-service";
 
 import { accountHolderValidation } from '@/validation/validations';
@@ -165,6 +165,18 @@ export default {
               break;
             }
             else {
+              const initializationTransaction = {
+                internalBankAccountId: createdBankAccount.id,
+                dateString: new Date().toISOString(),
+                amount: bankAccount.balance,
+                reference: '[Kontoinitialisierung]',
+              };
+
+              await InternalTransactionService.create(initializationTransaction);
+
+              if (!initializationTransaction) {
+                //TODO - something went wrong - throw an error?
+              }
               this.$router.push('/');
             }
           }

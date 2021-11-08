@@ -1,7 +1,7 @@
 
 <template>
   <div class="account-view">
-    <AtomHeadline tag="h1" content="Kontenübersicht" />
+    <AtomHeadline tag="h1" text="Kontenübersicht" />
     <div class="dev-hint important">
       <p>Kostenstelle "Nicht zugewiesen:</p>
       <p>Diese Kostenstelle dient nur dazu, freies Budget zu "lagern". Einnahmen werden auf "Nicht zugewiesen" gebucht, wenn keine Kostenstelle angegeben wird. <b>TODO</b></p>

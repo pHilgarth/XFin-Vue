@@ -1,10 +1,12 @@
+<!-- TODO - refactor this component, its partially duplicated code with new Account Holder -->
+<!-- TODO - dont render content before data is not loaded (div v-if=dataLoaded)-->
 <template>
   <div class="update-account-holder">
 
     <div v-if="!showForm" class="update-account-holder__main">
       <AtomHeadline tag="h1" text="Kontoinhaber bearbeiten" />
       <section>
-        <MoleculeInputText  classList="update-account-holder__name" field="name" :hasErrors="nameHasErrors || duplicateName"
+        <MoleculeInputText  classList="update-account-holder__name pb-5" field="name" :hasErrors="nameHasErrors || duplicateName"
                             :validation="v$.name" v-model="name" label="Name" @blur="v$.name.$touch()"/>
 
         <teleport v-if="duplicateName" to=".update-account-holder__name">
@@ -52,6 +54,7 @@ import OrganismAccountForm                from "@/components/organisms/OrganismA
 
 import { AccountHolderService }           from "@/services/account-holder-service";
 import { InternalBankAccountService }     from "@/services/internal-bank-account-service";
+import { InternalTransactionService }   from '@/services/internal-transaction-service';
 import { NumberService }                  from "@/services/number-service";
 
 export default {
@@ -273,8 +276,9 @@ export default {
       if (this.accountsChanged) {
         for (let i = 0; i < this.updatedBankAccounts.length; i++) {
           const bankAccount = this.updatedBankAccounts[i];
+          bankAccount.iban = bankAccount.iban.toUpperCase();
+          bankAccount.bic = bankAccount.bic.toUpperCase();
           const jsonPatch = [];
-
           if (bankAccount.id && bankAccount.changed) {
             for (const prop of bankAccount.changed) {
               jsonPatch.push({
@@ -287,11 +291,33 @@ export default {
             await InternalBankAccountService.update(bankAccount.id, jsonPatch);
           }
           else if (!bankAccount.id) {
-            bankAccount.accountHolderId = this.$route.params.id;
 
-            console.log(bankAccount);
+            bankAccount.accountHolderId = this.$route.params.id;
+            bankAccount.iban = bankAccount.iban.toUpperCase();
+            bankAccount.bic = bankAccount.bic.toUpperCase();
             const createdBankAccount = await InternalBankAccountService.create(bankAccount);
-            console.log(createdBankAccount);
+
+            if (!createdBankAccount) {
+              //TODO - what if the account was created but the first account crashes? Then I have an accountHolder with no accounts.
+              //In AccountView I can show only accountHolders that have accounts
+              alert('error during account creation');
+              break;
+            }
+            else {
+              const initializationTransaction = {
+                internalBankAccountId: createdBankAccount.id,
+                dateString: new Date().toISOString(),
+                amount: bankAccount.balance,
+                reference: '[Kontoinitialisierung]',
+              };
+
+              await InternalTransactionService.create(initializationTransaction);
+
+              if (!initializationTransaction) {
+                //TODO - something went wrong - throw an error?
+              }
+              this.$router.push('/');
+            }
           }
           //if bankAccount.newAccount => it's a newly created account
         }

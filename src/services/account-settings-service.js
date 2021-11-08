@@ -2,7 +2,7 @@
 //TODO - switch to axios for the api call
 //import * as axios from 'axios';
 // TODO - this service is not finished/tested yet
-const baseUrl = "http://localhost:2905/api/accountSettings";
+const baseUrl = "http://localhost:2905/api/internalBankAccountSettings";
 
 export const AccountSettingsService = {
   async get(id) {
