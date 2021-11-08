@@ -45,55 +45,57 @@
 //TODO - because of async created() i dont knwow how to add the ibanDuplicateValidator or pass the ibans to it - the current way of doing this is ugly as fuck
 //TODO - watch the course on async programming on pluralsight!! There must be a way to realize this
 
+//TODO - when no reference is provided, it should be NULL in db not ''
+
 //TODO - refactor every component to use the same import structure: 1. third-party-libs 2. my components 3. my services
-import { useVuelidate }                 from '@vuelidate/core';
-import { required }                     from "@vuelidate/validators";
+import { useVuelidate } from "@vuelidate/core";
+import { required } from "@vuelidate/validators";
 
+import AtomButton from "@/components/atoms/AtomButton";
+import MoleculeInputAutoSuggest from "@/components/molecules/MoleculeInputAutoSuggest";
+import MoleculeInputCheckbox from "@/components/molecules/MoleculeInputCheckbox";
+import MoleculeInputSelect from "@/components/molecules/MoleculeInputSelect";
+import MoleculeInputText from "@/components/molecules/MoleculeInputText";
 
-import AtomButton                       from '@/components/atoms/AtomButton';
-import MoleculeInputAutoSuggest         from '@/components/molecules/MoleculeInputAutoSuggest';
-import MoleculeInputCheckbox            from '@/components/molecules/MoleculeInputCheckbox';
-import MoleculeInputSelect              from '@/components/molecules/MoleculeInputSelect';
-import MoleculeInputText                from '@/components/molecules/MoleculeInputText';
-
-import { NumberService }                from '@/services/number-service';
-import { AccountHolderService }         from '@/services/account-holder-service';
-import { ExternalBankAccountService }   from '@/services/external-bank-account-service';
-import { ExternalPartyService }         from '@/services/external-party-service';
-import { InternalTransactionService }   from '@/services/internal-transaction-service';
-import { ExternalTransactionService }   from '@/services/external-transaction-service';
-import { TransactionCategoryService }   from '@/services/transaction-category-service.js';
+import { NumberService } from "@/services/number-service";
+import { AccountHolderService } from "@/services/account-holder-service";
+import { ExternalBankAccountService } from "@/services/external-bank-account-service";
+import { ExternalPartyService } from "@/services/external-party-service";
+import { InternalTransactionService } from "@/services/internal-transaction-service";
+import { ExternalTransactionService } from "@/services/external-transaction-service";
+import { TransactionCategoryService } from "@/services/transaction-category-service.js";
 
 import {
   amountValidator,
   bicValidator,
   ibanDuplicateValidator,
-  ibanValidator, }                      from "@/validation/custom-validators";
+  ibanValidator,
+} from "@/validation/custom-validators";
 
 export default {
   //TODO - maybe tweak this error handling?
-  async created()                       {
-                                          let result = null;
-                                          result = await this.getAccountHolders();
+  async created() {
+    let result = null;
+    result = await this.getAccountHolders();
 
-                                          if (result.success) {
-                                            result = await this.getExternalParties();
-                                          } else {
-                                            console.error(result.error);
-                                          }
+    if (result.success) {
+      result = await this.getExternalParties();
+    } else {
+      console.error(result.error);
+    }
 
-                                          if (result.success) {
-                                            result = await this.getTransactionCategories();
-                                          } else {
-                                            console.error(result.error);
-                                          }
+    if (result.success) {
+      result = await this.getTransactionCategories();
+    } else {
+      console.error(result.error);
+    }
 
-                                          if (result.success) {
-                                            this.dataLoaded = true;
-                                          } else {
-                                            console.error(result.error);
-                                          }
-                                        },
+    if (result.success) {
+      this.dataLoaded = true;
+    } else {
+      console.error(result.error);
+    }
+  },
 
   components: {
     AtomButton,
@@ -104,312 +106,336 @@ export default {
   },
 
   props: {
-    transactionType:                    { type: String, required: true },
+    transactionType: { type: String, required: true },
   },
 
   computed: {
-    amountErrors()                      { return this.v$.amount.$error; },
-    counterPartErrors()                 { return this.v$.counterPart.$error; },
-    counterPartIbanErrors()             { return this.v$.counterPartIban.$error; },
-    counterPartBicErrors()              { return this.v$.counterPartBic.$error; },
-    paddingAutoSuggest()                { return this.selectedCounterPart && !this.selectedCounterPart.id ? 'pb-1' : 'pb-5'; },
+    amountErrors() {
+      return this.v$.amount.$error;
+    },
+    counterPartErrors() {
+      return this.v$.counterPart.$error;
+    },
+    counterPartIbanErrors() {
+      return this.v$.counterPartIban.$error;
+    },
+    counterPartBicErrors() {
+      return this.v$.counterPartBic.$error;
+    },
+    paddingAutoSuggest() {
+      return this.selectedCounterPart && !this.selectedCounterPart.id
+        ? "pb-1"
+        : "pb-5";
+    },
 
-    saveDisabled()                      {
-                                        return !this.includeCounterPartAccount
-                                            ? this.v$.amount.$silentErrors.length > 0 || !this.selectedCounterPart
-                                            : this.v$.$silentErrors.length > 0 || !this.selectedCounterPart;
-                                        },
-    showCheckbox()                      {
-                                          return this.selectedCounterPart && !this.selectedCounterPart.id;
-                                        },
+    saveDisabled() {
+      return !this.includeCounterPartAccount
+        ? this.v$.amount.$silentErrors.length > 0 || !this.selectedCounterPart
+        : this.v$.$silentErrors.length > 0 || !this.selectedCounterPart;
+    },
+    showCheckbox() {
+      return this.selectedCounterPart && !this.selectedCounterPart.id;
+    },
   },
 
   watch: {
-    amount()                            { this.v$.amount.$touch(); },
+    amount() {
+      this.v$.amount.$touch();
+    },
 
-    counterPart()                       {
-                                          if (!this.counterParts.find(c => c.name === this.counterPart)) {
-                                            this.selectedCounterPart = null;
-                                          }
-                                        },
+    counterPart() {
+      if (!this.counterParts.find((c) => c.name === this.counterPart)) {
+        this.selectedCounterPart = null;
+      }
+    },
 
-    includeCounterPartAccount()         {
-                                          this.ibans !== null
-                                            ? Array.from([
-                                              this.accountHolders.map(a => a.bankAccounts.map(b => b.iban)).flat(),
-                                              ...this.counterParts.map(c => c.externalBankAccount.iban )
-                                              ]).flat().filter(i => i !== null)
-                                            : this.ibans;
+    includeCounterPartAccount() {
+      this.ibans !== null
+        ? Array.from([
+            this.accountHolders
+              .map((a) => a.bankAccounts.map((b) => b.iban))
+              .flat(),
+            ...this.counterParts.map((c) => c.externalBankAccount.iban),
+          ])
+            .flat()
+            .filter((i) => i !== null)
+        : this.ibans;
 
-                                          console.log(this.ibans);
-                                        },
+      console.log(this.ibans);
+    },
 
-    selectedAccountNumber()             {
-                                          this.findAccount();
-                                          this.$router.push(`/new-${this.transactionType}/${this.selectedAccount.id}`);
-                                        }
+    selectedAccountNumber() {
+      this.findAccount();
+      this.$router.push(
+        `/new-${this.transactionType}/${this.selectedAccount.id}`
+      );
+    },
   },
 
   data() {
     return {
-      dataLoaded:                       false,
-      ibans:                            null,
+      dataLoaded: false,
+      ibans: null,
 
-      accountHolders:                   [],
-      bankAccountOptions:               null,
-      categories:                       null,
-      categoryOptions:                  null,
-      counterParts:                     null,
-      counterPartNames:                 [],
+      accountHolders: [],
+      bankAccountOptions: null,
+      categories: null,
+      categoryOptions: null,
+      counterParts: null,
+      counterPartNames: [],
 
-      selectedAccountNumber:            null,
-      selectedAccount:                  null,
-      selectedCategoryName:             null,
-      selectedCategory:                 null,
+      selectedAccountNumber: null,
+      selectedAccount: null,
+      selectedCategoryName: null,
+      selectedCategory: null,
 
       //counterPart is the v-model property for the input field - it refers to a counterParts name and is of type string
-      counterPart:                      null,
+      counterPart: null,
       //selectedCounterPart is the actual counterPartObject which contains the id and the externalBankAccountId if it's a persisted counterPart
-      selectedCounterPart:              null,
-      reference:                        '',
-      amount:                           '',
+      selectedCounterPart: null,
+      reference: "",
+      amount: "",
 
-      includeCounterPartAccount:        false,
-      counterPartIban:                  null,
-      counterPartBic:                   null,
+      includeCounterPartAccount: false,
+      counterPartIban: null,
+      counterPartBic: null,
     };
   },
 
   methods: {
-    blurAutoSuggest()                   {
-                                          if (!this.selectedCounterPart) {
-                                            this.counterPart = '';
-                                          }
+    blurAutoSuggest() {
+      if (!this.selectedCounterPart) {
+        this.counterPart = "";
+      }
 
-                                          this.v$.counterPart.$touch();
-                                        },
+      this.v$.counterPart.$touch();
+    },
 
-    findAccount()                       {
-                                          for (let i = 0; i < this.accountHolders.length; i++) {
-                                            const bankAccounts = this.accountHolders[i].bankAccounts;
+    findAccount() {
+      for (let i = 0; i < this.accountHolders.length; i++) {
+        const bankAccounts = this.accountHolders[i].bankAccounts;
 
-                                            for (let ii = 0; ii < bankAccounts.length; ii++) {
-                                              if (bankAccounts[ii].accountNumber === this.selectedAccountNumber) {
-                                                this.selectedAccount = bankAccounts[ii];
-                                                break;
-                                              }
-                                            }
-                                          }
-                                        },
+        for (let ii = 0; ii < bankAccounts.length; ii++) {
+          if (bankAccounts[ii].accountNumber === this.selectedAccountNumber) {
+            this.selectedAccount = bankAccounts[ii];
+            break;
+          }
+        }
+      }
+    },
 
-    async getAccountHolders()           {
-                                          const includeBankAccounts = true;
-                                          this.accountHolders = await AccountHolderService.getAll(
-                                            includeBankAccounts
-                                          );
+    async getAccountHolders() {
+      const includeBankAccounts = true;
+      this.accountHolders = await AccountHolderService.getAll(
+        includeBankAccounts
+      );
 
-                                          if (this.accountHolders) {
-                                            this.bankAccountOptions = [];
+      if (this.accountHolders) {
+        this.bankAccountOptions = [];
 
-                                            this.accountHolders.forEach((accountHolder) => {
-                                              this.bankAccountOptions.push({
-                                                value: accountHolder.name,
-                                                disabled: true,
-                                              });
+        this.accountHolders.forEach((accountHolder) => {
+          this.bankAccountOptions.push({
+            value: accountHolder.name,
+            disabled: true,
+          });
 
-                                              accountHolder.bankAccounts.forEach((bankAccount) => {
-                                                this.bankAccountOptions.push({
-                                                  value: bankAccount.accountNumber,
-                                                  disabled: false,
-                                                });
+          accountHolder.bankAccounts.forEach((bankAccount) => {
+            this.bankAccountOptions.push({
+              value: bankAccount.accountNumber,
+              disabled: false,
+            });
 
-                                                //TODO - this doesnt belong into this function, it should live in its own
-                                                //select the account which matches the id in the url
-                                                if (bankAccount.id == this.$route.params.id) {
-                                                  this.selectedAccountNumber = bankAccount.accountNumber;
-                                                  this.selectedAccount = bankAccount;
-                                                }
-                                              });
-                                            });
+            //TODO - this doesnt belong into this function, it should live in its own
+            //select the account which matches the id in the url
+            if (bankAccount.id == this.$route.params.id) {
+              this.selectedAccountNumber = bankAccount.accountNumber;
+              this.selectedAccount = bankAccount;
+            }
+          });
+        });
 
-                                            return {
-                                              success: true,
-                                              error: null,
-                                            };
-                                          } else {
-                                            return {
-                                              success: false,
-                                              error: 'Error fetching accountHolders',
-                                            };
-                                          }
-                                        },
+        return {
+          success: true,
+          error: null,
+        };
+      } else {
+        return {
+          success: false,
+          error: "Error fetching accountHolders",
+        };
+      }
+    },
 
-    async getExternalParties()          {
-                                          this.counterParts = await ExternalPartyService.getExternalParties();
-                                          if (this.counterParts) {
-                                            this.counterParts.forEach((counterPart) => {
-                                              this.counterPartNames.push(counterPart.name);
-                                            });
+    async getExternalParties() {
+      this.counterParts = await ExternalPartyService.getExternalParties();
+      if (this.counterParts) {
+        this.counterParts.forEach((counterPart) => {
+          this.counterPartNames.push(counterPart.name);
+        });
 
-                                            return {
-                                              success: true,
-                                              error: null,
-                                            };
-                                          } else {
-                                            return {
-                                              success: false,
-                                              error: 'Error fetching externalParties',
-                                            };
-                                          }
-                                        },
+        return {
+          success: true,
+          error: null,
+        };
+      } else {
+        return {
+          success: false,
+          error: "Error fetching externalParties",
+        };
+      }
+    },
 
-    async getTransactionCategories()    {
-                                          this.categories =
-                                            await TransactionCategoryService.getTransactionCategories();
+    async getTransactionCategories() {
+      this.categories =
+        await TransactionCategoryService.getTransactionCategories();
 
-                                          if (this.categories) {
-                                            this.categoryOptions = [];
+      if (this.categories) {
+        this.categoryOptions = [];
 
-                                            this.categories.forEach((category) => {
-                                              this.categoryOptions.push({
-                                                value: category.name,
-                                                disabled: false,
-                                              });
-                                            });
+        this.categories.forEach((category) => {
+          this.categoryOptions.push({
+            value: category.name,
+            disabled: false,
+          });
+        });
 
-                                            this.selectedCategoryName = this.categories[0].name;
-                                            this.selectedCategory = this.categories[0];
+        this.selectedCategoryName = this.categories[0].name;
+        this.selectedCategory = this.categories[0];
 
-                                            return {
-                                              success: true,
-                                              error: null,
-                                            };
-                                          } else {
-                                            return {
-                                              success: false,
-                                              error: 'Error fetching transactionCategories',
-                                            };
-                                          }
-                                        },
+        return {
+          success: true,
+          error: null,
+        };
+      } else {
+        return {
+          success: false,
+          error: "Error fetching transactionCategories",
+        };
+      }
+    },
 
-    pickItem(event)                     {
-                                          // highlighting the match is realized by wrapping it in a <strong>-element
-                                          // if the user clicks that part, we get the complete string from parentNode
-                                          const clickedItem =
-                                            event.target.tagName.toLowerCase() === 'strong'
-                                              ? event.target.parentNode.innerText
-                                              : event.target.textContent;
+    pickItem(event) {
+      // highlighting the match is realized by wrapping it in a <strong>-element
+      // if the user clicks that part, we get the complete string from parentNode
+      const clickedItem =
+        event.target.tagName.toLowerCase() === "strong"
+          ? event.target.parentNode.innerText
+          : event.target.textContent;
 
-                                          if (clickedItem.includes('Neu hinzufügen')) {
-                                            this.selectedCounterPart = { name: this.counterPart.trim() };
-                                          } else {
-                                            this.includeCounterPartAccount = false;
-                                            this.selectedCounterPart = this.counterParts.find(c => c.name === clickedItem);
-                                            this.counterPart = this.selectedCounterPart.name;
-                                          }
-                                        },
+      if (clickedItem.includes("Neu hinzufügen")) {
+        this.selectedCounterPart = { name: this.counterPart.trim() };
+      } else {
+        this.includeCounterPartAccount = false;
+        this.selectedCounterPart = this.counterParts.find(
+          (c) => c.name === clickedItem
+        );
+        this.counterPart = this.selectedCounterPart.name;
+      }
+    },
 
     //TODO - refactor this method, split it up into multiple async functions?
-    async save()                        {
-                                          let externalBankAccountId = null;
+    async save() {
+      let externalBankAccountId = null;
 
-                                          if (!this.selectedCounterPart.id) {
-                                            const externalParty = {
-                                              name: this.counterPart,
-                                            };
+      if (!this.selectedCounterPart.id) {
+        const externalParty = {
+          name: this.counterPart,
+        };
 
-                                            const createdExternalParty =
-                                              await ExternalPartyService.createExternalParty(externalParty);
+        const createdExternalParty =
+          await ExternalPartyService.createExternalParty(externalParty);
 
-                                            if (createdExternalParty) {
-                                              const externalBankAccount = {
-                                                externalPartyId: createdExternalParty.id,
-                                                iban: this.counterPartIban?.toUpperCase(),
-                                                bic: this.counterPartBic?.toUpperCase(),
-                                              };
+        if (createdExternalParty) {
+          const externalBankAccount = {
+            externalPartyId: createdExternalParty.id,
+            iban: this.counterPartIban?.toUpperCase(),
+            bic: this.counterPartBic?.toUpperCase(),
+          };
 
-                                              const createdExternalBankAccount =
-                                                await ExternalBankAccountService.createExternalBankAccount(
-                                                  externalBankAccount
-                                                );
+          const createdExternalBankAccount =
+            await ExternalBankAccountService.createExternalBankAccount(
+              externalBankAccount
+            );
 
-                                              if (createdExternalBankAccount) {
-                                                externalBankAccountId = createdExternalBankAccount.id;
-                                              } else {
-                                                //TODO - error handling?
-                                              }
-                                            } else {
-                                              //TODO - error handling?
-                                            }
-                                          } else {
-                                            externalBankAccountId = this.selectedCounterPart.externalBankAccount.id;
-                                          }
+          if (createdExternalBankAccount) {
+            externalBankAccountId = createdExternalBankAccount.id;
+          } else {
+            //TODO - error handling?
+          }
+        } else {
+          //TODO - error handling?
+        }
+      } else {
+        externalBankAccountId = this.selectedCounterPart.externalBankAccount.id;
+      }
 
-                                          const currentDate = new Date().toISOString();
-                                          const amount = NumberService.parseFloat(this.amount);
+      const currentDate = new Date().toISOString();
+      const amount = NumberService.parseFloat(this.amount);
 
-                                          const externalTransaction = {
-                                            externalBankAccountId: externalBankAccountId,
-                                            dateString: currentDate,
-                                            amount: amount * -1,
-                                            reference: this.reference,
-                                          };
-                                          const createdExternalTransaction =
-                                            await ExternalTransactionService.createExternalTransaction(
-                                              externalTransaction
-                                            );
+      const externalTransaction = {
+        externalBankAccountId: externalBankAccountId,
+        dateString: currentDate,
+        amount: amount * -1,
+        reference: this.reference,
+      };
+      const createdExternalTransaction =
+        await ExternalTransactionService.createExternalTransaction(
+          externalTransaction
+        );
 
-                                          if (!createdExternalTransaction) {
-                                            //TODO - something went wrong - throw an error?
-                                          } else {
-                                            const internalTransaction = {
-                                              internalBankAccountId: this.selectedAccount.id,
-                                              transactionCategoryId: this.selectedCategory.id,
-                                              dateString: currentDate,
-                                              amount: amount,
-                                              reference: this.reference,
-                                              counterPartTransactionToken:
-                                                createdExternalTransaction.transactionToken,
-                                              transactionToken:
-                                                createdExternalTransaction.counterPartTransactionToken,
-                                            };
-                                            await InternalTransactionService.create(internalTransaction);
+      if (!createdExternalTransaction) {
+        //TODO - something went wrong - throw an error?
+      } else {
+        const internalTransaction = {
+          internalBankAccountId: this.selectedAccount.id,
+          transactionCategoryId: this.selectedCategory.id,
+          dateString: currentDate,
+          amount: amount,
+          reference: this.reference,
+          counterPartTransactionToken:
+            createdExternalTransaction.transactionToken,
+          transactionToken:
+            createdExternalTransaction.counterPartTransactionToken,
+        };
+        await InternalTransactionService.create(internalTransaction);
 
-                                            if (!internalTransaction) {
-                                              //TODO - something went wrong - throw an error?
-                                            }
-                                          }
-                                        },
+        if (!internalTransaction) {
+          //TODO - something went wrong - throw an error?
+        }
+      }
+    },
 
     updateCounterPartAccountData(event) {
-                                          this.counterPartIban = event.iban;
-                                          this.counterPartBic = event.bic;
-                                        },
+      this.counterPartIban = event.iban;
+      this.counterPartBic = event.bic;
+    },
   },
 
-  setup()                               {
-                                          return {
-                                            v$: useVuelidate(),
-                                          };
-                                        },
+  setup() {
+    return {
+      v$: useVuelidate(),
+    };
+  },
 
-  validations()                         { 
-                                          if (this.includeCounterPartAccount) {
-                                            return {
-                                              amount:                 { required, amountValidator },
-                                              counterPart:            { required },
-                                              counterPartBic:         { bicValidator },
-                                              counterPartIban:        { ibanValidator, ibanDuplicate: ibanDuplicateValidator(this.ibans), }
-                                            }
-                                          }
-                                          else {
-                                            return {
-                                              amount:                 { required, amountValidator },
-                                              counterPart:            { required },
-                                              counterPartBic:         { bicValidator },
-                                              counterPartIban:        { ibanValidator }
-                                            }
-                                          }
-                                        },
+  validations() {
+    if (this.includeCounterPartAccount) {
+      return {
+        amount: { required, amountValidator },
+        counterPart: { required },
+        counterPartBic: { bicValidator },
+        counterPartIban: {
+          ibanValidator,
+          ibanDuplicate: ibanDuplicateValidator(this.ibans),
+        },
+      };
+    } else {
+      return {
+        amount: { required, amountValidator },
+        counterPart: { required },
+        counterPartBic: { bicValidator },
+        counterPartIban: { ibanValidator },
+      };
+    }
+  },
 };
 </script>
