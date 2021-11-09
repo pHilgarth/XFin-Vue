@@ -25,6 +25,7 @@
         </router-link>
       </div>
 
+<!--      <router-link to="/new-account-holder">-->
       <router-link to="/new-account-holder">
         Kontoinhaber hinzufügen
       </router-link>

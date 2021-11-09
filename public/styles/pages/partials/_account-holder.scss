@@ -1,4 +1,4 @@
-.new-account-holder, .update-account-holder {
+.account-holder {
     display: flex;
     overflow: hidden;
     width: 50%;
@@ -17,20 +17,20 @@
         );
     }
 
+    &__accounts-headline {
+        @include rem(
+                        (
+                                margin-bottom: 30px,
+                        )
+        );
+    }
+
     &__accounts {
         border-bottom: 1px solid $color__borders;
         @include rem(
             (
                 margin-bottom: 20px,
                 padding-bottom: 20px,
-            )
-        );
-    }
-
-    &__accounts-headline {
-        @include rem(
-            (
-                margin-bottom: 30px,
             )
         );
     }
@@ -60,7 +60,7 @@
         );
 
         &:hover {
-            .new-account-holder__edit, .update-account-holder__edit {
+            .account-holder__edit {
                 opacity: 1;
                 transition: opacity .2s;
             }

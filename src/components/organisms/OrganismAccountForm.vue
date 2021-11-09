@@ -14,7 +14,7 @@
             <MoleculeInputText v-if="newAccount" field="balance" :hasErrors="balanceErrors" v-model="balance" @blur="v$.balance.$touch()" :validation="v$.balance" label="Kontostand" />
 
             <AtomButton classList="xfin-form__button" text="Konto speichern" :disabled="v$.$silentErrors.length || duplicate ? true : false" @click.prevent="save" />
-            <AtomButton classList="xfin-form__button" text="Abbrechen" @click.prevent="$emit('cancel')" />
+            <AtomButton classList="xfin-form__button" text="Abbrechen" @click.prevent="$emit('cancel')" /><p>{{ formData.ibans }}</p>
         </form>
     </div>
 </template>
@@ -38,9 +38,7 @@ export default {
     if (this.formData.account) {
       const ibanIndex = this.formData.ibans.findIndex(i => i === this.formData.account.iban);
       let ibans = this.formData.ibans;
-      console.log(this.formData.ibans);
       ibans.splice(ibanIndex, 1);
-      console.log(this.formData.ibans);
     }
 
     if (this.newAccount) {
@@ -120,6 +118,8 @@ export default {
   methods: {
     async save() {
       //TODO - error occurs when no changes are made, because the iban obviously exists on a persisted account
+      //TODO - update this method and the endpoint on the API to use only the iban, i dont need the id here
+      //TODO - i will need to update the route on the API, just add /iban/{iban}
       const duplicate = await InternalBankAccountService.getByIban(this.id || 0, this.iban);
 
       if (!duplicate) {
@@ -127,8 +127,8 @@ export default {
           id: this.id,
           bank: this.bank,
           description: this.description,
-          bic: this.bic,
-          iban: this.iban,
+          bic: this.bic.toUpperCase(),
+          iban: this.iban.toUpperCase(),
         };
 
         //TODO - check if balance is passed when editing an existing account (existing in db)

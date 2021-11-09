@@ -25,14 +25,40 @@ export const AccountHolderService = {
       return null;
     }
   },
+  async get(id, includeAccounts = false, simpleBankAccounts = true) {
+//TODO - test this ternary
+    let url = includeAccounts
+        ? `${baseUrl}/${id}?includeAccounts=${includeAccounts}&simple=${simpleBankAccounts}`
+        : `${baseUrl}/${id}`;
 
-  async get(id, includeAccounts, simpleBankAccounts) {
-    let url = `${baseUrl}/${id}?includeAccounts=${includeAccounts}&simple=${simpleBankAccounts}`;
+    console.log(`id: ${id} - includeAccounts: ${includeAccounts} - simpleBankAccounts: ${simpleBankAccounts}`);
+    console.log(`url: ${url}`);
 
     try {
       return await fetch(url).then((response) => {
         if (response.ok) {
           return response.json();
+        }
+      }).then((data) => {
+        if (data != undefined) {
+          return data;
+        }
+      });
+    } catch (error) {
+      return null;
+    }
+  },
+
+  async getByName(name) {
+    let url = `${baseUrl}/name/${name}`;
+
+    try {
+      return await fetch(url).then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        else if (response.status === 204) {
+          return null;
         }
       }).then((data) => {
         if (data != undefined) {
@@ -58,8 +84,9 @@ export const AccountHolderService = {
         if (response.ok) {
           return response.json();
         }
-        else if (response.status === 409) {
-          return { duplicate: true };
+        //TODO - is this the right statuscode to return, when something failed? See also TODO on the API Controller Action
+        else if (response.status === 400) {
+          return null;
         }
       }).then((data) => {
         if (data !== undefined) {
@@ -86,6 +113,7 @@ export const AccountHolderService = {
         if (response.ok) {
           return response.json();
         }
+        //TODO - is this the right statuscode to return? See also the controller action on the API
         else if (response.status === 409) {
           return { duplicate: true };
         }

@@ -10,7 +10,7 @@ export const errorMessages = {
 
     //iban errors
     iban_ibanValidator:                     'Bitte gib eine gültige IBAN ein!',
-    iban_ibanDuplicate:                     'Diese IBAN exis    tiert bereits!',
+    iban_ibanDuplicate:                     'Diese IBAN existiert bereits!',
 
     //name errors
     name_required:                          'Bitte gib einen Namen ein!',
