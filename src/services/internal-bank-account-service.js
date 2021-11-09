@@ -21,14 +21,27 @@ export const InternalBankAccountService = {
     }
   },
 
-  async getByIban(id, iban) {
+  async getByIban(iban) {
 
-    const url = `${baseUrl}/${id}/${iban}`
+    const url = `${baseUrl}/iban/${iban}`
 
     try {
       return await fetch(url).then((response) => {
         if (response.ok) {
           return response.json();
+        }
+        else if (response.status === 204) {
+          alert('204');
+          return null;
+        }
+        //TODO - I'm not sure if this is the right way how to handle connection issues / bad requests etc.
+        //TODO - this is not working - if the server is not running, I get an CONNECTION REFUSES but 204 statuscode
+        else if (response.status >= 400) {
+          alert('400+');
+          return {
+            success: false,
+            error: 'Error during duplicate check',
+          };
         }
       }).then((data) => {
         if (data != undefined) {
