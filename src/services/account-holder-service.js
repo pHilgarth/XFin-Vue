@@ -47,15 +47,23 @@ export const AccountHolderService = {
   },
 
   async getByName(name) {
-    let url = `${baseUrl}/name/${name}`;
+    const url = `${baseUrl}/name/${name}`;
 
     try {
       return await fetch(url).then((response) => {
-        if (response.ok) {
-          return response.json();
+        if (response.status === 200) {
+          return {
+            success: true,
+            error: null,
+            duplicate: response.json(),
+          };
         }
         else if (response.status === 204) {
-          return null;
+          return {
+            success: true,
+            error: null,
+            duplicate: null,
+          };
         }
       }).then((data) => {
         if (data != undefined) {
@@ -63,7 +71,11 @@ export const AccountHolderService = {
         }
       });
     } catch (error) {
-      return null;
+      return {
+        success: false,
+        error: error,
+        duplicate: null,
+      };
     }
   },
 
@@ -95,24 +107,33 @@ export const AccountHolderService = {
     }
   },
 
-  async update(accountHolder) {
-    const url = `${baseUrl}/${accountHolder.id}`
+
+  async update(id, jsonPatchDocument) {
+    const url = `${baseUrl}/${id}`
+
     const postObject = {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(accountHolder)
+      body: JSON.stringify(jsonPatchDocument)
     };
 
     try {
       return await fetch(url, postObject).then((response) => {
-        if (response.ok) {
-          return response.json();
+        if (response.status === 200) {
+          return {
+            success: true,
+            error: null,
+            updatedRecord: response.json(),
+          };
         }
-        //TODO - is this the right statuscode to return? See also the controller action on the API
-        else if (response.status === 409) {
-          return { duplicate: true };
+        else if (response.status === 404) {
+          return {
+            success: false,
+            error: 'This record was not found in the database!',
+            updatedRecord: null,
+          };
         }
       }).then((data) => {
         if (data != undefined) {
@@ -120,7 +141,11 @@ export const AccountHolderService = {
         }
       });
     } catch (error) {
-      return error;
+      return {
+        success: false,
+        error: `Error while updating accountHolder (error: ${error})`,
+        updatedRecord: null,
+      };
     }
-  }
+  },
 }

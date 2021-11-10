@@ -26,7 +26,6 @@
         </div>
       </div>
       <button class="xfin-button" @click="saveAccountHolder" :disabled="saveDisabled">Kontoinhaber speichern</button>
-
     </article>
   </section>
   <div v-else class="account-holder__form">
@@ -36,17 +35,19 @@
 </template>
 
 <script>
-import { useVuelidate } from "@vuelidate/core";
+import { useVuelidate } from '@vuelidate/core';
 
-import AtomButtonLight from "@/components/atoms/AtomButtonLight";
-import AtomHeadline from "@/components/atoms/AtomHeadline";
+import AtomButtonLight from '@/components/atoms/AtomButtonLight';
+import AtomHeadline from '@/components/atoms/AtomHeadline';
 import AtomParagraph from '@/components/atoms/AtomParagraph';
 import AtomSpan from '@/components/atoms/AtomSpan';
-import MoleculeInputText from "@/components/molecules/MoleculeInputText";
-import OrganismAccountForm from "@/components/organisms/OrganismAccountForm";
+import MoleculeInputText from '@/components/molecules/MoleculeInputText';
+import OrganismAccountForm from '@/components/organisms/OrganismAccountForm';
 
-import { AccountHolderService } from "@/services/account-holder-service";
-//import { NumberService } from "@/services/number-service";
+import { AccountHolderService } from '@/services/account-holder-service';
+import { CopyService } from '@/services/copy-service';
+import { InternalBankAccountService }     from '@/services/internal-bank-account-service';
+import { InternalTransactionService }     from "@/services/internal-transaction-service";
 
 import { accountHolderValidation } from '@/validation/validations';
 
@@ -61,15 +62,7 @@ export default {
   },
 
   props: {
-    accountHolder: {
-      type: Object,
-      default() {
-        return {
-          name: '',
-          bankAccounts: [],
-        };
-      },
-    },
+    accountHolder: { type: Object, default: null },
     headline: { type: String, required: true },
   },
 
@@ -85,7 +78,7 @@ export default {
   watch: {
     name() {
       this.v$.name.$touch();
-      this.duplicatedName = null;
+      this.duplicatedName = false;
     },
     showForm() {
       if (this.showForm) {
@@ -102,9 +95,10 @@ export default {
     return {
       showForm: false,
 
-      name: this.accountHolder.name,
-      duplicatedName: null,
-      bankAccounts: this.accountHolder.bankAccounts,
+      name: this.accountHolder?.name || '',
+      originalName: this.accountHolder?.name || '',
+      duplicatedName: false,
+      bankAccounts: CopyService.copyArray(this.accountHolder?.bankAccounts || []),
       formData: null,
       formHeadline: null,
     };
@@ -114,6 +108,21 @@ export default {
     addAccount() {
       this.formHeadline = 'Konto hinzufügen';
       this.showForm = true;
+    },
+
+    checkForChanges(sourceAccount, bankAccount) {
+      const subset = ({iban, bic, bank, description}) => ({iban, bic, bank, description});
+      const sourceSubset = subset(sourceAccount);
+      const updateSubset = subset(bankAccount);
+      const changed = [];
+
+      for (const prop in sourceSubset) {
+        if (sourceSubset[prop] !== updateSubset[prop]) {
+          changed.push(prop);
+        }
+      }
+
+      return changed;
     },
 
     deleteAccount(event) {
@@ -141,102 +150,108 @@ export default {
       this.showForm = true;
     },
 
-    saveAccount(event) {
-      const newBankAccount = {};
+    async saveAccount(event) {
+      const bankAccount = {};
+
       for (const prop in event) {
-        newBankAccount[prop] = event[prop];
+        bankAccount[prop] = event[prop];
       }
-      //if newBankAccount.index -> user edited an existing account
-      if (newBankAccount.index >= 0) {
-        this.bankAccounts[newBankAccount.index] = newBankAccount;
-      } else {
-        this.bankAccounts.push(newBankAccount);
+
+      // if !this.accountHolder -> user is creating a new accountHolder
+      if (!this.accountHolder) {
+        //if bankAccount.index -> user edited an existing account
+        if (bankAccount.index >= 0) {
+          this.bankAccounts[bankAccount.index] = bankAccount;
+        } else {
+          this.bankAccounts.push(bankAccount);
+        }
+      
+        this.showForm = false;
       }
-    
-      this.showForm = false;
+      //else -> user is editing an existing accountHolder
+      else {
+        const sourceAccount = this.accountHolder.bankAccounts[bankAccount.index];
+
+        if (!sourceAccount) {
+          //TODO - this code is duplicated in NewAccountHolder when creating the accounts
+          bankAccount.accountHolderId = this.accountHolder.id;
+
+          const createdBankAccount = await InternalBankAccountService.create(bankAccount);
+
+          if (createdBankAccount) {
+            const initializationTransaction = {
+              internalBankAccountId: createdBankAccount.id,
+              dateString: new Date().toISOString(),
+              amount: bankAccount.balance,
+              reference: '[Kontoinitialisierung]',
+            };
+            const createdInitializationTransaction = await InternalTransactionService.create(initializationTransaction);
+            if (createdInitializationTransaction) {
+              this.bankAccounts.push(bankAccount);
+              this.showForm = false;
+            }
+            else {
+              //TODO - improve error handling - maybe remove the other records again? Or just implement a task on the API that takes care of this regularly?
+              this.error = 'Error during inizializationTransaction creation';
+              alert(this.error);
+            }
+          }
+          else {
+            //TODO - improve error handling
+            this.error = 'Error during bankAccountCreation';
+            alert(this.error);
+          }
+        }
+        else {
+          const jsonPatch = [];
+          
+          for (const prop of this.checkForChanges(sourceAccount, bankAccount)) {
+            jsonPatch.push({
+              op: "replace",
+              path: `/${prop}`,
+              value: bankAccount[prop],
+            });
+          }
+
+          const updateResponse = await InternalBankAccountService.update(bankAccount.id, jsonPatch);
+
+          if (!updateResponse.success) {
+            alert(updateResponse.error);
+          }
+          else {
+            this.bankAccounts[bankAccount.index] = bankAccount;
+            this.showForm = false;
+          }
+        }
+      }
     },
 
     async saveAccountHolder() {
-      this.duplicatedName = await AccountHolderService.getByName(this.name);
+      let duplicateCheckResponse = null;
+      let save = false;
 
-      if (!this.duplicatedName) {
+      if (this.originalName !== this.name) {
+        duplicateCheckResponse = await AccountHolderService.getByName(this.name);
+
+        if (duplicateCheckResponse.success && !duplicateCheckResponse.duplicate) {
+          save = true;
+        }
+        else if (duplicateCheckResponse.success && duplicateCheckResponse.duplicate) {
+          this.duplicatedName = true;
+        }
+        else if (!duplicateCheckResponse.success) {
+          //TODO - show something in frontend
+          alert('Error during duplicated name check');
+          console.error(duplicateCheckResponse.error);
+        }
+      }
+      else {
+        save = true;
+      }
+
+      if (save) {
         this.$emit('save', { name: this.name, bankAccounts: this.bankAccounts });
       }
-      // else {
-      //   //TODO - update accountHolder
-      //   if (this.nameChanged) {
-      //     const updatedAccountHolder = await this.saveName();
-    
-      //     if (updatedAccountHolder.duplicate) {
-      //       this.duplicateName = true;
-      //       return;
-      //     }
-      //   }
-    
-      //   if (this.accountsChanged) {
-      //     for (let i = 0; i < this.updatedBankAccounts.length; i++) {
-      //       const bankAccount = this.updatedBankAccounts[i];
-      //       bankAccount.iban = bankAccount.iban.toUpperCase();
-      //       bankAccount.bic = bankAccount.bic.toUpperCase();
-      //       const jsonPatch = [];
-      //       if (bankAccount.id && bankAccount.changed) {
-      //         for (const prop of bankAccount.changed) {
-      //           jsonPatch.push({
-      //             op: "replace",
-      //             path: `/${prop}`,
-      //             value: bankAccount[prop],
-      //           });
-      //         }
-    
-      //         await InternalBankAccountService.update(bankAccount.id, jsonPatch);
-      //       }
-      //       else if (!bankAccount.id) {
-    
-      //         bankAccount.accountHolderId = this.$route.params.id;
-      //         bankAccount.iban = bankAccount.iban.toUpperCase();
-      //         bankAccount.bic = bankAccount.bic.toUpperCase();
-      //         const createdBankAccount = await InternalBankAccountService.create(bankAccount);
-    
-      //         if (!createdBankAccount) {
-      //           //TODO - what if the account was created but the first account crashes? Then I have an accountHolder with no accounts.
-      //           //In AccountView I can show only accountHolders that have accounts
-      //           alert('error during account creation');
-      //           break;
-      //         }
-      //         else {
-      //           const initializationTransaction = {
-      //             internalBankAccountId: createdBankAccount.id,
-      //             dateString: new Date().toISOString(),
-      //             amount: bankAccount.balance,
-      //             reference: '[Kontoinitialisierung]',
-      //           };
-    
-      //           await InternalTransactionService.create(initializationTransaction);
-    
-      //           if (!initializationTransaction) {
-      //             //TODO - something went wrong - throw an error?
-      //           }
-      //           this.$router.push('/');
-      //         }
-      //       }
-      //       //if bankAccount.newAccount => it's a newly created account
-      //     }
-      //     // for (let i = 0; i < this.updatedBankAccounts.length; i++) {
-      //     // const updatedBankAccount = this.updatedBankAccounts[i];
-      //     //
-      //     // //const createdBankAccount = await InternalBankAccountService.create(updatedBankAccount);
-      //     //
-      //     // if (!createdBankAccount) {
-      //     //   //TODO - what if the account was created but the first account crashes? Then I have an accountHolder with no accounts.
-      //     //   //In AccountView I can show only accountHolders that have accounts
-      //     //   alert('error during account creation');
-      //     //   break;
-      //     // }
-      //     // }
-      //   }
-    
-      //   this.$router.push('/');
-      // }
     },
   },
 

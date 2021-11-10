@@ -1,5 +1,6 @@
 <template>
-  <div class="account-holder">
+<!-- TODO remove style attribute again -->
+  <div style="overflow:visible" class="account-holder">
     <OrganismAccountHolder headline="Kontoinhaber hinzufügen" @save="saveAccountHolder" />
     <!-- TODO - implement MoleculeLoading on every component, where an API call is made -->
   </div>
@@ -20,13 +21,13 @@ export default {
   data() {
     return {
       accountHolder: null,
+      error: null,
     };
   },
 
   methods: {
     async saveAccountHolder(accountHolder) {
       this.accountHolder = accountHolder;
-      //TODO - improve error handling, when API calls fail
       const createdAccountHolder = await AccountHolderService.create({ name: accountHolder.name });
     
         if (createdAccountHolder) {
@@ -46,19 +47,28 @@ export default {
               const createdInitializationTransaction = await InternalTransactionService.create(initializationTransaction);
 
               if (!createdInitializationTransaction) {
-                //TODO - error handling
-                alert('Error during inizializationTransaction creation')
+                //TODO - improve error handling - maybe remove the other records again? Or just implement a task on the API that takes care of this regularly?
+                this.error = 'Error during inizializationTransaction creation';
+                alert(this.error);
+                break;
               }
             }
             else {
-              //TODO - error handling
-              alert('Error during bankAccountCreation');
+              //TODO - improve error handling
+              this.error = 'Error during bankAccountCreation';
+              alert(this.error);
+              break;
             }
+          }
+
+          if (!this.error) {
+            this.$router.push('/');
           }
         }
         else {
-          //TODO - error handling
-          alert('Error during accountHolder creation');
+          //TODO - improve error handling
+          this.error = 'Error during accountHolder creation';
+          alert(this.error);
         }
     },
   }

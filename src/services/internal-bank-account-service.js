@@ -22,7 +22,6 @@ export const InternalBankAccountService = {
   },
 
   async getByIban(iban) {
-
     const url = `${baseUrl}/iban/${iban}`
 
     try {
@@ -34,7 +33,6 @@ export const InternalBankAccountService = {
             duplicate: response.json(),
           };
         }
-        //TODO - test if this block is executed, when no duplicate is found in DB and a NoContent() is returned by the API
         else if (response.status === 204) {
           return {
             success: true,
@@ -97,8 +95,19 @@ export const InternalBankAccountService = {
 
     try {
       return await fetch(url, postObject).then((response) => {
-        if (response.ok) {
-          return response.json();
+        if (response.status === 200) {
+          return {
+            success: true,
+            error: null,
+            updatedRecord: response.json(),
+          };
+        }
+        else if (response.status === 404) {
+          return {
+            success: false,
+            error: 'This record was not found in the database!',
+            updatedRecord: null,
+          };
         }
       }).then((data) => {
         if (data != undefined) {
@@ -106,7 +115,11 @@ export const InternalBankAccountService = {
         }
       });
     } catch (error) {
-      return null;
+      return {
+        success: false,
+        error: `Error while updating bankAccount (error: ${error})`,
+        updatedRecord: null,
+      };
     }
   }
 }

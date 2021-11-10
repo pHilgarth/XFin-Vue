@@ -142,7 +142,7 @@ export default {
          duplicateCheckResponse = await InternalBankAccountService.getByIban(this.iban);
       }
 
-      if (duplicateCheckResponse.success && !duplicateCheckResponse.duplicate) {
+      if ((duplicateCheckResponse === null) || duplicateCheckResponse.success && !duplicateCheckResponse.duplicate) {
         const account = {
           id: this.id,
           bank: this.bank,
@@ -159,7 +159,7 @@ export default {
       else if (duplicateCheckResponse.success && duplicateCheckResponse.duplicate) {
         this.duplicate = true;
       }
-      else if (!duplicateCheckResponse.success){
+      else if (!duplicateCheckResponse.success) {
         //TODO - show something in frontend
         alert('Error during duplicate check');
         console.error(duplicateCheckResponse.error);
