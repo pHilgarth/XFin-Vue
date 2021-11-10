@@ -191,7 +191,7 @@ export default {
 
       //counterPart is the v-model property for the input field - it refers to a counterParts name and is of type string
       counterPart: null,
-      //selectedCounterPart is the actual counterPartObject which contains the id and the externalBankAccountId if it's a persisted counterPart
+      //selectedCounterPart is the actual counterPartObject which contains the id and the externalBankAccountId if it's a counterPart stored in db
       selectedCounterPart: null,
       reference: "",
       amount: "",

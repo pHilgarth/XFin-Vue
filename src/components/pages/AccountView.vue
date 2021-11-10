@@ -2,25 +2,26 @@
 <template>
   <div class="account-view">
     <AtomHeadline tag="h1" text="Kontenübersicht" />
-    <div class="dev-hint important">
-      <p>Kostenstelle "Nicht zugewiesen:</p>
-      <p>Diese Kostenstelle dient nur dazu, freies Budget zu "lagern". Einnahmen werden auf "Nicht zugewiesen" gebucht, wenn keine Kostenstelle angegeben wird. <b>TODO</b></p>
-      <p>Ausgaben von "Nicht zugewiesen" dürfen nicht möglich sein - allerdings gibt es die Möglichkeit, bei einer Ausgabe eine KS auszuwählen und Geld von "Nicht zugewiesen" zu verwenden (via Checkbox "Freies Budget verwenden") <b>TODO</b></p>
-      <p>intern wird dann Geld auf die ausgewählte KS umgebucht und schließlich damit eine Ausgabe getätigt <b>TODO</b></p>
-      <br />
-      <p>Interne Geldtransfers von Konto nach Konto werden über Einnahmen / Ausgaben verbucht - die entsprechenden Forms müssen angepasst werden, damit auch eigene Konten ausgewählt werden können <b>TODO</b></p>
-      <p>Error Handling fehlt noch weitestgehend, einfach überall nochmal drüber gucken, wo man noch optimieren muss ( vor allem bei den api calls )</p>
-      <p>Atom Props testen (id, class, additionalProps, etc. ... )</p>
-      <p>scss und classes prüfen, welche brauche ich, bzw. kann ich die gesetzen classes vereinfachen, etc....</p>
-      <p>implement smart scss z-indices</p>
-    </div>
+    <!-- TODO - finish these todos -->
+<!--    <div class="dev-hint important">-->
+<!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->
+<!--      <p>Diese Kostenstelle dient nur dazu, freies Budget zu "lagern". Einnahmen werden auf "Nicht zugewiesen" gebucht, wenn keine Kostenstelle angegeben wird. <b>TODO</b></p>-->
+<!--      <p>Ausgaben von "Nicht zugewiesen" dürfen nicht möglich sein - allerdings gibt es die Möglichkeit, bei einer Ausgabe eine KS auszuwählen und Geld von "Nicht zugewiesen" zu verwenden (via Checkbox "Freies Budget verwenden") <b>TODO</b></p>-->
+<!--      <p>intern wird dann Geld auf die ausgewählte KS umgebucht und schließlich damit eine Ausgabe getätigt <b>TODO</b></p>-->
+<!--      <br />-->
+<!--      <p>Interne Geldtransfers von Konto nach Konto werden über Einnahmen / Ausgaben verbucht - die entsprechenden Forms müssen angepasst werden, damit auch eigene Konten ausgewählt werden können <b>TODO</b></p>-->
+<!--      <p>Error Handling fehlt noch weitestgehend, einfach überall nochmal drüber gucken, wo man noch optimieren muss ( vor allem bei den api calls )</p>-->
+<!--      <p>Atom Props testen (id, class, additionalProps, etc. ... )</p>-->
+<!--      <p>scss und classes prüfen, welche brauche ich, bzw. kann ich die gesetzen classes vereinfachen, etc....</p>-->
+<!--      <p>implement smart scss z-indices</p>-->
+<!--    </div>-->
     <MoleculeLoading v-if="loading || !accountHolders" :loadingError="!loading && !accountHolders" />
     
     <section class="account-view-body" v-else>
       <OrganismCollapsible v-for="accountHolder in accountHolders" :key="accountHolder.id" :config="configureCollapsible(accountHolder)" />
       
       <div style="border:1px solid red;margin: 10px 0;padding:10px 0;font-size:16px;">
-        <router-link v-for="accountHolder in accountHolders" :key="accountHolder.id" :to="'/accountHolders/' + accountHolder.id">
+        <router-link v-for="accountHolder in accountHolders" :key="accountHolder.id" :to="'/account-holders/' + accountHolder.id">
           Kontoinhaber bearbeiten
         </router-link>
       </div>

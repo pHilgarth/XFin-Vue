@@ -31,9 +31,6 @@ export const AccountHolderService = {
         ? `${baseUrl}/${id}?includeAccounts=${includeAccounts}&simple=${simpleBankAccounts}`
         : `${baseUrl}/${id}`;
 
-    console.log(`id: ${id} - includeAccounts: ${includeAccounts} - simpleBankAccounts: ${simpleBankAccounts}`);
-    console.log(`url: ${url}`);
-
     try {
       return await fetch(url).then((response) => {
         if (response.ok) {

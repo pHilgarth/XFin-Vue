@@ -1,8 +1,7 @@
 <template>
-  <div class="account-holder" style="display: block">
+  <div class="account-holder">
     <OrganismAccountHolder headline="Kontoinhaber hinzufügen" @save="saveAccountHolder" />
     <!-- TODO - implement MoleculeLoading on every component, where an API call is made -->
-    <p style="margin-top:100px">{{ accountHolder || 'null' }}</p>
   </div>
 </template>
 
@@ -27,7 +26,7 @@ export default {
   methods: {
     async saveAccountHolder(accountHolder) {
       this.accountHolder = accountHolder;
-      
+      //TODO - improve error handling, when API calls fail
       const createdAccountHolder = await AccountHolderService.create({ name: accountHolder.name });
     
         if (createdAccountHolder) {
@@ -56,17 +55,6 @@ export default {
               alert('Error during bankAccountCreation');
             }
           }
-    
-          //   const createdBankAccount = await this.createBankAccount(bankAccount);
-    
-          //   if (createdBankAccount) {
-
-          //   }
-          //   else {
-          //     //TODO - error handling
-          //     alert('Error during account creation');
-          //   }
-          // }
         }
         else {
           //TODO - error handling

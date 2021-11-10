@@ -143,44 +143,9 @@ export default {
       return changed;
     },
 
-    //TODO - relocate this copy function into some kind of service - it's reusable
-    copyArray(sourceArray) {
-      const targetArray = [];
 
-      sourceArray.forEach((element) => {
-        if (typeof element !== "object") {
-          targetArray.push(element);
-        } else if (Array.isArray(element)) {
-          targetArray.push(this.copyArray(element));
-        } else {
-          targetArray.push(this.copyObject(element));
-        }
-      });
 
-      return targetArray;
-    },
 
-    //TODO - relocate this copy function into some kind of service - it's reusable
-    copyObject(sourceObject) {
-      if (sourceObject === null) {
-        return null;
-      }
-
-      const targetObject = {};
-
-      for (let prop in sourceObject) {
-        if (typeof sourceObject[prop] !== "object") {
-          targetObject[prop] = sourceObject[prop];
-        } else if (Array.isArray(sourceObject[prop])) {
-          //prop == object, array, function or null
-          targetObject[prop] = this.copyArray(sourceObject[prop]);
-        } else {
-          targetObject[prop] = this.copyObject(sourceObject[prop]);
-        }
-      }
-
-      return targetObject;
-    },
 
     deleteAccount(index) {
       const bankAccount = this.updatedBankAccounts[index];
@@ -240,7 +205,7 @@ export default {
       const sourceAccount = this.sourceBankAccounts.find(b => b.id === event.id);
 
       //TODO - is it possible to rework this if else mess?
-      //if sourceAccount => the user updated an persisted account
+      //if sourceAccount => the user updated an existing account (existing in db)
       if (sourceAccount) {
         bankAccount.changed = this.checkForChanges(sourceAccount, bankAccount);
 

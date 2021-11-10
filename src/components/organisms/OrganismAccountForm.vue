@@ -15,11 +15,11 @@
 
             <AtomButton classList="xfin-form__button" text="Konto speichern" :disabled="v$.$silentErrors.length || duplicate ? true : false" @click.prevent="save" />
             <AtomButton classList="xfin-form__button" text="Abbrechen" @click.prevent="$emit('cancel')" />
-            <!-- TODO - remove this logging when done testing -->
-            <p>{{ `originalIban: ${originalIban || 'null'}`}}</p>
-            <p>{{ `iban: ${iban || 'null' }`}}</p>
-            <p>{{ `ibans for duplicate check: ${JSON.stringify(formData.ibans) || 'null'}`}}</p>
         </form>
+      <p>{{ `accountIndex: ${accountIndex} (${typeof accountIndex})`}}</p>
+      <p>{{ `originalIban: ${originalIban || 'null'}`}}</p>
+      <p>{{ `iban: ${iban || 'null' }`}}</p>
+      <p>{{ `ibans for duplicate check: ${JSON.stringify(formData.ibans) || 'null'}`}}</p>
     </div>
 </template>
 
@@ -81,8 +81,10 @@ export default {
 
   data() {
     return {
+      accountIndex:           this.formData.accountIndex,
       accountNumber:          this.formData.account?.accountNumber || null,
       id:                     this.formData.account?.id || null,
+      accountHolderId:        this.formData.account?.accountHolderId || null,
       balance:                this.formData.account?.balance
                                 ? NumberService.amountToString(this.formData.account.balance)
                                 : null,
@@ -135,28 +137,26 @@ export default {
 
   methods: {
     async save() {
-      let duplicate = null;
+
 
       //if iban changed, check for duplicates in the db
       if (this.originalIban !== this.iban) {
         //TODO - if this API call fails due to unavailable service or else which is not caused by the user / frontend I need some error handling
         //TODO - I need to check every API call in this app for proper error handling
-        duplicate = await InternalBankAccountService.getByIban(this.iban);
+        this.duplicate = await InternalBankAccountService.getByIban(this.iban);
       }
 
-      if (!duplicate) {
+      if (!this.duplicate) {
         const account = {
-          accountNumber: this.accountNumber,
           id: this.id,
           bank: this.bank,
           description: this.description,
           bic: this.bic,
           iban: this.iban,
+          accountNumber: NumberService.getAccountNumber(this.iban),
           balance: NumberService.parseFloat(this.balance),
+          index: this.accountIndex,
         };
-
-        console.log(account);
-        console.log(this.balance);
 
         //TODO - check if balance is passed when editing an existing account (existing in db)
         //TODO - it might get lost, because it's not in the 'account' declaration above (if(!duplicate) {...} )
@@ -170,8 +170,8 @@ export default {
         this.$emit("save", account);
       }
       else {
-        if (duplicate.error) {
-          alert(duplicate.error);
+        if (this.duplicate.error) {
+          alert(this.duplicate.error);
         }
       }
     },

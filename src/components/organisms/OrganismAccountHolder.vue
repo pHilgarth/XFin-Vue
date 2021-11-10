@@ -46,7 +46,7 @@ import MoleculeInputText from "@/components/molecules/MoleculeInputText";
 import OrganismAccountForm from "@/components/organisms/OrganismAccountForm";
 
 import { AccountHolderService } from "@/services/account-holder-service";
-import { NumberService } from "@/services/number-service";
+//import { NumberService } from "@/services/number-service";
 
 import { accountHolderValidation } from '@/validation/validations';
 
@@ -122,8 +122,8 @@ export default {
 
       //if the account to delete has an id, it's already stored in the db and the deletion needs additional logic - not yet implemented
       if (this.bankAccounts[index].id) {
-      //TODO - implement deletion of persisted accounts
-      alert('deletion of persisted accounts not yet implemented!');
+      //TODO - implement deletion of accounts stored in db
+      alert('deletion of accounts stored in db not yet implemented!');
       }
       else {
         this.bankAccounts.splice(event.target.dataset.index, 1);
@@ -134,25 +134,22 @@ export default {
       this.formHeadline = 'Konto bearbeiten';
       this.formData = {
         account: this.bankAccounts[event.target.dataset.index],
+        //accountIndex is needed to find the right account to update
+        accountIndex: parseInt(event.target.dataset.index),
         ibans: this.bankAccounts.map(b => b.iban),
       };
       this.showForm = true;
     },
 
     saveAccount(event) {
-      const newBankAccount = {
-        accountNumber: NumberService.getAccountNumber(event.iban),
-        iban: event.iban,
-        bic: event.bic,
-        bank: event.bank,
-        description: event.description,
-        balance: event.balance,
-      };
-      //if event.accountNumber -> user edited an existing account
-      if (event.accountNumber) {
-        const index = this.bankAccounts.findIndex(b => b.accountNumber === event.accountNumber);
-        this.bankAccounts[index] = newBankAccount;
-      } else {    
+      const newBankAccount = {};
+      for (const prop in event) {
+        newBankAccount[prop] = event[prop];
+      }
+      //if newBankAccount.index -> user edited an existing account
+      if (newBankAccount.index >= 0) {
+        this.bankAccounts[newBankAccount.index] = newBankAccount;
+      } else {
         this.bankAccounts.push(newBankAccount);
       }
     
@@ -165,13 +162,6 @@ export default {
       if (!this.duplicatedName) {
         this.$emit('save', { name: this.name, bankAccounts: this.bankAccounts });
       }
-    
-      // if (this.duplicatedName) {
-      //   //do nothing
-      // }
-      // else if (this.newAccountHolder) {
-      //   //
-      // }
       // else {
       //   //TODO - update accountHolder
       //   if (this.nameChanged) {
