@@ -13,7 +13,7 @@
             <MoleculeInputText classList="pb-5" field="description" v-model="description" :optional="true" label="Beschreibung" />
             <MoleculeInputText classList="pb-5" v-if="!formData.account" field="balance" :hasErrors="balanceErrors" v-model="balance" @blur="v$.balance.$touch()" :validation="v$.balance" label="Kontostand" />
 
-            <AtomButton classList="xfin-form__button" text="Konto speichern" :disabled="v$.$silentErrors.length || duplicate ? true : false" @click.prevent="save" />
+            <AtomButton classList="xfin-form__button" text="Konto speichern" :disabled="v$.$silentErrors.length > 0 || duplicate" @click.prevent="save" />
             <AtomButton classList="xfin-form__button" text="Abbrechen" @click.prevent="$emit('cancel')" />
         </form>
       <p>{{ `accountIndex: ${accountIndex} (${typeof accountIndex})`}}</p>
@@ -45,9 +45,7 @@ export default {
     //if formData has an account property, the user is editing an existing account (existing in memory or in db) and I remove its iban from the
     //duplicate checklist - I need an extra variable since I cant mutate props directly
     if (this.formData.account) {
-      const ibanIndex = this.formData.ibans.findIndex(
-        (i) => i === this.formData.account.iban
-      );
+      const ibanIndex = this.formData.ibans.findIndex(i => i === this.formData.account.iban);
       let ibans = this.formData.ibans;
       ibans.splice(ibanIndex, 1);
     }
@@ -56,9 +54,7 @@ export default {
     if (!this.formData.account) {
       newAccountValidation.iban.ibanDuplicate = ibanDuplicateValidator(this.formData.ibans);
     } else {
-      existingAccountValidation.iban.ibanDuplicate = ibanDuplicateValidator(
-        this.formData.ibans
-      );
+      existingAccountValidation.iban.ibanDuplicate = ibanDuplicateValidator(this.formData.ibans);
     }
   },
 
@@ -95,7 +91,7 @@ export default {
       iban:                   this.formData.account?.iban || "",
 
       ibans:                  this.formData.account?.ibans || [],
-      duplicate:              null,
+      duplicate:              false,
     };
   },
 
@@ -113,12 +109,13 @@ export default {
 
   watch: {
     iban() {
-      //TODO - add this next line to every iban / bic field watcher in other components and remove 'toUpperCase' afterwards where it's no longer needed
+      //TODO - add this next line to every iban field watcher in other components and remove 'toUpperCase' afterwards where it's no longer needed
       this.iban = this.iban.toUpperCase();
       this.v$.iban.$touch();
-      this.duplicate = null;
+      this.duplicate = false;
     },
     bic() {
+      //TODO - add this next line to every bic field watcher in other components and remove 'toUpperCase' afterwards where it's no longer needed
       this.bic = this.bic.toUpperCase();
       this.v$.bic.$touch();
     },
@@ -132,21 +129,20 @@ export default {
   },
 
   validations() {
-    return this.formData.account ? existingAccountValidation : newAccountValidation;
+    return this.formData.account
+      ? existingAccountValidation
+      : newAccountValidation;
   },
 
   methods: {
     async save() {
-
-
+      let duplicateCheckResponse = null;
       //if iban changed, check for duplicates in the db
       if (this.originalIban !== this.iban) {
-        //TODO - if this API call fails due to unavailable service or else which is not caused by the user / frontend I need some error handling
-        //TODO - I need to check every API call in this app for proper error handling
-        this.duplicate = await InternalBankAccountService.getByIban(this.iban);
+         duplicateCheckResponse = await InternalBankAccountService.getByIban(this.iban);
       }
 
-      if (!this.duplicate) {
+      if (duplicateCheckResponse.success && !duplicateCheckResponse.duplicate) {
         const account = {
           id: this.id,
           bank: this.bank,
@@ -157,22 +153,16 @@ export default {
           balance: NumberService.parseFloat(this.balance),
           index: this.accountIndex,
         };
-
-        //TODO - check if balance is passed when editing an existing account (existing in db)
-        //TODO - it might get lost, because it's not in the 'account' declaration above (if(!duplicate) {...} )
-
-        //TODO - do I need this block?
-        // if (!this.formData.account) {
-        //   account.balance = NumberService.parseFloat(this.balance);
-        //   account.index = this.formData.account?.index;
-        // }
-
+      
         this.$emit("save", account);
       }
-      else {
-        if (this.duplicate.error) {
-          alert(this.duplicate.error);
-        }
+      else if (duplicateCheckResponse.success && duplicateCheckResponse.duplicate) {
+        this.duplicate = true;
+      }
+      else if (!duplicateCheckResponse.success){
+        //TODO - show something in frontend
+        alert('Error during duplicate check');
+        console.error(duplicateCheckResponse.error);
       }
     },
   },
