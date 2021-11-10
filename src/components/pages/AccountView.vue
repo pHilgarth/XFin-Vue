@@ -2,7 +2,9 @@
 <template>
   <div class="account-view">
     <AtomHeadline tag="h1" text="Kontenübersicht" />
-    <!-- TODO - finish these todos -->
+    <!-- TODO - general todos -->
+    <!-- TODO - check every API call in this app for proper error handling -->
+
 <!--    <div class="dev-hint important">-->
 <!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->
 <!--      <p>Diese Kostenstelle dient nur dazu, freies Budget zu "lagern". Einnahmen werden auf "Nicht zugewiesen" gebucht, wenn keine Kostenstelle angegeben wird. <b>TODO</b></p>-->
