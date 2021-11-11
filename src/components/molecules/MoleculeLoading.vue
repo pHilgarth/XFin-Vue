@@ -1,6 +1,6 @@
 <template>
     <section>
-      <div v-if="loadingError">Fehler beim Laden der Kontoinhaber!</div>
+      <div v-if="loadingError">{{ errorMessage }}</div>
       <div v-else>Daten werden geladen ...</div>
     </section>
 </template>
@@ -8,7 +8,8 @@
 <script>
 export default {
   props: {
-    loadingError: { required: true },
+    errorMessage: { type: String, required: true },
+    loadingError: { type: Boolean, required: true },
   }
 }
 </script>
