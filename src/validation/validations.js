@@ -19,12 +19,12 @@ export const existingAccountValidation = {
     bic:        { bicValidator },
 }
 
-export const transactionValidation = {
-    amount:                 { required, amountValidator },
-    counterPart:            { required },
-    counterPartIban:        { ibanValidator },
-    counterPartBic:         { bicValidator },
-}
+//TODO - delete if not needed
+// export const transactionValidation = {
+//     amount:                 { required, amountValidator },
+//     counterPartIban:        { ibanValidator },
+//     counterPartBic:         { bicValidator },
+// }
 
 export const counterPartValidation = {
     counterPartIban:        { ibanValidator },

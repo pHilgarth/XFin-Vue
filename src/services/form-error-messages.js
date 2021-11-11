@@ -18,7 +18,8 @@ export const errorMessages = {
     name_nameDuplicate:                     'Dieser Name existiert bereits!',
 
     //counterPart errors
-    counterPart:                            'Bitte gib einen Zahlungspflichtigen / Zahlungsempfänger an!',
+    counterPart_payerRequired:              'Bitte gib einen Zahlungspflichtigen an!',
+    counterPart_payeeRequired:              'Bitte gib einen Zahlungsempfänger an!',
     counterPartIban:                        'Bitte gib eine gültige IBAN ein!',
     counterPartBic:                         'Bitte gib einen gültigen BIC ein!',
     counterPartIban_ibanDuplicate:          'Diese IBAN existiert bereits!',

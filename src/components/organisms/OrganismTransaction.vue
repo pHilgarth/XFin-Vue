@@ -68,6 +68,8 @@ import { InternalTransactionService } from "@/services/internal-transaction-serv
 import { ExternalTransactionService } from "@/services/external-transaction-service";
 import { TransactionCategoryService } from "@/services/transaction-category-service.js";
 
+import { counterPartValidator } from '@/validation/custom-validators';
+
 import {
   amountValidator,
   bicValidator,
@@ -76,24 +78,26 @@ import {
 } from "@/validation/custom-validators";
 
 export default {
-  //TODO - maybe tweak this error handling?
+  //TODO - tweak this error handling -  it is so ugly
   async created() {
     let apiResponse = await this.getAccountHolders();
 
     if (apiResponse.success) {
       apiResponse = await this.getExternalParties();
-    } else {
-      console.error(apiResponse.error);
-    }
 
-    if (apiResponse.success) {
-      apiResponse = await this.getTransactionCategories();
-    } else {
-      console.error(apiResponse.error);
-    }
+      if (apiResponse.success) {
+        apiResponse = await this.getTransactionCategories();
 
-    if (apiResponse.success) {
-      this.dataLoaded = true;
+        if (apiResponse.success) {
+          this.dataLoaded = true;
+        } else {
+          this.loadingError = true;
+          console.error(apiResponse.error);
+        }
+      } else {
+        this.loadingError = true;
+        console.error(apiResponse.error);
+      }
     } else {
       this.loadingError = true;
       console.error(apiResponse.error);
@@ -114,18 +118,12 @@ export default {
   },
 
   computed: {
-    amountErrors() {
-      return this.v$.amount.$error;
-    },
-    counterPartErrors() {
-      return this.v$.counterPart.$error;
-    },
-    counterPartIbanErrors() {
-      return this.v$.counterPartIban.$error;
-    },
-    counterPartBicErrors() {
-      return this.v$.counterPartBic.$error;
-    },
+    amountErrors() { return this.v$.amount.$error; },
+    counterPartBicErrors() { return this.v$.counterPartBic.$error; },
+    counterPartErrors() { return this.v$.counterPart.$error; },
+    counterPartIbanErrors() { return this.v$.counterPartIban.$error; },
+    showCheckbox() { return this.selectedCounterPart && !this.selectedCounterPart.id; },
+
     paddingAutoSuggest() {
       return this.selectedCounterPart && !this.selectedCounterPart.id
         ? "pb-1"
@@ -137,15 +135,10 @@ export default {
         ? this.v$.amount.$silentErrors.length > 0 || !this.selectedCounterPart
         : this.v$.$silentErrors.length > 0 || !this.selectedCounterPart;
     },
-    showCheckbox() {
-      return this.selectedCounterPart && !this.selectedCounterPart.id;
-    },
   },
 
   watch: {
-    amount() {
-      this.v$.amount.$touch();
-    },
+    amount() { this.v$.amount.$touch(); },
 
     counterPart() {
       if (!this.counterParts.find((c) => c.name === this.counterPart)) {
@@ -153,26 +146,28 @@ export default {
       }
     },
 
-    includeCounterPartAccount() {
-      this.ibans !== null
-        ? Array.from([
-            this.accountHolders
-              .map((a) => a.bankAccounts.map((b) => b.iban))
-              .flat(),
-            ...this.counterParts.map((c) => c.externalBankAccount.iban),
-          ])
-            .flat()
-            .filter((i) => i !== null)
-        : this.ibans;
+    counterPartBic() {
+      this.counterPartBic = this.counterPartBic.toUpperCase();
+      this.v$.counterPartBic.$touch();
+    },
 
-      console.log(this.ibans);
+    counterPartIban() {
+      this.counterPartIban = this.counterPartIban.toUpperCase();
+      this.v$.counterPartIban.$touch();
+    },
+
+    includeCounterPartAccount() {
+      this.ibans = this.ibans === null
+        ? Array.from([
+              this.accountHolders.map((a) => a.bankAccounts.map((b) => b.iban)).flat(),
+            ...this.counterParts.map((c) => c.externalBankAccount.iban),
+          ]).flat().filter((i) => i !== null)
+        : this.ibans;
     },
 
     selectedAccountNumber() {
       this.findAccount();
-      this.$router.push(
-        `/new-${this.transactionType}/${this.selectedAccount.id}`
-      );
+      this.$router.push(`/new-${this.transactionType}/${this.selectedAccount.id}`);
     },
   },
 
@@ -328,13 +323,14 @@ export default {
     async save() {
       let externalBankAccountId = null;
 
+      //TODO - if creation of new externalPary fails, it still tries to create an externalTransaction - I need to update the error handling here
+      //if !this.selectedCounterPart.id -> it's a new counterPart, create a new one
       if (!this.selectedCounterPart.id) {
         const externalParty = {
           name: this.counterPart,
         };
 
-        const createdExternalParty =
-          await ExternalPartyService.createExternalParty(externalParty);
+        const createdExternalParty = await ExternalPartyService.createExternalParty(externalParty);
 
         if (createdExternalParty) {
           const externalBankAccount = {
@@ -409,23 +405,41 @@ export default {
   },
 
   validations() {
+    let validation = {
+      amount: { required, amountValidator },
+      counterPartBic: { bicValidator },
+      counterPartIban: { ibanValidator },
+    };
+
+    //i need different keys to show the appropriate error message
+    if (this.transactionType === 'revenue') {
+      validation.counterPart = { payerRequired: counterPartValidator };
+    }
+    else {
+      validation.counterPart = { payeeRequired: counterPartValidator };
+    }
+
     if (this.includeCounterPartAccount) {
-      return {
-        amount: { required, amountValidator },
-        counterPart: { required },
-        counterPartBic: { bicValidator },
-        counterPartIban: {
-          ibanValidator,
-          ibanDuplicate: ibanDuplicateValidator(this.ibans),
-        },
-      };
+      validation.counterPartIban.ibanDuplicate = ibanDuplicateValidator(this.ibans);
+
+      return validation;
+      // return {
+      //   amount: { required, amountValidator },
+      //   counterPart: { required },
+      //   counterPartBic: { bicValidator },
+      //   counterPartIban: {
+      //     ibanValidator,
+      //     ibanDuplicate: ibanDuplicateValidator(this.ibans),
+      //   },
+      // };
     } else {
-      return {
-        amount: { required, amountValidator },
-        counterPart: { required },
-        counterPartBic: { bicValidator },
-        counterPartIban: { ibanValidator },
-      };
+      return validation;
+      // return {
+      //   amount: { required, amountValidator },
+      //   counterPart: { required },
+      //   counterPartBic: { bicValidator },
+      //   counterPartIban: { ibanValidator },
+      // };
     }
   },
 };
