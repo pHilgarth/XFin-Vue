@@ -16,7 +16,7 @@ export const router = createRouter({
         { path: '/', component: AccountView },
         { path: '/accounts/:id', component: AccountDetail },
         { path: '/new-account-holder', component: NewAccountHolder },
-        { path: '/account-holders/:id', component: UpdateAccountHolder },
+        { path: '/edit-account-holder/:id', component: UpdateAccountHolder },
         { path: '/new-revenue/:id', component: NewRevenue },
         { path: '/new-expense/:id', component: NewExpense },
         { path: '/budget-manager', component: BudgetManager },
