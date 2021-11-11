@@ -6,7 +6,7 @@
                           :validation="v$.name" v-model="name" label="Name" @blur="v$.name.$touch()"/>
 
       <teleport v-if="duplicatedName" to=".account-holder__name">
-        <AtomParagraph classList="xfin-form__error" text="Dieser Name wird bereits verwendet!"/>
+        <AtomParagraph class="xfin-form__error" text="Dieser Name wird bereits verwendet!"/>
       </teleport>
 
       <div class="account-holder__accounts">

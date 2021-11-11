@@ -3,7 +3,7 @@
   <div class="account-settings" v-if="dataLoaded">
     <AtomHeadline v-if="!showForm" tag="h1" :text="`Kontoeinstellungen (${account.accountNumber})`" />
     <div class="account-settings__main" v-if="!showForm">
-      <AtomParagraph classList="account-settings__edit-account-data pb-5" text="Kontodaten bearbeiten" @click="showForm = true" />
+      <AtomParagraph class="account-settings__edit-account-data pb-5" text="Kontodaten bearbeiten" @click="showForm = true" />
       <MoleculeInputCheckbox classList="pb-3" v-model="accountSettings.effectsExpenses" label="Ausgaben erlauben" :_switch="true"/>
       <MoleculeInputCheckbox classList="pb-3" v-model="accountSettings.receivesRevenues" label="Einnahmen erlauben" :_switch="true"/>
       <MoleculeInputCheckbox classList="pb-3" v-model="accountSettings.allowsOverdraft" label="Kontoüberziehung erlauben" :_switch="true"/>

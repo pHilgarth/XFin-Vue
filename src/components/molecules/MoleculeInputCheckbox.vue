@@ -3,7 +3,7 @@
         <AtomInputCheckbox :id="field" :checked="modelValue" @input="$emit('update:modelValue', $event.target.checked)" />
         <AtomLabel classList="xfin-form__label" :target="field" :text="label" />
         <template v-for="(error, index) in validation?.$errors" :key="index">
-            <AtomParagraph classList="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
+            <AtomParagraph class="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
         </template>
     </div>
 </template>

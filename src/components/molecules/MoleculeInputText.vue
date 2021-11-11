@@ -6,7 +6,7 @@
                         @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
 
         <template v-for="(error, index) in validation?.$errors" :key="index">
-            <AtomParagraph classList="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
+            <AtomParagraph class="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
         </template>
 
     </div>
@@ -18,7 +18,7 @@
         <AtomLabel classList="xfin-form__label" :target="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
 
         <template v-for="(error, index) in validation?.$errors" :key="index">
-            <AtomParagraph classList="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
+            <AtomParagraph class="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
         </template>
     </div>
 </template>
