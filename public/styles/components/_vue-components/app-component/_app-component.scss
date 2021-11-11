@@ -1,7 +1,7 @@
 
 .xfin {
   &__header {
-    background-color: $color__primary;
+    background-color: $color--primary;
     color: $color__font--dark;
     height: 5vh;
     position: fixed;
@@ -16,7 +16,7 @@
   }
 
   &__sidebar {
-    background-color: $color__primary;
+    background-color: $color--primary;
     height: 95vh;
     position: fixed;
     width: 12.5vw;
@@ -31,7 +31,7 @@
     padding: 0;
 
     li {
-      background-color: $color__white;
+      background-color: $color--white;
       border: solid $color__borders;
       border-width: 1px 1px 0 0;
       cursor: pointer;
@@ -40,8 +40,8 @@
       ));
 
       &:hover, &.active {
-        background-color: $color__secondary;
-        border-color: $color__secondary;
+        background-color: $color--secondary;
+        border-color: $color--secondary;
         color: $color__font--light;
       }
     }
