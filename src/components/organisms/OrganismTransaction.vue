@@ -5,7 +5,9 @@
   <div class="transaction">
     <section class="transaction-body">
       <h1>{{ transactionType === 'revenue' ? 'Einnahme' : 'Ausgabe' }} eintragen</h1>
-      <form class="xfin-account-form" v-if="dataLoaded">
+      <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!"/>
+
+      <form class="xfin-account-form" v-else>
         <MoleculeInputSelect  classList="transaction__account" :options="bankAccountOptions" field="account" v-model="selectedAccountNumber" label="Konto" />
         <MoleculeInputSelect  classList="transaction__category" :options="categoryOptions" field="category" v-model="selectedCategoryName" label="Kostenstelle"
                               @update:modelValue="selectedCategory = categories.find(c => c.name === $event)" />
@@ -56,6 +58,7 @@ import MoleculeInputAutoSuggest from "@/components/molecules/MoleculeInputAutoSu
 import MoleculeInputCheckbox from "@/components/molecules/MoleculeInputCheckbox";
 import MoleculeInputSelect from "@/components/molecules/MoleculeInputSelect";
 import MoleculeInputText from "@/components/molecules/MoleculeInputText";
+import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 
 import { NumberService } from "@/services/number-service";
 import { AccountHolderService } from "@/services/account-holder-service";
@@ -75,25 +78,25 @@ import {
 export default {
   //TODO - maybe tweak this error handling?
   async created() {
-    let result = null;
-    result = await this.getAccountHolders();
+    let apiResponse = await this.getAccountHolders();
 
-    if (result.success) {
-      result = await this.getExternalParties();
+    if (apiResponse.success) {
+      apiResponse = await this.getExternalParties();
     } else {
-      console.error(result.error);
+      console.error(apiResponse.error);
     }
 
-    if (result.success) {
-      result = await this.getTransactionCategories();
+    if (apiResponse.success) {
+      apiResponse = await this.getTransactionCategories();
     } else {
-      console.error(result.error);
+      console.error(apiResponse.error);
     }
 
-    if (result.success) {
+    if (apiResponse.success) {
       this.dataLoaded = true;
     } else {
-      console.error(result.error);
+      this.loadingError = true;
+      console.error(apiResponse.error);
     }
   },
 
@@ -103,6 +106,7 @@ export default {
     MoleculeInputCheckbox,
     MoleculeInputSelect,
     MoleculeInputText,
+    MoleculeLoading,
   },
 
   props: {
@@ -175,9 +179,11 @@ export default {
   data() {
     return {
       dataLoaded: false,
+      loadingError: false,
+
       ibans: null,
 
-      accountHolders: [],
+      accountHolders: null,
       bankAccountOptions: null,
       categories: null,
       categoryOptions: null,
@@ -226,11 +232,10 @@ export default {
 
     async getAccountHolders() {
       const includeBankAccounts = true;
-      this.accountHolders = await AccountHolderService.getAll(
-        includeBankAccounts
-      );
+      const apiResponse = await AccountHolderService.getAll(includeBankAccounts);
 
-      if (this.accountHolders) {
+      if (apiResponse.success && apiResponse.data) {
+        this.accountHolders = apiResponse.data;
         this.bankAccountOptions = [];
 
         this.accountHolders.forEach((accountHolder) => {
@@ -253,43 +258,35 @@ export default {
             }
           });
         });
-
-        return {
-          success: true,
-          error: null,
-        };
-      } else {
-        return {
-          success: false,
-          error: "Error fetching accountHolders",
-        };
       }
+      else if (apiResponse.success && !apiResponse.data) {
+        this.accountHolders = [];
+      }
+
+      return apiResponse;
     },
 
     async getExternalParties() {
-      this.counterParts = await ExternalPartyService.getExternalParties();
-      if (this.counterParts) {
+      const apiResponse = await ExternalPartyService.getAll();
+
+      if (apiResponse.success && apiResponse.data) {
+        this.counterParts = apiResponse.data;
+
         this.counterParts.forEach((counterPart) => {
           this.counterPartNames.push(counterPart.name);
         });
-
-        return {
-          success: true,
-          error: null,
-        };
-      } else {
-        return {
-          success: false,
-          error: "Error fetching externalParties",
-        };
+      } else if (apiResponse.success && !apiResponse.data) {
+        this.counterParts = [];
       }
+
+      return apiResponse;
     },
 
     async getTransactionCategories() {
-      this.categories =
-        await TransactionCategoryService.getTransactionCategories();
+      const apiResponse = await TransactionCategoryService.getAll();
 
-      if (this.categories) {
+      if (apiResponse.success && apiResponse.data) {
+        this.categories = apiResponse.data;
         this.categoryOptions = [];
 
         this.categories.forEach((category) => {
@@ -301,17 +298,11 @@ export default {
 
         this.selectedCategoryName = this.categories[0].name;
         this.selectedCategory = this.categories[0];
-
-        return {
-          success: true,
-          error: null,
-        };
-      } else {
-        return {
-          success: false,
-          error: "Error fetching transactionCategories",
-        };
+      } else if (apiResponse.success && !apiResponse.data) {
+        this.categories = [];
       }
+
+      return apiResponse;
     },
 
     pickItem(event) {

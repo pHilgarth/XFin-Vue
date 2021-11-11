@@ -51,22 +51,36 @@ export const TransactionCategoryService = {
     //     return transactionCategories;
     // },
 
-    async getTransactionCategories() {
+    async getAll() {
         try {
         return await fetch(baseUrl).then((response) => {
-            if (response.ok) {
-                if (response.status === 204) {
-                    return null;
-                }
-            return response.json();
+            if (response.status === 200) {
+                return response.json();
+            }
+            else if (response.status === 204) {
+                return null;
             }
         }).then((data) => {
             if (data != undefined) {
-            return data;
+                return {
+                    success: true,
+                    error: null,
+                    data: data,
+                };
+            }
+            else {
+                return {
+                    success: true,
+                    error: 'No categories found',
+                    data: null,
+                };
             }
         });
         } catch (error) {
-        return null;
+            return {
+                success: false,
+                error: `Error fetching categories\n${error}`,
+            };
         }
     },
 
