@@ -10,19 +10,34 @@ export const AccountHolderService = {
 
     try {
       return await fetch(url).then((response) => {
-        if (response.ok) {
-          if (response.status === 204) {
-            return [];
-          }
+        if (response.status === 200) {
           return response.json();
+        }
+        else if (response.status === 204) {
+          return null;
         }
       }).then((data) => {
         if (data != undefined) {
-          return data;
+          return {
+            success: true,
+            error: null,
+            data: data
+          };
+        }
+        else {
+          return {
+            success: true,
+            error: 'No account holders found!',
+            data: null,
+          };
         }
       });
     } catch (error) {
-      return null;
+      return {
+        success: false,
+        error: `Error fetching account holders\n${error}`,
+        data: null,
+      };
     }
   },
   async get(id, includeAccounts = false, simpleBankAccounts = true) {
@@ -107,7 +122,8 @@ export const AccountHolderService = {
     }
   },
 
-
+//TODO - this api call never returns the actual data - it returns a promise, so it doesnt work the way it should
+//TODO - on the get requests i still have the old way which is returning the data, i need to find another way of doing things
   async update(id, jsonPatchDocument) {
     const url = `${baseUrl}/${id}`
 

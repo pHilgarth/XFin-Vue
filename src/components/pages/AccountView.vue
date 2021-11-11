@@ -4,6 +4,8 @@
     <AtomHeadline tag="h1" text="Kontenübersicht" />
     <!-- TODO - general todos -->
     <!-- TODO - check every API call in this app for proper error handling -->
+    <!-- TODO - style xfin-button hover effect -->
+    <!-- TODO - make use of automatic attribute fallthrough (i.e. dont use classList on Atoms where only one root element is)-->
 
 <!--    <div class="dev-hint important">-->
 <!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->
@@ -17,9 +19,11 @@
 <!--      <p>scss und classes prüfen, welche brauche ich, bzw. kann ich die gesetzen classes vereinfachen, etc....</p>-->
 <!--      <p>implement smart scss z-indices</p>-->
 <!--    </div>-->
-    <MoleculeLoading v-if="loading || !accountHolders" :loadingError="!loading && !accountHolders" />
-    
+    <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Kontoinhaber!"/>
+
     <section class="account-view-body" v-else>
+      <AtomParagraph class="pb-4" v-if="dataLoaded && accountHolders.length === 0" text="Keine Kontoinhaber gefunden!" />
+
       <div class="account-view__account-holder" v-for="accountHolder in accountHolders" :key="accountHolder.id">
         <OrganismCollapsible :config="configureCollapsible(accountHolder)" />
         <span class="account-view__edit" :data-id="accountHolder.id" @click="editAccountHolder">
@@ -28,8 +32,7 @@
           </svg>
         </span>
       </div>
-
-<!--      <router-link to="/new-account-holder">-->
+      
       <router-link to="/new-account-holder" class="xfin-button">
         Kontoinhaber hinzufügen
       </router-link>
@@ -39,6 +42,7 @@
 
 <script>
 import AtomHeadline from "@/components/atoms/AtomHeadline";
+import AtomParagraph from '@/components/atoms/AtomParagraph';
 
 import MoleculeLoading from "@/components/molecules/MoleculeLoading";
 
@@ -49,20 +53,30 @@ import { NumberService } from "@/services/number-service";
 
 export default {
   //TODO - try using created hook for API calls
-  beforeMount() {
-    this.getAccountHolders(true);
+  async created() {
+    const apiResponse = await this.getAccountHolders(true);
+
+    if (apiResponse.success) {
+      this.dataLoaded = true;
+    }
+    else {
+      this.loadingError = true;
+    }
   },
 
   components: {
     AtomHeadline,
+    AtomParagraph,
     MoleculeLoading,
     OrganismCollapsible,
   },
 
   data() {
     return {
-      accountHolders: [],
-      loading: true,
+      dataLoaded: false,
+      loadingError: false,
+
+      accountHolders: null,
     };
   },
 
@@ -145,8 +159,16 @@ export default {
     },
 
     async getAccountHolders(includeAccounts = false) {
-      this.accountHolders = await AccountHolderService.getAll(includeAccounts);
-      this.loading = false;
+      const apiResponse = await AccountHolderService.getAll(includeAccounts);
+
+      if (apiResponse.success && apiResponse.data) {
+        this.accountHolders = apiResponse.data;
+      }
+      else if (apiResponse.success && !apiResponse.data) {
+        this.accountHolders = [];
+      }
+
+      return apiResponse;
     },
 
     formatCurrency(value) {
