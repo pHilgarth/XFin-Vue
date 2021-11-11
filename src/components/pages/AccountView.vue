@@ -30,7 +30,7 @@
       </div>
 
 <!--      <router-link to="/new-account-holder">-->
-      <router-link to="/new-account-holder">
+      <router-link to="/new-account-holder" class="xfin-button">
         Kontoinhaber hinzufügen
       </router-link>
     </section>
