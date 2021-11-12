@@ -1,5 +1,10 @@
 import { required, maxLength } from "@vuelidate/validators";
-import { amountValidator, balanceValidator, bicValidator, ibanValidator, } from "@/validation/custom-validators";
+import {
+    balanceValidator,
+    expensesThresholdValidator,
+    bicValidator,
+    ibanValidator,
+} from "@/validation/custom-validators";
 
 
 export const accountHolderValidation = {
@@ -32,5 +37,5 @@ export const counterPartValidation = {
 }
 
 export const accountSettingsValidation = {
-    threshold:              { amountValidator }
+    expensesThreshold:              { expensesThresholdValidator }
 }
