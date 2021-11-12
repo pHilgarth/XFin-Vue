@@ -1,16 +1,28 @@
+const amountErrorMessage =                  'Bitte gib einen gültigen Betrag ein!';
+const bicErrorMessage =                     'Bitte gib einen gültigen BIC ein!';
+const ibanErrorMessage =                    'Bitte gib eine gültige IBAN ein!';
+const ibanDuplicateErrorMessage =           'Diese IBAN existiert bereits!';
+
 export const errorMessages = {
     //amount errors
-    amount:                                 'Bitte gib einen gültigen Betrag ein!',
+    amount:                                 amountErrorMessage,
 
     //balance errors
-    balance:                                'Bitte gib einen gültigen Betrag ein!',
+    balance:                                amountErrorMessage,
+
+    //balanceThreshold errors
+    balanceThreshold_amount:                amountErrorMessage,
+    balanceThreshold_maxAmount:             'Der Betrag darf den aktuellen Kontostand nicht überschreiten!',
 
     //bic errors
-    bic:                                    'Bitte gib einen gültigen BIC ein!',
+    bic:                                    bicErrorMessage,
+
+    //expense errors
+    expensesThreshold:                      amountErrorMessage,
 
     //iban errors
-    iban_ibanValidator:                     'Bitte gib eine gültige IBAN ein!',
-    iban_ibanDuplicate:                     'Diese IBAN existiert bereits!',
+    iban_ibanValidator:                     ibanErrorMessage,
+    iban_ibanDuplicate:                     ibanDuplicateErrorMessage,
 
     //name errors
     name_required:                          'Bitte gib einen Namen ein!',
@@ -20,7 +32,7 @@ export const errorMessages = {
     //counterPart errors
     counterPart_payerRequired:              'Bitte gib einen Zahlungspflichtigen an!',
     counterPart_payeeRequired:              'Bitte gib einen Zahlungsempfänger an!',
-    counterPartIban:                        'Bitte gib eine gültige IBAN ein!',
-    counterPartBic:                         'Bitte gib einen gültigen BIC ein!',
-    counterPartIban_ibanDuplicate:          'Diese IBAN existiert bereits!',
+    counterPartIban:                        ibanErrorMessage,
+    counterPartBic:                         bicErrorMessage,
+    counterPartIban_ibanDuplicate:          ibanDuplicateErrorMessage,
 }
