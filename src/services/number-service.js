@@ -1,6 +1,8 @@
 export const NumberService = {
     amountToString(value) {
-        return value.toString().replaceAll(',', '').replace('.', ',');
+        return value !== null
+            ? value.toString().replaceAll(',', '').replace('.', ',')
+            : null;
     },
 
     formatCurrency(value, includeCurrency = true) {
@@ -8,10 +10,18 @@ export const NumberService = {
             style: "currency",
             currency: "EUR",
           });    
-          return includeCurrency ? currencyFormat.format(value) : currencyFormat.format(value).slice(0, -2);
+          return value !== null
+              ? includeCurrency
+                  ? currencyFormat.format(value)
+                  : currencyFormat.format(value).slice(0, -2)
+              : null;
     },
 
     formatDate(value) {
+
+        if (!value) {
+            return null;
+        }
 
         const date = new Date(value);
 
@@ -20,10 +30,14 @@ export const NumberService = {
     },
 
     getAccountNumber(iban) {
-        return iban.substring(12).replace(/^0+/, "");
+        return iban !== null
+            ? iban.substring(12).replace(/^0+/, "")
+            : null;
     },
 
     parseFloat(value) {
-        return parseFloat(value.replaceAll(".", "").replace(",", "."));
+        return value !== null
+            ? parseFloat(value.replaceAll(".", "").replace(",", "."))
+            : null;
     }
 }
