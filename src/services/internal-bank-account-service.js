@@ -2,7 +2,7 @@
 const baseUrl = "http://localhost:2905/api/internalBankAccounts";
 
 export const InternalBankAccountService = {
-  async getById(id, simple, year = 0, month = 0) {
+  async getById(id, simple, year = 0, month = -1) {
 
     const url = `${baseUrl}/${id}?simple=${simple}&year=${year}&month=${++month}`
 
