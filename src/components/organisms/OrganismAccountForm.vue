@@ -13,13 +13,10 @@
             <MoleculeInputText classList="pb-5" field="description" v-model="description" :optional="true" label="Beschreibung" />
             <MoleculeInputText classList="pb-5" v-if="!formData.account" field="balance" :hasErrors="balanceErrors" v-model="balance" @blur="v$.balance.$touch()" :validation="v$.balance" label="Kontostand" />
 
-            <AtomButton classList="xfin-form__button" text="Konto speichern" :disabled="v$.$silentErrors.length > 0 || duplicate" @click.prevent="save" />
-            <AtomButton classList="xfin-form__button" text="Abbrechen" @click.prevent="$emit('cancel')" />
+            <!-- TODO - remove border on button-->
+            <AtomButton classList="xfin-button" text="Konto speichern" :disabled="v$.$silentErrors.length > 0 || duplicate" @click.prevent="save" />
+            <AtomButton classList="xfin-button" text="Abbrechen" @click.prevent="$emit('cancel')" />
         </form>
-      <p>{{ `accountIndex: ${accountIndex} (${typeof accountIndex})`}}</p>
-      <p>{{ `originalIban: ${originalIban || 'null'}`}}</p>
-      <p>{{ `iban: ${iban || 'null' }`}}</p>
-      <p>{{ `ibans for duplicate check: ${JSON.stringify(formData.ibans) || 'null'}`}}</p>
     </div>
 </template>
 

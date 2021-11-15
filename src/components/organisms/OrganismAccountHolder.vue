@@ -110,6 +110,7 @@ export default {
       this.showForm = true;
     },
 
+    //TODO - can I move this function into a service? It's duplicated in AccountSettings.vue
     checkForChanges(sourceAccount, bankAccount) {
       const subset = ({iban, bic, bank, description}) => ({iban, bic, bank, description});
       const sourceSubset = subset(sourceAccount);

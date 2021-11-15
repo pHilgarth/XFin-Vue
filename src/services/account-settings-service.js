@@ -30,7 +30,45 @@ export const AccountSettingsService = {
     console.error('AccountSettingsService.create is not implemented');
   },
 
-  async update() {
-    console.error('AccountSettingsService.update is not implemented');
+  async update(settingsId, jsonPatchDocument) {
+    const url = `${baseUrl}/${settingsId}`
+
+    const postObject = {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(jsonPatchDocument)
+    };
+
+    //TODO - reusable code / duplicated code
+    try {
+      return await fetch(url, postObject).then((response) => {
+        if (response.status === 200) {
+          return {
+            success: true,
+            error: null,
+            updatedRecord: response.json(),
+          };
+        }
+        else if (response.status === 404) {
+          return {
+            success: false,
+            error: 'This record was not found in the database!',
+            updatedRecord: null,
+          };
+        }
+      }).then((data) => {
+        if (data != undefined) {
+          return data;
+        }
+      });
+    } catch (error) {
+      return {
+        success: false,
+        error: `Error while updating accountSettings (error: ${error})`,
+        updatedRecord: null,
+      };
+    }
   },
 }

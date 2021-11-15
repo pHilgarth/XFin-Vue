@@ -3,16 +3,21 @@
   <div class="account-settings" v-if="dataLoaded">
     <AtomHeadline v-if="!showForm" tag="h1" :text="`Kontoeinstellungen (${account.accountNumber})`" />
     <div class="account-settings__main" v-if="!showForm">
-      <AtomParagraph class="account-settings__edit-account-data pb-5" text="Kontodaten bearbeiten" @click="showForm = true" />
-      <MoleculeInputCheckbox classList="pb-3" v-model="effectsExpenses" label="Ausgaben erlauben" :_switch="true"/>
+      <div class="account-settings__edit-account-data pb-2">
+        <AtomParagraph class="xfin-button--light" text="Kontodaten bearbeiten" @click="showForm = true" />
+      </div>
+      <MoleculeInputCheckbox classList="pb-3" v-model="effectsExpenses" label="Ausgaben erlauben"
+                             :disabled="expensesThresholdDisabled" :_switch="true"/>
       <MoleculeInputCheckbox classList="pb-3" v-model="receivesRevenues" label="Einnahmen erlauben" :_switch="true"/>
-      <MoleculeInputCheckbox classList="pb-3" v-model="allowsOverdraft" label="Kontoüberziehung erlauben" :_switch="true"/>
+      <MoleculeInputCheckbox classList="pb-4" v-model="allowsOverdraft" label="Kontoüberziehung erlauben"
+                             :disabled="overdraftDisabled" :_switch="true"/>
       <!-- TODO - implement a little 'help'-icon for input fields, which provides info about the field when hovering it (question mark) -->
       <!-- TODO color red when input is negative -->
       <MoleculeInputText  classList="pb-5" field="balance-threshold" :hasErrors="balanceThresholdErrors" v-model="balanceThreshold"
                           :validation="v$.balanceThreshold" label="Mindestbetrag" :optional="true" @blur="v$.balanceThreshold.$touch()" />
       <MoleculeInputText classList="pb-5" field="expenses-threshold" :hasErrors="expensesThresholdErrors" v-model="expensesThreshold" :validation="v$.expensesThreshold"
                          label="Obergrenze für Ausgaben (pro Monat)" :optional="true" @blur="v$.expensesThreshold.$touch()" />
+      <AtomButton class="xfin-button" text="Speichern" @click="saveAccountSettings"/>
     </div>
     <div class="account-settings__form" v-else>
       <OrganismAccountForm @cancel="showForm = false" @save="saveAccountData" :formData="formData" :newAccount="false" :headline="formHeadline" />
@@ -23,6 +28,7 @@
 <script>
 import { useVuelidate }                 from '@vuelidate/core';
 
+import AtomButton                       from '@/components/atoms/AtomButton';
 import AtomHeadline                     from '@/components/atoms/AtomHeadline';
 import AtomParagraph                    from '@/components/atoms/AtomParagraph';
 import MoleculeInputCheckbox            from '@/components/molecules/MoleculeInputCheckbox';
@@ -60,6 +66,7 @@ export default {
   },
 
   components: {
+    AtomButton,
     AtomHeadline,
     AtomParagraph,
     MoleculeInputCheckbox,
@@ -78,18 +85,30 @@ export default {
 
       const value = this.balanceThreshold === ''
           ? null
-          : NumberService.amountToString(this.balanceThreshold);
+          //TODO - why amountToString? Delete, if wrong
+          //: NumberService.amountToString(this.balanceThreshold);
+          : NumberService.parseFloat(this.balanceThreshold);
 
-      if (value === null || value < 0) {
+      if (value === null) {
         this.allowsOverdraft = true;
+        this.overdraftDisabled = false;
       }
-      else if (value >= 0) {
-        this.allowsOverdraft = false;
+      else {
+        this.allowsOverdraft = value < 0;
+        this.overdraftDisabled = true;
       }
     },
 
     expensesThreshold() {
       this.v$.expensesThreshold.$touch();
+
+      const value = this.expensesThreshold === ''
+        ? null
+        : NumberService.parseFloat(this.expensesThreshold);
+
+      this.effectsExpenses = value !== 0;
+      this.expensesThresholdDisabled = value === 0;
+
     }
   },
 
@@ -98,12 +117,15 @@ export default {
       dataLoaded: false,
 
       account: null,
+      originalAccountSettings: null,
 
       effectsExpenses: true,
       receivesRevenues: true,
       allowsOverdraft: true,
+      overdraftDisabled: false,
       balanceThreshold: null,
       expensesThreshold: null,
+      expensesThresholdDisabled: false,
 
       formData: null,
       formHeadline: 'Kontodaten bearbeiten',
@@ -114,6 +136,21 @@ export default {
   },
 
   methods: {
+    //TODO - can I move this function into a service? It's duplicated in OrganismAccountHolder.vue
+    checkForChanges(sourceObject, targetObject, subset) {
+      const sourceSubset = subset(sourceObject);
+      const updateSubset = subset(targetObject);
+      const changed = [];
+
+      for (const prop in sourceSubset) {
+        if (sourceSubset[prop] !== updateSubset[prop]) {
+          changed.push(prop);
+        }
+      }
+
+      return changed;
+    },
+
     async getAccount() {
       const simpleBankAccount = true;
       this.account = await InternalBankAccountService.getById(this.$route.params.id, simpleBankAccount);
@@ -143,11 +180,13 @@ export default {
       const accountSettings = await AccountSettingsService.get(accountId);
 
       if (accountSettings) {
-        this.effectsExpenses = accountSettings.effectsExpenses;
-        this.receivesExpenses = accountSettings.receivesExpenses;
-        this.allowsOverdraft = accountSettings.allowsOverdraft;
-        this.balanceThreshold = NumberService.amountToString(accountSettings.balanceThreshold);
-        this.expensesThreshold = NumberService.amountToString(accountSettings.expensesThreshold);
+        this.originalAccountSettings =  accountSettings;
+        this.effectsExpenses =          accountSettings.effectsExpenses;
+        this.receivesExpenses =         accountSettings.receivesExpenses;
+        this.allowsOverdraft =          accountSettings.allowsOverdraft;
+        //TODO - decimals get cut off when loading amount from db
+        this.balanceThreshold =         NumberService.amountToString(accountSettings.balanceThreshold);
+        this.expensesThreshold =        NumberService.amountToString(accountSettings.expensesThreshold);
 
         return {
           success: true,
@@ -160,7 +199,65 @@ export default {
           error: 'Error fetching accountSettings!',
         };
       }
-    }
+    },
+
+    async saveAccountSettings() {
+      const updatedSettings = {
+        effectsExpenses: this.effectsExpenses,
+        receivesRevenues: this.receivesRevenues,
+        allowsOverdraft: this.allowsOverdraft,
+        balanceThreshold: NumberService.parseFloat(this.balanceThreshold),
+        expensesThreshold: NumberService.parseFloat(this.expensesThreshold),
+      };
+
+      const jsonPatch = [];
+
+      const subset =
+          ({ effectsExpenses, receivesRevenues, allowsOverdraft, balanceThreshold, expensesThreshold }) =>
+              ({ effectsExpenses, receivesRevenues, allowsOverdraft, balanceThreshold, expensesThreshold });
+
+      for (const prop of this.checkForChanges(this.originalAccountSettings, updatedSettings, subset)) {
+        jsonPatch.push({
+          op: "replace",
+          path: `/${prop}`,
+          value: updatedSettings[prop],
+        });
+      }
+
+      const updateResponse = await AccountSettingsService.update(this.originalAccountSettings.id, jsonPatch);
+
+      if (!updateResponse.success) {
+        alert(updateResponse.error);
+      }
+      else {
+        this.$router.push('/');
+      }
+
+    },
+
+    async saveAccountData(updatedAccount) {
+      const jsonPatch = [];
+      const subset = ({ iban, bic, bank, description }) => ({ iban, bic, bank, description });
+
+      for (const prop of this.checkForChanges(this.account, updatedAccount, subset)) {
+        jsonPatch.push({
+          op: "replace",
+          path: `/${prop}`,
+          value: updatedAccount[prop],
+        });
+      }
+
+      const updateResponse = await InternalBankAccountService.update(updatedAccount.id, jsonPatch);
+
+      if (!updateResponse.success) {
+        alert(updateResponse.error);
+      }
+      else {
+        this.account = updatedAccount;
+        this.formData.account = updatedAccount;
+        this.showForm = false;
+      }
+    },
   },
 
   setup() {
