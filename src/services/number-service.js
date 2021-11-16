@@ -1,7 +1,7 @@
 export const NumberService = {
     amountToString(value) {
         return value !== null
-            ? value.toString().replaceAll(',', '').replace('.', ',')
+            ? Number(value).toFixed(2).replace('.', ',')
             : null;
     },
 
