@@ -84,6 +84,39 @@ export const TransactionCategoryService = {
         }
     },
 
+    async getAllSimpleByAccount(id) {
+        try {
+            return await fetch(`${baseUrl}/simple/${id}`).then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                else if (response.status === 204) {
+                    return null;
+                }
+            }).then((data) => {
+                if (data != undefined) {
+                    return {
+                        success: true,
+                        error: null,
+                        data: data,
+                    };
+                }
+                else {
+                    return {
+                        success: true,
+                        error: 'No categories found',
+                        data: null,
+                    };
+                }
+            });
+        } catch (error) {
+            return {
+                success: false,
+                error: `Error fetching categories\n${error}`,
+            };
+        }
+    },
+
     async getTransactionCategoriesByAccount(id, year, month) {
         const url = `${baseUrl}/${id}?year=${year}&month=${++month}`
 
