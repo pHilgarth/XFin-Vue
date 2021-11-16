@@ -51,7 +51,7 @@ export default {
 
     result = await this.getAccount();
 
-    if (result.success) {console.log(this.account);
+    if (result.success) {
       result = await this.getAccountSettings(this.account.id);
 
     } else {
@@ -178,13 +178,11 @@ export default {
 
     async getAccountSettings(accountId) {
       const accountSettings = await AccountSettingsService.get(accountId);
-
       if (accountSettings) {
         this.originalAccountSettings =  accountSettings;
         this.effectsExpenses =          accountSettings.effectsExpenses;
         this.receivesExpenses =         accountSettings.receivesExpenses;
         this.allowsOverdraft =          accountSettings.allowsOverdraft;
-        //TODO - decimals get cut off when loading amount from db
         this.balanceThreshold =         NumberService.amountToString(accountSettings.balanceThreshold);
         this.expensesThreshold =        NumberService.amountToString(accountSettings.expensesThreshold);
 
