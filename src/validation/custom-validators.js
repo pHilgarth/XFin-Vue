@@ -11,6 +11,7 @@ import { NumberService } from '@/services/number-service';
 
 */
 export const amountValidator =                              (value) => value.match(/^(0|[1-9][0-9]*),[0-9]{2}$/);
+export const amountAvailableValidator =     (available) =>  (value) => NumberService.parseFloat(value) <= available;
 /* balance regex:
 
     allows negative values

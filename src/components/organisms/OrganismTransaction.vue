@@ -37,6 +37,7 @@
                             @blur="v$.amount.$touch()" />
 
        <AtomButton classList="xfin-form__button" text="Speichern" :disabled="saveDisabled" @click.prevent="save" />
+        <p>{{ v$.amount }}</p>
       </form>
     </section>
   </div>
@@ -68,7 +69,8 @@ import { InternalTransactionService } from "@/services/internal-transaction-serv
 import { ExternalTransactionService } from "@/services/external-transaction-service";
 import { TransactionCategoryService } from "@/services/transaction-category-service.js";
 
-import { counterPartValidator } from '@/validation/custom-validators';
+import { amountAvailableValidator, counterPartValidator } from '@/validation/custom-validators';
+//import { counterPartValidator } from '@/validation/custom-validators';
 
 import {
   amountValidator,
@@ -86,7 +88,7 @@ export default {
       apiResponse = await this.getExternalParties();
 
       if (apiResponse.success) {
-        apiResponse = await this.getTransactionCategories();
+        apiResponse = await this.getAllSimpleByAccount();
 
         if (apiResponse.success) {
           this.dataLoaded = true;
@@ -277,11 +279,11 @@ export default {
       return apiResponse;
     },
 
-    async getTransactionCategories() {
-      const apiResponse = await TransactionCategoryService.getAll();
+    async getAllSimpleByAccount() {
+      const apiResponse = await TransactionCategoryService.getAllSimpleByAccount(this.selectedAccount.id);
 
       if (apiResponse.success && apiResponse.data) {
-        this.categories = apiResponse.data;
+        this.categories = apiResponse.data.filter(c => c.name !== 'Nicht zugewiesen');
         this.categoryOptions = [];
 
         this.categories.forEach((category) => {
@@ -293,6 +295,7 @@ export default {
 
         this.selectedCategoryName = this.categories[0].name;
         this.selectedCategory = this.categories[0];
+        //this.availableAmount =
       } else if (apiResponse.success && !apiResponse.data) {
         this.categories = [];
       }
@@ -417,6 +420,8 @@ export default {
     }
     else {
       validation.counterPart = { payeeRequired: counterPartValidator };
+      validation.amount.availableAmount = amountAvailableValidator(this.availableAmount);
+
     }
 
     if (this.includeCounterPartAccount) {
