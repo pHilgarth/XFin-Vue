@@ -1,5 +1,5 @@
 <template>
-    <div class="xfin-card budget-manager">
+    <div class="xfin-card budget-manager__category">
         <div class="xfin-card__content col-8">
             <span>{{ transactionCategories[0].name }}</span>
         </div>
@@ -8,18 +8,7 @@
         </div>
     </div>
   <template v-for="(category, index) in transactionCategories" :key="index">
-    <div v-if="index > 0" class="xfin-card budget-manager" :class="{ 'changed': category.dirty }">
-        <div class="xfin-card__content col-8">
-            <span>{{ category.name }}</span>
-        </div>
-        <div class="xfin-card__content col-2">
-            <AtomBudgetManagerInput :valueProp="category.balance" @amount-changed="calculateFreeBudget($event.value, category)" />
-        </div>
-        <div class="xfin-card__content col-2">
-            <i v-if="category.dirty" class="bi bi-arrow-counterclockwise reset" title="Zurücksetzen" @click="resetCategory(category)"></i>
-            <i v-if="category.dirty" class="bi bi-check-circle save" title="Änderung speichern" @click="saveCategory(category)"></i>
-        </div>
-    </div>
+    <MoleculeBudgetManagerCategory v-if="index > 0" :category="category" />
   </template>
   <div class="row">
     <p class="col-8">&nbsp;</p>
@@ -30,7 +19,8 @@
 </template>
 
 <script>
-import AtomBudgetManagerInput from "@/components/atoms/AtomBudgetManagerInput";
+//import AtomBudgetManagerInput from "@/components/atoms/AtomBudgetManagerInput";
+import MoleculeBudgetManagerCategory from "@/components/molecules/MoleculeBudgetManagerCategory";
 
 import { InternalTransactionService } from "@/services/internal-transaction-service";
 import { NumberService } from "@/services/number-service";
@@ -41,7 +31,8 @@ export default {
   },
 
   components: {
-    AtomBudgetManagerInput,
+    //AtomBudgetManagerInput,
+    MoleculeBudgetManagerCategory,
   },
 
   props: {
@@ -82,13 +73,6 @@ export default {
 
         this.freeBudget = this.formatCurrency(numFreeBudget + (numCategoryValue - numValue), false);
         category.balance = this.formatCurrency(value, false, decimals);
-    },
-
-    configureInput(category) {
-      return {
-        disabled: category.name === "Nicht zugewiesen" ? true : false,
-        value: NumberService.formatCurrency(category.balance, false),
-      };
     },
 
     formatCurrency(value, includeCurrency = true, decimals = 2) {
