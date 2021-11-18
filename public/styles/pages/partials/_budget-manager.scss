@@ -1,20 +1,67 @@
-.budget-manager__total {
-    font-weight: bold;
-    padding: 0;
-    @include rem((
-        font-size: 20px,
-    ));
+.budget-manager {
+    width: 100%;
 
-    span {
-        &:first-child {
-            float: left
+    &__category {
+        align-items: center;
+        display: flex;
+
+        &.changed {
+            border: 2px solid $color--secondary;
         }
 
-        &:last-child {
-            float: right;
-            @include rem((
-                padding-right: 40px
-            ));
+        i {
+            position: absolute;
+            cursor: pointer;
+            transition: all .5s;
+            top: 50%;
+            transform: translateY(-50%);
+
+            &.reset {
+                @include rem((
+                        font-size: 30px,
+                        left: 5px,
+                ));
+
+                &:hover {
+                    transform: translateY(-50%) rotate(-360deg);
+                }
+            }
+
+            &.save {
+                @include rem((
+                        font-size: 27px,
+                        left: 50px,
+                ));
+
+                &:hover {
+                    transform: translateY(-50%) rotateY(360deg);
+                }
+            }
+
+            &:hover {
+                color: $color--secondary;
+                transition: all .5s;
+            }
+        }
+    }
+    &__total {
+        font-weight: bold;
+        padding: 0;
+        @include rem((
+                font-size: 20px,
+        ));
+
+        span {
+            &:first-child {
+                float: left
+            }
+
+            &:last-child {
+                float: right;
+                @include rem((
+                        padding-right: 40px
+                ));
+            }
         }
     }
 }
