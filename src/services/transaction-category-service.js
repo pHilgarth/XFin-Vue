@@ -117,21 +117,39 @@ export const TransactionCategoryService = {
         }
     },
 
-    async getTransactionCategoriesByAccount(id, year, month) {
+    async getAllByAccount(id, year, month) {
         const url = `${baseUrl}/${id}?year=${year}&month=${++month}`
 
         try {
         return await fetch(url).then((response) => {
-            if (response.ok) {
-            return response.json();
+            if (response.status === 200) {
+                return response.json();
+            }
+            else if (response.status === 204) {
+                return null;
             }
         }).then((data) => {
             if (data != undefined) {
-            return data;
+                return {
+                    success: true,
+                    error: null,
+                    data: data,
+                };
+            }
+            else {
+                return {
+                    success: true,
+                    error: 'No categories found',
+                    data: null,
+                };
             }
         });
         } catch (error) {
-        return null;
+            return {
+                success: null,
+                error: `Error fetching categories\n${error}`,
+                data: null,
+            };
         }
     },
 

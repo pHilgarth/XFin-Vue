@@ -70,7 +70,7 @@ export default {
       const year = new Date().getFullYear();
       month = month !== undefined ? month : new Date().getMonth();
 
-      this.transactionCategories = await TransactionCategoryService.getTransactionCategoriesByAccount(this.$route.params.id, year, month);
+      this.transactionCategories = await TransactionCategoryService.getAllByAccount(this.$route.params.id, year, month);
     },
 
     updateView(month) {
