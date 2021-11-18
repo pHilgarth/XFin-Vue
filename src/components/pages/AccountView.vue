@@ -54,7 +54,7 @@ import { NumberService } from "@/services/number-service";
 export default {
   //TODO - try using created hook for API calls
   async created() {
-    const apiResponse = await this.getAccountHolders(true);
+    const apiResponse = await this.getAccountHolders();
 
     if (apiResponse.success) {
       this.dataLoaded = true;
@@ -158,7 +158,8 @@ export default {
        this.$router.push(`/edit-account-holder/${id}`);
     },
 
-    async getAccountHolders(includeAccounts = false) {
+    async getAccountHolders() {
+      const includeAccounts = true;
       const apiResponse = await AccountHolderService.getAll(includeAccounts);
 
       if (apiResponse.success && apiResponse.data) {
