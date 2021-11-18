@@ -181,7 +181,7 @@ export default {
       if (accountSettings) {
         this.originalAccountSettings =  accountSettings;
         this.effectsExpenses =          accountSettings.effectsExpenses;
-        this.receivesExpenses =         accountSettings.receivesExpenses;
+        this.receivesRevenues =         accountSettings.receivesRevenues;
         this.allowsOverdraft =          accountSettings.allowsOverdraft;
         this.balanceThreshold =         NumberService.amountToString(accountSettings.balanceThreshold);
         this.expensesThreshold =        NumberService.amountToString(accountSettings.expensesThreshold);
