@@ -4,7 +4,7 @@
       <span>{{ category.name }}</span>
     </div>
     <div class="xfin-card__content col-2">
-      <AtomBudgetManagerInput :valueProp="category.balance" @amount-changed="processAmount($event, category)" />
+      <AtomBudgetManagerInput :valueProp="category.balance" @amount-changed="$emit('amount-changed', $event, category)" />
     </div>
     <div class="xfin-card__content col-2">
       <i v-if="category.dirty" class="bi bi-arrow-counterclockwise reset" title="Zurücksetzen" @click="resetCategory(category)"></i>
@@ -24,5 +24,13 @@ export default {
   props: {
     category: { type: Object, required: true },
   },
+
+  // methods: {
+  //   processAmount(event, category) {
+  //     this.category.balance = event;
+  //     console.log(event);
+  //     console.log(category);
+  //   }
+  // }
 };
 </script>

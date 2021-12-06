@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import AccountDetail from './components/pages/AccountDetail';
+//TODO - remove this
 //import AccountHolder from './components/pages/AccountHolder'
 import AccountSettings from './components/pages/AccountSettings';
 import AccountView from './components/pages/AccountView';

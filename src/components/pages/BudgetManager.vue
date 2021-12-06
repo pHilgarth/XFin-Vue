@@ -3,15 +3,13 @@
     <h1>Budgetmanager</h1>
     <!-- TODO - verfügbarer Betrag einer KS muss auch geplante Ausgaben berücksichtigen! Geld für geplante Ausgaben kann nicht umgebucht werden -->
     <!-- TODO - bei offenen Änderungen wär es cool, wenn der Collapsible Header irgendwie hervorgehen würde, allerdings müsste ich die Info irgendwie ans parent übergeben (OrgansimCollapsible)-->
-    <MoleculeLoading v-if="!accountHoldersLoaded" :loadingError="accountHoldersLoadingError"
-                     errorMessage="Fehler beim Laden der Kontoinhaber!"/>
+    <MoleculeLoading v-if="!accountHoldersLoaded" :loadingError="accountHoldersLoadingError" errorMessage="Fehler beim Laden der Kontoinhaber!"/>
 
     <template v-else>
       <MoleculeInputSelect classList="budget-manager__account-holder pb-5" :options="accountHolderOptions"
                            field="accountHolder" v-model="selectedAccountHolderName" label="Budget verwalten für:"/>
 
-      <MoleculeLoading v-if="selectedAccountHolder && !categoriesLoaded" :loadingError="categoriesLoadingError"
-                       errorMessage="Fehler beim Laden der Konten!" />
+      <MoleculeLoading v-if="selectedAccountHolder && !categoriesLoaded" :loadingError="categoriesLoadingError" errorMessage="Fehler beim Laden der Konten!" />
 
       <template v-else-if="selectedAccountHolder && categoriesLoaded">
         <template v-for="(bankAccount, index) in selectedAccountHolder.bankAccounts" :key="index">

@@ -8,7 +8,7 @@
         </div>
     </div>
   <template v-for="(category, index) in transactionCategories" :key="index">
-    <MoleculeBudgetManagerCategory v-if="index > 0" :category="category" />
+    <MoleculeBudgetManagerCategory v-if="index > 0" :category="category" @amount-changed="calculateFreeBudget" />
   </template>
   <div class="row">
     <p class="col-8">&nbsp;</p>
@@ -59,19 +59,29 @@ export default {
   methods: {
     calculateFreeBudget(value, category, dirty = true) {
         category.dirty = dirty;
+        //free budget is calculated on every input, so I need to check how many decimals there are, if any
         let decimals = value.split(',')[1]?.length || 0;
 
+        //string to number on value
         const numValue = value !== ''
           ? NumberService.parseFloat(value)
           : 0;
 
-        const numCategoryValue = category.balance !== ''
+        //string to number on categoryBalance
+        const numCategoryBalance = category.balance !== ''
           ? NumberService.parseFloat(category.balance)
           : 0;
 
+        //string to number on current free budget
         const numFreeBudget = NumberService.parseFloat(this.freeBudget);
 
-        this.freeBudget = this.formatCurrency(numFreeBudget + (numCategoryValue - numValue), false);
+        //calculate new free budget
+        this.freeBudget = this.formatCurrency(numFreeBudget + (numCategoryBalance - numValue), false);
+
+        //TODO - here I have to validate the new budget - (minimum amount, no overdraft)
+        //.....
+        
+        console.log(this.total);
         category.balance = this.formatCurrency(value, false, decimals);
     },
 
