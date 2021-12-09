@@ -1,6 +1,14 @@
 .budget-manager {
     width: 100%;
 
+    &__free-budget {
+        display: flex;
+
+        .xfin-form__error {
+            transform: translateX(-100%);
+        }
+    }
+
     &__category {
         align-items: center;
         display: flex;
@@ -44,6 +52,7 @@
             }
         }
     }
+
     &__total {
         font-weight: bold;
         padding: 0;

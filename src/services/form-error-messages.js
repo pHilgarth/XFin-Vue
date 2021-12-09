@@ -1,3 +1,4 @@
+//TODO - dynamische Errormessages einbauen, z. B. amount_availableAmount: Der verfügbare Betrag liegt bei ${availableAmount}!
 const amountErrorMessage =                  'Bitte gib einen gültigen Betrag ein!';
 const bicErrorMessage =                     'Bitte gib einen gültigen BIC ein!';
 const ibanErrorMessage =                    'Bitte gib eine gültige IBAN ein!';
@@ -20,6 +21,9 @@ export const errorMessages = {
 
     //expense errors
     expensesThreshold:                      amountErrorMessage,
+
+    //freeBudget errors                     //{...} gets replaced by the function getErrorMessage in MoleculeInputText
+    freeBudget:                             'Der Mindestbetrag für dieses Konto beträgt {minimalAmount}!',
 
     //iban errors
     iban_ibanValidator:                     ibanErrorMessage,

@@ -32,6 +32,6 @@ export const counterPartValidator =                             (value) => value
 export const expensesThresholdValidator =                       (value) =>  value === null || value === undefined || value === '' || value.match(/^(0|[1-9][0-9]*),[0-9]{2}$/);
 export const ibanDuplicateValidator =       (ibans) =>          (value) => value !== null ? !ibans.includes(value.toUpperCase()) : true;
 export const ibanValidator =                                    (value) => value.match(/^[a-zA-Z]{2}[0-9]{20}$/);
-export const freeBudgetValidator =          (minimalAmount) =>  (value) => value >= minimalAmount;
+export const freeBudgetValidator =          (minimalAmount) =>  (value) => minimalAmount === null || NumberService.parseFloat(value) >= minimalAmount;
 //TODO - delete, if not needed
 //export const dropDownValidator = (value) => value != -1;
