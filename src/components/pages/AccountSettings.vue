@@ -176,15 +176,18 @@ export default {
       }
     },
 
+    //TODO - API Call optimieren, so wie überall
     async getAccountSettings(accountId) {
-      const accountSettings = await AccountSettingsService.get(accountId);
-      if (accountSettings) {
-        this.originalAccountSettings =  accountSettings;
-        this.effectsExpenses =          accountSettings.effectsExpenses;
-        this.receivesRevenues =         accountSettings.receivesRevenues;
-        this.allowsOverdraft =          accountSettings.allowsOverdraft;
-        this.balanceThreshold =         NumberService.amountToString(accountSettings.balanceThreshold);
-        this.expensesThreshold =        NumberService.amountToString(accountSettings.expensesThreshold);
+      const accountSettings = await AccountSettingsService.getByAccount(accountId);
+      if (accountSettings.data) {
+        console.log(`balanceThreshold: ${accountSettings.data.balanceThreshold} (${typeof accountSettings.data.balanceThreshold})`);
+        console.log(`expensesThreshold: ${accountSettings.data.expensesThreshold} (${typeof accountSettings.data.expensesThreshold})`);
+        this.originalAccountSettings =  accountSettings.data;
+        this.effectsExpenses =          accountSettings.data.effectsExpenses;
+        this.receivesRevenues =         accountSettings.data.receivesRevenues;
+        this.allowsOverdraft =          accountSettings.data.allowsOverdraft;
+        this.balanceThreshold =         NumberService.amountToString(accountSettings.data.balanceThreshold);
+        this.expensesThreshold =        NumberService.amountToString(accountSettings.data.expensesThreshold);
 
         return {
           success: true,
@@ -221,6 +224,8 @@ export default {
           value: updatedSettings[prop],
         });
       }
+
+      console.log(this.originalAccountSettings.id);
 
       const updateResponse = await AccountSettingsService.update(this.originalAccountSettings.id, jsonPatch);
 

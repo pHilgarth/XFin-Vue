@@ -3,6 +3,7 @@
     <h1>Budgetmanager</h1>
     <!-- TODO - verfügbarer Betrag einer KS muss auch geplante Ausgaben berücksichtigen! Geld für geplante Ausgaben kann nicht umgebucht werden -->
     <!-- TODO - bei offenen Änderungen wär es cool, wenn der Collapsible Header irgendwie hervorgehen würde, allerdings müsste ich die Info irgendwie ans parent übergeben (OrgansimCollapsible)-->
+    <!-- TODO - error message kann unterschiedelich sein, nicht hardcoded -->
     <MoleculeLoading v-if="!accountHoldersLoaded" :loadingError="accountHoldersLoadingError" errorMessage="Fehler beim Laden der Kontoinhaber!"/>
 
     <template v-else>
@@ -26,6 +27,7 @@ import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import OrganismCollapsible from '@/components/organisms/OrganismCollapsible';
 
 import {AccountHolderService} from '@/services/account-holder-service';
+import { AccountSettingsService } from '@/services/account-settings-service';
 import {NumberService} from '@/services/number-service';
 import {TransactionCategoryService} from '@/services/transaction-category-service.js';
 
@@ -76,10 +78,11 @@ export default {
       for (let i = 0; i < accountHolder.bankAccounts.length; i++) {
         let bankAccount = accountHolder.bankAccounts[i]
 
-        const apiResponse = await this.getTransactionCategories(bankAccount);
+        const categoriesResponse = await this.getTransactionCategories(bankAccount);
 
-        if (apiResponse.error) {
+        if (categoriesResponse.error) {
           loadingError = true;
+          this.errorMessage = 'Daten konnten nicht geladen werden. (Dev-Hint: Categories failed)';
           break;
         }
       }
@@ -118,33 +121,51 @@ export default {
           component: {
             tag: 'OrganismBudgetList',
             props: {
+              bankAccount: bankAccount,
               transactionCategories: bankAccount.transactionCategories,
             },
           },
         }],
       };
     },
-
+//TODO - die ganzen API-Calls müssen optimiert werden, bzw. das Error-Handling ...
     async getAccountHolders() {
       const includeAccounts = true;
-      const apiResponse = await AccountHolderService.getAll(includeAccounts);
+      const accountHolderResponse = await AccountHolderService.getAll(includeAccounts);
 
-      if (apiResponse.success && apiResponse.data) {
-        this.accountHolders = apiResponse.data;
+      if (accountHolderResponse.success && accountHolderResponse.data) {
+        this.accountHolders = accountHolderResponse.data;
 
         this.accountHolderOptions = [{disabled: true, value: '(Kontoinhaber wählen)'}];
 
+        for (let i = 0; i < this.accountHolders.length; i++) {
+          const accountHolder = this.accountHolders[0];
+
+          for (let ii = 0; ii < accountHolder.bankAccounts.length; ii++) {
+            const bankAccount = accountHolder.bankAccounts[ii];
+
+            const settingsResponse = await AccountSettingsService.getByAccount(bankAccount.id);
+
+            if (settingsResponse.error) {
+              this.errorMessage = 'Fehler beim Laden der Daten (Dev-Hint: settings)';
+              break;
+            }
+            else {
+              bankAccount.settings = settingsResponse.data;
+            }
+          }
+        }
         this.accountHolders.forEach(a => {
           this.accountHolderOptions.push({
             disabled: false,
             value: a.name,
           });
         });
-      } else if (apiResponse.success && !apiResponse.data) {
+      } else if (accountHolderResponse.success && !accountHolderResponse.data) {
         this.accountHolders = [];
       }
 
-      return apiResponse;
+      return accountHolderResponse;
     },
   }
 };

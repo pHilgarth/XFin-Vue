@@ -14,8 +14,12 @@
     <p class="col-8">&nbsp;</p>
     <p class="col-2 budget-manager__total">
       <span>Total:</span><span :class="{ 'negative': total < 0 }">{{ formatCurrency(total) }}</span>
-      </p>
+    </p>
+    <p class="col-2">
+      <span class="btn xfin-button">Speichern</span>
+    </p>
   </div>
+  <div>{{ v$ }}</div>
 </template>
 
 <script>
@@ -24,6 +28,9 @@ import MoleculeBudgetManagerCategory from "@/components/molecules/MoleculeBudget
 
 import { InternalTransactionService } from "@/services/internal-transaction-service";
 import { NumberService } from "@/services/number-service";
+
+import { freeBudgetValidator } from '@/validation/custom-validators';
+import {useVuelidate} from "@vuelidate/core";
 
 export default {
   beforeMount() {
@@ -36,10 +43,8 @@ export default {
   },
 
   props: {
-    transactionCategories: {
-      type: Array,
-      required: true,
-    },
+    bankAccount: { type: Object, required: true },
+    transactionCategories: { type: Array, required: true },
   },
 
   computed: {
@@ -78,8 +83,14 @@ export default {
         //calculate new free budget
         this.freeBudget = this.formatCurrency(numFreeBudget + (numCategoryBalance - numValue), false);
 
+        if (!this.bankAccount.settings.allowsOverdraft && NumberService.parseFloat(this.freeBudget) < 0) {
+          console.log('no overdraft allowed!');
+        }
+
         //TODO - here I have to validate the new budget - (minimum amount, no overdraft)
-        //.....
+        //....
+
+
         
         console.log(this.total);
         category.balance = this.formatCurrency(value, false, decimals);
@@ -137,6 +148,18 @@ export default {
       this.transactionCategories.forEach(category => {
         category.originalBalance = category.balance;
       });
+    }
+  },
+
+  setup() {
+    return {
+      v$: useVuelidate(),
+    };
+  },
+
+  validations() {
+    return {
+      freeBudget: { freeBudget: freeBudgetValidator(this.minimalAmount) }
     }
   },
 };

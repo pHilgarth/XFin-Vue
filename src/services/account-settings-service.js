@@ -5,24 +5,39 @@
 const baseUrl = "http://localhost:2905/api/internalBankAccountSettings";
 
 export const AccountSettingsService = {
-  async get(id) {
-    let url = `${baseUrl}/${id}`;
+  async getByAccount(bankAccountId) {
+    let url = `${baseUrl}/${bankAccountId}`;
 
     try {
       return await fetch(url).then((response) => {
-        if (response.ok) {
-          if (response.status === 204) {
-            return [];
-          }
+        if (response.status === 200) {
           return response.json();
+        }
+        else if (response.status === 204) {
+          return null;
         }
       }).then((data) => {
         if (data != undefined) {
-          return data;
+          return {
+            success: true,
+            error: null,
+            data: data
+          };
+        }
+        else {
+          return {
+            success: true,
+            error: 'No account settings found!',
+            data: null,
+          };
         }
       });
     } catch (error) {
-      return null;
+      return {
+        success: false,
+        error: `Error fetching account settings\n${error}`,
+        data: null,
+      };
     }
   },
 
