@@ -2,19 +2,19 @@
 <!-- TODO - rework all components using this Molecule to use the prop 'label' for the label text and a lowercase english word for the id and the labels for-attribute -->
     <div v-if="small" :class="classList" :id="id">
         <AtomLabel v-if="label" classList="xfin-form__label col-2" :target="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />                   
-        <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :classList="`xfin-form__control form-control form-control-sm ${hasErrors ? 'has-errors' : ''}`"
+        <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :classList="`xfin-form__control form-control form-control-sm${hasErrors ? ' has-errors' : ''}`"
                         @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
     </div>
     <div v-else-if="label" class="form-floating" :class="classList" :id="id">
         <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :placeholder="label"
-                        :classList="`xfin-form__control form-control col-4 ${hasErrors ? 'has-errors' : ''}`"
+                        :classList="`xfin-form__control form-control col-4${hasErrors ? ' has-errors' : ''}`"
                         @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
                         
         <AtomLabel classList="xfin-form__label" :target="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
     </div>
         <div v-else :class="classList" :id="id">
         <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :placeholder="label"
-                        :classList="`xfin-form__control form-control col-4 ${hasErrors ? 'has-errors' : ''}`"
+                        :classList="`xfin-form__control form-control col-4${hasErrors ? ' has-errors' : ''}`"
                         @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
     </div>
     <template v-for="(error, index) in validation?.$errors" :key="index">

@@ -1,14 +1,6 @@
 .budget-manager {
     width: 100%;
 
-    &__free-budget {
-        display: flex;
-
-        .xfin-form__error {
-            transform: translateX(-100%);
-        }
-    }
-
     &__category {
         align-items: center;
         display: flex;
@@ -17,40 +9,50 @@
             border: 2px solid $color--secondary;
         }
 
-        i {
-            position: absolute;
-            cursor: pointer;
-            transition: all .5s;
-            top: 50%;
-            transform: translateY(-50%);
+        &__balance {
+            display: flex;
+            align-items: center;
 
-            &.reset {
-                @include rem((
-                        font-size: 30px,
-                        left: 5px,
-                ));
-
-                &:hover {
-                    transform: translateY(-50%) rotate(-360deg);
-                }
-            }
-
-            &.save {
-                @include rem((
-                        font-size: 27px,
-                        left: 50px,
-                ));
-
-                &:hover {
-                    transform: translateY(-50%) rotateY(360deg);
-                }
-            }
-
-            &:hover {
-                color: $color--secondary;
-                transition: all .5s;
+            .xfin-form__error {
+                transform: translateX(-100%);
+                @include rem(padding-right, 30px);
             }
         }
+
+        //i {
+        //    position: absolute;
+        //    cursor: pointer;
+        //    transition: all .5s;
+        //    top: 50%;
+        //    transform: translateY(-50%);
+        //
+        //    &.reset {
+        //        @include rem((
+        //                font-size: 30px,
+        //                left: 5px,
+        //        ));
+        //
+        //        &:hover {
+        //            transform: translateY(-50%) rotate(-360deg);
+        //        }
+        //    }
+        //
+        //    &.save {
+        //        @include rem((
+        //                font-size: 27px,
+        //                left: 50px,
+        //        ));
+        //
+        //        &:hover {
+        //            transform: translateY(-50%) rotateY(360deg);
+        //        }
+        //    }
+        //
+        //    &:hover {
+        //        color: $color--secondary;
+        //        transition: all .5s;
+        //    }
+        //}
     }
 
     &__total {

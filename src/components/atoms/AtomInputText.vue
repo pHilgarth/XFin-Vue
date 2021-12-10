@@ -12,6 +12,7 @@
 
 <script>
 export default {
+  //TODO - remove id and classList and update components using this Atom accordingly
   props: {
     id:               { type: String },
     classList:        { type: String },

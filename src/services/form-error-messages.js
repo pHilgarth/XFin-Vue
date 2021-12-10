@@ -23,7 +23,8 @@ export const errorMessages = {
     expensesThreshold:                      amountErrorMessage,
 
     //freeBudget errors                     //{...} gets replaced by the function getErrorMessage in MoleculeInputText
-    freeBudget:                             'Der Mindestbetrag für dieses Konto beträgt {minimalAmount}!',
+    //freeBudget:                             'Der Mindestbetrag für dieses Konto beträgt {minimalAmount}!',
+    freeBudget:                             'Dieser Posten darf nicht negativ sein!',
 
     //iban errors
     iban_ibanValidator:                     ibanErrorMessage,

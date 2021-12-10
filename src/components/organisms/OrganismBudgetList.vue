@@ -1,15 +1,7 @@
 <template>
-    <div class="xfin-card budget-manager__category">
-        <div class="xfin-card__content col-8">
-            <span>{{ transactionCategories[0].name }}</span>
-        </div>
-        <div class="xfin-card__content col-2 budget-manager__free-budget">
-          <MoleculeInputText field="free-budget" :hasErrors="freeBudgetErrors" v-model="freeBudget" :validation="v$.freeBudget" :disabled="true" :errorMessageParams="{ minimalAmount: minimalAmountString }" />
-          <!-- <input type="text" class="text-right" v-model="freeBudget" disabled :class="{ 'negative': budgetNegative }"/> -->
-        </div>
-    </div>
+  <MoleculeBudgetManagerCategory :category="transactionCategories[0]" :disabled="true" :hasErrors="freeBudgetErrors" :modelValue="freeBudget" :validation="v$.freeBudget"/>
   <template v-for="(category, index) in transactionCategories" :key="index">
-    <MoleculeBudgetManagerCategory v-if="index > 0" :category="category" @amount-changed="calculateFreeBudget" />
+    <MoleculeBudgetManagerCategory v-if="index > 0" :category="category" @amount-changed="calculateFreeBudget" :modelValue="category.balance"/>
   </template>
   <div class="row">
     <p class="col-8">&nbsp;</p>
@@ -26,7 +18,7 @@
 //import AtomBudgetManagerInput from '@/components/atoms/AtomBudgetManagerInput';
 import AtomButton from "@/components/atoms/AtomButton";
 import MoleculeBudgetManagerCategory from "@/components/molecules/MoleculeBudgetManagerCategory";
-import MoleculeInputText from "@/components/molecules/MoleculeInputText";
+//import MoleculeInputText from "@/components/molecules/MoleculeInputText";
 
 import { InternalTransactionService } from "@/services/internal-transaction-service";
 import { NumberService } from "@/services/number-service";
@@ -42,7 +34,7 @@ export default {
   components: {
     //AtomBudgetManagerInput,
     AtomButton,
-    MoleculeInputText,
+    //MoleculeInputText,
     MoleculeBudgetManagerCategory,
   },
 
@@ -52,9 +44,9 @@ export default {
   },
 
   computed: {
-    minimalAmountString() {
+/*    minimalAmountString() {
       return NumberService.formatCurrency(this.minimalAmount);
-    },
+    },*/
 
     budgetNegative() {
       return NumberService.parseFloat(this.freeBudget) < 0;
@@ -198,7 +190,7 @@ export default {
 
   validations() {
     return {
-      freeBudget: { freeBudgetMin: freeBudgetValidator(this.minimalAmount) },
+      freeBudget: { freeBudgetValidator },
     };
   },
 };
