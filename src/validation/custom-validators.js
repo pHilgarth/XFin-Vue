@@ -25,6 +25,7 @@ export const amountAvailableValidator =     (available) =>  (value) => NumberSer
 
 */
 export const balanceValidator =                                 (value) => value.match(/^-?(0|[1-9](\.?[0-9]{3})*|[1-9][0-9]{1,2}(\.?[0-9]{3})*),[0-9]{2}$/);
+//TODO - balanceThresholdValidator - regex stimmt nicht -> sie matcht auch z.B. 1234.123,32
 export const balanceThresholdValidator =                        (value) => value === null || value === undefined || value === '' || value.match(/^-?(0|[1-9](\.?[0-9]{3})*|[1-9][0-9]{1,2}(\.?[0-9]{3})*),[0-9]{2}$/);
 export const balanceThresholdMaxValidator = (balance) =>        (value) => value === null || value === undefined || value === '' || !value.match(/^-?(0|[1-9](\.?[0-9]{3})*|[1-9][0-9]{1,2}(\.?[0-9]{3})*),[0-9]{2}$/) || NumberService.parseFloat(value) <= balance;
 export const bicValidator =                                     (value) => value.match(/^[a-zA-Z]{6}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?$/);

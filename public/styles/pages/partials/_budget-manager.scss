@@ -19,6 +19,16 @@
             }
         }
 
+        &__reset {
+            cursor: pointer;
+            @include rem(margin-left, 20px);
+
+            svg {
+                @include rem(width, 25px);
+                @include rem(height, 25px);
+            }
+        }
+
         //i {
         //    position: absolute;
         //    cursor: pointer;

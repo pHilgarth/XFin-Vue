@@ -5,11 +5,20 @@
     </div>
     <div class="xfin-card__content col-2 budget-manager__category__balance">
       <!-- TODO - don't use another Atom here - just use AtomInputText and copy the methods from AtomBudgetManagerInput-->
-      <AtomInputText :class="`xfin-form__control form-control text-right ${hasErrors ? 'has-errors' : ''}`" :value="modelValue" :disabled="disabled" @input="processInput" />
+      <!-- <AtomInputText  :class="`xfin-form__control form-control text-right ${hasErrors ? 'has-errors' : ''}`" :value="balance" :disabled="disabled" -->
+      <!-- <AtomInputText  :class="`xfin-form__control form-control text-right ${hasErrors ? 'has-errors' : ''}`" :value="modelValue" :disabled="disabled" -->
+      <AtomInputText  :class="`xfin-form__control form-control text-right ${hasErrors ? 'has-errors' : ''}`" :value="value" :disabled="disabled"
+                      @input="processInput" />
       <template v-for="(error, index) in validation?.$errors" :key="index">
         <AtomParagraph class="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator, errorMessageParams)" />
       </template>
     </div>
+      <div v-if="category.dirty" class="budget-manager__category__reset" title="Zurücksetzen" @click="$emit('reset', category)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/>
+          <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/>
+        </svg>
+      </div>
   </div>
 </template>
 
@@ -31,10 +40,18 @@ export default {
     category: { type: Object, required: true },
     disabled: { type: Boolean },
     hasErrors: { type: Boolean },
-    modelValue: { type: String },
+    //modelValue: { type: Number },
+    //modelValue: { type: String },
+    value: { type: String },
     validation: { type: Object },
     errorMessageParams: { type: Object }
   },
+
+  // computed: {
+  //   balance() {
+  //     return NumberService.formatCurrency(this.modelValue, false);
+  //   }
+  // },
 
   methods: {
     processInput(event) {
@@ -98,22 +115,75 @@ export default {
       }
 
       //TODO - implement error handling: if the error message contains {...} substrings, but no params were passed to this function, return an empty errorMessage to prevent outputting weird strings
-
-      console.log(`errorMessage after: ${errorMessage} (${typeof errorMessage})`);
       return errorMessage;
       // return  errorMessages[`${property}_${validator}`] ||
       //         errorMessages[property]
     },
 
     validateInput(event) {
+      //TODO - i forgot to handle the delete key press
       //valid input are numbers, comma and backspace
       //event.data is null when backspace was pressed or if something was pasted into the input
       //if something was pasted, it has to be a completely valid amount, thus the regex
 
-      return (
-              event.data === null && (
-                  event.target.value === "" || event.target.value.match(/^-?[0-9.]*,{0,1}[0-9]*$/)))
-          || event.data !== null && event.data.match(/[0-9]+/) || event.data === ',';
+      //i have to remove the dots for proper regex checking
+      const value = event.target.value.replaceAll('.', '');
+
+      return value.match(/^-?([0-9]*,?[0-9]{0,2}|[0-9]{1,3}\.|[0-9]{1,3}(\.[0-9]{3})+(,[0-9]{0,2})?)$/);
+
+      // return  (event.data === null &&
+      //           (event.target.value === "" || event.target.value.match(/^-?([0-9]*,?[0-9]{0,2}|[0-9]{1,3}\.|[0-9]{1,3}(\.[0-9]{3})+(,[0-9]{0,2})?)$/))
+      //         )
+      //         ||
+      //         event.data !== null && event.data.match(/[0-9]+/) || event.data === ',';
+      
+      //TODO - move this regex documentation into a doc file
+      //these are the teststrings for the long regex above, paste them in regex101.com to see what the reges is doing
+      // müssen matchen:
+      //   -
+      //   -0
+      //   -3
+      //   -6
+      //   ,54
+      //   -0,43
+      //   0,4
+      //   -4,
+      //   -00
+      //   9
+      //   -1239876987698769876987689767676
+      //   123
+      //   123.
+      //   1.
+      //   12.
+      //   12
+      //   -123456,
+      //   -123456,5
+      //   -123456,67
+      //   1.250
+      //   1.234,
+      //   1.234,6
+      //   1.234,67
+
+      //   dürfen nicht matchen:
+      //   ..
+      //   ,,
+      //   --
+      //   123..234,34
+      //   123,454,54
+      //   .234
+      //   ,345
+      //   1.40,34
+      //   123,2.3
+      //   123.12323
+      //   123.,23
+      //   0,456
+      //   123.123123,45
+      //   1234.234,45
+      //   123.2.234444444.
+      //   -213456,654
+      //   1,234,67
+      //   1.234,567
+      //   12.345,678
     },
   }
 };

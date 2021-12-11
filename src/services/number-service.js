@@ -1,4 +1,5 @@
 export const NumberService = {
+    //TODO - is this method doing the same as formatCurrency with includeCurrency = false?
     amountToString(value) {
         return value !== null
             ? Number(value).toFixed(2).replace('.', ',')
@@ -36,7 +37,7 @@ export const NumberService = {
     },
 
     parseFloat(value) {
-        return value !== null
+        return value !== null && value !== undefined
             ? parseFloat(value.replaceAll(".", "").replace(",", "."))
             : null;
     }

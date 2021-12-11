@@ -1,24 +1,28 @@
 <template>
-  <MoleculeBudgetManagerCategory :category="transactionCategories[0]" :disabled="true" :hasErrors="freeBudgetErrors" :modelValue="freeBudget" :validation="v$.freeBudget"/>
+  <MoleculeBudgetManagerCategory  :category="transactionCategories[0]" :disabled="true" :hasErrors="freeBudgetErrors" :value="freeBudget"
+                                  :validation="v$.freeBudget" />
+
   <template v-for="(category, index) in transactionCategories" :key="index">
-    <MoleculeBudgetManagerCategory v-if="index > 0" :category="category" @amount-changed="calculateFreeBudget" :modelValue="category.balance"/>
+    <MoleculeBudgetManagerCategory v-if="index > 0" :category="category" @amount-changed="calculateFreeBudget" @reset="resetCategory" :value="category.balance"/>
   </template>
+
   <div class="row">
     <p class="col-8">&nbsp;</p>
     <p class="col-2 budget-manager__total">
       <span>Total:</span><span :class="{ 'negative': total < 0 }">{{ formatCurrency(total) }}</span>
     </p>
     <p class="col-2">
-      <AtomButton class="btn xfin-button" text="Speichern" :disabled="saveDisabled" />
+      <AtomButton class="btn xfin-button" text="Speichern" :disabled="saveDisabled" @click="saveChanges" />
     </p>
+  </div>
+  <div class="row">
+    <p>{{ dirtyCategories }}</p>
   </div>
 </template>
 
 <script>
-//import AtomBudgetManagerInput from '@/components/atoms/AtomBudgetManagerInput';
 import AtomButton from "@/components/atoms/AtomButton";
 import MoleculeBudgetManagerCategory from "@/components/molecules/MoleculeBudgetManagerCategory";
-//import MoleculeInputText from "@/components/molecules/MoleculeInputText";
 
 import { InternalTransactionService } from "@/services/internal-transaction-service";
 import { NumberService } from "@/services/number-service";
@@ -32,9 +36,7 @@ export default {
   },
 
   components: {
-    //AtomBudgetManagerInput,
     AtomButton,
-    //MoleculeInputText,
     MoleculeBudgetManagerCategory,
   },
 
@@ -44,13 +46,9 @@ export default {
   },
 
   computed: {
-/*    minimalAmountString() {
-      return NumberService.formatCurrency(this.minimalAmount);
-    },*/
-
-    budgetNegative() {
-      return NumberService.parseFloat(this.freeBudget) < 0;
-    },
+    // budgetNegative() {
+    //   return NumberService.parseFloat(this.freeBudget) < 0;
+    // },
 
     freeBudgetErrors() {
       return this.v$.freeBudget.$error;
@@ -66,9 +64,14 @@ export default {
       freeBudget: this.transactionCategories[0].balance,
       dirtyCategories: [],
 
+      //TODO - test if total is calculated correctly!
       total: this.transactionCategories.reduce((a, b) => {
+        //this step is needed because initially a is an object with a property balance
+        //but the return statement returns a number 
+        let aValue = a.balance || NumberService.amountToString(a);
+
         return (
-          NumberService.parseFloat(a.balance) +
+          NumberService.parseFloat(aValue) +
           NumberService.parseFloat(b.balance)
         );
       }),
@@ -80,39 +83,43 @@ export default {
   },
 
   methods: {
-    calculateFreeBudget(value, category, dirty = true) {
+    calculateFreeBudget(value, category, dirty = true) {      
       if (NumberService.parseFloat(value) !== category.originalBalance) {
         category.dirty = dirty;
-        this.dirtyCategories.push(category);
-        //free budget is calculated on every input, so I need to check how many decimals there are, if any
-        let decimals = value.split(",")[1]?.length || 0;
-
-        //string to number on value
-        const numValue = value !== "" ? NumberService.parseFloat(value) : 0;
-
-        //string to number on categoryBalance
-        const numCategoryBalance =
-          category.balance !== ""
-            ? NumberService.parseFloat(category.balance)
-            : 0;
-
-        //string to number on current free budget
-        const numFreeBudget = NumberService.parseFloat(this.freeBudget);
-
-        //calculate new free budget
-        this.freeBudget = this.formatCurrency(
-          numFreeBudget + (numCategoryBalance - numValue),
-          false
-        );
-        this.v$.freeBudget.$touch();
-
-        //TODO - here I have to validate the new budget - (minimum amount, no overdraft)
-        //....
-
-        console.log(this.total);
-        category.balance = this.formatCurrency(value, false, decimals);
+        
+        if (!this.dirtyCategories.find(c => c.id === category.id)) {
+          this.dirtyCategories.push(category);
+        }
       }
-      else { alert('fuck you' )}
+      else {
+        category.dirty = false;
+        const index = this.dirtyCategories.findIndex(c => c.id === category.id);
+        this.dirtyCategories.splice(index, 1);
+      }
+
+      //free budget is calculated on every input, so I need to check how many decimals there are, if any
+      let decimals = value.split(",")[1]?.length || 0;
+
+      //string to number on value
+      const numValue = value !== "" ? NumberService.parseFloat(value) : 0;
+
+      //string to number on categoryBalance
+      const numCategoryBalance =
+        category.balance !== ""
+          ? NumberService.parseFloat(category.balance)
+          : 0;
+
+      //string to number on current free budget
+      const numFreeBudget = NumberService.parseFloat(this.freeBudget);
+
+      //calculate new free budget
+      this.freeBudget = this.formatCurrency(
+        numFreeBudget + (numCategoryBalance - numValue),
+        false
+      );
+      this.v$.freeBudget.$touch();
+    
+      category.balance = this.formatCurrency(value, false, decimals);
     },
 
     formatCurrency(value, includeCurrency = true, decimals = 2) {
@@ -135,44 +142,52 @@ export default {
       return NumberService.formatCurrency(value, includeCurrency);
     },
 
+//TODO - implement category resetting
     resetCategory(category) {
-      this.calculateFreeBudget(category.originalBalance, category, false);
+      this.calculateFreeBudget(this.formatCurrency(category.originalBalance, false), category, false);
     },
 
-    async saveCategory(category) {
-      const amount =
-        NumberService.parseFloat(category.balance) -
-        NumberService.parseFloat(category.originalBalance);
-      const currentDate = new Date().toISOString();
+    async saveChanges() {
+      for (let i = 0; i < this.transactionCategories.length; i++) {
+        const category = this.transactionCategories[i];
 
-      const internalTransaction = {
-        internalBankAccountId: category.bankAccountId,
-        transactionCategoryId: category.id,
-        dateString: currentDate,
-        amount: amount,
-      };
+        if (category.dirty) {
+          console.log(`category.balance is ${typeof category.balance}`);
+          console.log(`category.originalBalance is ${typeof category.originalBalance}`);
+          const amount =
+            NumberService.parseFloat(category.balance) -
+            category.originalBalance;
 
-      const createdTransaction = await InternalTransactionService.create(
-        internalTransaction
-      );
+          const currentDate = new Date().toISOString();
 
-      const counterPartTransaction = {
-        internalBankAccountId: category.bankAccountId,
-        transactionCategoryId: this.transactionCategories.find(
-          (c) => c.name === "Nicht zugewiesen"
-        ).id,
-        dateString: currentDate,
-        amount: amount * -1,
-        transactionToken: createdTransaction.counterPartTransactionToken,
-        counterPartTransactionToken: createdTransaction.transactionToken,
-      };
+          const internalTransaction = {
+            internalBankAccountId: category.bankAccountId,
+            transactionCategoryId: category.id,
+            dateString: currentDate,
+            amount: amount,
+          };
 
-      /*const createdCounterPartTransaction = */ await InternalTransactionService.create(
-        counterPartTransaction
-      );
+          const createdTransaction = await InternalTransactionService.create(internalTransaction);
 
-      category.dirty = false;
-      category.originalBalance = category.balance;
+          const counterPartTransaction = {
+            internalBankAccountId: category.bankAccountId,
+            transactionCategoryId: this.transactionCategories.find(
+              (c) => c.name === "Nicht zugewiesen"
+            ).id,
+            dateString: currentDate,
+            amount: amount * -1,
+            transactionToken: createdTransaction.counterPartTransactionToken,
+            counterPartTransactionToken: createdTransaction.transactionToken,
+          };
+
+          /*const createdCounterPartTransaction = */ await InternalTransactionService.create(
+            counterPartTransaction
+          );
+
+          category.dirty = false;
+          category.originalBalance = category.balance;
+        }
+      }
     },
 
     storeOriginalBalanceValues() {

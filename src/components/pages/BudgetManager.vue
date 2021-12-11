@@ -105,6 +105,8 @@ export default {
         bankAccount.transactionCategories = apiResponse.data;
 
         bankAccount.transactionCategories.forEach(category => {
+          //category.balance has to be a string although it's actually a number
+          //this is because of the dynamic freeBudget calculation in OrganismBudgetList
           category.balance = NumberService.formatCurrency(category.balance, false);
           category.bankAccountId = bankAccount.id;
         });
