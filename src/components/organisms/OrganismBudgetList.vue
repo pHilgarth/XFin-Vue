@@ -15,9 +15,6 @@
       <AtomButton class="btn xfin-button" text="Speichern" :disabled="saveDisabled" @click="saveChanges" />
     </p>
   </div>
-  <div class="row">
-    <p>{{ dirtyCategories }}</p>
-  </div>
 </template>
 
 <script>
@@ -75,10 +72,6 @@ export default {
           NumberService.parseFloat(b.balance)
         );
       }),
-
-      minimalAmount:
-        this.bankAccount.settings.balanceThreshold ||
-        (!this.bankAccount.settings.allowsOverdraft ? 0 : null),
     };
   },
 
@@ -98,7 +91,7 @@ export default {
       }
 
       //free budget is calculated on every input, so I need to check how many decimals there are, if any
-      let decimals = value.split(",")[1]?.length || 0;
+      //let decimals = value.split(",")[1]?.length || 0;
 
       //string to number on value
       const numValue = value !== "" ? NumberService.parseFloat(value) : 0;
@@ -118,8 +111,8 @@ export default {
         false
       );
       this.v$.freeBudget.$touch();
-    
-      category.balance = this.formatCurrency(value, false, decimals);
+      //category.balance = this.formatCurrency(value, false, decimals);
+      category.balance = value;
     },
 
     formatCurrency(value, includeCurrency = true, decimals = 2) {

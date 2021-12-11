@@ -67,9 +67,12 @@ export default {
         let formattedValue = value.replaceAll(".", "");
         let valueArray = formattedValue.split(',');
 
-        if (valueArray.length === 2) {
-          valueArray[1] = valueArray[1].length > 2 ? valueArray[1].slice(0, 2) : valueArray[1];
-        }
+        //TODO - delete this whole commented block, when everything is working without it, the validation should already take care of too much decimals
+        //if the value has decimal places, valueArray.length is 2
+        //if (valueArray.length === 2) {
+          //after the split operation the decimal part is at index 1 - if the decimal part exceeds the length 2, the additional decimal places are cut off  
+          //valueArray[1] = valueArray[1].length > 2 ? valueArray[1].slice(0, 2) : valueArray[1];
+        //}
 
         //first we place the thousand separators - we need to reverse it, so we can count up in the loop and set a thousand separator after every third number
         //also we need to copy it, so the length won't change during the loop
@@ -95,8 +98,9 @@ export default {
 
         event.target.value = formattedValue;
 
-        event.target.selectionStart = caretPosition + (lengthAfter - lengthBefore);
-        event.target.selectionEnd = caretPosition + (lengthAfter - lengthBefore);
+        const selection = caretPosition + (lengthAfter - lengthBefore);
+        event.target.selectionStart = selection < 0 ? 0 : selection;
+        event.target.selectionEnd = selection < 0 ? 0 : selection;
 
         this.$emit('amount-changed', event.target.value, this.category);
       }

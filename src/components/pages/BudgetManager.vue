@@ -27,7 +27,7 @@ import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import OrganismCollapsible from '@/components/organisms/OrganismCollapsible';
 
 import {AccountHolderService} from '@/services/account-holder-service';
-import { AccountSettingsService } from '@/services/account-settings-service';
+//import { AccountSettingsService } from '@/services/account-settings-service';
 import {NumberService} from '@/services/number-service';
 import {TransactionCategoryService} from '@/services/transaction-category-service.js';
 
@@ -140,23 +140,6 @@ export default {
 
         this.accountHolderOptions = [{disabled: true, value: '(Kontoinhaber wählen)'}];
 
-        for (let i = 0; i < this.accountHolders.length; i++) {
-          const accountHolder = this.accountHolders[0];
-
-          for (let ii = 0; ii < accountHolder.bankAccounts.length; ii++) {
-            const bankAccount = accountHolder.bankAccounts[ii];
-
-            const settingsResponse = await AccountSettingsService.getByAccount(bankAccount.id);
-
-            if (settingsResponse.error) {
-              this.errorMessage = 'Fehler beim Laden der Daten (Dev-Hint: settings)';
-              break;
-            }
-            else {
-              bankAccount.settings = settingsResponse.data;
-            }
-          }
-        }
         this.accountHolders.forEach(a => {
           this.accountHolderOptions.push({
             disabled: false,
