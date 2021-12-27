@@ -8,16 +8,27 @@ export const InternalBankAccountService = {
 
     try {
       return await fetch(url).then((response) => {
-        if (response.ok) {
+        if (response.status === 200) {
           return response.json();
+        }
+        else if (response.status === 204) {
+          return null;
         }
       }).then((data) => {
         if (data != undefined) {
-          return data;
+          return {
+            success: true,
+            error: null,
+            data: data,
+          };
         }
       });
     } catch (error) {
-      return null;
+      return {
+        success: null,
+        error: `Error fetching categories\n${error}`,
+        data: null,
+      };
     }
   },
 

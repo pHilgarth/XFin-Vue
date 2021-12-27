@@ -84,6 +84,7 @@ export const TransactionCategoryService = {
         }
     },
 
+    //TODO - do i need this? I need all by account, but all by account simple?
     async getAllSimpleByAccount(id) {
         try {
             return await fetch(`${baseUrl}/simple/${id}`).then((response) => {
@@ -146,7 +147,7 @@ export const TransactionCategoryService = {
         });
         } catch (error) {
             return {
-                success: null,
+                success: false,
                 error: `Error fetching categories\n${error}`,
                 data: null,
             };
