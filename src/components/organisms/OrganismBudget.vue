@@ -56,6 +56,10 @@ export default {
                 props: { class: 'col-2 align-right' },
             },
             {
+              content: NumberService.formatCurrency(category.internalExpensesTotal),
+              props: { class: (Number)(category.internalExpensesTotal) < 0 ? 'negative col-2 align-right' : 'col-2 align-right' },
+            },
+            {
                 content: NumberService.formatCurrency(category.budget),
                 props: { class: (Number)(category.budget) < 0 ? 'negative col-2 align-right' : 'col-2 align-right' },
             },
@@ -119,6 +123,10 @@ export default {
             {
                 content: "Einnahmen",
                 props: { class: 'col-2 align-right' },
+            },
+            {
+              content: 'Umbuchungen',
+              props: { class: 'col-2 align-right' },
             },
             {
                 content: "Budget",
