@@ -88,7 +88,7 @@ export default {
       apiResponse = await this.getExternalParties();
 
       if (apiResponse.success) {
-        apiResponse = await this.getAllSimpleByAccount();
+        apiResponse = await this.getTransactionCategories();
 
         if (apiResponse.success) {
           this.dataLoaded = true;
@@ -279,11 +279,15 @@ export default {
       return apiResponse;
     },
 
-    async getAllSimpleByAccount() {
-      const apiResponse = await TransactionCategoryService.getAllSimpleByAccount(this.selectedAccount.id);
+    async getTransactionCategories() {
+      const simple = true;
+      const apiResponse = await TransactionCategoryService.getAll(simple);
 
       if (apiResponse.success && apiResponse.data) {
-        this.categories = apiResponse.data.filter(c => c.name !== 'Nicht zugewiesen');
+        this.categories = this.transactionType === 'revenue'
+            ? apiResponse.data
+            : apiResponse.data.filter(c => c.name !== 'Nicht zugewiesen');
+
         this.categoryOptions = [];
 
         this.categories.forEach((category) => {
@@ -391,6 +395,9 @@ export default {
 
         if (!internalTransaction) {
           //TODO - something went wrong - throw an error?
+        }
+        else {
+          this.$router.push('/');
         }
       }
     },
