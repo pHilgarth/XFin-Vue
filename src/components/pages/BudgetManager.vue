@@ -4,6 +4,7 @@
     <!-- TODO - verfügbarer Betrag einer KS muss auch geplante Ausgaben berücksichtigen! Geld für geplante Ausgaben kann nicht umgebucht werden -->
     <!-- TODO - bei offenen Änderungen wär es cool, wenn der Collapsible Header irgendwie hervorgehen würde, allerdings müsste ich die Info irgendwie ans parent übergeben (OrgansimCollapsible)-->
     <!-- TODO - error message kann unterschiedelich sein, nicht hardcoded -->
+    <!-- TODO - Überlegung: Soll BudgetManager nach dem Speichern auf die Startseite zurück routen? Man kann die Konten aber separat speichern, daher wohl eher nicht? -->
     <MoleculeLoading v-if="!accountHoldersLoaded" :loadingError="accountHoldersLoadingError" errorMessage="Fehler beim Laden der Kontoinhaber!"/>
 
     <template v-else>
