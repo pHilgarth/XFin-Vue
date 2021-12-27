@@ -9,7 +9,7 @@
         <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :placeholder="label"
                         :classList="`xfin-form__control form-control col-4${hasErrors ? ' has-errors' : ''}`"
                         @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
-                        
+
         <AtomLabel classList="xfin-form__label" :target="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
     </div>
         <div v-else :class="classList" :id="id">
@@ -29,6 +29,7 @@ import AtomParagraph from "@/components/atoms/AtomParagraph";
 
 import { errorMessages } from "@/services/form-error-messages";
 export default {
+    emits: [ 'blur' ],
     props: {
         id:             { type: String },
         classList:      { type: String },
