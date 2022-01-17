@@ -9,7 +9,7 @@
     }
 
     &__name {
-        border-bottom: 1px solid $color__borders;
+        border-bottom: 1px solid $color-borders;
         @include rem(
             (
                 margin-bottom: 20px,
@@ -26,7 +26,7 @@
     }
 
     &__accounts {
-        border-bottom: 1px solid $color__borders;
+        border-bottom: 1px solid $color-borders;
         @include rem(
             (
                 margin-bottom: 20px,

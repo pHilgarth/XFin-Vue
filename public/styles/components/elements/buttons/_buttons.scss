@@ -1,7 +1,7 @@
 
 .xfin-button {
-    background-color: $color__buttons--background;
-    color: $color__buttons--text;
+    background-color: $color-buttons-background;
+    color: $color-buttons-text;
     text-decoration: none;
     @include rem((
         border-radius: 5px,
@@ -9,18 +9,18 @@
     ));
 
     &:hover {
-        color: $color__font--dark;
+        background-color: $color-buttons-background-dark;
         text-decoration: none;
     }
 
     &--light {
         border-bottom: 1px solid transparent;
-        color: $color__buttons__text--light;
+        color: $color-buttons-text-light;
         cursor: pointer;
         display: inline-block;
 
         &:hover {
-            border-bottom: 1px solid $color__buttons__border--light;
+            border-bottom: 1px solid $color-buttons-border-light;
         }
     }
 }

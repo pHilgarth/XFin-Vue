@@ -1,6 +1,6 @@
 .xfin__suggestions {
-    background-color: $color--white;
-    border: 1px solid $color--secondary;
+    background-color: $color-white;
+    border: 1px solid $color-secondary;
     box-shadow: 0 2px 5px 0px rgba(0, 0, 0, .5);
     list-style-type: none;
     position: absolute;
@@ -17,11 +17,11 @@
         @include rem(( padding: 5px ));
 
         &:hover, &:hover strong {
-            background-color: $color--secondary;
-            color: $color--white;
+            background-color: $color-secondary;
+            color: $color-white;
             cursor: pointer;
         }
 
-        strong { color: $color--secondary }
+        strong { color: $color-secondary }
     }
 }

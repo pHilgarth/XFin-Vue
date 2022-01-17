@@ -10,7 +10,7 @@
 
         &:focus {
             box-shadow: none;
-            border-color: $color--secondary
+            border-color: $color-secondary
         }
 
         &.form-control-sm {
@@ -31,7 +31,7 @@
     }
 
     &__error {
-        color: $color__form__errors;
+        color: $color-form-errors;
         margin: 0;
         position: absolute;
         @include rem((
@@ -41,7 +41,7 @@
     }
 
     &__label i {
-        color: $color__form__required;
+        color: $color-form-required;
     }
 
     .form-group {
@@ -52,7 +52,7 @@
         }
 
         .xfin-form-control {
-            border: 1px solid $color__borders;
+            border: 1px solid $color-borders;
             border-radius: .5rem;
 
             &:disabled {
@@ -70,7 +70,7 @@
         }
 
         .errors-output {
-            color: $color__form__errors;
+            color: $color-form-errors;
             @include rem((
                 font-size: 14px,
                 margin-top: 10px,

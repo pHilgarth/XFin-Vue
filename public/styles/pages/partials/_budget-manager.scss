@@ -6,7 +6,7 @@
         display: flex;
 
         &.changed {
-            border: 2px solid $color--secondary;
+            border: 2px solid $color-secondary;
         }
 
         &__balance {
@@ -59,7 +59,7 @@
         //    }
         //
         //    &:hover {
-        //        color: $color--secondary;
+        //        color: $color-secondary;
         //        transition: all .5s;
         //    }
         //}

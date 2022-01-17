@@ -1,8 +1,8 @@
 
 .xfin {
   &__header {
-    background-color: $color--primary;
-    color: $color__font--dark;
+    background-color: $color-primary;
+    color: $color-font-dark;
     height: 5vh;
     position: fixed;
     top: 0;
@@ -16,7 +16,7 @@
   }
 
   &__sidebar {
-    background-color: $color--primary;
+    background-color: $color-primary;
     height: 95vh;
     position: fixed;
     width: 12.5vw;
@@ -31,8 +31,8 @@
     padding: 0;
 
     li {
-      background-color: $color--white;
-      border: solid $color__borders;
+      background-color: $color-white;
+      border: solid $color-borders;
       border-width: 1px 1px 0 0;
       cursor: pointer;
       @include rem((
@@ -40,14 +40,14 @@
       ));
 
       &:hover, &.active {
-        background-color: $color--secondary;
-        border-color: $color--secondary;
-        color: $color__font--light;
+        background-color: $color-secondary;
+        border-color: $color-secondary;
+        color: $color-font-light;
       }
     }
     
     a {
-      color: $color__font--dark;
+      color: $color-font-dark;
       text-decoration: none;
     }
   }
