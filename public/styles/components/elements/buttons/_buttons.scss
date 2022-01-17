@@ -2,7 +2,9 @@
 .xfin-button {
     background-color: $color-buttons-background;
     color: $color-buttons-text;
+    display: inline-block;
     text-decoration: none;
+    transition: all .2s;
     @include rem((
         border-radius: 5px,
         padding: 10px 20px,
@@ -10,7 +12,9 @@
 
     &:hover {
         background-color: $color-buttons-background-dark;
+        color: $color-buttons-text;
         text-decoration: none;
+        transition: all .2s;
     }
 
     &--light {
