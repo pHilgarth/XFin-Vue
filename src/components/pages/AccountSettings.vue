@@ -47,21 +47,18 @@ import {
 
 export default {
   async created() {
-    let result = null;
+    let apiResponse = await this.getAccount();
 
-    result = await this.getAccount();
+    if (apiResponse.success) {
+      apiResponse = await this.getAccountSettings(this.account.id);
 
-    if (result.success) {
-      result = await this.getAccountSettings(this.account.id);
-
+      if (apiResponse.success) {
+        this.dataLoaded = true;
+      } else {
+        console.error(apiResponse.error);
+      }
     } else {
-      console.error(result.error);
-    }
-
-    if (result.success) {
-      this.dataLoaded = true;
-    } else {
-      console.error(result.error);
+      console.error(apiResponse.error);
     }
   },
 
@@ -153,9 +150,11 @@ export default {
 
     async getAccount() {
       const simpleBankAccount = true;
-      this.account = await InternalBankAccountService.getById(this.$route.params.id, simpleBankAccount);
+      const apiResponse = await InternalBankAccountService.getById(this.$route.params.id, simpleBankAccount);
 
-      if (this.account) {
+      if (apiResponse.success && apiResponse.data) {
+        this.account = apiResponse.data;
+
         this.formData = {
           account: this.account,
           ibans: [ this.account.iban ],
@@ -163,16 +162,7 @@ export default {
 
         this.dataLoaded = true;
 
-        return {
-          success: true,
-          error: null,
-        };
-      }
-      else {
-        return {
-          success: false,
-          error: 'Error fetching account',
-        };
+        return apiResponse;
       }
     },
 
