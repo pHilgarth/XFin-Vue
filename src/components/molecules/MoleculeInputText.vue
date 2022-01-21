@@ -4,22 +4,27 @@
         <AtomLabel v-if="label" classList="xfin-form__label col-2" :target="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />                   
         <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :classList="`xfin-form__control form-control form-control-sm${hasErrors ? ' has-errors' : ''}`"
                         @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
+        <template v-for="(error, index) in validation?.$errors" :key="index">
+            <AtomParagraph class="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator, errorMessageParams)" />
+        </template>
     </div>
     <div v-else-if="label" class="form-floating" :class="classList" :id="id">
         <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :placeholder="label"
                         :classList="`xfin-form__control form-control col-4${hasErrors ? ' has-errors' : ''}`"
                         @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
-
         <AtomLabel classList="xfin-form__label" :target="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
+        <template v-for="(error, index) in validation?.$errors" :key="index">
+            <AtomParagraph class="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator, errorMessageParams)" />
+        </template>
     </div>
         <div v-else :class="classList" :id="id">
         <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :placeholder="label"
                         :classList="`xfin-form__control form-control col-4${hasErrors ? ' has-errors' : ''}`"
                         @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
+        <template v-for="(error, index) in validation?.$errors" :key="index">
+            <AtomParagraph class="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator, errorMessageParams)" />
+        </template>
     </div>
-    <template v-for="(error, index) in validation?.$errors" :key="index">
-        <AtomParagraph class="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator, errorMessageParams)" />
-    </template>
 </template>
 
 <script>
@@ -29,7 +34,10 @@ import AtomParagraph from "@/components/atoms/AtomParagraph";
 
 import { errorMessages } from "@/services/form-error-messages";
 export default {
-    emits: [ 'blur' ],
+    emits: [
+        'blur',
+        'update:modelValue'
+        ],
     props: {
         id:             { type: String },
         classList:      { type: String },
@@ -64,7 +72,6 @@ export default {
 
             //TODO - implement error handling: if the error message contains {...} substrings, but no params were passed to this function, return an empty errorMessage to prevent outputting weird strings
 
-            console.log(`errorMessage after: ${errorMessage} (${typeof errorMessage})`);
             return errorMessage;
             // return  errorMessages[`${property}_${validator}`] ||
             //         errorMessages[property]
