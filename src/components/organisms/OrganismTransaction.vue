@@ -37,7 +37,6 @@
                             @blur="v$.amount.$touch()" />
 
        <AtomButton classList="xfin-form__button" text="Speichern" :disabled="saveDisabled" @click.prevent="save" />
-        <p>{{ v$.amount }}</p>
       </form>
     </section>
   </div>
@@ -242,10 +241,13 @@ export default {
           });
 
           accountHolder.bankAccounts.forEach((bankAccount) => {
-            this.bankAccountOptions.push({
-              value: bankAccount.accountNumber,
-              disabled: false,
-            });
+            
+            if (bankAccount.accountSettings.receivesRevenues) {
+              this.bankAccountOptions.push({
+                value: bankAccount.accountNumber,
+                disabled: false,
+              });
+            }
 
             //TODO - this doesnt belong into this function, it should live in its own
             //select the account which matches the id in the url
