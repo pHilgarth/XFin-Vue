@@ -3,7 +3,9 @@ $color-secondary:                   #235baf;
 $color-secondary-dark:              #1f4989;
 
 $color-black:                       #000000;
+$color-green:                       #178009;
 $color-light-gray:                  #cccccc;
+$color-orange:                      #ff8936;
 $color-red:                         #f04124;
 $color-white:                       #ffffff;
 
@@ -11,6 +13,7 @@ $color-borders:                     $color-light-gray;
 
 $color-buttons-background:          $color-secondary;
 $color-buttons-background-dark:     $color-secondary-dark;
+$color-buttons-background-disabled: $color-light-gray;
 $color-buttons-text:                $color-white;
 $color-buttons-text-light:          $color-secondary;
 $color-buttons-border-light:        $color-secondary;

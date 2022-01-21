@@ -1,7 +1,9 @@
 
 .xfin-button {
     background-color: $color-buttons-background;
+    border: 0;
     color: $color-buttons-text;
+    cursor: pointer;
     display: inline-block;
     text-decoration: none;
     transition: all .2s;
@@ -15,6 +17,11 @@
         color: $color-buttons-text;
         text-decoration: none;
         transition: all .2s;
+    }
+
+    &:disabled {
+        background-color: $color-buttons-background-disabled;
+        cursor: not-allowed;
     }
 
     &--light {
