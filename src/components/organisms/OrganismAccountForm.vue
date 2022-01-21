@@ -11,7 +11,7 @@
             <MoleculeInputText classList="pb-5" field="bic" :hasErrors="bicErrors" v-model="bic" @blur="v$.bic.$touch()" :validation="v$.bic" label="BIC" />
             <MoleculeInputText classList="pb-5" field="bank" v-model="bank" :optional="true" label="Bank" />
             <MoleculeInputText classList="pb-5" field="description" v-model="description" :optional="true" label="Beschreibung" />
-            <MoleculeInputText classList="pb-5" v-if="!formData.account" field="balance" :hasErrors="balanceErrors" v-model="balance" @blur="v$.balance.$touch()" :validation="v$.balance" label="Kontostand" />
+            <MoleculeInputText classList="pb-5" v-if="!formData.account || formData.account.isNew" field="balance" :hasErrors="balanceErrors" v-model="balance" @blur="v$.balance.$touch()" :validation="v$.balance" label="Kontostand" />
 
             <!-- TODO - remove border on button-->
             <AtomButton classList="xfin-button" text="Konto speichern" :disabled="v$.$silentErrors.length > 0 || duplicate" @click.prevent="save" />
@@ -126,13 +126,15 @@ export default {
   },
 
   validations() {
-    return this.formData.account
-      ? existingAccountValidation
-      : newAccountValidation;
+    return !this.formData.account || this.formData.account.isNew
+      ? newAccountValidation
+      : existingAccountValidation;
   },
 
   methods: {
     async save() {
+      // TODO - delete console log
+      console.log('save invoked!');
       let duplicateCheckResponse = null;
       //if iban changed, check for duplicates in the db
       if (this.originalIban !== this.iban) {

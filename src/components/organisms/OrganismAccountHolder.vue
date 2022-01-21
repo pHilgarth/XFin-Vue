@@ -5,9 +5,9 @@
       <MoleculeInputText  classList="account-holder__name pb-5" field="name" :hasErrors="nameHasErrors || duplicatedName"
                           :validation="v$.name" v-model="name" label="Name" @blur="v$.name.$touch()"/>
 
-      <teleport v-if="duplicatedName" to=".account-holder__name">
-        <AtomParagraph class="xfin-form__error" text="Dieser Name wird bereits verwendet!"/>
-      </teleport>
+      <template v-if="duplicatedName" to=".account-holder__name">
+        <AtomParagraph class="xfin-form__error account-holder__name__error" text="Dieser Name wird bereits verwendet!"/>
+      </template>
 
       <div class="account-holder__accounts">
         <AtomHeadline classList="account-holder__accounts-headline" tag="h4" text="Konten:" />
@@ -15,11 +15,12 @@
 
         <div v-if="bankAccounts.length" class="account-holder__account-items">
           <template v-for="(account, index) in bankAccounts" :key="index">
-            <!-- TODO cursor:pointer only above the X and the "Edit" button -->
-            <!-- TODO background-color red for the X and color white -->
             <div class="account-holder__account">
+              <AtomSpan v-if="account.isNew" class="account-holder__new" text="NEU" />
+              <AtomSpan v-else-if="account.changed" class="account-holder__changed" text="GEÄNDERT" />
               <AtomSpan class="account-holder__delete" :data-index="index" text="&times;" @click="deleteAccount" />
               <span class="account-holder__account-number">{{ account.accountNumber }}</span>
+              <span class="account-holder__balance">{{ formatBalance(account.balance) }}</span>
               <AtomButtonLight classList="account-holder__edit xfin-button&#45;&#45;light" :data-index="index" text="Bearbeiten" @click="editAccount" />
             </div>
           </template>
@@ -29,7 +30,6 @@
     </article>
   </section>
   <div v-else class="account-holder__form">
-    <!-- TODO when clicking on the 'addAccount' light button, the AccountForm should expand below the button instead of how it is at the moment -->
     <OrganismAccountForm @cancel="showForm = false" @save="saveAccount" :formData="formData" :headline="formHeadline"/>
   </div>
 </template>
@@ -46,8 +46,7 @@ import OrganismAccountForm from '@/components/organisms/OrganismAccountForm';
 
 import { AccountHolderService } from '@/services/account-holder-service';
 import { CopyService } from '@/services/copy-service';
-import { InternalBankAccountService }     from '@/services/internal-bank-account-service';
-import { InternalTransactionService }     from "@/services/internal-transaction-service";
+import { NumberService } from '@/services/number-service';
 
 import { accountHolderValidation } from '@/validation/validations';
 
@@ -61,6 +60,8 @@ export default {
     OrganismAccountForm
   },
 
+  emits: [ 'save' ],
+
   props: {
     accountHolder: { type: Object, default: null },
     headline: { type: String, required: true },
@@ -70,6 +71,7 @@ export default {
     nameHasErrors() {
       return this.v$.name.$error;
     },
+
     saveDisabled() {
       return this.v$.name.$invalid || this.duplicatedName || !this.bankAccounts.length
     },
@@ -110,22 +112,6 @@ export default {
       this.showForm = true;
     },
 
-    //TODO - can I move this function into a service? It's duplicated in AccountSettings.vue
-    checkForChanges(sourceAccount, bankAccount) {
-      const subset = ({iban, bic, bank, description}) => ({iban, bic, bank, description});
-      const sourceSubset = subset(sourceAccount);
-      const updateSubset = subset(bankAccount);
-      const changed = [];
-
-      for (const prop in sourceSubset) {
-        if (sourceSubset[prop] !== updateSubset[prop]) {
-          changed.push(prop);
-        }
-      }
-
-      return changed;
-    },
-
     deleteAccount(event) {
       //TODO - show modal to confirm deletion
       const index = event.target.dataset.index;
@@ -151,7 +137,11 @@ export default {
       this.showForm = true;
     },
 
-    async saveAccount(event) {
+    formatBalance(value) {
+      return NumberService.formatCurrency(value);
+    },
+
+    saveAccount(event) {
       const bankAccount = {};
 
       for (const prop in event) {
@@ -160,6 +150,8 @@ export default {
 
       // if !this.accountHolder -> user is creating a new accountHolder
       if (!this.accountHolder) {
+        bankAccount.isNew = true;
+
         //if bankAccount.index -> user edited an existing account
         if (bankAccount.index >= 0) {
           this.bankAccounts[bankAccount.index] = bankAccount;
@@ -173,56 +165,23 @@ export default {
       else {
         const sourceAccount = this.accountHolder.bankAccounts[bankAccount.index];
 
+        //if !sourceAccount -> user created or edited a new account, which is not stored in the db yet
         if (!sourceAccount) {
-          //TODO - this code is duplicated in NewAccountHolder when creating the accounts
-          bankAccount.accountHolderId = this.accountHolder.id;
+          bankAccount.isNew = true;
 
-          const createdBankAccount = await InternalBankAccountService.create(bankAccount);
+          //if bankAccount.index -> user edited an existing account
+          if (bankAccount.index >= 0) {
+            this.bankAccounts[bankAccount.index] = bankAccount;
+          } else {
+            this.bankAccounts.push(bankAccount);
+          }
 
-          if (createdBankAccount) {
-            const initializationTransaction = {
-              internalBankAccountId: createdBankAccount.id,
-              dateString: new Date().toISOString(),
-              amount: bankAccount.balance,
-              reference: '[Kontoinitialisierung]',
-            };
-            const createdInitializationTransaction = await InternalTransactionService.create(initializationTransaction);
-            if (createdInitializationTransaction) {
-              this.bankAccounts.push(bankAccount);
-              this.showForm = false;
-            }
-            else {
-              //TODO - improve error handling - maybe remove the other records again? Or just implement a task on the API that takes care of this regularly?
-              this.error = 'Error during inizializationTransaction creation';
-              alert(this.error);
-            }
-          }
-          else {
-            //TODO - improve error handling
-            this.error = 'Error during bankAccountCreation';
-            alert(this.error);
-          }
+          this.showForm = false;
         }
         else {
-          const jsonPatch = [];
-          
-          for (const prop of this.checkForChanges(sourceAccount, bankAccount)) {
-            jsonPatch.push({
-              op: "replace",
-              path: `/${prop}`,
-              value: bankAccount[prop],
-            });
-          }
-
-          const updateResponse = await InternalBankAccountService.update(bankAccount.id, jsonPatch);
-
-          if (!updateResponse.success) {
-            alert(updateResponse.error);
-          }
-          else {
-            this.bankAccounts[bankAccount.index] = bankAccount;
-            this.showForm = false;
-          }
+          bankAccount.changed = true;
+          this.bankAccounts[bankAccount.index] = bankAccount;
+          this.showForm = false;
         }
       }
     },
@@ -251,7 +210,7 @@ export default {
       }
 
       if (save) {
-        this.$emit('save', { name: this.name, bankAccounts: this.bankAccounts });
+        this.$emit('save', { id: this.accountHolder?.id, name: this.name, bankAccounts: this.bankAccounts });
       }
     },
   },
