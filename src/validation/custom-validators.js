@@ -10,8 +10,9 @@ import { NumberService } from '@/services/number-service';
     allows exavtly 2 decimal places
 
 */
-export const amountValidator =                              (value) => value.match(/^(0|[1-9][0-9]*),[0-9]{2}$/);
-export const amountAvailableValidator =     (available) =>  (value) => NumberService.parseFloat(value) <= available;
+export const amountValidator =                              (value) => value.match(/^(0|[1-9][0-9]*)?,?[0-9]{1,2}$/);
+export const amountAvailableValidator =     (available) =>  (value) => typeof available === 'number' && typeof value === 'number' ? NumberService.parseFloat(value) <= available : true;
+
 /* balance regex:
 
     allows negative values
