@@ -126,7 +126,7 @@ export default {
             {
               component: {
                 tag: 'MoleculeActionSelect',
-                props: { config: { bankAccountId: bankAccount.id } },
+                props: { config: { bankAccount: bankAccount } },
               },
             },
           ],
