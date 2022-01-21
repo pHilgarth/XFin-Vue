@@ -1,9 +1,9 @@
 <!-- TODO - can I make the options dynamically? They're hardcoded in here ...-->
 <template>
-    <select @change="getAccountAction($event, config.bankAccountId)">
+    <select @change="getAccountAction($event, config.bankAccount.id)">
         <option>Aktion wählen ...</option>
-        <option id="new-revenue">Einnahme eintragen</option>
-        <option id="new-expense">Ausgabe eintragen</option>
+        <option v-if="config.bankAccount.accountSettings.receivesRevenues" id="new-revenue">Einnahme eintragen</option>
+        <option v-if="config.bankAccount.accountSettings.effectsExpenses" id="new-expense">Ausgabe eintragen</option>
         <option id="budget-manager">Budget verwalten</option>
         <option>Fixkostenverwaltung</option>
         <option id="account-settings">Einstellungen</option>
