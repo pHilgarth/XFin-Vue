@@ -32,11 +32,12 @@
         </div>
 
         <MoleculeInputText classList="pb-5" field="reference" v-model="reference" :optional="true" label="Verwendungszweck" />
-        <!-- TODO - adjust validation regex! users are forced to type in a 100% valid amount. Just "10" is not possible, but thats bad UX -->
+        <!-- TODO - den verfügbaren Betrag immer anzeigen lassen! (heute verfügbar, wie im OnlineBanking) -->
         <MoleculeInputText field="amount" :hasErrors="amountErrors" v-model="amount" :validation="v$.amount" label="Betrag"
                            @blur="v$.amount.$touch()" />
 
        <AtomButton classList="xfin-form__button" text="Speichern" :disabled="saveDisabled" @click.prevent="save" />
+       <p>{{ v$.amount }}</p>
       </form>
     </section>
   </div>
@@ -185,6 +186,7 @@ export default {
       counterParts: null,
       counterPartNames: [],
 
+      availableAmount: null,
       selectedAccountNumber: null,
       selectedAccount: null,
       selectedCategoryName: null,
@@ -210,6 +212,17 @@ export default {
       }
 
       this.v$.counterPart.$touch();
+    },
+
+    calculateAvailableAmount(bankAccount) {
+      const balance = bankAccount.balance;
+      const settings = bankAccount.accountSettings;
+
+      return settings.balanceThreshold
+        ? balance - settings.balanceThreshold
+        : !settings.allowsOverdraft
+          ? balance
+          : null;
     },
 
     findAccount() {
@@ -253,6 +266,8 @@ export default {
             if (bankAccount.id == this.$route.params.id) {
               this.selectedAccountNumber = bankAccount.accountNumber;
               this.selectedAccount = bankAccount;
+
+              this.availableAmount = this.calculateAvailableAmount(bankAccount);
             }
           });
         });
@@ -300,7 +315,6 @@ export default {
 
         this.selectedCategoryName = this.categories[0].name;
         this.selectedCategory = this.categories[0];
-        //this.availableAmount =
       } else if (apiResponse.success && !apiResponse.data) {
         this.categories = [];
       }
@@ -428,8 +442,10 @@ export default {
     }
     else {
       validation.counterPart = { payeeRequired: counterPartValidator };
-      validation.amount.availableAmount = amountAvailableValidator(this.availableAmount);
 
+      if (this.availableAmount !== null) {
+        validation.amount.availableAmount = amountAvailableValidator(this.availableAmount);
+      }
     }
 
     if (this.includeCounterPartAccount) {
