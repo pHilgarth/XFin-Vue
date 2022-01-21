@@ -6,6 +6,10 @@
     <!-- TODO - check every API call in this app for proper error handling -->
     <!-- TODO - style xfin-button hover effect -->
     <!-- TODO - make use of automatic attribute fallthrough (i.e. dont use classList on Atoms where only one root element is)-->
+    <!-- TODO - include balance on created / drafted account cards when creating a new account holder -->
+    <!-- TODO - enable save button OrganismAccountForm only if changes were made -->
+    <!-- TODO - enable save button OrganismAccountHolder only if changes were made -->
+    <!-- TODO - update api call on UpdateAccountHolder to be equal as the others -->
 
 <!--    <div class="dev-hint important">-->
 <!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->
