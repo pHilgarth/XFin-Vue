@@ -33,8 +33,8 @@
 
         <MoleculeInputText classList="pb-5" field="reference" v-model="reference" :optional="true" label="Verwendungszweck" />
         <!-- TODO - adjust validation regex! users are forced to type in a 100% valid amount. Just "10" is not possible, but thats bad UX -->
-        <MoleculeInputText  classList="pb-5" field="amount" :hasErrors="amountErrors" v-model="amount" :validation="v$.amount" label="Betrag"
-                            @blur="v$.amount.$touch()" />
+        <MoleculeInputText field="amount" :hasErrors="amountErrors" v-model="amount" :validation="v$.amount" label="Betrag"
+                           @blur="v$.amount.$touch()" />
 
        <AtomButton classList="xfin-form__button" text="Speichern" :disabled="saveDisabled" @click.prevent="save" />
       </form>
@@ -51,7 +51,6 @@
 
 //TODO - refactor every component to use the same import structure: 1. third-party-libs 2. my components 3. my services
 import { useVuelidate } from "@vuelidate/core";
-import { required } from "@vuelidate/validators";
 
 import AtomButton from "@/components/atoms/AtomButton";
 import MoleculeInputAutoSuggest from "@/components/molecules/MoleculeInputAutoSuggest";
@@ -418,7 +417,7 @@ export default {
 
   validations() {
     let validation = {
-      amount: { required, amountValidator },
+      amount: { amountValidator },
       counterPartBic: { bicValidator },
       counterPartIban: { ibanValidator },
     };
