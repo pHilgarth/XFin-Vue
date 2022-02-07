@@ -2,6 +2,7 @@
 <template>
   <div class="account-view">
     <AtomHeadline tag="h1" text="Kontenübersicht" />
+    <p>Nest Step: TODO AccountSettings: Betrag für Maximal-Ausgaben darf die aktuellen Monatsausgaben nicht unterschreiten </p>
     <!-- TODO - general todos -->
     <!-- TODO - check every API call in this app for proper error handling -->
     <!-- TODO - style xfin-button hover effect -->
@@ -10,6 +11,8 @@
     <!-- TODO - enable save button OrganismAccountForm only if changes were made -->
     <!-- TODO - enable save button OrganismAccountHolder only if changes were made -->
     <!-- TODO - update api call on UpdateAccountHolder to be equal as the others -->
+    <!-- TODO - on account-detail: expenses table: no reference makes the amount appear in the reference column! -->
+    <!-- TODO - on account-detail: expenses table: text-align: right on payee column -->
     <!-- TODO - disable budget manager, when no accountHolders are available -->
 
 <!--    <div class="dev-hint important">-->

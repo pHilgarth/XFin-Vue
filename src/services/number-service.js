@@ -6,6 +6,16 @@ export const NumberService = {
             : null;
     },
 
+    enforceNumber(value) {
+        let result = typeof value === 'number' && !isNaN(value)
+            ? value
+            : NumberService.parseFloat(value);
+        
+        return isNaN(result)
+            ? null
+            : result;
+    },
+
     formatCurrency(value, includeCurrency = true) {
         let currencyFormat = new Intl.NumberFormat("de-DE", {
             style: "currency",

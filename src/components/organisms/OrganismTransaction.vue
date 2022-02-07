@@ -33,11 +33,11 @@
 
         <MoleculeInputText classList="pb-5" field="reference" v-model="reference" :optional="true" label="Verwendungszweck" />
         <!-- TODO - den verfügbaren Betrag immer anzeigen lassen! (heute verfügbar, wie im OnlineBanking) -->
-        <MoleculeInputText field="amount" :hasErrors="amountErrors" v-model="amount" :validation="v$.amount" label="Betrag"
+        <MoleculeInputText field="amount" :hasErrors="amountErrors" v-model="amount" :validation="v$.amount" label="Betrag" :errorMessageParams="{ limitType: availableAmountLimitType }"
                            @blur="v$.amount.$touch()" />
 
        <AtomButton classList="xfin-form__button" text="Speichern" :disabled="saveDisabled" @click.prevent="save" />
-       <p>{{ v$.amount }}</p>
+       <p>{{ availableAmount }}</p>
       </form>
     </section>
   </div>
@@ -187,6 +187,7 @@ export default {
       counterPartNames: [],
 
       availableAmount: null,
+      availableAmountLimitType: null,
       selectedAccountNumber: null,
       selectedAccount: null,
       selectedCategoryName: null,
@@ -215,14 +216,43 @@ export default {
     },
 
     calculateAvailableAmount(bankAccount) {
+      console.log('calculateAvailableAmount fired');
       const balance = bankAccount.balance;
       const settings = bankAccount.accountSettings;
+      const expensesSum = bankAccount.expenses.length > 0
+        ? Math.abs(bankAccount.expenses.map(e => e.amount).reduce((a,b) => a + b))
+        : 0;
 
-      return settings.balanceThreshold
-        ? balance - settings.balanceThreshold
+      //calculate availableAmount based on the balance and balanceThreshold
+      let availableAmount = settings.balanceThreshold
+        ? Math.round((balance - settings.balanceThreshold) * 100) / 100
         : !settings.allowsOverdraft
           ? balance
           : null;
+      
+      //calculate availableAmount based on the expenses sum and expensesThreshold
+      let availableExpenses = settings.expensesThreshold
+        ? Math.round((settings.expensesThreshold - expensesSum) * 100) / 100
+        : null;
+      
+      this.availableAmountLimitType = availableAmount && availableExpenses
+        ? availableAmount < availableExpenses
+          ? 'Budget'
+          : 'Ausgaben-Maximum'
+        : availableAmount
+          ? 'Budget'
+          : availableExpenses
+            ? 'Ausgaben-Maximum'
+            : null;
+
+      //return the lower of both      
+      return availableAmount && availableExpenses
+        ? Math.min(availableAmount, availableExpenses)
+        : availableAmount
+          ? availableAmount
+          : availableExpenses
+            ? availableExpenses
+            : null;
     },
 
     findAccount() {
@@ -266,8 +296,10 @@ export default {
             if (bankAccount.id == this.$route.params.id) {
               this.selectedAccountNumber = bankAccount.accountNumber;
               this.selectedAccount = bankAccount;
-
-              this.availableAmount = this.calculateAvailableAmount(bankAccount);
+console.log(`transactionType is ${this.transactionType}(${typeof this.transactionType})`);
+              this.availableAmount = this.transactionType !== 'revenue'
+                ? this.calculateAvailableAmount(bankAccount)
+                : null;
             }
           });
         });
@@ -384,7 +416,9 @@ export default {
       const externalTransaction = {
         externalBankAccountId: externalBankAccountId,
         dateString: currentDate,
-        amount: amount * -1,
+        amount: this.transactionType === 'revenue'
+          ? amount * -1
+          : amount,
         reference: this.reference,
       };
       const createdExternalTransaction =
@@ -399,7 +433,9 @@ export default {
           internalBankAccountId: this.selectedAccount.id,
           transactionCategoryId: this.selectedCategory.id,
           dateString: currentDate,
-          amount: amount,
+          amount: this.transactionType === 'revenue'
+            ? amount
+            : amount * -1,
           reference: this.reference,
           counterPartTransactionToken:
             createdExternalTransaction.transactionToken,

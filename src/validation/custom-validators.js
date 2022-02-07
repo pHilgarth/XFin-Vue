@@ -11,7 +11,19 @@ import { NumberService } from '@/services/number-service';
 
 */
 export const amountValidator =                              (value) => value.match(/^(0|[1-9][0-9]*)?,?[0-9]{1,2}$/);
-export const amountAvailableValidator =     (available) =>  (value) => typeof available === 'number' && typeof value === 'number' ? NumberService.parseFloat(value) <= available : true;
+//export const amountAvailableValidator =     (available) =>  (value) => typeof available === 'number' && typeof value === 'number' ? NumberService.parseFloat(value) <= available : true;
+export const amountAvailableValidator =                     (available) => (value) => {
+                                                                //returns null or a valid number
+                                                                available = NumberService.enforceNumber(available);
+                                                                value = NumberService.enforceNumber(value);
+
+                                                                if (available !== null && value !== null) {
+                                                                    return value <= available;
+                                                                }
+                                                                else {
+                                                                    return true;
+                                                                }
+                                                            }
 
 /* balance regex:
 
