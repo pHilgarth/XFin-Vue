@@ -2,7 +2,7 @@
 <template>
   <div class="account-view">
     <AtomHeadline tag="h1" text="Kontenübersicht" />
-    <p>Nest Step: TODO AccountSettings: Betrag für Maximal-Ausgaben darf die aktuellen Monatsausgaben nicht unterschreiten </p>
+    <p>Nest Step: TODO AccountSettings: Save-Button conditionally disable / enable </p>
     <!-- TODO - general todos -->
     <!-- TODO - check every API call in this app for proper error handling -->
     <!-- TODO - style xfin-button hover effect -->
