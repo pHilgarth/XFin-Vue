@@ -37,16 +37,19 @@ export const amountAvailableValidator =                     (available) => (valu
     allows exavtly 2 decimal places
 
 */
-export const balanceValidator =                                 (value) => value.match(/^-?(0|[1-9](\.?[0-9]{3})*|[1-9][0-9]{1,2}(\.?[0-9]{3})*),[0-9]{2}$/);
+export const balanceValidator =                                     (value) => value.match(/^-?(0|[1-9](\.?[0-9]{3})*|[1-9][0-9]{1,2}(\.?[0-9]{3})*),[0-9]{2}$/);
 //TODO - balanceThresholdValidator - regex stimmt nicht -> sie matcht auch z.B. 1234.123,32
-export const balanceThresholdValidator =                        (value) => value === null || value === undefined || value === '' || value.match(/^-?(0|[1-9](\.?[0-9]{3})*|[1-9][0-9]{1,2}(\.?[0-9]{3})*),[0-9]{2}$/);
-export const balanceThresholdMaxValidator = (balance) =>        (value) => value === null || value === undefined || value === '' || !value.match(/^-?(0|[1-9](\.?[0-9]{3})*|[1-9][0-9]{1,2}(\.?[0-9]{3})*),[0-9]{2}$/) || NumberService.parseFloat(value) <= balance;
-export const bicValidator =                                     (value) => value.match(/^[a-zA-Z]{6}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?$/);
-export const counterPartValidator =                             (value) => value !== null && value !== undefined && typeof value === 'string' && value.trim() !== '';
-export const expensesThresholdValidator =                       (value) =>  value === null || value === undefined || value === '' || value.match(/^(0|[1-9][0-9]*),[0-9]{2}$/);
-export const ibanDuplicateValidator =       (ibans) =>          (value) => value !== null ? !ibans.includes(value.toUpperCase()) : true;
-export const ibanValidator =                                    (value) => value.match(/^[a-zA-Z]{2}[0-9]{20}$/);
-export const freeBudgetValidator =                              (value) => NumberService.parseFloat(value) >= 0;
+export const balanceThresholdValidator =                            (value) => value === null || value === undefined || value === '' || value.match(/^-?(0|[1-9](\.?[0-9]{3})*|[1-9][0-9]{1,2}(\.?[0-9]{3})*),[0-9]{2}$/);
+//TODO - test this regex - amount is NOT valid, if it matches the regex => what does that mean?
+export const balanceThresholdMaxValidator =     (balance) =>        (value) => value === null || value === undefined || value === '' || !value.match(/^-?(0|[1-9](\.?[0-9]{3})*|[1-9][0-9]{1,2}(\.?[0-9]{3})*),[0-9]{2}$/) || NumberService.parseFloat(value) <= balance;
+export const bicValidator =                                         (value) => value.match(/^[a-zA-Z]{6}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?$/);
+export const counterPartValidator =                                 (value) => value !== null && value !== undefined && typeof value === 'string' && value.trim() !== '';
+export const expensesThresholdValidator =                           (value) => value === null || value === undefined || value === '' || value.match(/^(0|[1-9][0-9]*),[0-9]{2}$/);
+//this validator returns true (=valid) if there is no expenses
+export const expensesThresholdMinValidator =    (expensesSum) =>    (value) => value === null || value === undefined || value === '' || !value.match(/^(0|[1-9][0-9]*),[0-9]{2}$/) || NumberService.parseFloat(value) >= expensesSum;
+export const ibanDuplicateValidator =           (ibans) =>          (value) => value !== null ? !ibans.includes(value.toUpperCase()) : true;
+export const ibanValidator =                                        (value) => value.match(/^[a-zA-Z]{2}[0-9]{20}$/);
+export const freeBudgetValidator =                                  (value) => NumberService.parseFloat(value) >= 0;
 //TODO - delete, if not needed
 //export const freeBudgetValidator =          (minimalAmount) =>  (value) => minimalAmount === null || NumberService.parseFloat(value) >= minimalAmount;
 //export const dropDownValidator = (value) => value != -1;

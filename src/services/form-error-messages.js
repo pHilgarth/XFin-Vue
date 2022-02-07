@@ -14,13 +14,14 @@ export const errorMessages = {
 
     //balanceThreshold errors
     balanceThreshold_amount:                amountErrorMessage,
-    balanceThreshold_maxAmount:             'Der Betrag darf den aktuellen Kontostand nicht überschreiten!',
+    balanceThreshold_maxAmount:             'Der Betrag darf den aktuellen Kontostand nicht überschreiten! ({balance})',
 
     //bic errors
     bic:                                    bicErrorMessage,
 
     //expense errors
     expensesThreshold:                      amountErrorMessage,
+    expensesThreshold_minAmount:            'Der Betrag darf die aktuellen Monatsausgaben nicht unterschreiten! ({expensesSum})',
 
     //freeBudget errors                     //{...} gets replaced by the function getErrorMessage in MoleculeInputText
     //freeBudget:                             'Der Mindestbetrag für dieses Konto beträgt {minimalAmount}!',

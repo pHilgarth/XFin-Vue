@@ -14,10 +14,12 @@
       <!-- TODO - implement a little 'help'-icon for input fields, which provides info about the field when hovering it (question mark) -->
       <!-- TODO color red when input is negative -->
       <MoleculeInputText  classList="pb-5" field="balance-threshold" :hasErrors="balanceThresholdErrors" v-model="balanceThreshold"
-                          :validation="v$.balanceThreshold" label="Mindestbetrag" :optional="true" @blur="v$.balanceThreshold.$touch()" />
-      <MoleculeInputText classList="pb-5" field="expenses-threshold" :hasErrors="expensesThresholdErrors" v-model="expensesThreshold" :validation="v$.expensesThreshold"
-                         label="Obergrenze für Ausgaben (pro Monat)" :optional="true" @blur="v$.expensesThreshold.$touch()" />
-      <AtomButton class="xfin-button" text="Speichern" @click="saveAccountSettings"/>
+                          :validation="v$.balanceThreshold" label="Mindestbetrag" :optional="true" @blur="v$.balanceThreshold.$touch()"
+                          :errorMessageParams="{ balance: balanceString }"/>
+      <MoleculeInputText classList="pb-5" field="expenses-threshold" :hasErrors="expensesThresholdErrors" v-model="expensesThreshold"
+                         :validation="v$.expensesThreshold" label="Obergrenze für Ausgaben (pro Monat)" :optional="true" @blur="v$.expensesThreshold.$touch()"
+                         :errorMessageParams="{ expensesSum: expensesSumString }"/>
+      <AtomButton class="xfin-button" text="Speichern" @click="saveAccountSettings" />
     </div>
     <div class="account-settings__form" v-else>
       <OrganismAccountForm @cancel="showForm = false" @save="saveAccountData" :formData="formData" :newAccount="false" :headline="formHeadline" />
@@ -43,7 +45,8 @@ import { NumberService }                from '@/services/number-service';
 import {
   balanceThresholdValidator,
   balanceThresholdMaxValidator,
-  expensesThresholdValidator }          from '@/validation/custom-validators';
+  expensesThresholdValidator,
+  expensesThresholdMinValidator, }          from '@/validation/custom-validators';
 
 export default {
   async created() {
@@ -74,6 +77,17 @@ export default {
   computed: {
     balanceThresholdErrors() { return this.v$.balanceThreshold.$error; },
     expensesThresholdErrors() { return this.v$.expensesThreshold.$error; },
+    expensesSum() {
+      return this.account.expenses.length > 0
+          ? Math.abs(this.account.expenses.map(e => e.amount).reduce((a,b) => a + b))
+          : 0;
+    },
+    expensesSumString() {
+      return NumberService.formatCurrency(this.expensesSum);
+    },
+    balanceString() {
+      return NumberService.formatCurrency(this.account.balance);
+    }
   },
 
   watch: {
@@ -149,7 +163,7 @@ export default {
     },
 
     async getAccount() {
-      const simpleBankAccount = true;
+      const simpleBankAccount = false;
       const apiResponse = await InternalBankAccountService.getById(this.$route.params.id, simpleBankAccount);
 
       if (apiResponse.success && apiResponse.data) {
@@ -260,12 +274,16 @@ export default {
   },
 
   validations() {
-    let validation = { expensesThreshold: { expensesThresholdValidator } };
+    let validation = {};
 
     if (this.account) {
       validation.balanceThreshold = {
         amount: balanceThresholdValidator,
         maxAmount: balanceThresholdMaxValidator(this.account.balance) };
+
+      validation.expensesThreshold = {
+        amount: expensesThresholdValidator,
+        minAmount: expensesThresholdMinValidator(this.expensesSum) };
     }
 
     return validation;
