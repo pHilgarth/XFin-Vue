@@ -10,6 +10,7 @@
     <!-- TODO - enable save button OrganismAccountForm only if changes were made -->
     <!-- TODO - enable save button OrganismAccountHolder only if changes were made -->
     <!-- TODO - update api call on UpdateAccountHolder to be equal as the others -->
+    <!-- TODO - disable budget manager, when no accountHolders are available -->
 
 <!--    <div class="dev-hint important">-->
 <!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->

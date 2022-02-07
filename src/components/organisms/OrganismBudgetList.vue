@@ -145,8 +145,6 @@ export default {
         const category = this.transactionCategories[i];
 
         if (category.dirty) {
-          console.log(`category.balance is ${typeof category.balance}`);
-          console.log(`category.originalBalance is ${typeof category.originalBalance}`);
           const amount =
             NumberService.parseFloat(category.balance) -
             category.originalBalance;
@@ -179,6 +177,9 @@ export default {
 
           category.dirty = false;
           category.originalBalance = category.balance;
+
+          const index = this.dirtyCategories.findIndex(c => c.id === category.id);
+          this.dirtyCategories.splice(index, 1);
         }
       }
     },

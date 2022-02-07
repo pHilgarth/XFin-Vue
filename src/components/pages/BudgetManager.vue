@@ -1,6 +1,6 @@
 <template>
   <section class="budget-manager">
-    <h1>Budgetmanager</h1>
+    <h1>Budgetmanager (zweimal Speichern hintereinander liefert einen ERROR beim 2. mal</h1>
     <!-- TODO - verfügbarer Betrag einer KS muss auch geplante Ausgaben berücksichtigen! Geld für geplante Ausgaben kann nicht umgebucht werden -->
     <!-- TODO - bei offenen Änderungen wär es cool, wenn der Collapsible Header irgendwie hervorgehen würde, allerdings müsste ich die Info irgendwie ans parent übergeben (OrgansimCollapsible)-->
     <!-- TODO - error message kann unterschiedelich sein, nicht hardcoded -->
