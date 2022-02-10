@@ -63,6 +63,7 @@ export default {
         //params has to be an object with at least one property - the errorMessages can have placeholders (wrapped in {}), whose names map to the property-keys
         //this function gets a specific error message and replaces all placeholders with the values of the matching properties
         //that's how I output dynamic error messages
+      //TODO - make this function reusable in a service
         getErrorMessage(property, validator, params) {
             let errorMessage = errorMessages[`${property}_${validator}`] || errorMessages[property];
 
