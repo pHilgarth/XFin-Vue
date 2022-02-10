@@ -7,7 +7,7 @@
         <AtomParagraph class="xfin-button--light" text="Kontodaten bearbeiten" @click="showForm = true" />
       </div>
       <MoleculeInputCheckbox classList="pb-3" v-model="effectsExpenses" label="Ausgaben erlauben"
-                             :disabled="expensesThresholdDisabled" :_switch="true"/>
+                             :disabled="effectsExpensesDisabled" :_switch="true"/>
       <MoleculeInputCheckbox classList="pb-3" v-model="receivesRevenues" label="Einnahmen erlauben" :_switch="true"/>
       <MoleculeInputCheckbox classList="pb-4" v-model="allowsOverdraft" label="Kontoüberziehung erlauben"
                              :disabled="overdraftDisabled" :_switch="true"/>
@@ -19,7 +19,7 @@
       <MoleculeInputText classList="pb-5" field="expenses-threshold" :hasErrors="expensesThresholdErrors" v-model="expensesThreshold"
                          :validation="v$.expensesThreshold" label="Obergrenze für Ausgaben (pro Monat)" :optional="true" @blur="v$.expensesThreshold.$touch()"
                          :errorMessageParams="{ expensesSum: expensesSumString }"/>
-      <AtomButton class="xfin-button" text="Speichern" @click="saveAccountSettings" />
+            <AtomButton class="xfin-button" text="Speichern" @click="saveAccountSettings" :disabled="saveDisabled" />
     </div>
     <div class="account-settings__form" v-else>
       <OrganismAccountForm @cancel="showForm = false" @save="saveAccountData" :formData="formData" :newAccount="false" :headline="formHeadline" />
@@ -75,19 +75,18 @@ export default {
   },
 
   computed: {
+    balanceString() { return NumberService.formatCurrency(this.account.balance); },
     balanceThresholdErrors() { return this.v$.balanceThreshold.$error; },
+    expensesSumString() { return NumberService.formatCurrency(this.expensesSum); },
     expensesThresholdErrors() { return this.v$.expensesThreshold.$error; },
+    saveDisabled() {
+      return this.v$.$errors.length > 0;
+    },
     expensesSum() {
       return this.account.expenses.length > 0
           ? Math.abs(this.account.expenses.map(e => e.amount).reduce((a,b) => a + b))
           : 0;
     },
-    expensesSumString() {
-      return NumberService.formatCurrency(this.expensesSum);
-    },
-    balanceString() {
-      return NumberService.formatCurrency(this.account.balance);
-    }
   },
 
   watch: {
@@ -110,6 +109,12 @@ export default {
       }
     },
 
+    effectsExpenses() {
+      this.expensesThreshold = this.effectsExpenses == false
+        ? null
+        : this.expensesThreshold;
+    },
+
     expensesThreshold() {
       this.v$.expensesThreshold.$touch();
 
@@ -117,8 +122,8 @@ export default {
         ? null
         : NumberService.parseFloat(this.expensesThreshold);
 
-      this.effectsExpenses = value !== 0;
-      this.expensesThresholdDisabled = value === 0;
+      this.effectsExpenses = value > 0;
+      this.effectsExpensesDisabled = value > 0;
 
     }
   },
@@ -136,7 +141,7 @@ export default {
       overdraftDisabled: false,
       balanceThreshold: null,
       expensesThreshold: null,
-      expensesThresholdDisabled: false,
+      effectsExpensesDisabled: false,
 
       formData: null,
       formHeadline: 'Kontodaten bearbeiten',
