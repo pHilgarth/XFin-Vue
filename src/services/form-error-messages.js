@@ -7,7 +7,7 @@ const ibanDuplicateErrorMessage =           'Diese IBAN existiert bereits!';
 export const errorMessages = {
     //amount errors
     amount:                                 amountErrorMessage,
-    amount_availableAmount:                 'Der Betrag übersteigt das {limitType} auf dieser Kostenstelle!',
+    amount_availableAmount:                 'Der Betrag übersteigt das {limitType} auf dieser Kostenstelle! (muss das nicht Konto heißen?)',
 
     //balance errors
     balance:                                amountErrorMessage,

@@ -2,7 +2,6 @@
 <template>
   <div class="account-view">
     <AtomHeadline tag="h1" text="Kontenübersicht" />
-    <p>Nest Step: TODO AccountSettings: Save-Button conditionally disable / enable </p>
     <!-- TODO - general todos -->
     <!-- TODO - check every API call in this app for proper error handling -->
     <!-- TODO - style xfin-button hover effect -->
@@ -15,6 +14,9 @@
     <!-- TODO - on account-detail: expenses table: text-align: right on payee column -->
     <!-- TODO - disable budget manager, when no accountHolders are available -->
     <!-- TODO - more information on OrganismTransaction when transactionType == 'expense' (what's the current balance, what's the budget, what's the balance threshold, expenses threshhold, etc... there is place on the right side to display these informations -->
+    <!-- TODO - opening the budget manager from an accounts dropdown menu in accountview does not work -->
+    <!-- TODO - xfin-form-error on budget-manager "Dieser Posten darf nicht negativ sein" -> it's not position: absolute anymore, but here it has to be -->
+    <!--          TODO - i disabled position: absolute because of another component where it shouldn't be absolute -> need to find a solution here -->
 
 <!--    <div class="dev-hint important">-->
 <!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->
