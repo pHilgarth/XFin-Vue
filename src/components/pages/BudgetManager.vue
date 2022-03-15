@@ -30,7 +30,7 @@ import OrganismCollapsible from '@/components/organisms/OrganismCollapsible';
 import {AccountHolderService} from '@/services/account-holder-service';
 //import { AccountSettingsService } from '@/services/account-settings-service';
 import {NumberService} from '@/services/number-service';
-import {TransactionCategoryService} from '@/services/transaction-category-service.js';
+import {CostCenterService} from '@/services/cost-center-service.js';
 
 export default {
   async created() {
@@ -100,7 +100,7 @@ export default {
       const year = new Date().getFullYear();
       const month = new Date().getMonth();
 
-      const apiResponse = await TransactionCategoryService.getAllByAccount(bankAccount.id, year, month);
+      const apiResponse = await CostCenterService.getAllByAccount(bankAccount.id, year, month);
 
       if (apiResponse.success && apiResponse.data) {
         bankAccount.transactionCategories = apiResponse.data;

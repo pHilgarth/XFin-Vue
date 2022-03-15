@@ -24,7 +24,7 @@ import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeMonthSwitch from "@/components/molecules/MoleculeMonthSwitch";
 
 import { InternalBankAccountService } from '@/services/internal-bank-account-service';
-import { TransactionCategoryService } from '@/services/transaction-category-service';
+import { CostCenterService } from '@/services/cost-center-service';
 
 export default {
   async created() {
@@ -86,7 +86,7 @@ export default {
       const year = new Date().getFullYear();
       month = month !== undefined ? month : new Date().getMonth();
 
-      const apiResponse = await TransactionCategoryService.getAllByAccount(this.$route.params.id, year, month);
+      const apiResponse = await CostCenterService.getAllByAccount(this.$route.params.id, year, month);
 
       if (apiResponse.success && apiResponse.data) {
         this.transactionCategories = apiResponse.data;

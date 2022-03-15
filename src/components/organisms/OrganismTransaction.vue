@@ -67,7 +67,7 @@ import { ExternalBankAccountService } from "@/services/external-bank-account-ser
 import { ExternalPartyService } from "@/services/external-party-service";
 import { InternalTransactionService } from "@/services/internal-transaction-service";
 import { ExternalTransactionService } from "@/services/external-transaction-service";
-import { TransactionCategoryService } from "@/services/transaction-category-service.js";
+import { CostCenterService } from "@/services/cost-center-service.js";
 
 import { amountAvailableValidator, counterPartValidator } from '@/validation/custom-validators';
 //import { counterPartValidator } from '@/validation/custom-validators';
@@ -355,7 +355,7 @@ export default {
     },
 
     async getTransactionCategories() {
-      const apiResponse = await TransactionCategoryService.getAllByAccount(this.selectedAccount.id, new Date().getFullYear(), new Date().getMonth());
+      const apiResponse = await CostCenterService.getAllByAccount(this.selectedAccount.id, new Date().getFullYear(), new Date().getMonth());
 
       if (apiResponse.success && apiResponse.data) {
         this.categories = this.transactionType === 'revenue'

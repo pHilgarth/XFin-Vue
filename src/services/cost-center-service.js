@@ -2,7 +2,7 @@
 
 const baseUrl = "http://localhost:2905/api/transactionCategories";
 
-export const TransactionCategoryService = {
+export const CostCenterService = {
     // addExpense(expense) {
     //     const _transactionCategory = this.transactionCategories.find(el => el.name === expense.source.transactionCategory);
 
