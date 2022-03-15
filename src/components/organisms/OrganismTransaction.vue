@@ -16,7 +16,8 @@
           <MoleculeInputAutoSuggest :classList="paddingAutoSuggest" field="counter-part" :hasErrors="counterPartErrors" v-model="counterPart"
                                     :validation="v$.counterPart" :label="`${transactionType === 'revenue' ? 'Zahlungspflichtiger' : 'Zahlungsempfänger'}`"
                                     :items="counterPartNames" noItemsFallback="&plus; Neu hinzufügen"
-                                    :alwaysShowFallback="true" @blur="blurAutoSuggest" @itemPicked="pickItem" />
+                                    :alwaysShowFallback="true" :errorMessageParams="{ counterPartType: transactionType === 'revenue' ? 'Zahlungspflichtigen' : 'Zahlungsempfänger' }"
+                                    @blur="blurAutoSuggest" @itemPicked="pickItem" />
 
           <MoleculeInputCheckbox  v-if="showCheckbox" :classList="includeCounterPartAccount ? 'pb-1' : 'pb-5'" field="include-counter-part-account"
                                   v-model="includeCounterPartAccount" label="Bankdaten hinzufügen" :_switch="true" />
@@ -37,7 +38,7 @@
                            @blur="v$.amount.$touch()" />
 
        <AtomButton classList="xfin-form__button" text="Speichern" :disabled="saveDisabled" @click.prevent="save" />
-       <p>{{ availableAmount }}</p>
+       <p>{{ selectedCategory }}</p>
       </form>
     </section>
   </div>
@@ -215,44 +216,74 @@ export default {
       this.v$.counterPart.$touch();
     },
 
-    calculateAvailableAmount(bankAccount) {
-      console.log('calculateAvailableAmount fired');
+    //TODO - wenn Konto überzogen werden darf, kann auch jede KS überzogen werden
+    //TODO - wenn Konto überzogen werden darf, beim Überziehen einer KS eine Warnung ausgeben
+    //TODO - wenn Konto überzogen werden darf, bei KS mit gesperrtem Budget eine Warnung ausgeben, wenn dieses gesperrte Budget "angerührt" wird (weil zu hohe Ausgabe)
+    //TODO - wenn Konto nicht überzogen werden darf, darf auch keine einzige KS überzogen werden
+    //TODO - wenn Konto nicht überzogen werden darf, beim Überziehen einer KS einen Validation-Fehler ausgeben
+    //TODO - wenn Konto nicht überzogen werden darf, bei KS mit gesperrtem Budget einen Validation-Fehler ausgeben, wenn dieses gesperrte Budget "angerührt" wird (weil zu hohe Ausgabe)
+    calculateAvailableAmount(bankAccount, transactionCategory) {
       const balance = bankAccount.balance;
-      const settings = bankAccount.accountSettings;
       const expensesSum = bankAccount.expenses.length > 0
-        ? Math.abs(bankAccount.expenses.map(e => e.amount).reduce((a,b) => a + b))
-        : 0;
+          ? Math.abs(bankAccount.expenses.map(e => e.amount).reduce((a,b) => a + b))
+          : 0;
+
+      const settings = bankAccount.accountSettings;
 
       //calculate availableAmount based on the balance and balanceThreshold
-      let availableAmount = settings.balanceThreshold
+      let availableBalanceAmount = settings.balanceThreshold
         ? Math.round((balance - settings.balanceThreshold) * 100) / 100
         : !settings.allowsOverdraft
           ? balance
           : null;
-      
+
       //calculate availableAmount based on the expenses sum and expensesThreshold
       let availableExpenses = settings.expensesThreshold
         ? Math.round((settings.expensesThreshold - expensesSum) * 100) / 100
         : null;
-      
-      this.availableAmountLimitType = availableAmount && availableExpenses
-        ? availableAmount < availableExpenses
-          ? 'Budget'
-          : 'Ausgaben-Maximum'
-        : availableAmount
-          ? 'Budget'
-          : availableExpenses
-            ? 'Ausgaben-Maximum'
-            : null;
+
+      //calculate availableAmount based on category data
+      let availableCategoryAmount = transactionCategory.blockedBudget
+        ? Math.round(transactionCategory.balance - transactionCategory.blockedBudget * 100) / 100
+        : !settings.allowsOverdraft
+          ? transactionCategory.balance
+          : null
+
+      //TODO - the worst ternary ever ...
+      this.availableAmount = availableBalanceAmount === null
+        ? availableExpenses === null
+          ? availableCategoryAmount === null
+              ? null
+              : availableCategoryAmount
+          : availableCategoryAmount === null
+            ? availableExpenses
+            : Math.min(availableExpenses, availableCategoryAmount)
+        : availableExpenses === null
+          ? availableCategoryAmount === null
+              ? availableBalanceAmount
+              : Math.min(availableBalanceAmount, availableCategoryAmount)
+          : availableCategoryAmount === null
+            ? Math.min(availableBalanceAmount, availableExpenses)
+            : Math.min(availableBalanceAmount, availableExpenses, availableCategoryAmount);
+
+      // this.availableAmountLimitType = availableAmount && availableExpenses
+      //   ? availableAmount < availableExpenses
+      //     ? 'Budget'
+      //     : 'Ausgaben-Maximum'
+      //   : availableAmount
+      //     ? 'Budget'
+      //     : availableExpenses
+      //       ? 'Ausgaben-Maximum'
+      //       : null;
 
       //return the lower of both      
-      return availableAmount && availableExpenses
-        ? Math.min(availableAmount, availableExpenses)
-        : availableAmount
-          ? availableAmount
-          : availableExpenses
-            ? availableExpenses
-            : null;
+      // return availableAmount && availableExpenses
+      //   ? Math.min(availableAmount, availableExpenses)
+      //   : availableAmount
+      //     ? availableAmount
+      //     : availableExpenses
+      //       ? availableExpenses
+      //       : null;
     },
 
     findAccount() {
@@ -296,10 +327,6 @@ export default {
             if (bankAccount.id == this.$route.params.id) {
               this.selectedAccountNumber = bankAccount.accountNumber;
               this.selectedAccount = bankAccount;
-console.log(`transactionType is ${this.transactionType}(${typeof this.transactionType})`);
-              this.availableAmount = this.transactionType !== 'revenue'
-                ? this.calculateAvailableAmount(bankAccount)
-                : null;
             }
           });
         });
@@ -328,8 +355,7 @@ console.log(`transactionType is ${this.transactionType}(${typeof this.transactio
     },
 
     async getTransactionCategories() {
-      const simple = true;
-      const apiResponse = await TransactionCategoryService.getAll(simple);
+      const apiResponse = await TransactionCategoryService.getAllByAccount(this.selectedAccount.id, new Date().getFullYear(), new Date().getMonth());
 
       if (apiResponse.success && apiResponse.data) {
         this.categories = this.transactionType === 'revenue'
@@ -347,6 +373,11 @@ console.log(`transactionType is ${this.transactionType}(${typeof this.transactio
 
         this.selectedCategoryName = this.categories[0].name;
         this.selectedCategory = this.categories[0];
+
+        this.availableAmount = this.transactionType !== 'revenue'
+          ? this.calculateAvailableAmount(this.selectedAccount, this.selectedCategory)
+          : null;
+
       } else if (apiResponse.success && !apiResponse.data) {
         this.categories = [];
       }
@@ -470,15 +501,11 @@ console.log(`transactionType is ${this.transactionType}(${typeof this.transactio
       amount: { amountValidator },
       counterPartBic: { bicValidator },
       counterPartIban: { ibanValidator },
+      counterPart: { required: counterPartValidator },
     };
 
     //i need different keys to show the appropriate error message
-    if (this.transactionType === 'revenue') {
-      validation.counterPart = { payerRequired: counterPartValidator };
-    }
-    else {
-      validation.counterPart = { payeeRequired: counterPartValidator };
-
+    if (this.transactionType === 'expense') {
       if (this.availableAmount !== null) {
         validation.amount.availableAmount = amountAvailableValidator(this.availableAmount);
       }
