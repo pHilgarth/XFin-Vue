@@ -11,7 +11,7 @@
                             @itemMouseenter="hoverOnItem = true" @itemMouseleave="hoverOnItem = false" @tabbedOut="tabbedOut = true" />
 
         <template v-for="(error, index) in validation?.$errors" :key="index">
-            <AtomParagraph classList="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
+            <AtomParagraph classList="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator, errorMessageParams)" />
         </template>
     </div>
 </template>
@@ -40,6 +40,8 @@ export default {
         items:              { type: Array, required: true },
         noItemsFallback:    { type: String },
         alwaysShowFallback: { type: Boolean },
+        errorMessageParams: { type: Object },
+
     },
 
     components: {
@@ -88,9 +90,19 @@ export default {
             this.$emit('update:modelValue', event.target.value);
         },
 
-        getErrorMessage(property, validator) {
-            return  errorMessages[`${property}_${validator}`] ||
-                    errorMessages[property]
+      //TODO - make this function reusable in a service
+        getErrorMessage(property, validator, params) {
+          let errorMessage = errorMessages[`${property}_${validator}`] || errorMessages[property];
+
+          for (const key in params) {
+            errorMessage = errorMessage.replace(`{${key}}`, params[key]);
+          }
+
+          //TODO - implement error handling: if the error message contains {...} substrings, but no params were passed to this function, return an empty errorMessage to prevent outputting weird strings
+
+          return errorMessage;
+          // return  errorMessages[`${property}_${validator}`] ||
+          //         errorMessages[property]
         },
 
         pickItem(event) {
