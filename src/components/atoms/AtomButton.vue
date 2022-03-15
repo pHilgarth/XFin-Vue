@@ -1,5 +1,5 @@
 <template>
-    <button :class="getType" :disabled="disabled" v-bind="additionalProps">{{ text }}</button>
+    <button :class="`xfin__button ${getType()}`" :disabled="disabled" v-bind="additionalProps">{{ text }}</button>
 </template>
 
 <script>
@@ -9,6 +9,10 @@ export default {
                                 type: String,
                                 required: true,
                             },
+        type:               {
+                              type: String,
+                              required: true,
+                            },
         disabled:           { type: Boolean },
         additionalProps:    { type: Object },
     },
@@ -16,9 +20,9 @@ export default {
   methods: {
       getType() {
         switch (this.type) {
-          case 'btn-primary':
+          case 'primary':
             return 'xfin__button--primary';
-          case 'btn-light':
+          case 'light':
             return 'xfin__button--light';
         }
       }
