@@ -2,11 +2,23 @@
     width: 100%;
 
     &__category {
-        align-items: center;
-        display: flex;
+        //align-items: center;
+        //display: flex;
+        overflow: hidden;
+        transition: all 1s ease-in-out;
+        @include rem(max-height, 66px);
 
         &.changed {
             border: 2px solid $color-secondary;
+        }
+
+        &.show-detail {
+            transition: all 1s ease-in-out;
+            @include rem(max-height, 1000px);
+        }
+
+        &-header {
+            display: flex;
         }
 
         &__balance {
