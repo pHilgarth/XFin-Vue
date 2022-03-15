@@ -10,10 +10,6 @@
           <li :class="selectedMenuItem == 2 ? 'active' : ''" data-route="/budget-manager" data-index="2" @click="routeToComponent">
             Budgetmanager
           </li>
-          <li :class="selectedMenuItem == 3 ? 'active' : ''" data-route="/testform" data-index="3" @click="routeToComponent">
-            <!-- TODO - delete this link, the component is/was just for testing purposes -->
-            Test-Form
-          </li>
         </ul>
       </div>
       <div class="xfin__content">
