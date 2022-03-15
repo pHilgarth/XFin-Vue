@@ -19,7 +19,7 @@
       <MoleculeInputText classList="pb-5" field="expenses-threshold" :hasErrors="expensesThresholdErrors" v-model="expensesThreshold"
                          :validation="v$.expensesThreshold" label="Obergrenze für Ausgaben (pro Monat)" :optional="true" @blur="v$.expensesThreshold.$touch()"
                          :errorMessageParams="{ expensesSum: expensesSumString }"/>
-            <AtomButton class="xfin-button" text="Speichern" @click="saveAccountSettings" :disabled="saveDisabled" />
+            <AtomButton text="Speichern" @click="saveAccountSettings" :disabled="saveDisabled" />
     </div>
     <div class="account-settings__form" v-else>
       <OrganismAccountForm @cancel="showForm = false" @save="saveAccountData" :formData="formData" :newAccount="false" :headline="formHeadline" />

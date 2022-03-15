@@ -12,7 +12,7 @@
       <span>Total:</span><span :class="{ 'negative': total < 0 }">{{ formatCurrency(total) }}</span>
     </p>
     <p class="col-2">
-      <AtomButton class="btn xfin-button" text="Speichern" :disabled="saveDisabled" @click="saveChanges" />
+      <AtomButton text="Speichern" :disabled="saveDisabled" @click="saveChanges" />
     </p>
   </div>
 </template>

@@ -37,7 +37,7 @@
         <MoleculeInputText field="amount" :hasErrors="amountErrors" v-model="amount" :validation="v$.amount" label="Betrag" :errorMessageParams="{ limitType: availableAmountLimitType }"
                            @blur="v$.amount.$touch()" />
 
-       <AtomButton classList="xfin-form__button" text="Speichern" :disabled="saveDisabled" @click.prevent="save" />
+       <AtomButton text="Speichern" :disabled="saveDisabled" @click.prevent="save" />
        <p>{{ selectedCategory }}</p>
       </form>
     </section>
