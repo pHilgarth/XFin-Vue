@@ -17,6 +17,8 @@
     <!-- TODO - opening the budget manager from an accounts dropdown menu in accountview does not work -->
     <!-- TODO - xfin-form-error on budget-manager "Dieser Posten darf nicht negativ sein" -> it's not position: absolute anymore, but here it has to be -->
     <!--          TODO - i disabled position: absolute because of another component where it shouldn't be absolute -> need to find a solution here -->
+    <!-- TODO - dont show "Nicht zugewiesen" in CostCenterManager -->
+    <!-- TODO - implement saving of new CostCenter -->
 
 <!--    <div class="dev-hint important">-->
 <!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->
