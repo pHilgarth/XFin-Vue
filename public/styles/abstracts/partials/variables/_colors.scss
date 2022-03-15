@@ -7,6 +7,7 @@ $color-green:                               #178009;
 $color-light-gray:                          #cccccc;
 $color-orange:                              #ff8936;
 $color-red:                                 #f04124;
+$color-red-dark:                            #bb331d;
 $color-white:                               #ffffff;
 
 $color-borders:                             $color-light-gray;
@@ -17,6 +18,10 @@ $background-button-primary-disabled:        $color-light-gray;
 $text-button-primary:                       $color-white;
 $text-button-light:                         $color-secondary;
 $border-button-light:                       $color-secondary;
+$background-button-cancel:                  $color-red;
+$background-button-cancel-dark:             $color-red-dark;
+$text-button-cancel:                        $color-white;
+
 
 $color-font-dark:                           $color-black;
 $color-font-light:                          $color-white;

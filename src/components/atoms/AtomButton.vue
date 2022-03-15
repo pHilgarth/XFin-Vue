@@ -24,6 +24,8 @@ export default {
             return 'xfin__button--primary';
           case 'light':
             return 'xfin__button--light';
+          case 'cancel':
+            return 'xfin__button--cancel';
         }
       }
   }
