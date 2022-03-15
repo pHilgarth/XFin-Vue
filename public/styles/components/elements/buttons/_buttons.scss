@@ -1,37 +1,44 @@
-
-.xfin-button {
-    background-color: $color-buttons-background;
+.xfin__button {
     border: 0;
-    color: $color-buttons-text;
-    cursor: pointer;
-    display: inline-block;
-    text-decoration: none;
-    transition: all .2s;
-    @include rem((
-        border-radius: 5px,
-        padding: 10px 20px,
-    ));
 
-    &:hover {
-        background-color: $color-buttons-background-dark;
-        color: $color-buttons-text;
-        text-decoration: none;
-        transition: all .2s;
-    }
+    &--primary {
+        background-color: $background-button-primary;
+        color: $text-button-primary;
+        transition: all .5s;
+        @include rem((
+                border-radius: 5px,
+                padding: 10px 20px,
+        ));
 
-    &:disabled {
-        background-color: $color-buttons-background-disabled;
-        cursor: not-allowed;
+        &:hover {
+            background-color: $background-button-primary-dark;
+            color: $text-button-primary;
+            text-decoration: none;
+            transition: all .5s;
+        }
+
+        &:disabled {
+            background-color: $background-button-primary-disabled;
+            cursor: not-allowed;
+        }
     }
 
     &--light {
+        background-color: transparent;
         border-bottom: 1px solid transparent;
-        color: $color-buttons-text-light;
+        color: $text-button-light;
         cursor: pointer;
         display: inline-block;
+        transition: all .5s;
 
-        &:hover {
-            border-bottom: 1px solid $color-buttons-border-light;
+        &:hover:not(:disabled) {
+            border-bottom: 1px solid $border-button-light;
+            transition: all .5s;
+        }
+
+        &:disabled {
+            color: $background-button-primary-disabled;
+            cursor: not-allowed;
         }
     }
 }
