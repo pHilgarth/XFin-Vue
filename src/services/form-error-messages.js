@@ -3,6 +3,7 @@ const amountErrorMessage =                  'Bitte gib einen gültigen Betrag ei
 const bicErrorMessage =                     'Bitte gib einen gültigen BIC ein!';
 const ibanErrorMessage =                    'Bitte gib eine gültige IBAN ein!';
 const ibanDuplicateErrorMessage =           'Diese IBAN existiert bereits!';
+const nameErrorMessage =                    'Bitte gib einen Namen ein!';
 
 export const errorMessages = {
     //amount errors
@@ -19,6 +20,15 @@ export const errorMessages = {
     //bic errors
     bic:                                    bicErrorMessage,
 
+    //costCenter errors
+    newCostCenter_required:                 nameErrorMessage,
+
+    //counterPart errors
+    counterPart_required:                   'Bitte gib einen {counterPartType} an!',
+    counterPartIban:                        ibanErrorMessage,
+    counterPartBic:                         bicErrorMessage,
+    counterPartIban_ibanDuplicate:          ibanDuplicateErrorMessage,
+
     //expense errors
     expensesThreshold:                      amountErrorMessage,
     expensesThreshold_minAmount:            'Der Betrag darf die aktuellen Monatsausgaben nicht unterschreiten! ({expensesSum})',
@@ -32,13 +42,7 @@ export const errorMessages = {
     iban_ibanDuplicate:                     ibanDuplicateErrorMessage,
 
     //name errors
-    name_required:                          'Bitte gib einen Namen ein!',
+    name_required:                          nameErrorMessage,
     name_maxLength:                         'Der Name darf nicht länger als 15 Zeichen sein!',
     name_nameDuplicate:                     'Dieser Name existiert bereits!',
-
-    //counterPart errors
-    counterPart_required:                   'Bitte gib einen {counterPartType} an!',
-    counterPartIban:                        ibanErrorMessage,
-    counterPartBic:                         bicErrorMessage,
-    counterPartIban_ibanDuplicate:          ibanDuplicateErrorMessage,
 }
