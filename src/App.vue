@@ -10,6 +10,9 @@
           <li :class="selectedMenuItem == 2 ? 'active' : ''" data-route="/budget-manager" data-index="2" @click="routeToComponent">
             Budgetmanager
           </li>
+          <li :class="selectedMenuItem == 3 ? 'active' : ''" data-route="/design-elements" data-index="3" @click="routeToComponent">
+            Design-Elemente (Dev)
+          </li>
         </ul>
       </div>
       <div class="xfin__content">
