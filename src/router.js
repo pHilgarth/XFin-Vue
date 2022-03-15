@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import AccountDetail from './components/pages/AccountDetail';
 import AccountSettings from './components/pages/AccountSettings';
 import AccountView from './components/pages/AccountView';
+import CostCenterManager from './components/pages/CostCenterManager';
 import BudgetManager from './components/pages/BudgetManager';
 import NewExpense from './components/pages/NewExpense';
 import NewAccountHolder from './components/pages/NewAccountHolder';
@@ -23,5 +24,6 @@ export const router = createRouter({
         { path: '/budget-manager', component: BudgetManager },
         { path: '/account-settings/:id', component: AccountSettings },
         { path: '/design-elements', component: DesignElements},
+        { path: '/cost-centers', component: CostCenterManager},
     ],
 });
