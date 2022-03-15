@@ -3,16 +3,29 @@
   &__header {
     background-color: $color-primary;
     color: $color-font-dark;
-    height: 5vh;
     position: fixed;
     top: 0;
     width: 100vw;
     z-index: 999;
+    @include rem(height, 60px);
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    @include rem(width, 240px);
+
+    svg {
+      width: auto;
+      @include rem(height, 50px);
+    }
   }
 
   &__body {
     display: flex;
-    margin-top: 5vh;
+    @include rem(margin-top, 60px);
   }
 
   &__sidebar {
