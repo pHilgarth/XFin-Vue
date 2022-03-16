@@ -61,7 +61,6 @@ export default {
 
     if (apiResponse.success) {
       this.dataLoaded = true;
-      console.log(this.costCenters);
     } else {
       this.loadingError = true;
       console.error(apiResponse.error);
@@ -70,6 +69,7 @@ export default {
 
   methods: {
     cancelCostCenterCreation() {
+      this.newCostCenter = '';
       this.createNew = false;
       this.v$.$reset();
     },
@@ -78,6 +78,8 @@ export default {
       const apiResponse = await CostCenterService.getAll();
 
       if (apiResponse.success && apiResponse.data) {
+        apiResponse.data.splice(apiResponse.data.indexOf(t => t.name === 'Nicht zugewiesen'));
+
         this.costCenters = apiResponse.data;
       }
       else if (apiResponse.success && !apiResponse.data) {
@@ -87,8 +89,15 @@ export default {
       return apiResponse;
     },
 
-    saveCostCenter() {
-      alert('saving not yet implemented');
+    async saveCostCenter() {
+      this.v$.$touch();
+
+      if (!this.nameErrors) {
+        await CostCenterService.create({ name: this.newCostCenter });
+        await this.getCostCenters();
+
+        this.cancelCostCenterCreation();
+      }
     }
   },
 

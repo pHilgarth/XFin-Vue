@@ -3,53 +3,33 @@
 const baseUrl = "http://localhost:2905/api/transactionCategories";
 
 export const CostCenterService = {
-    // addExpense(expense) {
-    //     const _transactionCategory = this.transactionCategories.find(el => el.name === expense.source.transactionCategory);
+    async create(costCenter) {
+        const postObject = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(costCenter)
+        };
 
-    //     _transactionCategory.expenses.push(expense);
-    // },
-
-    // addExternalRevenue(revenue) {
-    //     this.transactionCategories[0].revenues.push(revenue);
-    // },
-
-    // addRevenue(revenue) {
-    //     const transactionCategory = this.transactionCategories.find(el => el.name === revenue.target.transactionCategory);
-
-    //     transactionCategory.revenues.push(revenue);
-    // },
-
-    // getBudget(accountNumber, transactionCategory, month) {
-    //     let revenuesTotal = 0;
-
-    //     transactionCategory.revenues.forEach(revenue => {
-    //         if (revenue.target.account.accountNumber === accountNumber && revenue.month <= month) {
-    //             revenuesTotal += revenue.amount;
-    //         }
-    //     });
-
-    //     let expensesTotal = 0;
-
-    //     transactionCategory.expenses.forEach(expense => {
-    //         if (expense.source.account.accountNumber === accountNumber && expense.type === 'transfer') {
-    //             expensesTotal += expense.amount;
-    //         }
-    //     });
-
-    //     return revenuesTotal - expensesTotal;
-    // },
-
-    // getTransactionCategoryNames() {
-    //     let transactionCategories = [];
-
-    //     for (let i = 1; i < this.transactionCategories.length; i++) {
-    //         const transactionCategory = this.transactionCategories[i];
-
-    //         transactionCategories.push(transactionCategory.name);
-    //     }
-
-    //     return transactionCategories;
-    // },
+        try {
+            return await fetch(baseUrl, postObject).then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                //TODO - is this the right statuscode to return, when something failed? See also TODO on the API Controller Action
+                else if (response.status === 400) {
+                    return null;
+                }
+            }).then((data) => {
+                if (data !== undefined) {
+                    return data;
+                }
+            });
+        } catch (error) {
+            return error;
+        }
+    },
 
     async getAll() {
         try {
@@ -153,6 +133,54 @@ export const CostCenterService = {
             };
         }
     },
+
+    // addExpense(expense) {
+    //     const _transactionCategory = this.transactionCategories.find(el => el.name === expense.source.transactionCategory);
+
+    //     _transactionCategory.expenses.push(expense);
+    // },
+
+    // addExternalRevenue(revenue) {
+    //     this.transactionCategories[0].revenues.push(revenue);
+    // },
+
+    // addRevenue(revenue) {
+    //     const transactionCategory = this.transactionCategories.find(el => el.name === revenue.target.transactionCategory);
+
+    //     transactionCategory.revenues.push(revenue);
+    // },
+
+    // getBudget(accountNumber, transactionCategory, month) {
+    //     let revenuesTotal = 0;
+
+    //     transactionCategory.revenues.forEach(revenue => {
+    //         if (revenue.target.account.accountNumber === accountNumber && revenue.month <= month) {
+    //             revenuesTotal += revenue.amount;
+    //         }
+    //     });
+
+    //     let expensesTotal = 0;
+
+    //     transactionCategory.expenses.forEach(expense => {
+    //         if (expense.source.account.accountNumber === accountNumber && expense.type === 'transfer') {
+    //             expensesTotal += expense.amount;
+    //         }
+    //     });
+
+    //     return revenuesTotal - expensesTotal;
+    // },
+
+    // getTransactionCategoryNames() {
+    //     let transactionCategories = [];
+
+    //     for (let i = 1; i < this.transactionCategories.length; i++) {
+    //         const transactionCategory = this.transactionCategories[i];
+
+    //         transactionCategories.push(transactionCategory.name);
+    //     }
+
+    //     return transactionCategories;
+    // },
 
     // getTransactionCategoriesByAccount(accountNumber) {
     //     if (!accountNumber) {
