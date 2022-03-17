@@ -1,0 +1,15 @@
+.xfin__edit {
+  cursor: pointer;
+  display: none;
+  position: absolute;
+  transform: translateY(-50%);
+  @include rem(top, 25px);
+
+  &--left {
+    @include rem(left, 20px);
+  }
+
+  &--right {
+    @include rem(right, 20px);
+  }
+}

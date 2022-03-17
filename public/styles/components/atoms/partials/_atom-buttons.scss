@@ -5,10 +5,8 @@
         background-color: $background-button-primary;
         color: $text-button-primary;
         transition: all .5s;
-        @include rem((
-                border-radius: 5px,
-                padding: 10px 20px,
-        ));
+        @include rem(border-radius, 5px);
+        @include rem(padding, 10px 20px);
 
         &:hover {
             background-color: $background-button-primary-dark;
@@ -56,5 +54,10 @@
             text-decoration: none;
             transition: all .5s;
         }
+    }
+
+    &--small {
+        @include rem(font-size, 14px);
+        @include rem(padding, 5px 10px);
     }
 }
