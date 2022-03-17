@@ -1,11 +1,31 @@
 .xfin__cost-center {
   background-color: $color-primary;
   color: $color-white;
+  position: relative;
   @include rem(border-radius, 5px);
   @include rem(padding, 15px 20px);
   @include rem(margin-bottom, 25px);
 
+  &:hover .xfin__edit {
+    display: block;
+  }
+
   p {
     margin: 0;
+  }
+
+  &--edit {
+    position: relative;
+  }
+
+  &__buttons {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    @include rem(right, 15px);
+
+    .xfin__button--primary {
+      @include rem(margin-right, 5px);
+    }
   }
 }

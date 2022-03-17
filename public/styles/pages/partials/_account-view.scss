@@ -2,22 +2,11 @@
   &__account-holder {
     position: relative;
 
-    &:hover .account-view__edit {
+    &:hover .xfin__edit {
       display: block;
     }
     .xfin-collapsible__title {
       @include rem(( padding-left: 50px ));
     }
-  }
-
-  &__edit {
-    cursor: pointer;
-    display: none;
-    position: absolute;
-    transform: translateY(-50%);
-    @include rem((
-      left: 20px,
-      top: 25px,
-    ));
   }
 }

@@ -48,12 +48,13 @@
         @include rem(margin-right, 10px);
         @include rem(margin-bottom, 10px);
 
-        &:hover {
-            .account-holder__edit {
-                opacity: 1;
-                transition: opacity .2s;
-            }
-        }
+        //TODO - delete if not needed
+        //&:hover {
+        //    .account-holder__edit {
+        //        opacity: 1;
+        //        transition: opacity .2s;
+        //    }
+        //}
     }
 
     &__new, &__changed {
@@ -89,18 +90,19 @@
         @include rem(font-size, 18px);
     }
 
-    &__edit {
-        cursor: pointer;
-        position: absolute;
-        bottom: 10%;
-        left: 50%;
-        transform: translateX(-50%);
-        opacity: 0;
-        transition: opacity .2s;
-        @include rem((
-            font-size: 12px
-        ));
-    }
+    //TODO - delete if not needed
+    //&__edit {
+    //    cursor: pointer;
+    //    position: absolute;
+    //    bottom: 10%;
+    //    left: 50%;
+    //    transform: translateX(-50%);
+    //    opacity: 0;
+    //    transition: opacity .2s;
+    //    @include rem((
+    //        font-size: 12px
+    //    ));
+    //}
 
     &__duplicate-account {
         font-size: 12px;
