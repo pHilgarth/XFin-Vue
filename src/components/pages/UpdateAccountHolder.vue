@@ -71,9 +71,6 @@ export default {
     },
 
     async updateAccountHolder(accountHolder) {
-      //TODO - delete next line
-      console.log(accountHolder);
-
       let error = false;
 
       if (this.originalAccountHolder.name !== accountHolder.name) {

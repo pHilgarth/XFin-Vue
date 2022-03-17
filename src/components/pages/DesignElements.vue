@@ -8,6 +8,8 @@
     <br><br>
     <button class="xfin__button xfin__button--primary" disabled>Primary Button Disabled</button>
     <br><br>
+    <button class="xfin__button xfin__button--primary xfin__button--small">Button Small</button>
+    <br><br>
     <button class="xfin__button xfin__button--cancel" disabled>Button Cancel</button>
     <br><br>
     <button class="xfin__button xfin__button--light">Button Light</button>

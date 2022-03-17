@@ -5,7 +5,7 @@
     <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Kostenstellen!"/>
 
     <template v-else>
-      <AtomButton v-if="!createNew" type="primary" text="Kostenstelle hinzufügen" @click="createNew = true"/>
+      <AtomButton v-if="!createNew" type="primary" text="Kostenstelle hinzufügen" @click="createNew = true" :disabled="editCostCenter"/>
       <AtomButton class="me-3" v-if="createNew" type="primary" text="Speichern" @click="saveCostCenter" />
       <AtomButton v-if="createNew" type="cancel" text="Abbrechen" @click="cancelCostCenterCreation"/>
 
@@ -13,7 +13,8 @@
         <MoleculeInputText v-if="createNew" classList="pb-4" field="cost-center" :hasErrors="nameErrors" v-model="newCostCenter" @blur="v$.newCostCenter.$touch()" :validation="v$.newCostCenter"
                            label="Neue Kostenstelle" />
         
-        <MoleculeCostCenterRow v-for="costCenter in costCenters" :key="costCenter.id" :costCenter="costCenter"/>
+        <MoleculeCostCenterRow v-for="costCenter in costCenters" :key="costCenter.id" :costCenter="costCenter" :allowEdit="!createNew" @edit-cost-center="editCostCenter = true"
+                               @cancel-edit="editCostCenter = false" @update-cost-center="updateCostCenter"/>
       </div>
     </template>
 
@@ -45,6 +46,7 @@ export default {
       costCenters: null,
       createNew: false,
       dataLoaded: false,
+      editCostCenter: false,
       loadingError: false,
       newCostCenter: null,
     }
@@ -54,6 +56,14 @@ export default {
     nameErrors() {
       return this.v$.newCostCenter.$error;
     }
+  },
+
+  watch: {
+    newCostCenter() {
+      if (this.createNew) {
+        this.v$.newCostCenter.$touch();
+      }
+    },
   },
 
   async created() {
@@ -69,8 +79,8 @@ export default {
 
   methods: {
     cancelCostCenterCreation() {
-      this.newCostCenter = '';
       this.createNew = false;
+      this.newCostCenter = '';
       this.v$.$reset();
     },
 
@@ -78,7 +88,7 @@ export default {
       const apiResponse = await CostCenterService.getAll();
 
       if (apiResponse.success && apiResponse.data) {
-        apiResponse.data.splice(apiResponse.data.indexOf(t => t.name === 'Nicht zugewiesen'));
+        apiResponse.data.splice(apiResponse.data.findIndex(t => t.name === 'Nicht zugewiesen'), 1);
 
         this.costCenters = apiResponse.data;
       }
@@ -98,6 +108,11 @@ export default {
 
         this.cancelCostCenterCreation();
       }
+    },
+
+    updateCostCenter() {
+      this.editCostCenter = false;
+      this.getCostCenters();
     }
   },
 

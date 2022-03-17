@@ -134,6 +134,50 @@ export const CostCenterService = {
         }
     },
 
+    //TODO - this function is duplicated - it's just copied from account-holder-service.js - I should implement an HttpService or something like that, to remove duplicated code
+    //TODO - this api call never returns the actual data - it returns a promise, so it doesnt work the way it should
+//TODO - on the get requests i still have the old way which is returning the data, i need to find another way of doing things
+    async update(id, jsonPatchDocument) {
+        const url = `${baseUrl}/${id}`
+
+        const postObject = {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonPatchDocument)
+        };
+
+        try {
+            return await fetch(url, postObject).then((response) => {
+                if (response.status === 200) {
+                    return {
+                        success: true,
+                        error: null,
+                        updatedRecord: response.json(),
+                    };
+                }
+                else if (response.status === 404) {
+                    return {
+                        success: false,
+                        error: 'This record was not found in the database!',
+                        updatedRecord: null,
+                    };
+                }
+            }).then((data) => {
+                if (data != undefined) {
+                    return data;
+                }
+            });
+        } catch (error) {
+            return {
+                success: false,
+                error: `Error while updating costCenter (error: ${error})`,
+                updatedRecord: null,
+            };
+        }
+    },
+
     // addExpense(expense) {
     //     const _transactionCategory = this.transactionCategories.find(el => el.name === expense.source.transactionCategory);
 

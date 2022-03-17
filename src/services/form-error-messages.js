@@ -20,8 +20,7 @@ export const errorMessages = {
     //bic errors
     bic:                                    bicErrorMessage,
 
-    //costCenter errors
-    newCostCenter_required:                 nameErrorMessage,
+
 
     //counterPart errors
     counterPart_required:                   'Bitte gib einen {counterPartType} an!',
