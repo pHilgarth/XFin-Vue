@@ -187,6 +187,24 @@ export default {
       this.findAccount();
       this.$router.push(`/new-${this.transactionType}/${this.selectedAccount.id}`);
     },
+
+    selectedTransactionType() {
+      const currentlySelectedCategory = this.categories.find(c => c.name === this.selectedCategoryName);
+      const indexToRemove = this.categoryOptions.findIndex(o => o.value === 'Nicht zugewiesen');
+
+      if (this.selectedTransactionType === transactionTypes['loan'] && indexToRemove >= 0) {
+        //TODO - remove this hardcoded string "Nicht zugewiesen" and move it to some kind of service (and here just compare the value of a key that never changes
+        this.categoryOptions.splice(indexToRemove, 1);
+        this.selectedCategoryName = currentlySelectedCategory.name;
+        this.selectedCategory = currentlySelectedCategory;
+      }
+      else if (this.selectedTransactionType !== transactionTypes['loan'] && indexToRemove < 0) {
+        this.categoryOptions.unshift({
+          value: 'Nicht zugewiesen',
+          disabled: false,
+        });
+      }
+    }
   },
 
   data() {
