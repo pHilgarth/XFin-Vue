@@ -20,6 +20,7 @@
     <!--          TODO - i disabled position: absolute because of another component where it shouldn't be absolute -> need to find a solution here -->
     <!-- TODO - dont show "Nicht zugewiesen" in CostCenterManager -->
     <!-- TODO - implement saving of new CostCenter -->
+    <!-- TODO - implement custom select form control, so that the options aren't displayed in the default browser dropdown, which is ugly -->
 
 <!--    <div class="dev-hint important">-->
 <!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->

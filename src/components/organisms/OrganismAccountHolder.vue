@@ -11,7 +11,7 @@
 
       <div class="account-holder__accounts">
         <AtomHeadline classList="account-holder__accounts-headline" tag="h4" text="Konten:" />
-        <AtomButton text="&plus; Neues Konto anlegen" @click="addAccount"/>
+        <AtomButton text="&plus; Neues Konto anlegen" type="light" @click="addAccount"/>
 
         <div v-if="bankAccounts.length" class="account-holder__account-items">
           <template v-for="(account, index) in bankAccounts" :key="index">
@@ -21,12 +21,12 @@
               <AtomSpan class="account-holder__delete" :data-index="index" text="&times;" @click="deleteAccount" />
               <span class="account-holder__account-number">{{ account.accountNumber }}</span>
               <span class="account-holder__balance">{{ formatBalance(account.balance) }}</span>
-              <AtomButton :data-index="index" text="Bearbeiten" @click="editAccount" />
+              <AtomButton :data-index="index" text="Bearbeiten" type="light-small" @click="editAccount" />
             </div>
           </template>
         </div>
       </div>
-      <button class="xfin-button" @click="saveAccountHolder" :disabled="saveDisabled">Kontoinhaber speichern</button>
+      <AtomButton class="xfin-button" :disabled="saveDisabled" text="Kontoinhaber speichern" type="primary" @click="saveAccountHolder" />
     </article>
   </section>
   <div v-else class="account-holder__form">
@@ -37,6 +37,7 @@
 <script>
 import { useVuelidate } from '@vuelidate/core';
 
+import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
 import AtomParagraph from '@/components/atoms/AtomParagraph';
 import AtomSpan from '@/components/atoms/AtomSpan';
@@ -51,6 +52,7 @@ import { accountHolderValidation } from '@/validation/validations';
 
 export default {
   components: {
+    AtomButton,
     AtomHeadline,
     AtomParagraph,
     AtomSpan,

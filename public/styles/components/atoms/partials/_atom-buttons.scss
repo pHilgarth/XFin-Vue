@@ -1,6 +1,10 @@
 .xfin__button {
     border: 0;
 
+    & + .xfin__button {
+        @include rem(margin-left, 10px);
+    }
+
     &--primary {
         background-color: $background-button-primary;
         color: $text-button-primary;

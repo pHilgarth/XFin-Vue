@@ -20,6 +20,8 @@ export default {
             return 'xfin__button--primary xfin__button--small';
           case 'light':
             return 'xfin__button--light';
+          case 'light-small':
+            return 'xfin__button--light xfin__button--small';
           case 'cancel':
             return 'xfin__button--cancel';
           case 'cancel-small':

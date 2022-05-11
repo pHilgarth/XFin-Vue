@@ -23,22 +23,26 @@
                                   v-model="includeCounterPartAccount" label="Bankdaten hinzufügen" :_switch="true" />
 
           <div v-if="includeCounterPartAccount" class="transaction__counter-part-account pb-5">
-            <MoleculeInputText  :small="true" classList="transaction__counter-part-account-data pb-1" field="counter-part-iban"
+            <MoleculeInputText  :small="true" classList="transaction__counter-part-account-data" field="counter-part-iban"
                                 :hasErrors="counterPartIbanErrors" v-model="counterPartIban" :validation="v$.counterPartIban" label="Iban"
                                 @blur="v$.counterPartIban.$touch()" />
-            
-            <MoleculeInputText  :small="true" classList="transaction__counter-part-account-data pb-1" field="counter-part-bic" :hasErrors="counterPartBicErrors"
+
+            <MoleculeInputText  :small="true" classList="transaction__counter-part-account-data" field="counter-part-bic" :hasErrors="counterPartBicErrors"
                                 v-model="counterPartBic" :validation="v$.counterPartBic" label="Bic" @blur="v$.counterPartBic.$touch()" />
           </div>
         </div>
 
         <MoleculeInputText classList="pb-5" field="reference" v-model="reference" :optional="true" label="Verwendungszweck" />
         <!-- TODO - den verfügbaren Betrag immer anzeigen lassen! (heute verfügbar, wie im OnlineBanking) -->
-        <MoleculeInputText field="amount" :hasErrors="amountErrors" v-model="amount" :validation="v$.amount" label="Betrag" :errorMessageParams="{ limitType: availableAmountLimitType }"
-                           @blur="v$.amount.$touch()" />
+        <MoleculeInputText classList="pb-5" field="amount" :hasErrors="amountErrors" v-model="amount" :validation="v$.amount" label="Betrag"
+                           :errorMessageParams="{ limitType: availableAmountLimitType }" @blur="v$.amount.$touch()" />
 
-       <AtomButton text="Speichern" :disabled="saveDisabled" @click.prevent="save" />
+        <MoleculeInputSelect classList="transaction__type pb-5" :options="transactionTypeOptions" field="transactionType" v-model="selectedTransactionType" label="Typ" />
+
+
+        <AtomButton type="primary" text="Speichern" :disabled="saveDisabled" @click.prevent="save" />
        <p>{{ selectedCategory }}</p>
+        <p>{{ transactionTypeOptions }}</p>
       </form>
     </section>
   </div>
@@ -67,7 +71,8 @@ import { ExternalBankAccountService } from "@/services/external-bank-account-ser
 import { ExternalPartyService } from "@/services/external-party-service";
 import { InternalTransactionService } from "@/services/internal-transaction-service";
 import { ExternalTransactionService } from "@/services/external-transaction-service";
-import { CostCenterService } from "@/services/cost-center-service.js";
+import { CostCenterService } from "@/services/cost-center-service";
+import { transactionTypes } from '@/services/transaction-type-service';
 
 import { amountAvailableValidator, counterPartValidator } from '@/validation/custom-validators';
 //import { counterPartValidator } from '@/validation/custom-validators';
@@ -82,6 +87,13 @@ import {
 export default {
   //TODO - tweak this error handling -  it is so ugly
   async created() {
+    for (let prop in transactionTypes) {
+      this.transactionTypeOptions.push({
+        value: transactionTypes[prop],
+        disabled: false,
+      });
+    }
+
     let apiResponse = await this.getAccountHolders();
 
     if (apiResponse.success) {
@@ -186,6 +198,7 @@ export default {
       categoryOptions: null,
       counterParts: null,
       counterPartNames: [],
+      transactionTypeOptions: [],
 
       availableAmount: null,
       availableAmountLimitType: null,
@@ -193,6 +206,7 @@ export default {
       selectedAccount: null,
       selectedCategoryName: null,
       selectedCategory: null,
+      selectedTransactionType: transactionTypes['default'],
 
       //counterPart is the v-model property for the input field - it refers to a counterParts name and is of type string
       counterPart: null,
