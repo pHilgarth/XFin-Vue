@@ -394,6 +394,7 @@ export default {
       const apiResponse = await CostCenterService.getAllByAccount(this.selectedAccount.id, new Date().getFullYear(), new Date().getMonth());
 
       if (apiResponse.success && apiResponse.data) {
+        //TODO - remove this hardcoded string "Nicht zugewiesen" and move it to some kind of service (and here just compare the value of a key that never changes
         this.categories = this.transactionType === 'revenue'
             ? apiResponse.data
             : apiResponse.data.filter(c => c.name !== 'Nicht zugewiesen');
