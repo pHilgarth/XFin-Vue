@@ -32,7 +32,8 @@
           </div>
         </div>
 
-        <MoleculeInputText classList="pb-5" field="reference" v-model="reference" :optional="true" label="Verwendungszweck" />
+        <MoleculeInputText classList="pb-5" field="reference" :hasErrors="referenceErrors" v-model="reference" :validation="v$.reference" label="Verwendungszweck"
+                            @blur="v$.reference.$touch()" />
         <!-- TODO - den verfügbaren Betrag immer anzeigen lassen! (heute verfügbar, wie im OnlineBanking) -->
         <MoleculeInputText classList="pb-5" field="amount" :hasErrors="amountErrors" v-model="amount" :validation="v$.amount" label="Betrag"
                            :errorMessageParams="{ limitType: availableAmountLimitType }" @blur="v$.amount.$touch()" />
@@ -57,6 +58,8 @@
 
 //TODO - refactor every component to use the same import structure: 1. third-party-libs 2. my components 3. my services
 import { useVuelidate } from "@vuelidate/core";
+import { required } from "@vuelidate/validators";
+
 
 import AtomButton from "@/components/atoms/AtomButton";
 import MoleculeInputAutoSuggest from "@/components/molecules/MoleculeInputAutoSuggest";
@@ -136,6 +139,7 @@ export default {
     counterPartBicErrors() { return this.v$.counterPartBic.$error; },
     counterPartErrors() { return this.v$.counterPart.$error; },
     counterPartIbanErrors() { return this.v$.counterPartIban.$error; },
+    referenceErrors() { return this.v$.reference.$error; },
     showCheckbox() { return this.selectedCounterPart && !this.selectedCounterPart.id; },
 
     paddingAutoSuggest() {
@@ -516,6 +520,7 @@ export default {
       counterPartBic: { bicValidator },
       counterPartIban: { ibanValidator },
       counterPart: { required: counterPartValidator },
+      reference: { required },
     };
 
     //i need different keys to show the appropriate error message

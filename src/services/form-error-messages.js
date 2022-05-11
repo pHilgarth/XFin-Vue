@@ -4,6 +4,7 @@ const bicErrorMessage =                     'Bitte gib einen gültigen BIC ein!'
 const ibanErrorMessage =                    'Bitte gib eine gültige IBAN ein!';
 const ibanDuplicateErrorMessage =           'Diese IBAN existiert bereits!';
 const nameErrorMessage =                    'Bitte gib einen Namen ein!';
+const referenceErrorMessage =               'Bitte gib einen Verwendungszweck ein!';
 
 export const errorMessages = {
     //amount errors
@@ -44,4 +45,7 @@ export const errorMessages = {
     name_required:                          nameErrorMessage,
     name_maxLength:                         'Der Name darf nicht länger als 15 Zeichen sein!',
     name_nameDuplicate:                     'Dieser Name existiert bereits!',
+
+    //reference errors
+    reference:                              referenceErrorMessage,
 }
