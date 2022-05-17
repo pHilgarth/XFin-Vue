@@ -10,7 +10,7 @@
       </template>
 
       <div class="account-holder__accounts">
-        <AtomHeadline classList="account-holder__accounts-headline" tag="h4" text="Konten:" />
+        <AtomHeadline class="account-holder__accounts-headline" tag="h4" text="Konten:" />
         <AtomButton text="&plus; Neues Konto anlegen" type="light" @click="addAccount"/>
 
         <div v-if="bankAccounts.length" class="account-holder__account-items">

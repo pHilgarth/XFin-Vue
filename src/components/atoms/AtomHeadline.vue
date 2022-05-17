@@ -1,5 +1,5 @@
 <template>
-  <component :class="classList" :is="tag">
+  <component :is="tag">
     {{ text }}
   </component>
 </template>
@@ -7,15 +7,8 @@
 <script>
 export default {
   props: {
-    classList:    { type: String },
-    tag:          {
-                    type: String,
-                    required: true,
-                    validator(value) {
-                        return value.match(/h[1-6]/);
-                    }
-                  },
-    text:         { type: String, required: true },
+    tag:    { type: String, required: true },
+    text:   { type: String, required: true },
   },
 };
 </script>
