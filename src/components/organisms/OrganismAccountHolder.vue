@@ -26,7 +26,7 @@
           </template>
         </div>
       </div>
-      <AtomButton class="xfin-button" :disabled="saveDisabled" text="Kontoinhaber speichern" type="primary" @click="saveAccountHolder" />
+      <AtomButton :disabled="saveDisabled" text="Kontoinhaber speichern" type="primary" @click="saveAccountHolder" />
     </article>
   </section>
   <div v-else class="account-holder__form">

@@ -14,8 +14,8 @@
             <MoleculeInputText classList="pb-5" v-if="!formData.account || formData.account.isNew" field="balance" :hasErrors="balanceErrors" v-model="balance" @blur="v$.balance.$touch()" :validation="v$.balance" label="Kontostand" />
 
             <!-- TODO - remove border on button-->
-            <AtomButton class="xfin__button" text="Konto speichern" :disabled="v$.$silentErrors.length > 0 || duplicate" type="primary" @click.prevent="save" />
-            <AtomButton class="xfin__button" text="Abbrechen" type="primary" @click.prevent="$emit('cancel')" />
+            <AtomButton text="Konto speichern" :disabled="v$.$silentErrors.length > 0 || duplicate" type="primary" @click.prevent="save" />
+            <AtomButton text="Abbrechen" type="primary" @click.prevent="$emit('cancel')" />
         </form>
     </div>
 </template>
