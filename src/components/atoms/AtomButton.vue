@@ -1,5 +1,5 @@
 <template>
-  <button :class="`xfin__button ${getType()}`" :disabled="disabled">{{ text }}</button>
+  <button :class="`xfin__button ${getType()}`">{{ text }}</button>
 </template>
 
 <script>
@@ -7,7 +7,6 @@ export default {
   props: {
     text: {type: String, required: true},
     type: {type: String, required: true},
-    disabled: {type: Boolean},
   },
 
   methods: {
