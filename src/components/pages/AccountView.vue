@@ -42,7 +42,7 @@
 
       <div class="account-view__account-holder" v-for="accountHolder in accountHolders" :key="accountHolder.id">
         <OrganismCollapsible :config="configureCollapsible(accountHolder)" />
-        <AtomEditIcon :id="accountHolder.id" @click="editAccountHolder" />
+        <AtomEditIcon :data-id="accountHolder.id" @click="editAccountHolder" />
       </div>
       
       <router-link to="/new-account-holder" class="xfin-button">

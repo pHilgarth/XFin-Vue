@@ -1,7 +1,7 @@
 <template>
   <div class="xfin__cost-center" v-show="!edit">
     <p>{{ costCenter.name }}</p>
-    <AtomEditIcon v-if="allowEdit" :id="costCenter.id.toString()" align="right" @click="editCostCenter" />
+    <AtomEditIcon v-if="allowEdit" :data-id="costCenter.id" align="right" @click="editCostCenter" />
   </div>
   <div v-if="edit" class="xfin__cost-center--edit">
     <MoleculeInputText classList="mb-4" field="cost-center" :hasErrors="costCenterNameErrors" v-model="costCenterName" @blur="v$.costCenterName.$touch()" :validation="v$.costCenterName"
