@@ -1,15 +1,16 @@
 <template>
-    <input
-        type="checkbox"
-        :id = id
-        class="form-check-input"
-    />
+  <input type="checkbox" :id="id" class="form-check-input" :checked="checked" @input="$emit('input')" />
 </template>
 
 <script>
 export default {
-    props: {
-        id: { type: String },
-    },
+  emits: [
+      'input',
+  ],
+
+  props: {
+    id:       { type: String },
+    checked:  { type: Boolean, default: false},
+  },
 };
 </script>
