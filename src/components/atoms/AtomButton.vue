@@ -1,5 +1,5 @@
 <template>
-    <button :class="`xfin__button ${getType()}`" :disabled="disabled" v-bind="additionalProps">{{ text }}</button>
+    <button :class="`xfin__button ${getType()}`" :disabled="disabled">{{ text }}</button>
 </template>
 
 <script>
@@ -8,7 +8,6 @@ export default {
         text:               { type: String, required: true },
         type:               { type: String, required: true },
         disabled:           { type: Boolean },
-        additionalProps:    { type: Object },
     },
 
   methods: {
