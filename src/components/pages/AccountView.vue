@@ -21,6 +21,7 @@
     <!-- TODO - dont show "Nicht zugewiesen" in CostCenterManager -->
     <!-- TODO - implement saving of new CostCenter -->
     <!-- TODO - implement custom select form control, so that the options aren't displayed in the default browser dropdown, which is ugly -->
+    <!-- TODO - rename transactionCategory to costCenter everywhere -->
 
 <!--    <div class="dev-hint important">-->
 <!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->
