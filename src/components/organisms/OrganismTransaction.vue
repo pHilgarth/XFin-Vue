@@ -38,12 +38,12 @@
         <MoleculeInputText classList="pb-5" field="amount" :hasErrors="amountErrors" v-model="amount" :validation="v$.amount" label="Betrag"
                            :errorMessageParams="{ limitType: availableAmountLimitType }" @blur="v$.amount.$touch()" />
 
-        <MoleculeInputSelect classList="transaction__type pb-5" :options="transactionTypeOptions" field="transactionType" v-model="selectedTransactionType" label="Typ" />
+        <MoleculeInputSelect classList="transaction__type pb-5" :options="transactionRoleOptions" field="transactionRole" v-model="selectedTransactionRole" label="Typ" />
 
 
         <AtomButton type="primary" text="Speichern" :disabled="saveDisabled" @click.prevent="save" />
        <p>{{ selectedCategory }}</p>
-        <p>{{ transactionTypeOptions }}</p>
+        <p>{{ transactionRoleOptions }}</p>
       </form>
     </section>
   </div>
@@ -75,7 +75,7 @@ import { ExternalPartyService } from "@/services/external-party-service";
 import { InternalTransactionService } from "@/services/internal-transaction-service";
 import { ExternalTransactionService } from "@/services/external-transaction-service";
 import { CostCenterService } from "@/services/cost-center-service";
-import { transactionTypes } from '@/services/transaction-type-service';
+import { transactionRoles } from '@/services/transaction-role-service';
 
 import { amountAvailableValidator, counterPartValidator } from '@/validation/custom-validators';
 //import { counterPartValidator } from '@/validation/custom-validators';
@@ -90,9 +90,9 @@ import {
 export default {
   //TODO - tweak this error handling -  it is so ugly
   async created() {
-    for (let prop in transactionTypes) {
-      this.transactionTypeOptions.push({
-        value: transactionTypes[prop],
+    for (let prop in transactionRoles) {
+      this.transactionRoleOptions.push({
+        value: transactionRoles[prop],
         disabled: false,
       });
     }
@@ -188,17 +188,17 @@ export default {
       this.$router.push(`/new-${this.transactionType}/${this.selectedAccount.id}`);
     },
 
-    selectedTransactionType() {
+    selectedTransactionRole() {
       const currentlySelectedCategory = this.categories.find(c => c.name === this.selectedCategoryName);
       const indexToRemove = this.categoryOptions.findIndex(o => o.value === 'Nicht zugewiesen');
 
-      if (this.selectedTransactionType === transactionTypes['loan'] && indexToRemove >= 0) {
+      if (this.selectedTransactionRole === transactionRoles['loan'] && indexToRemove >= 0) {
         //TODO - remove this hardcoded string "Nicht zugewiesen" and move it to some kind of service (and here just compare the value of a key that never changes
         this.categoryOptions.splice(indexToRemove, 1);
         this.selectedCategoryName = currentlySelectedCategory.name;
         this.selectedCategory = currentlySelectedCategory;
       }
-      else if (this.selectedTransactionType !== transactionTypes['loan'] && indexToRemove < 0) {
+      else if (this.selectedTransactionRole !== transactionRoles['loan'] && indexToRemove < 0) {
         this.categoryOptions.unshift({
           value: 'Nicht zugewiesen',
           disabled: false,
@@ -220,7 +220,7 @@ export default {
       categoryOptions: null,
       counterParts: null,
       counterPartNames: [],
-      transactionTypeOptions: [],
+      transactionRoleOptions: [],
 
       availableAmount: null,
       availableAmountLimitType: null,
@@ -228,7 +228,7 @@ export default {
       selectedAccount: null,
       selectedCategoryName: null,
       selectedCategory: null,
-      selectedTransactionType: transactionTypes['default'],
+      selectedTransactionRole: transactionRoles['default'],
 
       //counterPart is the v-model property for the input field - it refers to a counterParts name and is of type string
       counterPart: null,
