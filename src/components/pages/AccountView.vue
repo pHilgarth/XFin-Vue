@@ -42,7 +42,7 @@
 
       <div class="account-view__account-holder" v-for="accountHolder in accountHolders" :key="accountHolder.id">
         <OrganismCollapsible :config="configureCollapsible(accountHolder)" />
-        <AtomEdit :id="accountHolder.id" @click="editAccountHolder" />
+        <AtomEditIcon :id="accountHolder.id" @click="editAccountHolder" />
       </div>
       
       <router-link to="/new-account-holder" class="xfin-button">
@@ -54,7 +54,7 @@
 
 <script>
 import AtomHeadline from '@/components/atoms/AtomHeadline';
-import AtomEdit from '@/components/atoms/AtomEdit';
+import AtomEditIcon from '@/components/atoms/AtomEditIcon';
 import AtomParagraph from '@/components/atoms/AtomParagraph';
 
 import MoleculeLoading from "@/components/molecules/MoleculeLoading";
@@ -79,7 +79,7 @@ export default {
 
   components: {
     AtomHeadline,
-    AtomEdit,
+    AtomEditIcon,
     AtomParagraph,
     MoleculeLoading,
     OrganismCollapsible,

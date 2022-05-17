@@ -1,7 +1,7 @@
 <template>
   <div class="xfin__cost-center" v-show="!edit">
     <p>{{ costCenter.name }}</p>
-    <AtomEdit v-if="allowEdit" :id="costCenter.id.toString()" align="right" @click="editCostCenter" />
+    <AtomEditIcon v-if="allowEdit" :id="costCenter.id.toString()" align="right" @click="editCostCenter" />
   </div>
   <div v-if="edit" class="xfin__cost-center--edit">
     <MoleculeInputText classList="mb-4" field="cost-center" :hasErrors="costCenterNameErrors" v-model="costCenterName" @blur="v$.costCenterName.$touch()" :validation="v$.costCenterName"
@@ -18,7 +18,7 @@ import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
 import AtomButton from '@/components/atoms/AtomButton';
-import AtomEdit from '@/components/atoms/AtomEdit';
+import AtomEditIcon from '@/components/atoms/AtomEditIcon';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 
 import { CostCenterService } from '@/services/cost-center-service';
@@ -37,7 +37,7 @@ import { CostCenterService } from '@/services/cost-center-service';
 
     components: {
       AtomButton,
-      AtomEdit,
+      AtomEditIcon,
       MoleculeInputText
     },
 
