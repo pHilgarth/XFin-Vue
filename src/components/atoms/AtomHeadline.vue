@@ -1,5 +1,5 @@
 <template>
-  <component :id="id" :class="classList" :is="tag">
+  <component :class="classList" :is="tag">
     {{ text }}
   </component>
 </template>
@@ -7,7 +7,6 @@
 <script>
 export default {
   props: {
-    id:           { type: String },
     classList:    { type: String },
     tag:          {
                     type: String,
