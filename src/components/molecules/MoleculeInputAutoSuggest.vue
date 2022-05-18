@@ -2,8 +2,7 @@
     <div class="form-floating" :class="classList" :id="id">
         <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :placeholder="label"
                         :classList="`xfin-form__control form-control col-4 ${hasErrors ? 'has-errors' : ''}`"
-                        :additionalProps="{ autocomplete: 'off' }"
-                        @blur="onBlur" @input="onInput" />
+                        autocomplete="off" @blur="onBlur" @input="onInput" />
                         
         <AtomLabel classList="xfin-form__label" :target="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
         <!-- TODO - hide ul again, if input looses focus (on blur?) -> this is almost done! But if I hover on an element and then press tab, the box wont disappear, thats a cornercase but maybe i can fix it. I would need to track if TAB was pressed i guess-->
