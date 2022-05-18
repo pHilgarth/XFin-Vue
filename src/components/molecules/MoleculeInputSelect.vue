@@ -2,7 +2,7 @@
   <div class="form-floating" :class="classList" :id="id">
     <AtomInputSelect :id="field" :value="modelValue" :options="options"
                      @input="$emit('update:modelValue', $event.target.value)" />
-    <AtomLabel classList="xfin-form__label" :target="field" :text="label"/>
+    <AtomLabel class="xfin-form__label" :for="field" :text="label"/>
   </div>
 </template>
 

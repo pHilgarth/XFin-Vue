@@ -2,7 +2,7 @@
     <div :class="`form-check ${_switch ? 'form-switch ' : ''}${classList}`" :id="id">
         <AtomInputCheckbox :id="field" :checked="modelValue" @input="$emit('update:modelValue', $event.target.checked)"
                            :disabled="disabled"/>
-        <AtomLabel classList="xfin-form__label" :target="field" :text="label" />
+        <AtomLabel class="xfin-form__label" :for="field" :text="label" />
         <template v-for="(error, index) in validation?.$errors" :key="index">
             <AtomParagraph class="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
         </template>
