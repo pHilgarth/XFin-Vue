@@ -6,7 +6,7 @@
                         
         <AtomLabel class="xfin-form__label" :for="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
         <!-- TODO - hide ul again, if input looses focus (on blur?) -> this is almost done! But if I hover on an element and then press tab, the box wont disappear, thats a cornercase but maybe i can fix it. I would need to track if TAB was pressed i guess-->
-        <AtomUnorderedList  classList="xfin__suggestions" v-if="suggestions && suggestions.length > 0" :items="suggestions" @itemClicked="pickItem"
+        <AtomUnorderedList  v-if="suggestions && suggestions.length > 0" class="xfin__suggestions" :items="suggestions" @itemClicked="pickItem"
                             @itemMouseenter="hoverOnItem = true" @itemMouseleave="hoverOnItem = false" />
 
         <template v-for="(error, index) in validation?.$errors" :key="index">
