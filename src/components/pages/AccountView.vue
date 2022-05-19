@@ -22,6 +22,7 @@
     <!-- TODO - implement saving of new CostCenter -->
     <!-- TODO - implement custom select form control, so that the options aren't displayed in the default browser dropdown, which is ugly -->
     <!-- TODO - rename transactionCategory to costCenter everywhere -->
+    <!-- TODO - rethink the concept of dynamically rendering components by passing a config-prop to components, like in i.e. MoleculeTableBody - no one knows, what shape the config object has ... -->
 
 <!--    <div class="dev-hint important">-->
 <!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->
