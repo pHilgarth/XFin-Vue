@@ -1,5 +1,6 @@
 <template>
-    <label v-html="text"></label>
+  <!-- TODO - this component is using the v-html directive - make sure it always gets trusted content! -->
+  <label v-html="text"></label>
 </template>
 
 <script>

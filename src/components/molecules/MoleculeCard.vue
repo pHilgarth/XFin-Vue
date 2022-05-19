@@ -1,4 +1,5 @@
 <!-- TODO - rework this component - it's unused right now -->
+<!-- TODO - this component is using the v-html directive - make sure it always gets trusted content! -->
 <template>
     <div class="xfin-card" v-bind="config.props">
       <span class="dev-hint">this component is unsing the v-html directive - make sure it always gets trusted content!</span>

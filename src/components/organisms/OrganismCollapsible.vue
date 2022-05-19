@@ -1,3 +1,4 @@
+<!-- TODO - this component is using the v-html directive - make sure it always gets trusted content! -->
 <template>
   <div class="xfin-collapsible" :class="{ 'collapsed': collapsed }">
     <MoleculeCollapsibleHeader :title="title" @state-switched="collapsed = !collapsed" />
