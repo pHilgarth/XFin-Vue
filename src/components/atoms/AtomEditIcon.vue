@@ -9,7 +9,10 @@
 <script>
   export default {
     props: {
-      align:  { type: String }
+      align:  {
+        type: String,
+        required: false,
+        validator: (value) => [ 'left', 'center', 'right' ].indexOf(value) !== -1 }
     }
   }
 </script>
