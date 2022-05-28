@@ -1,31 +1,25 @@
 <template>
-  <button :class="`xfin__button ${getType()}`">{{ text }}</button>
+  <button :class="`xfin__button ${getTypes()}`">{{ text }}</button>
 </template>
 
 <script>
+import { buttonService } from '@/services/button-types';
+
 export default {
   props: {
-    text: {type: String, required: true},
-    type: {type: String, required: true},
+    text: {
+      type: String,
+      required: true
+    },
+    type: {
+      type: String,
+      required: true,
+      validator: (value) => buttonService.buttonTypes.indexOf(value) !== -1
+    },
   },
 
   methods: {
-    getType() {
-      switch (this.type) {
-        case 'primary':
-          return 'xfin__button--primary';
-        case 'primary-small':
-          return 'xfin__button--primary xfin__button--small';
-        case 'light':
-          return 'xfin__button--light';
-        case 'light-small':
-          return 'xfin__button--light xfin__button--small';
-        case 'cancel':
-          return 'xfin__button--cancel';
-        case 'cancel-small':
-          return 'xfin__button--cancel xfin__button--small';
-      }
-    }
+    getTypes() { return buttonService.getCssClassesForTypes(this.type); }
   }
 };
 </script>
