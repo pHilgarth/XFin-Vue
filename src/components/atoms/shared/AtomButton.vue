@@ -1,9 +1,9 @@
 <template>
-  <button :class="`xfin__button ${getTypes()}`">{{ text }}</button>
+  <button :class="`atom-button ${getTypes()}`">{{ text }}</button>
 </template>
 
 <script>
-import { buttonService } from '@/services/button-types';
+import { buttonService } from '@/services/button-service';
 
 export default {
   props: {

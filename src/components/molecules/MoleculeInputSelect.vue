@@ -1,8 +1,8 @@
 <template>
   <div class="form-floating" :class="classList" :id="id">
     <AtomInputSelect :id="field" :value="modelValue" :options="options"
-                     @input="$emit('update:modelValue', $event.target.value)" />
-    <AtomLabel class="xfin-form__label" :for="field" :text="label"/>
+                     @input="$emit('update:modelValue', $event.target.value)" @blur="$emit('blur')"/>
+    <AtomLabel class="xfin__form__label" :for="field" :text="label"/>
   </div>
 </template>
 
@@ -10,11 +10,12 @@
 import {errorMessages} from "@/services/form-error-messages";
 
 import AtomInputSelect from "@/components/atoms/AtomInputSelect";
-import AtomLabel from "@/components/atoms/AtomLabel";
+import AtomLabel from "@/components/atoms/shared/AtomLabel";
 
 export default {
   emits: [
-    'update:modelValue'
+    'update:modelValue',
+    'blur',
   ],
 
   props: {

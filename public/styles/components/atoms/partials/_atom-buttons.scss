@@ -1,7 +1,7 @@
-.xfin__button {
+.atom__button {
     border: 0;
 
-    & + .xfin__button {
+    & + & {
         @include rem(margin-left, 10px);
     }
 

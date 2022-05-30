@@ -15,7 +15,7 @@
     }
 
     &__counter-part {
-        .xfin-form__error {
+        .xfin__form__error {
             @include rem(( padding-top: 8px ));
         }
     }
@@ -41,7 +41,7 @@
             ));
         }
 
-        .xfin-form__error {
+        .xfin__form__error {
             bottom: 0;
             position: absolute;
             transform: translateY(100%);

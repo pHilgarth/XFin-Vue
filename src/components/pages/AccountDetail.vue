@@ -1,30 +1,29 @@
 <template>
   <div class="account-detail">
-    <h1 class="account-detail-headline">
-      Detailansicht ({{ accountNumber }})
-    </h1>
-    <p class="dev-hint important">Einnahmen stimmen hier (macbook) bei zweiter KS noch nicht, die Umbuchung ist als Einnahme aufgeführt</p>
-    <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!" />
-    <section class="account-detail-body" v-else>
-       <MoleculeMonthSwitch @month-switched="updateView" />
-        <OrganismRevenues :account="account" />
-       <!-- TODO - not all entries are visible - the height of the collapsible is too low, the last entries are cut off-->
-       <OrganismBudget :transactionCategories="transactionCategories" />
-       <OrganismExpenses :account="account" />
+    <AtomHeadline tag="h1" :text="`Detailansicht (${accountNumber})`"/>
+    <!-- TODO - Einnahmen stimmen hier (macbook) bei zweiter KS noch nicht, die Umbuchung ist als Einnahme aufgeführt -->
+    <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!"/>
+    <section v-else>
+      <MoleculeMonthSwitch @month-switched="updateView"/>
+      <OrganismRevenues :account="account"/>
+      <!-- TODO - not all entries are visible - the height of the collapsible is too low, the last entries are cut off -->
+      <OrganismBudget :transactionCategories="transactionCategories"/>
+      <OrganismExpenses :account="account"/>
     </section>
   </div>
 </template>
 
 <script>
+import AtomHeadline from '@/components/atoms/shared/AtomHeadline';
 import OrganismBudget from "@/components/organisms/OrganismBudget";
 import OrganismExpenses from "@/components/organisms/OrganismExpenses";
 import OrganismRevenues from "@/components/organisms/OrganismRevenues";
 
-import MoleculeLoading from '@/components/molecules/MoleculeLoading';
+import MoleculeLoading from '@/components/molecules/shared/MoleculeLoading';
 import MoleculeMonthSwitch from "@/components/molecules/MoleculeMonthSwitch";
 
-import { InternalBankAccountService } from '@/services/internal-bank-account-service';
-import { CostCenterService } from '@/services/cost-center-service';
+import {InternalBankAccountService} from '@/services/internal-bank-account-service';
+import {CostCenterService} from '@/services/cost-center-service';
 
 export default {
   async created() {
@@ -35,26 +34,25 @@ export default {
 
       if (apiResponse.success) {
         this.dataLoaded = true;
-      }
-      else {
+      } else {
         this.loadingError = true;
         console.error(apiResponse.error);
       }
-    }
-    else {
+    } else {
       this.loadingError = true;
       console.error(apiResponse.error);
     }
 
   },
 
-   components: {
-     OrganismBudget,
-     OrganismExpenses,
-     OrganismRevenues,
-     MoleculeLoading,
-     MoleculeMonthSwitch,
-   },
+  components: {
+    AtomHeadline,
+    OrganismBudget,
+    OrganismExpenses,
+    OrganismRevenues,
+    MoleculeLoading,
+    MoleculeMonthSwitch,
+  },
 
   data() {
     return {
@@ -90,8 +88,7 @@ export default {
 
       if (apiResponse.success && apiResponse.data) {
         this.transactionCategories = apiResponse.data;
-      }
-      else if (apiResponse.success && !apiResponse.data) {
+      } else if (apiResponse.success && !apiResponse.data) {
         this.transactionCategories = [];
       }
 

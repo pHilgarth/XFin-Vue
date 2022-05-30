@@ -2,9 +2,9 @@
   <!-- TODO - reduce letter-spacing on components h1s -->
   <div class="account-settings" v-if="dataLoaded">
     <AtomHeadline v-if="!showForm" tag="h1" :text="`Kontoeinstellungen (${account.accountNumber})`" />
-    <div class="account-settings__main" v-if="!showForm">
-      <div class="account-settings__edit-account-data pb-2">
-        <AtomParagraph class="xfin-button--light" text="Kontodaten bearbeiten" @click="showForm = true" />
+    <div v-if="!showForm">
+      <div class="account-settings__edit pb-2">
+        <AtomButton type="light" text="Kontodaten bearbeiten" @click.prevent="showForm = true" />
       </div>
       <MoleculeInputCheckbox classList="pb-3" v-model="effectsExpenses" label="Ausgaben erlauben"
                              :disabled="effectsExpensesDisabled" :_switch="true"/>
@@ -13,15 +13,15 @@
                              :disabled="overdraftDisabled" :_switch="true"/>
       <!-- TODO - implement a little 'help'-icon for input fields, which provides info about the field when hovering it (question mark) -->
       <!-- TODO color red when input is negative -->
-      <MoleculeInputText  classList="pb-5" field="balance-threshold" :hasErrors="balanceThresholdErrors" v-model="balanceThreshold"
+      <MoleculeInputText  class="pb-5" field="balance-threshold" :hasErrors="balanceThresholdErrors" v-model="balanceThreshold"
                           :validation="v$.balanceThreshold" label="Mindestbetrag" :optional="true" @blur="v$.balanceThreshold.$touch()"
                           :errorMessageParams="{ balance: balanceString }"/>
-      <MoleculeInputText classList="pb-5" field="expenses-threshold" :hasErrors="expensesThresholdErrors" v-model="expensesThreshold"
+      <MoleculeInputText class="pb-5" field="expenses-threshold" :hasErrors="expensesThresholdErrors" v-model="expensesThreshold"
                          :validation="v$.expensesThreshold" label="Obergrenze für Ausgaben (pro Monat)" :optional="true" @blur="v$.expensesThreshold.$touch()"
                          :errorMessageParams="{ expensesSum: expensesSumString }"/>
-            <AtomButton text="Speichern" @click="saveAccountSettings" :disabled="saveDisabled" />
+      <AtomButton type="primary" text="Speichern" @click="saveAccountSettings" :disabled="saveDisabled" />
     </div>
-    <div class="account-settings__form" v-else>
+    <div v-else>
       <OrganismAccountForm @cancel="showForm = false" @save="saveAccountData" :formData="formData" :newAccount="false" :headline="formHeadline" />
     </div>
   </div>
@@ -30,18 +30,16 @@
 <script>
 import { useVuelidate }                 from '@vuelidate/core';
 
-import AtomButton                       from '@/components/atoms/AtomButton';
-import AtomHeadline                     from '@/components/atoms/AtomHeadline';
-import AtomParagraph                    from '@/components/atoms/AtomParagraph';
-import MoleculeInputCheckbox            from '@/components/molecules/MoleculeInputCheckbox';
-import MoleculeInputText                from '@/components/molecules/MoleculeInputText';
+import AtomButton                       from '@/components/atoms/shared/AtomButton';
+import AtomHeadline                     from '@/components/atoms/shared/AtomHeadline';
+import MoleculeInputCheckbox            from '@/components/molecules/shared/MoleculeInputCheckbox';
+import MoleculeInputText                from '@/components/molecules/shared/MoleculeInputText';
 import OrganismAccountForm              from '@/components/organisms/OrganismAccountForm';
 
 import { AccountSettingsService }       from '@/services/account-settings-service';
 import { InternalBankAccountService }   from '@/services/internal-bank-account-service';
 import { NumberService }                from '@/services/number-service';
 
-//import { accountSettingsValidation }    from '@/validation/validations';
 import {
   balanceThresholdValidator,
   balanceThresholdMaxValidator,
@@ -68,7 +66,6 @@ export default {
   components: {
     AtomButton,
     AtomHeadline,
-    AtomParagraph,
     MoleculeInputCheckbox,
     MoleculeInputText,
     OrganismAccountForm,

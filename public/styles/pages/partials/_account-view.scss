@@ -1,12 +1,11 @@
-.account-view {
-  &__account-holder {
-    position: relative;
+.account-view__account-holder {
+  position: relative;
 
-    &:hover .xfin__edit {
-      display: block;
-    }
-    .xfin-collapsible__title {
-      @include rem(( padding-left: 50px ));
-    }
+  &:hover .atom-edit-icon {
+    display: block;
+  }
+
+  .organism-collapsible__title {
+    @include rem(( padding-left: 50px ));
   }
 }

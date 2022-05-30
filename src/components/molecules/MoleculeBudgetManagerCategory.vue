@@ -1,18 +1,18 @@
 <template>
-  <div class="xfin-card budget-manager__category" :class="{ 'changed': category.dirty, 'show-detail': showDetail }">
+  <div class="xfin__card budget-manager__category" :class="{ 'changed': category.dirty, 'show-detail': showDetail }">
     <div class="budget-manager__category-header">
-      <div class="xfin-card__content col-8 budget-manager__category__name">
+      <div class="xfin__card__content col-8 budget-manager__category__name">
         <span>{{ category.name }}</span>
       </div>
-      <div class="xfin-card__content col-2 budget-manager__category__balance">
+      <div class="xfin__card__content col-2 budget-manager__category__balance">
         <!-- TODO - don't use another Atom here - just use AtomInputText and copy the methods from AtomBudgetManagerInput-->
-        <!-- <AtomInputText  :class="`xfin-form__control form-control text-right ${hasErrors ? 'has-errors' : ''}`" :value="balance" :disabled="disabled" -->
-        <!-- <AtomInputText  :class="`xfin-form__control form-control text-right ${hasErrors ? 'has-errors' : ''}`" :value="modelValue" :disabled="disabled" -->
-        <AtomInputText :class="`xfin-form__control form-control text-right ${hasErrors ? 'has-errors' : ''}`"
+        <!-- <AtomInputText  :class="`xfin__form__form-control form-control text-right ${hasErrors ? 'has-errors' : ''}`" :value="balance" :disabled="disabled" -->
+        <!-- <AtomInputText  :class="`xfin__form__form-control form-control text-right ${hasErrors ? 'has-errors' : ''}`" :value="modelValue" :disabled="disabled" -->
+        <AtomInputText :class="`xfin__form__form-control form-control text-right ${hasErrors ? 'has-errors' : ''}`"
                        :value="value" :disabled="disabled"
                        @input="processInput"/>
         <template v-for="(error, index) in validation?.$errors" :key="index">
-          <AtomParagraph class="xfin-form__error"
+          <AtomParagraph class="xfin__form__error"
                          :text="getErrorMessage(error.$property, error.$validator, errorMessageParams)"/>
         </template>
       </div>
@@ -46,7 +46,7 @@
 
 <script>
 import AtomInputText from '@/components/atoms/AtomInputText';
-import AtomParagraph from "@/components/atoms/AtomParagraph";
+import AtomParagraph from "@/components/atoms/shared/AtomParagraph";
 
 import {NumberService} from '@/services/number-service';
 

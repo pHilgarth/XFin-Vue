@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import OrganismCollapsible from "@/components/organisms/OrganismCollapsible";
+import OrganismCollapsible from "@/components/organisms/shared/OrganismCollapsible";
 
 import { NumberService } from "@/services/number-service";
 
@@ -64,7 +64,7 @@ export default {
               content: "Keine Ausgaben vorhanden!",
               props: {
                 colspan: 4,
-                class: "no-expenses",
+                class: "text-center",
               },
             },
           ],

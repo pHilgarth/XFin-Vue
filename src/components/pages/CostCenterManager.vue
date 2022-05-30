@@ -1,5 +1,5 @@
 <template>
-  <div class="xfin__cost-center-manager">
+  <div class="cost-center-manager">
     <h1>Kostenstellenverwaltung</h1>
 
     <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Kostenstellen!"/>
@@ -9,8 +9,8 @@
       <AtomButton class="me-3" v-if="createNew" type="primary" text="Speichern" @click="saveCostCenter" />
       <AtomButton v-if="createNew" type="cancel" text="Abbrechen" @click="cancelCostCenterCreation"/>
 
-      <div class="xfin__cost-centers" >
-        <MoleculeInputText v-if="createNew" classList="pb-4" field="cost-center" :hasErrors="nameErrors" v-model="newCostCenter" @blur="v$.newCostCenter.$touch()" :validation="v$.newCostCenter"
+      <div class="cost-center-manager__cost-centers" >
+        <MoleculeInputText v-if="createNew" class="pb-4" field="cost-center" :hasErrors="nameErrors" v-model="newCostCenter" @blur="v$.newCostCenter.$touch()" :validation="v$.newCostCenter"
                            label="Neue Kostenstelle" />
         
         <MoleculeCostCenterRow v-for="costCenter in costCenters" :key="costCenter.id" :costCenter="costCenter" :allowEdit="!createNew" @edit-cost-center="editCostCenter = true"
@@ -25,10 +25,10 @@
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
-import AtomButton from "@/components/atoms/AtomButton";
+import AtomButton from "@/components/atoms/shared/AtomButton";
 
-import MoleculeInputText from "@/components/molecules/MoleculeInputText";
-import MoleculeLoading from "@/components/molecules/MoleculeLoading";
+import MoleculeInputText from "@/components/molecules/shared/MoleculeInputText";
+import MoleculeLoading from "@/components/molecules/shared/MoleculeLoading";
 import MoleculeCostCenterRow from "@/components/molecules/MoleculeCostCenterRow";
 
 import { CostCenterService } from "@//services/cost-center-service";

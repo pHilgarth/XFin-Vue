@@ -1,10 +1,10 @@
 <template>
-    <div :class="`form-check ${_switch ? 'form-switch ' : ''}${classList}`" :id="id">
+    <div :class="`molecule-input-checkbox form-check ${_switch ? 'form-switch ' : ''}${classList}`" :id="id">
         <AtomInputCheckbox :id="field" :checked="modelValue" @input="$emit('update:modelValue', $event.target.checked)"
                            :disabled="disabled"/>
-        <AtomLabel class="xfin-form__label" :for="field" :text="label" />
+        <AtomLabel class="xfin__form__label" :for="field" :text="label" />
         <template v-for="(error, index) in validation?.$errors" :key="index">
-            <AtomParagraph class="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator)" />
+            <AtomParagraph class="xfin__form__error" :text="getErrorMessage(error.$property, error.$validator)" />
         </template>
     </div>
 </template>
@@ -13,8 +13,8 @@
 import { errorMessages } from '@/services/form-error-messages';
 
 import AtomInputCheckbox from '@/components/atoms/AtomInputCheckbox';
-import AtomLabel from '@/components/atoms/AtomLabel';
-import AtomParagraph from '@/components/atoms/AtomParagraph';
+import AtomLabel from '@/components/atoms/shared/AtomLabel';
+import AtomParagraph from '@/components/atoms/shared/AtomParagraph';
 
 export default {
     props: {

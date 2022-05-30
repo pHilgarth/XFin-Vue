@@ -1,19 +1,29 @@
 <template>
-  <div class="xfin__design-elements">
+  <div class="design-elements">
     <h1>Design-Elements</h1>
     <hr />
     <h3>Buttons</h3>
     <br>
-    <button class="xfin__button xfin__button--primary">Primary Button</button>
+    <AtomButton type="primary" text="Primary Button" />
     <br><br>
-    <button class="xfin__button xfin__button--primary" disabled>Primary Button Disabled</button>
+    <AtomButton type="primary" text="Primary Button Disabled" disabled />
     <br><br>
-    <button class="xfin__button xfin__button--primary xfin__button--small">Button Small</button>
+    <AtomButton type="primary-small" text="Primary Button Small" />
     <br><br>
-    <button class="xfin__button xfin__button--cancel" disabled>Button Cancel</button>
+    <AtomButton type="cancel" text="Button Cancel" />
     <br><br>
-    <button class="xfin__button xfin__button--light">Button Light</button>
+    <AtomButton type="light" text="Button Light" />
     <br><br>
-    <button class="xfin__button xfin__button--light" disabled>Button Light Disabled</button>
+    <AtomButton type="light" text="Button Light Disabled" disabled />
   </div>
 </template>
+
+<script>
+import AtomButton from '@/components/atoms/shared/AtomButton';
+
+export default {
+  components: {
+    AtomButton,
+  },
+}
+</script>

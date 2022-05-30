@@ -1,6 +1,10 @@
 .budget-manager {
     width: 100%;
 
+    &__account-holder {
+        width: fit-content;
+    }
+
     &__category {
         //align-items: center;
         //display: flex;
@@ -25,7 +29,7 @@
             display: flex;
             align-items: center;
 
-            .xfin-form__error {
+            .xfin__form__error {
                 transform: translateX(-100%);
                 @include rem(padding-right, 30px);
             }

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import OrganismCollapsible from "@/components/organisms/OrganismCollapsible";
+import OrganismCollapsible from "@/components/organisms/shared/OrganismCollapsible";
 
 import { NumberService } from "@/services/number-service";
 

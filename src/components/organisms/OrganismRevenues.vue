@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import OrganismCollapsible from "@/components/organisms/OrganismCollapsible";
+import OrganismCollapsible from "@/components/organisms/shared/OrganismCollapsible";
 
 import { NumberService } from "@/services/number-service";
 
@@ -72,7 +72,7 @@ export default {
               content: "Keine Einnahmen vorhanden!",
               props: {
                 colspan: 4,
-                class: "no-revenues",
+                class: "text-center",
               },
             },
           ],

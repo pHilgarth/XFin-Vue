@@ -1,5 +1,5 @@
 <template>
-  <div class="month-switch">
+  <div class="molecule-month-switch">
     <ul>
       <li @click="setMonth(0)" :class="getTabState(0)">Januar</li>
       <li @click="setMonth(1)" :class="getTabState(1)">Februar</li>

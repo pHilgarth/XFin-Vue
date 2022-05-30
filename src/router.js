@@ -9,6 +9,7 @@ import NewExpense from './components/pages/NewExpense';
 import NewAccountHolder from './components/pages/NewAccountHolder';
 import NewRevenue from './components/pages/NewRevenue';
 import UpdateAccountHolder from './components/pages/UpdateAccountHolder';
+import ExampleComponent from './components/tempComponents/ExampleComponent';
 
 import DesignElements from './components/pages/DesignElements';
 
@@ -25,5 +26,6 @@ export const router = createRouter({
         { path: '/account-settings/:id', component: AccountSettings },
         { path: '/design-elements', component: DesignElements},
         { path: '/cost-centers', component: CostCenterManager},
+        { path: '/example', component: ExampleComponent},
     ],
 });

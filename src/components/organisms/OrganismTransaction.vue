@@ -1,16 +1,20 @@
-<!-- TODO on new expense: check the available amount on the selected account and category -->
+<!-- TODO on new expense: check the available amount on the selected account and costCenter -->
 <!-- TODO the available amount is infinite, if the user didnt set any settings -->
 <!-- TODO the user can configure the accounts so its not possible to spend more money than to an certain balance (gesperrtes Budget und so, nicht ins minus)-->
 <template>
   <div class="transaction">
-    <section class="transaction-body">
+    <section class="transaction__body">
       <h1>{{ transactionType === 'revenue' ? 'Einnahme' : 'Ausgabe' }} eintragen</h1>
       <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!"/>
 
-      <form class="xfin-account-form" v-else>
+      <form class="xfin__accountform" v-else>
         <MoleculeInputSelect  classList="transaction__account" :options="bankAccountOptions" field="account" v-model="selectedAccountNumber" label="Konto" />
-        <MoleculeInputSelect  classList="transaction__category" :options="categoryOptions" field="category" v-model="selectedCategoryName" label="Kostenstelle"
-                              @update:modelValue="selectedCategory = categories.find(c => c.name === $event)" />
+        <MoleculeInputSelect  classList="transaction__costcenter" :options="costCenterOptions" field="costCenter" v-model="costCenter" label="Kostenstelle"
+                              :validation="v$.costCenter" :hasErrors="costCenterErrors" @blur="v$.costCenter.$touch()"/>
+
+        <button @click.prevent="v$.costCenter.$touch()">click</button>
+
+        <p>{{ v$.costCenter }}</p>
 
         <div class="transaction__counter-part">
           <MoleculeInputAutoSuggest :classList="paddingAutoSuggest" field="counter-part" :hasErrors="counterPartErrors" v-model="counterPart"
@@ -23,32 +27,33 @@
                                   v-model="includeCounterPartAccount" label="Bankdaten hinzufügen" :_switch="true" />
 
           <div v-if="includeCounterPartAccount" class="transaction__counter-part-account pb-5">
-            <MoleculeInputText  :small="true" classList="transaction__counter-part-account-data" field="counter-part-iban"
+            <MoleculeInputText  class="transaction__counter-part-account-data" field="counter-part-iban"
                                 :hasErrors="counterPartIbanErrors" v-model="counterPartIban" :validation="v$.counterPartIban" label="Iban"
                                 @blur="v$.counterPartIban.$touch()" />
 
-            <MoleculeInputText  :small="true" classList="transaction__counter-part-account-data" field="counter-part-bic" :hasErrors="counterPartBicErrors"
+            <MoleculeInputText  class="transaction__counter-part-account-data" field="counter-part-bic" :hasErrors="counterPartBicErrors"
                                 v-model="counterPartBic" :validation="v$.counterPartBic" label="Bic" @blur="v$.counterPartBic.$touch()" />
           </div>
         </div>
 
-        <MoleculeInputText classList="pb-5" field="reference" :hasErrors="referenceErrors" v-model="reference" :validation="v$.reference" label="Verwendungszweck"
+        <MoleculeInputText class="pb-5" field="reference" :hasErrors="referenceErrors" v-model="reference" :validation="v$.reference" label="Verwendungszweck"
                             @blur="v$.reference.$touch()" />
         <!-- TODO - den verfügbaren Betrag immer anzeigen lassen! (heute verfügbar, wie im OnlineBanking) -->
-        <MoleculeInputText classList="pb-5" field="amount" :hasErrors="amountErrors" v-model="amount" :validation="v$.amount" label="Betrag"
+        <MoleculeInputText class="pb-5" field="amount" :hasErrors="amountErrors" v-model="amount" :validation="v$.amount" label="Betrag"
                            :errorMessageParams="{ limitType: availableAmountLimitType }" @blur="v$.amount.$touch()" />
 
-        <MoleculeInputSelect classList="transaction__type pb-5" :options="transactionRoleOptions" field="transactionRole" v-model="selectedTransactionRole" label="Typ" />
+        <MoleculeInputSelect classList="transaction__role pb-5" :options="transactionRoleOptions" field="transactionRole" label="Typ" />
 
 
         <AtomButton type="primary" text="Speichern" :disabled="saveDisabled" @click.prevent="save" />
-       <p>{{ selectedCategory }}</p>
-        <p>{{ transactionRoleOptions }}</p>
       </form>
     </section>
   </div>
 </template>
 
+<style>
+.error { border: 3px solid red; }
+</style>
 <script>
 //TODO - i need to refactor this component, its crap. I had to place counterPartAccountData into its own child component for the client side iban duplicate check
 //TODO - because of async created() i dont knwow how to add the ibanDuplicateValidator or pass the ibans to it - the current way of doing this is ugly as fuck
@@ -61,12 +66,12 @@ import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
 
-import AtomButton from "@/components/atoms/AtomButton";
+import AtomButton from "@/components/atoms/shared/AtomButton";
 import MoleculeInputAutoSuggest from "@/components/molecules/MoleculeInputAutoSuggest";
-import MoleculeInputCheckbox from "@/components/molecules/MoleculeInputCheckbox";
+import MoleculeInputCheckbox from "@/components/molecules/shared/MoleculeInputCheckbox";
 import MoleculeInputSelect from "@/components/molecules/MoleculeInputSelect";
-import MoleculeInputText from "@/components/molecules/MoleculeInputText";
-import MoleculeLoading from '@/components/molecules/MoleculeLoading';
+import MoleculeInputText from "@/components/molecules/shared/MoleculeInputText";
+import MoleculeLoading from '@/components/molecules/shared/MoleculeLoading';
 
 import { NumberService } from "@/services/number-service";
 import { AccountHolderService } from "@/services/account-holder-service";
@@ -76,15 +81,14 @@ import { InternalTransactionService } from "@/services/internal-transaction-serv
 import { ExternalTransactionService } from "@/services/external-transaction-service";
 import { CostCenterService } from "@/services/cost-center-service";
 import { transactionRoles } from '@/services/transaction-role-service';
-
-import { amountAvailableValidator, counterPartValidator } from '@/validation/custom-validators';
-//import { counterPartValidator } from '@/validation/custom-validators';
-
 import {
   amountValidator,
+  amountAvailableValidator,
   bicValidator,
+  counterPartValidator,
   ibanDuplicateValidator,
   ibanValidator,
+  costCenterValidator,
 } from "@/validation/custom-validators";
 
 export default {
@@ -103,7 +107,7 @@ export default {
       apiResponse = await this.getExternalParties();
 
       if (apiResponse.success) {
-        apiResponse = await this.getTransactionCategories();
+        apiResponse = await this.getCostCenters();
 
         if (apiResponse.success) {
           this.dataLoaded = true;
@@ -136,6 +140,7 @@ export default {
 
   computed: {
     amountErrors() { return this.v$.amount.$error; },
+    costCenterErrors() { return this.v$.costCenter.$error; },
     counterPartBicErrors() { return this.v$.counterPartBic.$error; },
     counterPartErrors() { return this.v$.counterPart.$error; },
     counterPartIbanErrors() { return this.v$.counterPartIban.$error; },
@@ -187,24 +192,6 @@ export default {
       this.findAccount();
       this.$router.push(`/new-${this.transactionType}/${this.selectedAccount.id}`);
     },
-
-    selectedTransactionRole() {
-      const currentlySelectedCategory = this.categories.find(c => c.name === this.selectedCategoryName);
-      const indexToRemove = this.categoryOptions.findIndex(o => o.value === 'Nicht zugewiesen');
-
-      if (this.selectedTransactionRole === transactionRoles['loan'] && indexToRemove >= 0) {
-        //TODO - remove this hardcoded string "Nicht zugewiesen" and move it to some kind of service (and here just compare the value of a key that never changes
-        this.categoryOptions.splice(indexToRemove, 1);
-        this.selectedCategoryName = currentlySelectedCategory.name;
-        this.selectedCategory = currentlySelectedCategory;
-      }
-      else if (this.selectedTransactionRole !== transactionRoles['loan'] && indexToRemove < 0) {
-        this.categoryOptions.unshift({
-          value: 'Nicht zugewiesen',
-          disabled: false,
-        });
-      }
-    }
   },
 
   data() {
@@ -216,8 +203,8 @@ export default {
 
       accountHolders: null,
       bankAccountOptions: null,
-      categories: null,
-      categoryOptions: null,
+      costCenters: null,
+      costCenterOptions: null,
       counterParts: null,
       counterPartNames: [],
       transactionRoleOptions: [],
@@ -226,8 +213,9 @@ export default {
       availableAmountLimitType: null,
       selectedAccountNumber: null,
       selectedAccount: null,
-      selectedCategoryName: null,
-      selectedCategory: null,
+      costCenter: null,
+      selectedCostCenterName: null,
+      selectedCostCenter: null,
       selectedTransactionRole: transactionRoles['default'],
 
       //counterPart is the v-model property for the input field - it refers to a counterParts name and is of type string
@@ -258,7 +246,7 @@ export default {
     //TODO - wenn Konto nicht überzogen werden darf, darf auch keine einzige KS überzogen werden
     //TODO - wenn Konto nicht überzogen werden darf, beim Überziehen einer KS einen Validation-Fehler ausgeben
     //TODO - wenn Konto nicht überzogen werden darf, bei KS mit gesperrtem Budget einen Validation-Fehler ausgeben, wenn dieses gesperrte Budget "angerührt" wird (weil zu hohe Ausgabe)
-    calculateAvailableAmount(bankAccount, transactionCategory) {
+    calculateAvailableAmount(bankAccount, costCenter) {
       const balance = bankAccount.balance;
       const expensesSum = bankAccount.expenses.length > 0
           ? Math.abs(bankAccount.expenses.map(e => e.amount).reduce((a,b) => a + b))
@@ -278,29 +266,29 @@ export default {
         ? Math.round((settings.expensesThreshold - expensesSum) * 100) / 100
         : null;
 
-      //calculate availableAmount based on category data
-      let availableCategoryAmount = transactionCategory.blockedBudget
-        ? Math.round(transactionCategory.balance - transactionCategory.blockedBudget * 100) / 100
+      //calculate availableAmount based on costCenter data
+      let availableCostCenterAmount = costCenter.blockedBudget
+        ? Math.round(costCenter.balance - costCenter.blockedBudget * 100) / 100
         : !settings.allowsOverdraft
-          ? transactionCategory.balance
+          ? costCenter.balance
           : null
 
       //TODO - the worst ternary ever ...
       this.availableAmount = availableBalanceAmount === null
         ? availableExpenses === null
-          ? availableCategoryAmount === null
+          ? availableCostCenterAmount === null
               ? null
-              : availableCategoryAmount
-          : availableCategoryAmount === null
+              : availableCostCenterAmount
+          : availableCostCenterAmount === null
             ? availableExpenses
-            : Math.min(availableExpenses, availableCategoryAmount)
+            : Math.min(availableExpenses, availableCostCenterAmount)
         : availableExpenses === null
-          ? availableCategoryAmount === null
+          ? availableCostCenterAmount === null
               ? availableBalanceAmount
-              : Math.min(availableBalanceAmount, availableCategoryAmount)
-          : availableCategoryAmount === null
+              : Math.min(availableBalanceAmount, availableCostCenterAmount)
+          : availableCostCenterAmount === null
             ? Math.min(availableBalanceAmount, availableExpenses)
-            : Math.min(availableBalanceAmount, availableExpenses, availableCategoryAmount);
+            : Math.min(availableBalanceAmount, availableExpenses, availableCostCenterAmount);
 
       // this.availableAmountLimitType = availableAmount && availableExpenses
       //   ? availableAmount < availableExpenses
@@ -390,33 +378,35 @@ export default {
       return apiResponse;
     },
 
-    async getTransactionCategories() {
+    async getCostCenters() {
       const apiResponse = await CostCenterService.getAllByAccount(this.selectedAccount.id, new Date().getFullYear(), new Date().getMonth());
 
       if (apiResponse.success && apiResponse.data) {
         //TODO - remove this hardcoded string "Nicht zugewiesen" and move it to some kind of service (and here just compare the value of a key that never changes
-        this.categories = this.transactionType === 'revenue'
+        this.costCenters = this.transactionType === 'revenue'
             ? apiResponse.data
             : apiResponse.data.filter(c => c.name !== 'Nicht zugewiesen');
 
-        this.categoryOptions = [];
+        this.costCenterOptions = [{
+          value: '- Kostenstelle wählen -',
+          disabled: false,
+        }];
 
-        this.categories.forEach((category) => {
-          this.categoryOptions.push({
-            value: category.name,
+        this.costCenters.forEach((costCenter) => {
+          this.costCenterOptions.push({
+            value: costCenter.name,
             disabled: false,
           });
         });
 
-        this.selectedCategoryName = this.categories[0].name;
-        this.selectedCategory = this.categories[0];
+        this.selectedCostCenter = this.costCenterOptions[0];
 
         this.availableAmount = this.transactionType !== 'revenue'
-          ? this.calculateAvailableAmount(this.selectedAccount, this.selectedCategory)
+          ? this.calculateAvailableAmount(this.selectedAccount, this.selectedCostCenter)
           : null;
 
       } else if (apiResponse.success && !apiResponse.data) {
-        this.categories = [];
+        this.costCenters = [];
       }
 
       return apiResponse;
@@ -499,7 +489,7 @@ export default {
       } else {
         const internalTransaction = {
           internalBankAccountId: this.selectedAccount.id,
-          transactionCategoryId: this.selectedCategory.id,
+          costCenterId: this.selectedCostCenter.id,
           dateString: currentDate,
           amount: this.transactionType === 'revenue'
             ? amount
@@ -536,6 +526,7 @@ export default {
   validations() {
     let validation = {
       amount: { amountValidator },
+      costCenter: { costCenterValidator: costCenterValidator(this.transactionRole) },
       counterPartBic: { bicValidator },
       counterPartIban: { ibanValidator },
       counterPart: { required: counterPartValidator },

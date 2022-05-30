@@ -1,6 +1,6 @@
 <template>
-  <div class="xfin-modal">
-    <div class="xfin-modal__content">
+  <div class="xfin__modal">
+    <div class="xfin__modal__content">
       <slot></slot>
     </div>
   </div>

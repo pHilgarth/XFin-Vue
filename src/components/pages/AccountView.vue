@@ -3,6 +3,7 @@
   <div class="account-view">
     <AtomHeadline tag="h1" text="Kontenübersicht" />
     <!-- TODO - general todos -->
+    <!-- TODO rework class structure of elements (ie here its .account-form -xfin-account-form) - don't remove this comment before all classes in project are updated, deleted, etc....-->
     <!-- TODO - when refreshing on a component, the first menu entry on the left menu is highlighted as if it were the selected item -->
     <!-- TODO - check every API call in this app for proper error handling -->
     <!-- TODO - style xfin-button hover effect -->
@@ -16,13 +17,20 @@
     <!-- TODO - disable budget manager, when no accountHolders are available -->
     <!-- TODO - more information on OrganismTransaction when transactionType == 'expense' (what's the current balance, what's the budget, what's the balance threshold, expenses threshhold, etc... there is place on the right side to display these informations -->
     <!-- TODO - opening the budget manager from an accounts dropdown menu in accountview does not work -->
-    <!-- TODO - xfin-form-error on budget-manager "Dieser Posten darf nicht negativ sein" -> it's not position: absolute anymore, but here it has to be -->
+    <!-- TODO - xfin__form-error on budget-manager "Dieser Posten darf nicht negativ sein" -> it's not position: absolute anymore, but here it has to be -->
     <!--          TODO - i disabled position: absolute because of another component where it shouldn't be absolute -> need to find a solution here -->
     <!-- TODO - dont show "Nicht zugewiesen" in CostCenterManager -->
     <!-- TODO - implement saving of new CostCenter -->
     <!-- TODO - implement custom select form control, so that the options aren't displayed in the default browser dropdown, which is ugly -->
     <!-- TODO - rename transactionCategory to costCenter everywhere -->
     <!-- TODO - rethink the concept of dynamically rendering components by passing a config-prop to components, like in i.e. MoleculeTableBody - no one knows, what shape the config object has ... -->
+    <!-- TODO - merge pages NewAccountHolder and UpdateAccountHolder into one component rendering OrganismAccountHolder accordingly-->
+    <!-- TODO - move the edit account holder link out of the collapsible title into a section "settings" or else (in main menu sidebar) -->
+    <!-- TODO - arrange components in folders: organisms should live in folders named after their parent-components - when they're used multiple times across different components, they live in the folder "shared" - same goes for molecules and atoms -->
+    <!-- TODO - rework props declaration on every component like its recommended in the vue styleguide -->
+    <!-- TODO - maybe remove "component docs" out of components into a readme or similar -->
+    <!-- TODO - rework form classes -> every form should have "xfin__form" and the form-elements "xfin__form__<control|error|label|etc....>" -->
+    <!-- TODO - check if there are any classes set, which are not used by CSS and which are NO root-classes used for clarification (component root-classes) -->
 
 <!--    <div class="dev-hint important">-->
 <!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->
@@ -38,29 +46,29 @@
 <!--    </div>-->
     <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Kontoinhaber!"/>
 
-    <section class="account-view-body" v-else>
+    <section v-else>
       <AtomParagraph class="pb-4" v-if="dataLoaded && accountHolders.length === 0" text="Keine Kontoinhaber gefunden!" />
 
       <div class="account-view__account-holder" v-for="accountHolder in accountHolders" :key="accountHolder.id">
         <OrganismCollapsible :config="configureCollapsible(accountHolder)" />
         <AtomEditIcon :data-id="accountHolder.id" @click="editAccountHolder" />
       </div>
-      
-      <router-link to="/new-account-holder" class="xfin-button">
-        Kontoinhaber hinzufügen
-      </router-link>
+
+      <AtomButton type="light" text="Kontoinhaber hinzufügen" @click.prevent="$router.push('/new-account-holder')" />
+
     </section>
   </div>
 </template>
 
 <script>
-import AtomHeadline from '@/components/atoms/AtomHeadline';
-import AtomEditIcon from '@/components/atoms/AtomEditIcon';
-import AtomParagraph from '@/components/atoms/AtomParagraph';
+import AtomButton from '@/components/atoms/shared/AtomButton';
+import AtomHeadline from '@/components/atoms/shared/AtomHeadline';
+import AtomEditIcon from '@/components/atoms/shared/AtomEditIcon';
+import AtomParagraph from '@/components/atoms/shared/AtomParagraph';
 
-import MoleculeLoading from "@/components/molecules/MoleculeLoading";
+import MoleculeLoading from "@/components/molecules/shared/MoleculeLoading";
 
-import OrganismCollapsible from "@/components/organisms/OrganismCollapsible";
+import OrganismCollapsible from "@/components/organisms/shared/OrganismCollapsible";
 
 import { AccountHolderService } from "@/services/account-holder-service";
 import { NumberService } from "@/services/number-service";
@@ -79,6 +87,7 @@ export default {
   },
 
   components: {
+    AtomButton,
     AtomHeadline,
     AtomEditIcon,
     AtomParagraph,

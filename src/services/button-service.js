@@ -1,4 +1,4 @@
-const baseClass = 'xfin__button';
+const baseClass = 'atom-button';
 
 export const buttonService = {
     buttonTypes: [
@@ -13,9 +13,9 @@ export const buttonService = {
     getCssClassesForTypes(value) {
         let classList = '';
 
-        value.split('-').forEach(type => classList += `${baseClass}--${type}`);
+        value.split('-').forEach(type => classList += `${baseClass}--${type} `);
 
-        return classList;
+        return classList.trim();
     }
 }
 

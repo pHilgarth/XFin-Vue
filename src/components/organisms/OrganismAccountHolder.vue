@@ -2,11 +2,11 @@
   <section v-if="!showForm" class="account-holder__main">
     <AtomHeadline tag="h1" :text="headline" />
     <article>
-      <MoleculeInputText  classList="account-holder__name pb-5" field="name" :hasErrors="nameHasErrors || duplicatedName"
+      <MoleculeInputText  class="account-holder__name pb-5" field="name" :hasErrors="nameHasErrors || duplicatedName"
                           :validation="v$.name" v-model="name" label="Name" @blur="v$.name.$touch()"/>
 
       <template v-if="duplicatedName" to=".account-holder__name">
-        <AtomParagraph class="xfin-form__error account-holder__name__error" text="Dieser Name wird bereits verwendet!"/>
+        <AtomParagraph class="xfin__form__error account-holder__name__error" text="Dieser Name wird bereits verwendet!"/>
       </template>
 
       <div class="account-holder__accounts">
@@ -37,11 +37,11 @@
 <script>
 import { useVuelidate } from '@vuelidate/core';
 
-import AtomButton from '@/components/atoms/AtomButton';
-import AtomHeadline from '@/components/atoms/AtomHeadline';
-import AtomParagraph from '@/components/atoms/AtomParagraph';
+import AtomButton from '@/components/atoms/shared/AtomButton';
+import AtomHeadline from '@/components/atoms/shared/AtomHeadline';
+import AtomParagraph from '@/components/atoms/shared/AtomParagraph';
 import AtomSpan from '@/components/atoms/AtomSpan';
-import MoleculeInputText from '@/components/molecules/MoleculeInputText';
+import MoleculeInputText from '@/components/molecules/shared/MoleculeInputText';
 import OrganismAccountForm from '@/components/organisms/OrganismAccountForm';
 
 import { AccountHolderService } from '@/services/account-holder-service';

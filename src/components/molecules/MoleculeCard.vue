@@ -1,9 +1,9 @@
 <!-- TODO - rework this component - it's unused right now -->
 <!-- TODO - this component is using the v-html directive - make sure it always gets trusted content! -->
 <template>
-    <div class="xfin-card" v-bind="config.props">
+    <div class="xfin__card" v-bind="config.props">
       <span class="dev-hint">this component is unsing the v-html directive - make sure it always gets trusted content!</span>
-      <div class="xfin-card__content" v-for="(content, index) in config.content" :key="index" v-bind="content.props">
+      <div class="xfin__card__content" v-for="(content, index) in config.content" :key="index" v-bind="content.props">
         <div v-if="content.content" v-html="content.content"></div>
         <template v-else-if="content.component">
             <component :is="content.component.tag" v-bind="content.component.props" />
@@ -29,7 +29,7 @@
   //           }
   //         }
   //       ],
-  //       props: <object>                                   --> attributes to bind some value to on the div.xfin-card
+  //       props: <object>                                   --> attributes to bind some value to on the div.xfin__card
   //     };
   
 

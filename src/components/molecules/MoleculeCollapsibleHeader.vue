@@ -1,9 +1,9 @@
 <template>
-    <div class="xfin-collapsible__header" @click="$emit('state-switched')">
-      <span class="xfin-collapsible__title">{{ title }}</span>
-      <div class="xfin-collapsible__state">
-        <div class="bar"></div>
-        <div class="bar"></div>
+    <div class="molecule-collapsible-header" @click="$emit('state-switched')">
+      <span class="molecule-collapsible-header__title">{{ title }}</span>
+      <div class="molecule-collapsible-header__state">
+        <div class="molecule-collapsible-header__bar"></div>
+        <div class="molecule-collapsible-header__bar"></div>
       </div>
     </div>
 </template>

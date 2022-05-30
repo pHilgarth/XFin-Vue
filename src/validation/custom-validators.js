@@ -1,4 +1,5 @@
 import { NumberService } from '@/services/number-service';
+import { helpers } from '@vuelidate/validators';
 
 /* amount regex:
 
@@ -52,4 +53,47 @@ export const ibanValidator =                                        (value) => v
 export const freeBudgetValidator =                                  (value) => NumberService.parseFloat(value) >= 0;
 //TODO - delete, if not needed
 //export const freeBudgetValidator =          (minimalAmount) =>  (value) => minimalAmount === null || NumberService.parseFloat(value) >= minimalAmount;
-//export const dropDownValidator = (value) => value != -1;
+
+export const costCenterValidator = (transactionRole) => helpers.withParams(
+    { transactionRole: transactionRole },
+    (value) => {
+        console.log(transactionRole);
+        console.log(value);
+        return (value !== '- Kostenstelle wählen -' && value !== '' && value !== null) && (transactionRole !== 'loan' || value !== 'Nicht zugewiesen'); },
+);
+
+
+
+
+export const firstSelectValidator = (secondSelect) => helpers.withParams(
+    { secondSelect: secondSelect },
+    (value) => {
+        console.log(`validating firstSelect - secondSelect is: ${secondSelect + ' (' + typeof(secondSelect) + ')' || '(its null or empty)'}`);
+
+        if (secondSelect === '1') {
+            return value === 'A';
+        }
+        else if (secondSelect === '2') {
+            return value === 'B';
+        }
+        else if (secondSelect === '3') {
+            return value === 'C';
+        }
+        else {
+            return true;
+        }
+    }
+);
+
+export const secondSelectValidator = (firstSelect) => (value) => {
+    console.log(`validating secondSelect - firstSelect is: ${firstSelect || '(its null or empty)'}`);
+
+    if (value === '') {
+        return false;
+        //console.log('value is empty string');
+    }
+    else {
+        return true;
+    }
+    //return value !== 'C' && value !== '';
+}

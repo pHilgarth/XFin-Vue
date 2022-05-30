@@ -1,5 +1,5 @@
 <template>
-    <div class="xfin-collapsible__body" :class="{ ' collapsed': collapsed }">
+    <div :class="`molecule-collapsible-body${ collapsed ? ' collapsed' : ''}`">
       <slot></slot>
     </div>
 </template>

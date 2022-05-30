@@ -4,7 +4,7 @@
     <AtomEditIcon v-if="allowEdit" :data-id="costCenter.id" align="right" @click="editCostCenter" />
   </div>
   <div v-if="edit" class="xfin__cost-center--edit">
-    <MoleculeInputText classList="mb-4" field="cost-center" :hasErrors="costCenterNameErrors" v-model="costCenterName" @blur="v$.costCenterName.$touch()" :validation="v$.costCenterName"
+    <MoleculeInputText class="mb-4" field="cost-center" :hasErrors="costCenterNameErrors" v-model="costCenterName" @blur="v$.costCenterName.$touch()" :validation="v$.costCenterName"
                        label="Kostenstelle" />
     <div class="xfin__cost-center__buttons">
       <AtomButton type="primary-small" text="&check;" @click="updateCostCenter" :disabled="costCenterNameErrors" />
@@ -17,9 +17,9 @@
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
-import AtomButton from '@/components/atoms/AtomButton';
-import AtomEditIcon from '@/components/atoms/AtomEditIcon';
-import MoleculeInputText from '@/components/molecules/MoleculeInputText';
+import AtomButton from '@/components/atoms/shared/AtomButton';
+import AtomEditIcon from '@/components/atoms/shared/AtomEditIcon';
+import MoleculeInputText from '@/components/molecules/shared/MoleculeInputText';
 
 import { CostCenterService } from '@/services/cost-center-service';
 

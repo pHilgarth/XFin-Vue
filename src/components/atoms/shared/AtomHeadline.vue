@@ -1,5 +1,5 @@
 <template>
-  <component :is="tag">
+  <component :is="tag" class="atom-headline">
     {{ text }}
   </component>
 </template>

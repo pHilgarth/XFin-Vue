@@ -1,5 +1,5 @@
 <template>
-    <p>{{ text }}</p>
+    <p class="atom-paragraph">{{ text }}</p>
 </template>
 
 <script>

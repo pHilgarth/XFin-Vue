@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <section class="molecule-loading">
       <div v-if="loadingError">{{ errorMessage }}</div>
       <div v-else>Daten werden geladen ...</div>
     </section>

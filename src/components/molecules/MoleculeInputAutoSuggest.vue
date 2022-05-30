@@ -1,24 +1,24 @@
 <template>
     <div class="form-floating" :class="classList" :id="id">
         <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :placeholder="label"
-                        :classList="`xfin-form__control form-control col-4 ${hasErrors ? 'has-errors' : ''}`"
+                        :classList="`xfin__form__form-control form-control col-4 ${hasErrors ? 'has-errors' : ''}`"
                         autocomplete="off" @blur="onBlur" @input="onInput" />
                         
-        <AtomLabel class="xfin-form__label" :for="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
+        <AtomLabel class="xfin__form__label" :for="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
         <!-- TODO - hide ul again, if input looses focus (on blur?) -> this is almost done! But if I hover on an element and then press tab, the box wont disappear, thats a cornercase but maybe i can fix it. I would need to track if TAB was pressed i guess-->
         <AtomUnorderedList  v-if="suggestions && suggestions.length > 0" class="xfin__suggestions" :items="suggestions" @itemClicked="pickItem"
                             @itemMouseenter="hoverOnItem = true" @itemMouseleave="hoverOnItem = false" />
 
         <template v-for="(error, index) in validation?.$errors" :key="index">
-            <AtomParagraph classList="xfin-form__error" :text="getErrorMessage(error.$property, error.$validator, errorMessageParams)" />
+            <AtomParagraph classList="xfin__form__error" :text="getErrorMessage(error.$property, error.$validator, errorMessageParams)" />
         </template>
     </div>
 </template>
 
 <script>
 import AtomInputText from "@/components/atoms/AtomInputText";
-import AtomLabel from "@/components/atoms/AtomLabel";
-import AtomParagraph from "@/components/atoms/AtomParagraph";
+import AtomLabel from "@/components/atoms/shared/AtomLabel";
+import AtomParagraph from "@/components/atoms/shared/AtomParagraph";
 import AtomUnorderedList from '@/components/atoms/AtomUnorderedList';
 
 import { errorMessages } from "@/services/form-error-messages";

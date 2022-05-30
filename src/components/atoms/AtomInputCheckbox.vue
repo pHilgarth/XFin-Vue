@@ -1,3 +1,3 @@
 <template>
-  <input type="checkbox" class="form-check-input" />
+  <input type="checkbox" class="atom-input-checkbox form-check-input" />
 </template>

@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import AtomButton from "@/components/atoms/AtomButton";
+import AtomButton from "@/components/atoms/shared/AtomButton";
 import MoleculeBudgetManagerCategory from "@/components/molecules/MoleculeBudgetManagerCategory";
 
 import { InternalTransactionService } from "@/services/internal-transaction-service";

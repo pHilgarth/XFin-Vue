@@ -1,17 +1,16 @@
 <template>
-<!-- TODO rework class structure of elements (ie here its .account-form -xfin-account-form) - don't remove this comment before all classes in project are updated, deleted, etc....-->
-    <div class="account-form">
+    <div class="organism-account-form">
       <AtomHeadline tag="h1" :text="headline" />
-        <form class="xfin-account-form">
+        <form>
           <!-- TODO - add padding-classes to every molecule, atom, etc .... check every form and add it where its missing -->
-            <MoleculeInputText classList="pb-5" field="iban" :hasErrors="ibanErrors || duplicate" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" label="IBAN" />
-            <p class="xfin-account-form__duplicate-account xfin-form__error" v-if="duplicate">
+            <MoleculeInputText class="pb-5" field="iban" :hasErrors="ibanErrors || duplicate" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" label="IBAN" />
+            <p class="organism-account-form__duplicate-account xfin__form__error" v-if="duplicate">
               Diese Iban existiert bereits!
             </p>
-            <MoleculeInputText classList="pb-5" field="bic" :hasErrors="bicErrors" v-model="bic" @blur="v$.bic.$touch()" :validation="v$.bic" label="BIC" />
-            <MoleculeInputText classList="pb-5" field="bank" v-model="bank" :optional="true" label="Bank" />
-            <MoleculeInputText classList="pb-5" field="description" v-model="description" :optional="true" label="Beschreibung" />
-            <MoleculeInputText classList="pb-5" v-if="!formData.account || formData.account.isNew" field="balance" :hasErrors="balanceErrors" v-model="balance" @blur="v$.balance.$touch()" :validation="v$.balance" label="Kontostand" />
+            <MoleculeInputText class="pb-5" field="bic" :hasErrors="bicErrors" v-model="bic" @blur="v$.bic.$touch()" :validation="v$.bic" label="BIC" />
+            <MoleculeInputText class="pb-5" field="bank" v-model="bank" :optional="true" label="Bank" />
+            <MoleculeInputText class="pb-5" field="description" v-model="description" :optional="true" label="Beschreibung" />
+            <MoleculeInputText class="pb-5" v-if="!formData.account || formData.account.isNew" field="balance" :hasErrors="balanceErrors" v-model="balance" @blur="v$.balance.$touch()" :validation="v$.balance" label="Kontostand" />
 
             <!-- TODO - remove border on button-->
             <AtomButton text="Konto speichern" :disabled="v$.$silentErrors.length > 0 || duplicate" type="primary" @click.prevent="save" />
@@ -28,9 +27,9 @@ import { ibanDuplicateValidator } from "@/validation/custom-validators";
 import { InternalBankAccountService } from "@/services/internal-bank-account-service";
 import { NumberService } from "@/services/number-service";
 
-import AtomButton from "@/components/atoms/AtomButton";
-import AtomHeadline from "@/components/atoms/AtomHeadline";
-import MoleculeInputText from "@/components/molecules/MoleculeInputText";
+import AtomButton from "@/components/atoms/shared/AtomButton";
+import AtomHeadline from "@/components/atoms/shared/AtomHeadline";
+import MoleculeInputText from "@/components/molecules/shared/MoleculeInputText";
 
 import {
   newAccountValidation,

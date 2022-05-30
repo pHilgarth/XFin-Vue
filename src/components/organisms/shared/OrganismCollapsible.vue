@@ -1,17 +1,15 @@
 <!-- TODO - this component is using the v-html directive - make sure it always gets trusted content! -->
 <template>
-  <div class="xfin-collapsible" :class="{ 'collapsed': collapsed }">
+  <div class="organism-collapsible" :class="{ 'collapsed': collapsed }">
     <MoleculeCollapsibleHeader :title="title" @state-switched="collapsed = !collapsed" />
     <MoleculeCollapsibleBody :collapsed="collapsed">
       <template v-for="(content, index) in config.content" :key="index">
-        <span class="dev-hint">this component is unsing the v-html directive - make sure it always gets trusted content!</span>
         <div v-if="content.content" v-html="content.content" v-bind="content.props"></div>
         <template v-else-if="content.component" v-bind="content.props">
           <component :is="content.component.tag" v-bind="content.component.props" />
         </template> 
       </template>
     </MoleculeCollapsibleBody>
-
   </div>
 </template>
 
