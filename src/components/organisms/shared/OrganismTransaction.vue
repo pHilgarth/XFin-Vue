@@ -2,22 +2,22 @@
 <!-- TODO the available amount is infinite, if the user didnt set any settings -->
 <!-- TODO the user can configure the accounts so its not possible to spend more money than to an certain balance (gesperrtes Budget und so, nicht ins minus)-->
 <template>
-  <div class="transaction">
-    <section class="transaction__body">
+  <div class="organism-transaction">
+    <section>
       <h1>{{ transactionType === 'revenue' ? 'Einnahme' : 'Ausgabe' }} eintragen</h1>
       <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!"/>
 
-      <form class="xfin__accountform" v-else>
-        <MoleculeInputSelect  classList="transaction__account" :options="bankAccountOptions" field="account" v-model="selectedAccountNumber" label="Konto" />
-        <MoleculeInputSelect  classList="transaction__costcenter" :options="costCenterOptions" field="costCenter" v-model="costCenter" label="Kostenstelle"
+      <form v-else>
+        <MoleculeInputSelect  class="organism-transaction__account" :options="bankAccountOptions" field="account" v-model="selectedAccountNumber" label="Konto" />
+        <MoleculeInputSelect  class="organism-transaction__cost-center" :options="costCenterOptions" field="costCenter" v-model="costCenter" label="Kostenstelle"
                               :validation="v$.costCenter" :hasErrors="costCenterErrors" @blur="v$.costCenter.$touch()"/>
 
         <button @click.prevent="v$.costCenter.$touch()">click</button>
 
         <p>{{ v$.costCenter }}</p>
 
-        <div class="transaction__counter-part">
-          <MoleculeInputAutoSuggest :classList="paddingAutoSuggest" field="counter-part" :hasErrors="counterPartErrors" v-model="counterPart"
+        <div class="organism-transaction__counter-part">
+          <MoleculeInputAutoSuggest :class="paddingAutoSuggest" field="counter-part" :hasErrors="counterPartErrors" v-model="counterPart"
                                     :validation="v$.counterPart" :label="`${transactionType === 'revenue' ? 'Zahlungspflichtiger' : 'Zahlungsempfänger'}`"
                                     :items="counterPartNames" noItemsFallback="&plus; Neu hinzufügen"
                                     :alwaysShowFallback="true" :errorMessageParams="{ counterPartType: transactionType === 'revenue' ? 'Zahlungspflichtigen' : 'Zahlungsempfänger' }"
@@ -26,12 +26,12 @@
           <MoleculeInputCheckbox  v-if="showCheckbox" :classList="includeCounterPartAccount ? 'pb-1' : 'pb-5'" field="include-counter-part-account"
                                   v-model="includeCounterPartAccount" label="Bankdaten hinzufügen" :_switch="true" />
 
-          <div v-if="includeCounterPartAccount" class="transaction__counter-part-account pb-5">
+          <div v-if="includeCounterPartAccount" class="organism-transaction__counter-part-account pb-5">
             <MoleculeInputText  class="transaction__counter-part-account-data" field="counter-part-iban"
                                 :hasErrors="counterPartIbanErrors" v-model="counterPartIban" :validation="v$.counterPartIban" label="Iban"
                                 @blur="v$.counterPartIban.$touch()" />
 
-            <MoleculeInputText  class="transaction__counter-part-account-data" field="counter-part-bic" :hasErrors="counterPartBicErrors"
+            <MoleculeInputText  class="organism-transaction__counter-part-account-data" field="counter-part-bic" :hasErrors="counterPartBicErrors"
                                 v-model="counterPartBic" :validation="v$.counterPartBic" label="Bic" @blur="v$.counterPartBic.$touch()" />
           </div>
         </div>
@@ -42,7 +42,7 @@
         <MoleculeInputText class="pb-5" field="amount" :hasErrors="amountErrors" v-model="amount" :validation="v$.amount" label="Betrag"
                            :errorMessageParams="{ limitType: availableAmountLimitType }" @blur="v$.amount.$touch()" />
 
-        <MoleculeInputSelect classList="transaction__role pb-5" :options="transactionRoleOptions" field="transactionRole" label="Typ" />
+        <MoleculeInputSelect class="pb-5" :options="transactionRoleOptions" field="transactionRole" label="Typ" />
 
 
         <AtomButton type="primary" text="Speichern" :disabled="saveDisabled" @click.prevent="save" />
@@ -51,9 +51,6 @@
   </div>
 </template>
 
-<style>
-.error { border: 3px solid red; }
-</style>
 <script>
 //TODO - i need to refactor this component, its crap. I had to place counterPartAccountData into its own child component for the client side iban duplicate check
 //TODO - because of async created() i dont knwow how to add the ibanDuplicateValidator or pass the ibans to it - the current way of doing this is ugly as fuck
@@ -69,7 +66,7 @@ import { required } from "@vuelidate/validators";
 import AtomButton from "@/components/atoms/shared/AtomButton";
 import MoleculeInputAutoSuggest from "@/components/molecules/MoleculeInputAutoSuggest";
 import MoleculeInputCheckbox from "@/components/molecules/shared/MoleculeInputCheckbox";
-import MoleculeInputSelect from "@/components/molecules/MoleculeInputSelect";
+import MoleculeInputSelect from "@/components/molecules/shared/MoleculeInputSelect";
 import MoleculeInputText from "@/components/molecules/shared/MoleculeInputText";
 import MoleculeLoading from '@/components/molecules/shared/MoleculeLoading';
 

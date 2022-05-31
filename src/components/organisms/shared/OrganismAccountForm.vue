@@ -3,10 +3,8 @@
       <AtomHeadline tag="h1" :text="headline" />
         <form>
           <!-- TODO - add padding-classes to every molecule, atom, etc .... check every form and add it where its missing -->
-            <MoleculeInputText class="pb-5" field="iban" :hasErrors="ibanErrors || duplicate" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" label="IBAN" />
-            <p class="organism-account-form__duplicate-account xfin__form__error" v-if="duplicate">
-              Diese Iban existiert bereits!
-            </p>
+          <MoleculeInputText class="pb-5" field="iban" :hasErrors="ibanErrors || duplicate" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" label="IBAN" />
+          <AtomParagraph v-if="duplicate" class="organism-account-form__duplicate-account xfin__form__error" text="Diese Iban existiert bereits!" />
             <MoleculeInputText class="pb-5" field="bic" :hasErrors="bicErrors" v-model="bic" @blur="v$.bic.$touch()" :validation="v$.bic" label="BIC" />
             <MoleculeInputText class="pb-5" field="bank" v-model="bank" :optional="true" label="Bank" />
             <MoleculeInputText class="pb-5" field="description" v-model="description" :optional="true" label="Beschreibung" />
@@ -29,6 +27,7 @@ import { NumberService } from "@/services/number-service";
 
 import AtomButton from "@/components/atoms/shared/AtomButton";
 import AtomHeadline from "@/components/atoms/shared/AtomHeadline";
+import AtomParagraph from '@/components/atoms/shared/AtomParagraph';
 import MoleculeInputText from "@/components/molecules/shared/MoleculeInputText";
 
 import {
@@ -57,6 +56,7 @@ export default {
   components: {
     AtomButton,
     AtomHeadline,
+    AtomParagraph,
     MoleculeInputText,
   },
 

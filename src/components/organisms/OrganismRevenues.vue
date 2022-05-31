@@ -1,5 +1,5 @@
 <template>
-  <OrganismCollapsible :config="configureCollapsible()" />
+  <OrganismCollapsible class="organism-revenues" :config="configureCollapsible()" />
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-    <thead>
+    <thead class="molecule-table-head">
         <MoleculeTableRow :config="config" atom="tableHead"/>
     </thead>
 </template>
@@ -13,7 +13,7 @@
       ]
     }
 */
-import MoleculeTableRow from "@/components/molecules/MoleculeTableRow";
+import MoleculeTableRow from "@/components/molecules/shared/MoleculeTableRow";
 
 export default {
     components: {

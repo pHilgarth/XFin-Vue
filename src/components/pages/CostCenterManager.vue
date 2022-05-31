@@ -1,6 +1,6 @@
 <template>
   <div class="cost-center-manager">
-    <h1>Kostenstellenverwaltung</h1>
+    <AtomHeadline tag="h1" text="Kostenstellenverwaltung" />
 
     <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Kostenstellen!"/>
 
@@ -9,15 +9,12 @@
       <AtomButton class="me-3" v-if="createNew" type="primary" text="Speichern" @click="saveCostCenter" />
       <AtomButton v-if="createNew" type="cancel" text="Abbrechen" @click="cancelCostCenterCreation"/>
 
-      <div class="cost-center-manager__cost-centers" >
-        <MoleculeInputText v-if="createNew" class="pb-4" field="cost-center" :hasErrors="nameErrors" v-model="newCostCenter" @blur="v$.newCostCenter.$touch()" :validation="v$.newCostCenter"
-                           label="Neue Kostenstelle" />
-        
-        <MoleculeCostCenterRow v-for="costCenter in costCenters" :key="costCenter.id" :costCenter="costCenter" :allowEdit="!createNew" @edit-cost-center="editCostCenter = true"
-                               @cancel-edit="editCostCenter = false" @update-cost-center="updateCostCenter"/>
-      </div>
-    </template>
+      <MoleculeInputText v-if="createNew" class="pb-4" field="cost-center" :hasErrors="nameErrors" v-model="newCostCenter" @blur="v$.newCostCenter.$touch()" :validation="v$.newCostCenter"
+                         label="Neue Kostenstelle" />
 
+      <MoleculeCostCenterRow v-for="costCenter in costCenters" :key="costCenter.id" :costCenter="costCenter" :allowEdit="!createNew" @edit-cost-center="editCostCenter = true"
+                             @cancel-edit="editCostCenter = false" @update-cost-center="updateCostCenter"/>
+    </template>
   </div>
 </template>
 
@@ -26,6 +23,7 @@ import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
 import AtomButton from "@/components/atoms/shared/AtomButton";
+import AtomHeadline from '@/components/atoms/shared/AtomHeadline';
 
 import MoleculeInputText from "@/components/molecules/shared/MoleculeInputText";
 import MoleculeLoading from "@/components/molecules/shared/MoleculeLoading";
@@ -36,6 +34,7 @@ import { CostCenterService } from "@//services/cost-center-service";
 export default {
   components: {
     AtomButton,
+    AtomHeadline,
     MoleculeInputText,
     MoleculeLoading,
     MoleculeCostCenterRow

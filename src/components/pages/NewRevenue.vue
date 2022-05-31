@@ -1,9 +1,9 @@
 <template>
-  <OrganismTransaction transactionType="revenue" />
+  <OrganismTransaction class="new-revenue" transactionType="revenue" />
 </template>
 
 <script>
-  import OrganismTransaction from '@/components/organisms/OrganismTransaction';
+  import OrganismTransaction from '@/components/organisms/shared/OrganismTransaction';
 
   export default {
     components: {

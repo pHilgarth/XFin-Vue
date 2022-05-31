@@ -1,19 +1,23 @@
 <template>
-  <MoleculeBudgetManagerCategory  :category="transactionCategories[0]" :disabled="true" :hasErrors="freeBudgetErrors" :value="freeBudget"
-                                  :validation="v$.freeBudget" />
+  <!-- TODO - rework this component - it uses <p>-tags and one is even empty -->
+  <!-- TODO - this component is only used inside config object (in component BudgetManager), passed to a collapsible component. maybe work with slots? -->
+  <div class="organism-budget-list">
+    <MoleculeBudgetManagerCategory  :category="transactionCategories[0]" :disabled="true" :hasErrors="freeBudgetErrors" :value="freeBudget"
+                                    :validation="v$.freeBudget" />
 
-  <template v-for="(category, index) in transactionCategories" :key="index">
-    <MoleculeBudgetManagerCategory v-if="index > 0" :category="category" @amount-changed="calculateFreeBudget" @reset="resetCategory" :value="category.balance"/>
-  </template>
+    <template v-for="(category, index) in transactionCategories" :key="index">
+      <MoleculeBudgetManagerCategory v-if="index > 0" :category="category" @amount-changed="calculateFreeBudget" @reset="resetCategory" :value="category.balance"/>
+    </template>
 
-  <div class="row">
-    <p class="col-8">&nbsp;</p>
-    <p class="col-2 budget-manager__total">
-      <span>Total:</span><span :class="{ 'negative': total < 0 }">{{ formatCurrency(total) }}</span>
-    </p>
-    <p class="col-2">
-      <AtomButton text="Speichern" :disabled="saveDisabled" @click="saveChanges" />
-    </p>
+    <div class="row">
+      <p class="col-8">&nbsp;</p>
+      <p class="col-2 organism-budget-list__total">
+        <span>Total:</span><span :class="{ 'negative': total < 0 }">{{ formatCurrency(total) }}</span>
+      </p>
+      <p class="col-2">
+        <AtomButton type="light" text="Speichern" :disabled="saveDisabled" @click="saveChanges" />
+      </p>
+    </div>
   </div>
 </template>
 

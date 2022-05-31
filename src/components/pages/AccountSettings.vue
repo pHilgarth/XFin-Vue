@@ -34,7 +34,7 @@ import AtomButton                       from '@/components/atoms/shared/AtomButt
 import AtomHeadline                     from '@/components/atoms/shared/AtomHeadline';
 import MoleculeInputCheckbox            from '@/components/molecules/shared/MoleculeInputCheckbox';
 import MoleculeInputText                from '@/components/molecules/shared/MoleculeInputText';
-import OrganismAccountForm              from '@/components/organisms/OrganismAccountForm';
+import OrganismAccountForm              from '@/components/organisms/shared/OrganismAccountForm';
 
 import { AccountSettingsService }       from '@/services/account-settings-service';
 import { InternalBankAccountService }   from '@/services/internal-bank-account-service';

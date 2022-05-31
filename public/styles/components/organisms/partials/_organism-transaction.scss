@@ -1,11 +1,11 @@
-.transaction {
+.organism-transaction {
     width: 50%;
 
     &__account {
         @include rem(( padding-bottom: 20px ));
     }
 
-    &__category {
+    &__cost-center {
         border-bottom: 1px solid $color-borders;
 
         @include rem((

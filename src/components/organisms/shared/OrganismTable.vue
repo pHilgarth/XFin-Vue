@@ -1,5 +1,6 @@
+<!-- TODO - this component is only used inside config object (i.e in component AccountView), passed to a collapsible component. maybe work with slots? -->
 <template>
-  <table>
+  <table class="organism-table">
     <MoleculeTableHead v-if="config.tableHead" :config="config.tableHead" />
     <MoleculeTableBody v-if="config.tableBody" :config="config.tableBody" />
   </table>

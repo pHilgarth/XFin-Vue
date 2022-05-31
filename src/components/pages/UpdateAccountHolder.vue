@@ -1,11 +1,11 @@
 <template>
-  <div v-if="dataLoaded" class="account-holder" style="display:block;overflow:visible">
+  <div v-if="dataLoaded" class="update-account-holder" style="display:block;overflow:visible">
     <OrganismAccountHolder headline="Kontoinhaber bearbeiten" :accountHolder="copiedAccountHolder" @save="updateAccountHolder" />
   </div>
 </template>
 
 <script>
-import OrganismAccountHolder              from '@/components/organisms/OrganismAccountHolder';
+import OrganismAccountHolder              from '@/components/organisms/shared/OrganismAccountHolder';
 
 import { AccountHolderService }           from '@/services/account-holder-service';
 import { CopyService }                    from '@/services/copy-service';

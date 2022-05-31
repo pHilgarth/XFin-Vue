@@ -1,0 +1,75 @@
+.molecule-budget-manager-category {
+  //align-items: center;
+  //display: flex;
+  overflow: hidden;
+  transition: all 1s ease-in-out;
+  @include rem(max-height, 66px);
+
+  &.changed {
+    border: 2px solid $color-secondary;
+  }
+
+  &.show-detail {
+    transition: all 1s ease-in-out;
+    @include rem(max-height, 1000px);
+  }
+
+  &__header {
+    display: flex;
+  }
+
+  &__balance {
+    display: flex;
+    align-items: center;
+
+    .xfin__form__error {
+      transform: translateX(-100%);
+      @include rem(padding-right, 30px);
+    }
+  }
+
+  &__reset {
+    cursor: pointer;
+    @include rem(margin-left, 20px);
+
+    svg {
+      @include rem(width, 25px);
+      @include rem(height, 25px);
+    }
+  }
+
+  //i {
+  //    position: absolute;
+  //    cursor: pointer;
+  //    transition: all .5s;
+  //    top: 50%;
+  //    transform: translateY(-50%);
+  //
+  //    &.reset {
+  //        @include rem((
+  //                font-size: 30px,
+  //                left: 5px,
+  //        ));
+  //
+  //        &:hover {
+  //            transform: translateY(-50%) rotate(-360deg);
+  //        }
+  //    }
+  //
+  //    &.save {
+  //        @include rem((
+  //                font-size: 27px,
+  //                left: 50px,
+  //        ));
+  //
+  //        &:hover {
+  //            transform: translateY(-50%) rotateY(360deg);
+  //        }
+  //    }
+  //
+  //    &:hover {
+  //        color: $color-secondary;
+  //        transition: all .5s;
+  //    }
+  //}
+}

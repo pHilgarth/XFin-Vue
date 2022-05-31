@@ -1,13 +1,13 @@
 <template>
 <!-- TODO remove style attribute again -->
-  <div style="overflow:visible" class="account-holder">
+  <div style="overflow:visible" class="new-account-holder">
     <OrganismAccountHolder headline="Kontoinhaber hinzufügen" @save="saveAccountHolder" />
     <!-- TODO - implement MoleculeLoading on every component, where an API call is made -->
   </div>
 </template>
 
 <script>
-import OrganismAccountHolder from "@/components/organisms/OrganismAccountHolder";
+import OrganismAccountHolder from "@/components/organisms/shared/OrganismAccountHolder";
 
 import { AccountHolderService } from '@/services/account-holder-service';
 import { InternalBankAccountService } from "@/services/internal-bank-account-service";

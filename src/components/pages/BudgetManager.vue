@@ -8,7 +8,7 @@
     <MoleculeLoading v-if="!accountHoldersLoaded" :loadingError="accountHoldersLoadingError" errorMessage="Fehler beim Laden der Kontoinhaber!"/>
 
     <template v-else>
-      <MoleculeInputSelect classList="budget-manager__account-holder pb-5" :options="accountHolderOptions"
+      <MoleculeInputSelect class="budget-manager__account-holder pb-5" :options="accountHolderOptions"
                            field="accountHolder" v-model="selectedAccountHolderName" label="Budget verwalten für:"/>
 
       <MoleculeLoading v-if="selectedAccountHolder && !categoriesLoaded" :loadingError="categoriesLoadingError" errorMessage="Fehler beim Laden der Konten!" />
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
+import MoleculeInputSelect from '@/components/molecules/shared/MoleculeInputSelect';
 import MoleculeLoading from '@/components/molecules/shared/MoleculeLoading';
 import OrganismCollapsible from '@/components/organisms/shared/OrganismCollapsible';
 

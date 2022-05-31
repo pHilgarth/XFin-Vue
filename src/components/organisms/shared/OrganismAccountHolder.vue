@@ -1,36 +1,40 @@
 <template>
-  <section v-if="!showForm" class="account-holder__main">
-    <AtomHeadline tag="h1" :text="headline" />
-    <article>
-      <MoleculeInputText  class="account-holder__name pb-5" field="name" :hasErrors="nameHasErrors || duplicatedName"
-                          :validation="v$.name" v-model="name" label="Name" @blur="v$.name.$touch()"/>
+  <!-- TODO - rework this component, the form rendering shouldnt be handeled with v-if -->
+  <!-- TODO - maybe another component -->
+  <div class="organism-account-holder">
+    <section v-if="!showForm">
+      <AtomHeadline tag="h1" :text="headline" />
+      <article>
+        <MoleculeInputText  class="organism-account-holder__name pb-5" field="name" :hasErrors="nameHasErrors || duplicatedName"
+                            :validation="v$.name" v-model="name" label="Name" @blur="v$.name.$touch()"/>
 
-      <template v-if="duplicatedName" to=".account-holder__name">
-        <AtomParagraph class="xfin__form__error account-holder__name__error" text="Dieser Name wird bereits verwendet!"/>
-      </template>
+        <template v-if="duplicatedName" to=".organism-account-holder__name">
+          <AtomParagraph class="xfin__form__error organism-account-holder__name__error" text="Dieser Name wird bereits verwendet!"/>
+        </template>
 
-      <div class="account-holder__accounts">
-        <AtomHeadline class="account-holder__accounts-headline" tag="h4" text="Konten:" />
-        <AtomButton text="&plus; Neues Konto anlegen" type="light" @click="addAccount"/>
+        <div class="organism-account-holder__accounts">
+          <AtomHeadline class="account-holder__accounts__headline" tag="h4" text="Konten:" />
+          <AtomButton text="&plus; Neues Konto anlegen" type="light" @click="addAccount"/>
 
-        <div v-if="bankAccounts.length" class="account-holder__account-items">
-          <template v-for="(account, index) in bankAccounts" :key="index">
-            <div class="account-holder__account">
-              <AtomSpan v-if="account.isNew" class="account-holder__new" text="NEU" />
-              <AtomSpan v-else-if="account.changed" class="account-holder__changed" text="GEÄNDERT" />
-              <AtomSpan class="account-holder__delete" :data-index="index" text="&times;" @click="deleteAccount" />
-              <span class="account-holder__account-number">{{ account.accountNumber }}</span>
-              <span class="account-holder__balance">{{ formatBalance(account.balance) }}</span>
-              <AtomButton :data-index="index" text="Bearbeiten" type="light-small" @click="editAccount" />
-            </div>
-          </template>
+          <div v-if="bankAccounts.length" class="organism-account-holder__account-items">
+            <template v-for="(account, index) in bankAccounts" :key="index">
+              <div class="organism-account-holder__account">
+                <AtomSpan v-if="account.isNew" class="organism-account-holder__new" text="NEU" />
+                <AtomSpan v-else-if="account.changed" class="organism-account-holder__changed" text="GEÄNDERT" />
+                <AtomSpan class="organism-account-holder__delete" :data-index="index" text="&times;" @click="deleteAccount" />
+                <AtomSpan class="organism-account-holder__account-number" :text="account.accountNumber" @click="deleteAccount" />
+                <AtomSpan class="organism-account-holder__balance" :text="formatBalance(account.balance)" @click="deleteAccount" />
+                <AtomButton :data-index="index" text="Bearbeiten" type="light-small" @click="editAccount" />
+              </div>
+            </template>
+          </div>
         </div>
-      </div>
-      <AtomButton :disabled="saveDisabled" text="Kontoinhaber speichern" type="primary" @click="saveAccountHolder" />
-    </article>
-  </section>
-  <div v-else class="account-holder__form">
-    <OrganismAccountForm @cancel="showForm = false" @save="saveAccount" :formData="formData" :headline="formHeadline"/>
+        <AtomButton :disabled="saveDisabled" text="Kontoinhaber speichern" type="primary" @click="saveAccountHolder" />
+      </article>
+    </section>
+    <div v-else>
+      <OrganismAccountForm @cancel="showForm = false" @save="saveAccount" :formData="formData" :headline="formHeadline"/>
+    </div>
   </div>
 </template>
 
@@ -40,9 +44,9 @@ import { useVuelidate } from '@vuelidate/core';
 import AtomButton from '@/components/atoms/shared/AtomButton';
 import AtomHeadline from '@/components/atoms/shared/AtomHeadline';
 import AtomParagraph from '@/components/atoms/shared/AtomParagraph';
-import AtomSpan from '@/components/atoms/AtomSpan';
+import AtomSpan from '@/components/atoms/shared/AtomSpan';
 import MoleculeInputText from '@/components/molecules/shared/MoleculeInputText';
-import OrganismAccountForm from '@/components/organisms/OrganismAccountForm';
+import OrganismAccountForm from '@/components/organisms/shared/OrganismAccountForm';
 
 import { AccountHolderService } from '@/services/account-holder-service';
 import { CopyService } from '@/services/copy-service';

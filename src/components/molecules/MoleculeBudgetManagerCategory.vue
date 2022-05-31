@@ -1,10 +1,11 @@
 <template>
-  <div class="xfin__card budget-manager__category" :class="{ 'changed': category.dirty, 'show-detail': showDetail }">
-    <div class="budget-manager__category-header">
-      <div class="xfin__card__content col-8 budget-manager__category__name">
+  <!-- TODO - .molecule__card classes doesnt belong here, check what they do and maybe extend .molecule-budget-manager-category or else -->
+  <div class="molecule-budget-manager-category" :class="{ 'changed': category.dirty, 'show-detail': showDetail }">
+    <div class="molecule-budget-manager-category__header">
+      <div class="col-8">
         <span>{{ category.name }}</span>
       </div>
-      <div class="xfin__card__content col-2 budget-manager__category__balance">
+      <div class="col-2 molecule-budget-manager-category__balance">
         <!-- TODO - don't use another Atom here - just use AtomInputText and copy the methods from AtomBudgetManagerInput-->
         <!-- <AtomInputText  :class="`xfin__form__form-control form-control text-right ${hasErrors ? 'has-errors' : ''}`" :value="balance" :disabled="disabled" -->
         <!-- <AtomInputText  :class="`xfin__form__form-control form-control text-right ${hasErrors ? 'has-errors' : ''}`" :value="modelValue" :disabled="disabled" -->
@@ -16,7 +17,7 @@
                          :text="getErrorMessage(error.$property, error.$validator, errorMessageParams)"/>
         </template>
       </div>
-      <div v-if="category.dirty" class="budget-manager__category__reset" title="Zurücksetzen"
+      <div v-if="category.dirty" class="molecule-budget-manager-category__reset" title="Zurücksetzen"
            @click="$emit('reset', category)">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
              class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
@@ -24,10 +25,10 @@
           <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/>
         </svg>
       </div>
-      <div class="budget-manager__detail" @click="showDetail = !showDetail">Detailansicht</div>
+      <div @click="showDetail = !showDetail">Detailansicht</div>
     </div>
     <hr />
-    <div class="budget-manager__category-detail">
+    <div>
       <ul>
         <li>Sample</li>
         <li>Sample</li>
@@ -45,7 +46,7 @@
 </template>
 
 <script>
-import AtomInputText from '@/components/atoms/AtomInputText';
+import AtomInputText from '@/components/atoms/shared/AtomInputText';
 import AtomParagraph from "@/components/atoms/shared/AtomParagraph";
 
 import {NumberService} from '@/services/number-service';

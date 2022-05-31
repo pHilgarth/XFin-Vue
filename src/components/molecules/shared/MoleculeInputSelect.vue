@@ -1,5 +1,5 @@
 <template>
-  <div class="form-floating" :class="classList" :id="id">
+  <div class="molecule-input-select form-floating">
     <AtomInputSelect :id="field" :value="modelValue" :options="options"
                      @input="$emit('update:modelValue', $event.target.value)" @blur="$emit('blur')"/>
     <AtomLabel class="xfin__form__label" :for="field" :text="label"/>
@@ -19,8 +19,6 @@ export default {
   ],
 
   props: {
-    classList: {type: String},
-    id: {type: String},
     field: {type: String},
     options: {
       type: Array,

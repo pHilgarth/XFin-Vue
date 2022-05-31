@@ -1,0 +1,75 @@
+.organism-account-holder {
+  &__name {
+    border-bottom: 1px solid $color-borders;
+    @include rem(margin-bottom, 20px);
+
+    &__error {
+      @include rem(transform, translateY(-70px));
+    }
+  }
+
+  &__accounts {
+    border-bottom: 1px solid $color-borders;
+    @include rem(margin-bottom, 20px);
+    @include rem(padding-bottom, 20px);
+
+    &__headline {
+      @include rem( margin-bottom, 30px);
+    }
+  }
+
+  &__account-items {
+    display: flex;
+    flex-wrap: wrap;
+
+    @include rem(margin-top, 30px);
+  }
+
+  &__account {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    @include rem(border-radius, 5px);
+    @include rem(height, 150px);
+    @include rem(width, 150px);
+    @include rem(font-size, 24px);
+    @include rem(margin-right, 10px);
+    @include rem(margin-bottom, 10px);
+  }
+
+  &__new, &__changed {
+    color: $color-green;
+    font-weight: 500;
+    position: absolute;
+    @include rem(top, 5px);
+    @include rem(left, 10px);
+    @include rem(font-size, 16px);
+  }
+
+  &__changed {
+    color: $color-orange;
+  }
+
+  &__delete {
+    color: $color-red;
+    cursor: pointer;
+    position: absolute;
+    @include rem(line-height, 10px);
+    @include rem(top, 10px);
+    @include rem(right, 10px);
+  }
+
+  &__account-number {
+    border-bottom: 1px solid $color-borders;
+    width: 80%;
+    text-align: center;
+    @include rem(font-size, 20px);
+  }
+
+  &__balance {
+    @include rem(font-size, 18px);
+  }
+}

@@ -1,12 +1,12 @@
 <template>
-    <div class="form-floating" :class="classList" :id="id">
+    <div class="molecule-input-auto-suggest form-floating">
         <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :placeholder="label"
                         :classList="`xfin__form__form-control form-control col-4 ${hasErrors ? 'has-errors' : ''}`"
                         autocomplete="off" @blur="onBlur" @input="onInput" />
                         
         <AtomLabel class="xfin__form__label" :for="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
         <!-- TODO - hide ul again, if input looses focus (on blur?) -> this is almost done! But if I hover on an element and then press tab, the box wont disappear, thats a cornercase but maybe i can fix it. I would need to track if TAB was pressed i guess-->
-        <AtomUnorderedList  v-if="suggestions && suggestions.length > 0" class="xfin__suggestions" :items="suggestions" @itemClicked="pickItem"
+        <AtomUnorderedList  v-if="suggestions && suggestions.length > 0" class="molecule-input-auto-suggest__suggestions" :items="suggestions" @itemClicked="pickItem"
                             @itemMouseenter="hoverOnItem = true" @itemMouseleave="hoverOnItem = false" />
 
         <template v-for="(error, index) in validation?.$errors" :key="index">
@@ -16,17 +16,15 @@
 </template>
 
 <script>
-import AtomInputText from "@/components/atoms/AtomInputText";
+import AtomInputText from "@/components/atoms/shared/AtomInputText";
 import AtomLabel from "@/components/atoms/shared/AtomLabel";
 import AtomParagraph from "@/components/atoms/shared/AtomParagraph";
-import AtomUnorderedList from '@/components/atoms/AtomUnorderedList';
+import AtomUnorderedList from '@/components/atoms/shared/AtomUnorderedList';
 
 import { errorMessages } from "@/services/form-error-messages";
 export default {
     //TODO - refactor props - i might not need all of them - just copied from MoleculeInputText
     props: {
-        id:                 { type: String },
-        classList:          { type: String },
         field:              { type: String, required: true, },
         label:              { type: String, required: true, },
         hasErrors:          { type: Boolean },

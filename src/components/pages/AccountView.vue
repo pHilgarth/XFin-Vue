@@ -31,6 +31,8 @@
     <!-- TODO - maybe remove "component docs" out of components into a readme or similar -->
     <!-- TODO - rework form classes -> every form should have "xfin__form" and the form-elements "xfin__form__<control|error|label|etc....>" -->
     <!-- TODO - check if there are any classes set, which are not used by CSS and which are NO root-classes used for clarification (component root-classes) -->
+    <!-- TODO - check if <h>-tags are used anywhere else than in AtomHeadline -->
+    <!-- TODO - check if <p>-tags are used anywhere else than in AtomParagraph -->
 
 <!--    <div class="dev-hint important">-->
 <!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->

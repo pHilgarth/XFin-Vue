@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import AtomInputText from "@/components/atoms/AtomInputText";
+import AtomInputText from "@/components/atoms/shared/AtomInputText";
 import AtomLabel from "@/components/atoms/shared/AtomLabel";
 import AtomParagraph from "@/components/atoms/shared/AtomParagraph";
 

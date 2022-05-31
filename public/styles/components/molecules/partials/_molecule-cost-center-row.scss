@@ -1,4 +1,4 @@
-.xfin__cost-center {
+.molecule-cost-center-row {
   background-color: $color-primary;
   color: $color-white;
   position: relative;
@@ -14,7 +14,7 @@
     margin: 0;
   }
 
-  &--edit {
+  &__edit {
     position: relative;
   }
 

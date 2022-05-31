@@ -1,0 +1,20 @@
+.organism-budget-list__total {
+  font-weight: bold;
+  padding: 0;
+  @include rem((
+          font-size: 20px,
+  ));
+
+  span {
+    &:first-child {
+      float: left
+    }
+
+    &:last-child {
+      float: right;
+      @include rem((
+              padding-right: 40px
+      ));
+    }
+  }
+}
