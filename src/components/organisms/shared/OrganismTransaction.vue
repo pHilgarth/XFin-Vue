@@ -27,7 +27,7 @@
                                   v-model="includeCounterPartAccount" label="Bankdaten hinzufügen" :_switch="true" />
 
           <div v-if="includeCounterPartAccount" class="organism-transaction__counter-part-account pb-5">
-            <MoleculeInputText  class="transaction__counter-part-account-data" field="counter-part-iban"
+            <MoleculeInputText  class="organism-transaction__counter-part-account-data" field="counter-part-iban"
                                 :hasErrors="counterPartIbanErrors" v-model="counterPartIban" :validation="v$.counterPartIban" label="Iban"
                                 @blur="v$.counterPartIban.$touch()" />
 

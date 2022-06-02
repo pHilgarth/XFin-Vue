@@ -1,6 +1,4 @@
 .molecule-budget-manager-category {
-  //align-items: center;
-  //display: flex;
   overflow: hidden;
   transition: all 1s ease-in-out;
   @include rem(max-height, 66px);
@@ -38,6 +36,7 @@
     }
   }
 
+  //TODO - check if I need this
   //i {
   //    position: absolute;
   //    cursor: pointer;

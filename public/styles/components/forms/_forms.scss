@@ -1,5 +1,5 @@
 .xfin__form {
-    &__control {
+    &__form-control {
         border-radius: .5rem;
         border-width: .1rem;
         box-shadow: none;
@@ -11,22 +11,6 @@
         &:focus {
             box-shadow: none;
             border-color: $color-secondary
-        }
-
-        &.form-control-sm {
-            @include rem(( font-size: 14px ));
-        }
-    }
-
-    &__button {
-        @include rem((
-            margin-bottom: 30px
-        ));
-
-        &.btn-submit-account, &.btn-edit-account {
-            @include rem((
-                margin-left: 15px,
-            ));
         }
     }
 
@@ -42,58 +26,8 @@
     &__label i {
         color: $color-form-required;
     }
-
-    .form-group {
-        &.xfin__form__group-select {
-            @include rem((
-                margin-bottom: 50px,
-            ));
-        }
-
-        .xfin__form__form-control {
-            border: 1px solid $color-borders;
-            border-radius: .5rem;
-
-            &:disabled {
-                border: 1px solid rgba(118, 118, 118, 0.3);
-            }
-
-            // TODO - find a better color or just leave it black
-            // option.new-account {
-            //     color: $color-new-account-option;
-            // }
-        }
-
-        label {
-            margin: 0;
-        }
-
-        .errors-output {
-            color: $color-form-errors;
-            @include rem((
-                font-size: 14px,
-                margin-top: 10px,
-            ));
-        }
-
-        .xfin__form__form-control {
-            @include rem((
-                padding: 5px,
-            ));
-        }
-
-        #checkboxes {
-            display: flex;
-
-            .checkbox-group:first-child {
-                @include rem((
-                    margin-right: 25px,
-                ));
-            }
-        }
-    }
 }
 
-.form-floating .xfin__form__control.form-select {
+.form-floating .xfin__form__form-control.form-select {
     @include rem(( height: 62px ));
 }

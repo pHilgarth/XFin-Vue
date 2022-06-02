@@ -44,12 +44,6 @@ export default {
     MoleculeCollapsibleBody,
   },
 
-  computed: {
-    cardHeaderClassList() {
-      return this.cardExpanded ? " expanded" : "";
-    }
-  },
-
   data() {
     return {
       collapsed: this.config.collapsed,

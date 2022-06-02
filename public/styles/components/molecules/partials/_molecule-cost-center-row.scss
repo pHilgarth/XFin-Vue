@@ -24,7 +24,7 @@
     transform: translateY(-50%);
     @include rem(right, 15px);
 
-    .xfin__button--primary {
+    .atom-button--primary {
       @include rem(margin-right, 5px);
     }
   }

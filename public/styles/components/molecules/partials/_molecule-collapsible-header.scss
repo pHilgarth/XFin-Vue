@@ -7,13 +7,6 @@
           border-radius: 5px,
   ));
 
-  &.expanded {
-    transition: all .5s;
-    @include rem((
-            border-radius: 5px 5px 0 0,
-    ));
-  }
-
   &__title {
     color: #fff;
     display: inline-block;
