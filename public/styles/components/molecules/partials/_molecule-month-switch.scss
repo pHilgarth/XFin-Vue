@@ -1,6 +1,6 @@
 .molecule-month-switch {
-    border-top: 1px solid #235baf;
-    color: #fff;
+    border-top: 1px solid $color-secondary;
+    color: $color-white;
 
     ul {
         align-items: flex-start;
@@ -14,14 +14,14 @@
         ));
         
         li {
-            background-color: #235baf;
+            background-color: $color-secondary;
             letter-spacing: 2px;
             padding: 1rem 0;
             text-align: center;
             width: 8.3333333%;
 
             &.active {
-                background-color: #3f72bf;
+                background-color: $color-secondary-light;
                 box-shadow: 2px 3px 5px 0px rgba(0, 0, 0, .5);
                 transform: scale(1.05);
             }
