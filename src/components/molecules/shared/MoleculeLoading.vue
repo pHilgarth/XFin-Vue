@@ -8,8 +8,14 @@
 <script>
 export default {
   props: {
-    errorMessage: { type: String, required: true },
-    loadingError: { type: Boolean, required: true },
+    errorMessage: {
+      type: String,
+      required: true
+    },
+    loadingError: {
+      type: Boolean,
+      required: true
+    },
   }
 }
 </script>

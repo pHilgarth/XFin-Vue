@@ -1,5 +1,5 @@
 <template>
-    <div :class="`molecule-input-checkbox form-check ${_switch ? 'form-switch ' : ''}`">
+    <div :class="`molecule-input-checkbox form-check ${renderAsSwitch ? 'form-switch ' : ''}`">
         <AtomInputCheckbox :id="field" :checked="modelValue" @input="$emit('update:modelValue', $event.target.checked)"
                            :disabled="disabled"/>
         <AtomLabel class="xfin__form__label" :for="field" :text="label" />
@@ -13,20 +13,22 @@ import AtomLabel from '@/components/atoms/shared/AtomLabel';
 export default {
     props: {
         field:              { type: String },
-        modelValue:         { type: Boolean, required: true },
-        label:              { type: String, required: true },
-        //if true, component will render as a 'on-off'-switch
-        _switch:            { type: Boolean },
+        renderAsSwitch:     { type: Boolean },
         disabled:           { type: Boolean },
+
+        modelValue: {
+          type: Boolean,
+          required: true
+        },
+        label: {
+          type: String,
+          required: true
+        },
     },
 
     components: {
         AtomInputCheckbox,
         AtomLabel,
-    },
-
-    data() {
-        return { counter: 0 };
     },
 };
 </script>

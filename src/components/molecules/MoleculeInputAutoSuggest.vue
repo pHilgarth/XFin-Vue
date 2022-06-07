@@ -10,7 +10,7 @@
                             @itemMouseenter="hoverOnItem = true" @itemMouseleave="hoverOnItem = false" />
 
         <template v-for="(error, index) in validation?.$errors" :key="index">
-            <AtomParagraph classList="xfin__form__error" :text="errorService.getErrorMessage(error.$property, error.$validator, errorMessageParams)" />
+          <MoleculeFormError :error="error" :errorMessageParams="errorMessageParams" />
         </template>
     </div>
 </template>
@@ -18,8 +18,9 @@
 <script>
 import AtomInputText from "@/components/atoms/shared/AtomInputText";
 import AtomLabel from "@/components/atoms/shared/AtomLabel";
-import AtomParagraph from "@/components/atoms/shared/AtomParagraph";
 import AtomUnorderedList from '@/components/atoms/shared/AtomUnorderedList';
+
+import MoleculeFormError from '@/components/molecules/shared/MoleculeFormError';
 
 import { errorService } from "@/services/form-error-service";
 export default {
@@ -44,8 +45,8 @@ export default {
     components: {
         AtomInputText,
         AtomLabel,
-        AtomParagraph,
         AtomUnorderedList,
+        MoleculeFormError,
     },
 
     data() {

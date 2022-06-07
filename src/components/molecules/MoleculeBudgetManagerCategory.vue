@@ -13,8 +13,7 @@
                        :value="value" :disabled="disabled"
                        @input="processInput"/>
         <template v-for="(error, index) in validation?.$errors" :key="index">
-          <AtomParagraph class="xfin__form__error"
-                         :text="errorService.getErrorMessage(error.$property, error.$validator, errorMessageParams)"/>
+          <MoleculeFormError :error="error" :errorMessageParams="errorMessageParams" />
         </template>
       </div>
       <div v-if="category.dirty" class="molecule-budget-manager-category__reset" title="Zurücksetzen"
@@ -47,7 +46,8 @@
 
 <script>
 import AtomInputText from '@/components/atoms/shared/AtomInputText';
-import AtomParagraph from "@/components/atoms/shared/AtomParagraph";
+
+import MoleculeFormError from "@/components/molecules/shared/MoleculeFormError";
 
 import { numberService } from '@/services/number-service';
 import { errorService } from "@/services/form-error-service";
@@ -55,7 +55,7 @@ import { errorService } from "@/services/form-error-service";
 export default {
   components: {
     AtomInputText,
-    AtomParagraph,
+    MoleculeFormError,
   },
 
   props: {

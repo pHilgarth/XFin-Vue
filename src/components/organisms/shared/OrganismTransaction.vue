@@ -24,15 +24,15 @@
                                     @blur="blurAutoSuggest" @itemPicked="pickItem" />
 
           <MoleculeInputCheckbox  v-if="showCheckbox" :class="includeCounterPartAccount ? 'pb-1' : 'pb-5'" field="include-counter-part-account"
-                                  v-model="includeCounterPartAccount" label="Bankdaten hinzufügen" :_switch="true" />
+                                  v-model="includeCounterPartAccount" label="Bankdaten hinzufügen" :renderAsSwitch="true" />
 
           <div v-if="includeCounterPartAccount" class="organism-transaction__counter-part-account pb-5">
             <MoleculeInputText  class="organism-transaction__counter-part-account-data" field="counter-part-iban"
-                                :hasErrors="counterPartIbanErrors" v-model="counterPartIban" :validation="v$.counterPartIban" label="Iban"
+                                :hasErrors="counterPartIbanErrors" v-model="counterPartIban" :validation="v$.counterPartIban" label="IBAN"
                                 @blur="v$.counterPartIban.$touch()" />
 
             <MoleculeInputText  class="organism-transaction__counter-part-account-data" field="counter-part-bic" :hasErrors="counterPartBicErrors"
-                                v-model="counterPartBic" :validation="v$.counterPartBic" label="Bic" @blur="v$.counterPartBic.$touch()" />
+                                v-model="counterPartBic" :validation="v$.counterPartBic" label="BIC" @blur="v$.counterPartBic.$touch()" />
           </div>
         </div>
 

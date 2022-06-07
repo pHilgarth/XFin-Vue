@@ -18,24 +18,27 @@ export default {
   ],
 
   props: {
-    field: { type: String },
+    field:      { type: String },
+    hasErrors:  { type: Boolean },
+    validation: { type: Object },
+
     options: {
       type: Array,
       required: true,
     },
-    modelValue: { type: [String, Number], required: true },
-    label: { type: String, required: true },
-    hasErrors: { type: Boolean },
-    validation:     { type: Object },
+    modelValue: {
+      type: [String, Number],
+      required: true
+    },
+    label: {
+      type: String,
+      required: true
+    },
   },
 
   components: {
     AtomInputSelect,
     AtomLabel,
-  },
-
-  data() {
-    return {counter: 0}
   },
 };
 </script>

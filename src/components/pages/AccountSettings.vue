@@ -7,10 +7,10 @@
         <AtomButton type="light" text="Kontodaten bearbeiten" @click.prevent="showForm = true" />
       </div>
       <MoleculeInputCheckbox class="pb-3" v-model="effectsExpenses" label="Ausgaben erlauben"
-                             :disabled="effectsExpensesDisabled" :_switch="true"/>
-      <MoleculeInputCheckbox class="pb-3" v-model="receivesRevenues" label="Einnahmen erlauben" :_switch="true"/>
+                             :disabled="effectsExpensesDisabled" :renderAsSwitch="true"/>
+      <MoleculeInputCheckbox class="pb-3" v-model="receivesRevenues" label="Einnahmen erlauben" :renderAsSwitch="true"/>
       <MoleculeInputCheckbox class="pb-4" v-model="allowsOverdraft" label="Kontoüberziehung erlauben"
-                             :disabled="overdraftDisabled" :_switch="true"/>
+                             :disabled="overdraftDisabled" :renderAsSwitch="true"/>
       <!-- TODO - implement a little 'help'-icon for input fields, which provides info about the field when hovering it (question mark) -->
       <!-- TODO color red when input is negative -->
       <MoleculeInputText  class="pb-5" field="balance-threshold" :hasErrors="balanceThresholdErrors" v-model="balanceThreshold"
