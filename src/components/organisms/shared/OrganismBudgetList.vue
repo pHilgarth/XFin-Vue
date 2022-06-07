@@ -26,7 +26,7 @@ import AtomButton from "@/components/atoms/shared/AtomButton";
 import MoleculeBudgetManagerCategory from "@/components/molecules/MoleculeBudgetManagerCategory";
 
 import { InternalTransactionService } from "@/services/internal-transaction-service";
-import { NumberService } from "@/services/number-service";
+import { numberService } from "@/services/number-service";
 
 import { freeBudgetValidator } from "@/validation/custom-validators";
 import { useVuelidate } from "@vuelidate/core";
@@ -48,7 +48,7 @@ export default {
 
   computed: {
     // budgetNegative() {
-    //   return NumberService.parseFloat(this.freeBudget) < 0;
+    //   return numberService.parseFloat(this.freeBudget) < 0;
     // },
 
     freeBudgetErrors() {
@@ -69,11 +69,11 @@ export default {
       total: this.transactionCategories.reduce((a, b) => {
         //this step is needed because initially a is an object with a property balance
         //but the return statement returns a number 
-        let aValue = a.balance || NumberService.amountToString(a);
+        let aValue = a.balance || numberService.amountToString(a);
 
         return (
-          NumberService.parseFloat(aValue) +
-          NumberService.parseFloat(b.balance)
+          numberService.parseFloat(aValue) +
+          numberService.parseFloat(b.balance)
         );
       }),
     };
@@ -81,7 +81,7 @@ export default {
 
   methods: {
     calculateFreeBudget(value, category, dirty = true) {      
-      if (NumberService.parseFloat(value) !== category.originalBalance) {
+      if (numberService.parseFloat(value) !== category.originalBalance) {
         category.dirty = dirty;
         
         if (!this.dirtyCategories.find(c => c.id === category.id)) {
@@ -98,16 +98,16 @@ export default {
       //let decimals = value.split(",")[1]?.length || 0;
 
       //string to number on value
-      const numValue = value !== "" ? NumberService.parseFloat(value) : 0;
+      const numValue = value !== "" ? numberService.parseFloat(value) : 0;
 
       //string to number on categoryBalance
       const numCategoryBalance =
         category.balance !== ""
-          ? NumberService.parseFloat(category.balance)
+          ? numberService.parseFloat(category.balance)
           : 0;
 
       //string to number on current free budget
-      const numFreeBudget = NumberService.parseFloat(this.freeBudget);
+      const numFreeBudget = numberService.parseFloat(this.freeBudget);
 
       //calculate new free budget
       this.freeBudget = this.formatCurrency(
@@ -128,15 +128,15 @@ export default {
             : sliceAmount;
 
         value =
-          typeof value === "number" ? value : NumberService.parseFloat(value);
+          typeof value === "number" ? value : numberService.parseFloat(value);
 
-        let result = NumberService.formatCurrency(value, includeCurrency);
+        let result = numberService.formatCurrency(value, includeCurrency);
         result = decimals < 2 ? result.slice(0, sliceAmount * -1) : result;
 
         return result;
       }
 
-      return NumberService.formatCurrency(value, includeCurrency);
+      return numberService.formatCurrency(value, includeCurrency);
     },
 
 //TODO - implement category resetting
@@ -150,7 +150,7 @@ export default {
 
         if (category.dirty) {
           const amount =
-            NumberService.parseFloat(category.balance) -
+            numberService.parseFloat(category.balance) -
             category.originalBalance;
 
           const currentDate = new Date().toISOString();
@@ -190,7 +190,7 @@ export default {
 
     storeOriginalBalanceValues() {
       this.transactionCategories.forEach((category) => {
-        category.originalBalance = NumberService.parseFloat(category.balance);
+        category.originalBalance = numberService.parseFloat(category.balance);
       });
     },
   },

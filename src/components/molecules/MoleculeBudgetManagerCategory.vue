@@ -14,7 +14,7 @@
                        @input="processInput"/>
         <template v-for="(error, index) in validation?.$errors" :key="index">
           <AtomParagraph class="xfin__form__error"
-                         :text="getErrorMessage(error.$property, error.$validator, errorMessageParams)"/>
+                         :text="errorService.getErrorMessage(error.$property, error.$validator, errorMessageParams)"/>
         </template>
       </div>
       <div v-if="category.dirty" class="molecule-budget-manager-category__reset" title="Zurücksetzen"
@@ -49,9 +49,8 @@
 import AtomInputText from '@/components/atoms/shared/AtomInputText';
 import AtomParagraph from "@/components/atoms/shared/AtomParagraph";
 
-import {NumberService} from '@/services/number-service';
-
-import {errorMessages} from "@/services/form-error-messages";
+import { numberService } from '@/services/number-service';
+import { errorService } from "@/services/form-error-service";
 
 export default {
   components: {
@@ -63,22 +62,15 @@ export default {
     category: {type: Object, required: true},
     disabled: {type: Boolean},
     hasErrors: {type: Boolean},
-    //modelValue: { type: Number },
-    //modelValue: { type: String },
     value: {type: String},
     validation: {type: Object},
     errorMessageParams: {type: Object}
   },
 
-  // computed: {
-  //   balance() {
-  //     return NumberService.formatCurrency(this.modelValue, false);
-  //   }
-  // },
-
   data() {
     return {
       showDetail: false,
+      errorService: errorService,
     }
   },
 
@@ -88,7 +80,7 @@ export default {
       const lengthBefore = event.target.value.length;
 
       if (this.validateInput(event)) {
-        const negative = NumberService.parseFloat(event.target.value) < 0;
+        const negative = numberService.parseFloat(event.target.value) < 0;
         let value = negative ? event.target.value.slice(1) : event.target.value;
 
         //TODO - move this formatting code into a service (this code formats the value and places the thounsand separators appropriatly
@@ -137,19 +129,6 @@ export default {
         event.target.selectionStart = caretPosition - 1;
         event.target.selectionEnd = caretPosition - 1;
       }
-    },
-
-    getErrorMessage(property, validator, params) {
-      let errorMessage = errorMessages[`${property}_${validator}`] || errorMessages[property];
-
-      for (const key in params) {
-        errorMessage = errorMessage.replace(`{${key}}`, params[key]);
-      }
-
-      //TODO - implement error handling: if the error message contains {...} substrings, but no params were passed to this function, return an empty errorMessage to prevent outputting weird strings
-      return errorMessage;
-      // return  errorMessages[`${property}_${validator}`] ||
-      //         errorMessages[property]
     },
 
     validateInput(event) {

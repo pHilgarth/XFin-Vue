@@ -50,7 +50,7 @@ import OrganismAccountForm from '@/components/organisms/shared/OrganismAccountFo
 
 import { AccountHolderService } from '@/services/account-holder-service';
 import { CopyService } from '@/services/copy-service';
-import { NumberService } from '@/services/number-service';
+import { numberService } from '@/services/number-service';
 
 import { accountHolderValidation } from '@/validation/validations';
 
@@ -142,7 +142,7 @@ export default {
     },
 
     formatBalance(value) {
-      return NumberService.formatCurrency(value);
+      return numberService.formatCurrency(value);
     },
 
     saveAccount(event) {

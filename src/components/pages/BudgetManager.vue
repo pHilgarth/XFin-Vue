@@ -29,7 +29,7 @@ import OrganismCollapsible from '@/components/organisms/shared/OrganismCollapsib
 
 import {AccountHolderService} from '@/services/account-holder-service';
 //import { AccountSettingsService } from '@/services/account-settings-service';
-import {NumberService} from '@/services/number-service';
+import {numberService} from '@/services/number-service';
 import {CostCenterService} from '@/services/cost-center-service.js';
 
 export default {
@@ -108,7 +108,7 @@ export default {
         bankAccount.transactionCategories.forEach(category => {
           //category.balance has to be a string although it's actually a number
           //this is because of the dynamic freeBudget calculation in OrganismBudgetList
-          category.balance = NumberService.formatCurrency(category.balance, false);
+          category.balance = numberService.formatCurrency(category.balance, false);
           category.bankAccountId = bankAccount.id;
         });
       }

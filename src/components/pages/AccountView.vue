@@ -74,7 +74,7 @@ import MoleculeLoading from "@/components/molecules/shared/MoleculeLoading";
 import OrganismCollapsible from "@/components/organisms/shared/OrganismCollapsible";
 
 import { AccountHolderService } from "@/services/account-holder-service";
-import { NumberService } from "@/services/number-service";
+import { numberService } from "@/services/number-service";
 
 export default {
   //TODO - try using created hook for API calls
@@ -200,7 +200,7 @@ export default {
     },
 
     formatCurrency(value) {
-      return NumberService.formatCurrency(value);
+      return numberService.formatCurrency(value);
     },
   },
 };

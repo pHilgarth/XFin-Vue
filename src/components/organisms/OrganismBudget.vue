@@ -5,7 +5,7 @@
 <script>
 import OrganismCollapsible from "@/components/organisms/shared/OrganismCollapsible";
 
-import { NumberService } from "@/services/number-service";
+import { numberService } from "@/services/number-service";
 
 export default {
   components: {
@@ -48,27 +48,27 @@ export default {
                 props: { class: 'col-2' },
             },
             {
-                content: NumberService.formatCurrency(category.proportionPreviousMonth),
+                content: numberService.formatCurrency(category.proportionPreviousMonth),
                 props: { class: (Number)(category.proportionPreviousMonth) < 0 ? 'negative col-3 align-right' : 'col-3 align-right' },
             },
             {
-                content: NumberService.formatCurrency(category.revenuesTotal),
+                content: numberService.formatCurrency(category.revenuesTotal),
                 props: { class: 'col-2 align-right' },
             },
             {
-              content: NumberService.formatCurrency(category.internalTransfersAmount),
+              content: numberService.formatCurrency(category.internalTransfersAmount),
               props: { class: (Number)(category.internalTransfersAmount) < 0 ? 'negative col-2 align-right' : 'test col-2 align-right' },
             },
             {
-                content: NumberService.formatCurrency(category.budget),
+                content: numberService.formatCurrency(category.budget),
                 props: { class: (Number)(category.budget) < 0 ? 'negative col-2 align-right' : 'col-2 align-right' },
             },
             {
-                content: NumberService.formatCurrency(Math.abs(category.expensesTotal)),
+                content: numberService.formatCurrency(Math.abs(category.expensesTotal)),
                 props: { class: 'col-2 align-right' },
             },
             {
-                content: NumberService.formatCurrency(category.balance),
+                content: numberService.formatCurrency(category.balance),
                 props: { class: (Number)(category.balance) < 0 ? 'negative col-1 align-right' : 'col-1 align-right' },
             },
           ],
@@ -160,7 +160,7 @@ export default {
         });
 
         if (format) {
-        return NumberService.formatCurrency(balanceTotal);
+        return numberService.formatCurrency(balanceTotal);
         }
         else {
         return balanceTotal;
@@ -175,7 +175,7 @@ export default {
         });
 
         if (format) {
-            return NumberService.formatCurrency(budgetTotal);
+            return numberService.formatCurrency(budgetTotal);
         } else {
             return budgetTotal;
         }
@@ -188,7 +188,7 @@ export default {
         expensesTotal += Math.abs(transactionCategory.expensesTotal);
         });
 
-        return NumberService.formatCurrency(expensesTotal);
+        return numberService.formatCurrency(expensesTotal);
     },
 
     getProportionTotal(format) {
@@ -199,7 +199,7 @@ export default {
         });
 
         if (format) {
-            return NumberService.formatCurrency(proportionTotal);
+            return numberService.formatCurrency(proportionTotal);
         } else {
             return proportionTotal;            
         }
@@ -212,7 +212,7 @@ export default {
         revenuesTotal += transactionCategory.revenuesTotal;
         });
 
-        return NumberService.formatCurrency(revenuesTotal);
+        return numberService.formatCurrency(revenuesTotal);
     },
   },
 };

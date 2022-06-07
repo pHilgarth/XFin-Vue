@@ -6,10 +6,10 @@
       <div class="account-settings__edit pb-2">
         <AtomButton type="light" text="Kontodaten bearbeiten" @click.prevent="showForm = true" />
       </div>
-      <MoleculeInputCheckbox classList="pb-3" v-model="effectsExpenses" label="Ausgaben erlauben"
+      <MoleculeInputCheckbox class="pb-3" v-model="effectsExpenses" label="Ausgaben erlauben"
                              :disabled="effectsExpensesDisabled" :_switch="true"/>
-      <MoleculeInputCheckbox classList="pb-3" v-model="receivesRevenues" label="Einnahmen erlauben" :_switch="true"/>
-      <MoleculeInputCheckbox classList="pb-4" v-model="allowsOverdraft" label="Kontoüberziehung erlauben"
+      <MoleculeInputCheckbox class="pb-3" v-model="receivesRevenues" label="Einnahmen erlauben" :_switch="true"/>
+      <MoleculeInputCheckbox class="pb-4" v-model="allowsOverdraft" label="Kontoüberziehung erlauben"
                              :disabled="overdraftDisabled" :_switch="true"/>
       <!-- TODO - implement a little 'help'-icon for input fields, which provides info about the field when hovering it (question mark) -->
       <!-- TODO color red when input is negative -->
@@ -38,7 +38,7 @@ import OrganismAccountForm              from '@/components/organisms/shared/Orga
 
 import { AccountSettingsService }       from '@/services/account-settings-service';
 import { InternalBankAccountService }   from '@/services/internal-bank-account-service';
-import { NumberService }                from '@/services/number-service';
+import { numberService }                from '@/services/number-service';
 
 import {
   balanceThresholdValidator,
@@ -72,9 +72,9 @@ export default {
   },
 
   computed: {
-    balanceString() { return NumberService.formatCurrency(this.account.balance); },
+    balanceString() { return numberService.formatCurrency(this.account.balance); },
     balanceThresholdErrors() { return this.v$.balanceThreshold.$error; },
-    expensesSumString() { return NumberService.formatCurrency(this.expensesSum); },
+    expensesSumString() { return numberService.formatCurrency(this.expensesSum); },
     expensesThresholdErrors() { return this.v$.expensesThreshold.$error; },
     saveDisabled() {
       return this.v$.$errors.length > 0;
@@ -93,8 +93,8 @@ export default {
       const value = this.balanceThreshold === ''
           ? null
           //TODO - why amountToString? Delete, if wrong
-          //: NumberService.amountToString(this.balanceThreshold);
-          : NumberService.parseFloat(this.balanceThreshold);
+          //: numberService.amountToString(this.balanceThreshold);
+          : numberService.parseFloat(this.balanceThreshold);
 
       if (value === null) {
         this.allowsOverdraft = true;
@@ -117,7 +117,7 @@ export default {
 
       const value = this.expensesThreshold === ''
         ? null
-        : NumberService.parseFloat(this.expensesThreshold);
+        : numberService.parseFloat(this.expensesThreshold);
 
       this.effectsExpenses = value > 0;
       this.effectsExpensesDisabled = value > 0;
@@ -192,8 +192,8 @@ export default {
         this.effectsExpenses =          accountSettings.data.effectsExpenses;
         this.receivesRevenues =         accountSettings.data.receivesRevenues;
         this.allowsOverdraft =          accountSettings.data.allowsOverdraft;
-        this.balanceThreshold =         NumberService.amountToString(accountSettings.data.balanceThreshold);
-        this.expensesThreshold =        NumberService.amountToString(accountSettings.data.expensesThreshold);
+        this.balanceThreshold =         numberService.amountToString(accountSettings.data.balanceThreshold);
+        this.expensesThreshold =        numberService.amountToString(accountSettings.data.expensesThreshold);
 
         return {
           success: true,
@@ -213,8 +213,8 @@ export default {
         effectsExpenses: this.effectsExpenses,
         receivesRevenues: this.receivesRevenues,
         allowsOverdraft: this.allowsOverdraft,
-        balanceThreshold: NumberService.parseFloat(this.balanceThreshold),
-        expensesThreshold: NumberService.parseFloat(this.expensesThreshold),
+        balanceThreshold: numberService.parseFloat(this.balanceThreshold),
+        expensesThreshold: numberService.parseFloat(this.expensesThreshold),
       };
 
       const jsonPatch = [];

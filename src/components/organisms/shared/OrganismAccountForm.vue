@@ -23,7 +23,7 @@ import { useVuelidate } from "@vuelidate/core";
 import { ibanDuplicateValidator } from "@/validation/custom-validators";
 
 import { InternalBankAccountService } from "@/services/internal-bank-account-service";
-import { NumberService } from "@/services/number-service";
+import { numberService } from "@/services/number-service";
 
 import AtomButton from "@/components/atoms/shared/AtomButton";
 import AtomHeadline from "@/components/atoms/shared/AtomHeadline";
@@ -78,7 +78,7 @@ export default {
       id:                     this.formData.account?.id || null,
       accountHolderId:        this.formData.account?.accountHolderId || null,
       balance:                this.formData.account?.balance
-                                ? NumberService.amountToString(this.formData.account.balance)
+                                ? numberService.amountToString(this.formData.account.balance)
                                 : null,
       bank:                   this.formData.account?.bank || "",
       description:            this.formData.account?.description || "",
@@ -147,8 +147,8 @@ export default {
           description: this.description,
           bic: this.bic,
           iban: this.iban,
-          accountNumber: NumberService.getAccountNumber(this.iban),
-          balance: NumberService.parseFloat(this.balance),
+          accountNumber: numberService.getAccountNumber(this.iban),
+          balance: numberService.parseFloat(this.balance),
           index: this.accountIndex,
         };
       

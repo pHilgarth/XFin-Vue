@@ -1,4 +1,4 @@
-export const NumberService = {
+export const numberService = {
     //TODO - is this method doing the same as formatCurrency with includeCurrency = false?
     amountToString(value) {
         return value !== null
@@ -9,7 +9,7 @@ export const NumberService = {
     enforceNumber(value) {
         let result = typeof value === 'number' && !isNaN(value)
             ? value
-            : NumberService.parseFloat(value);
+            : numberService.parseFloat(value);
         
         return isNaN(result)
             ? null

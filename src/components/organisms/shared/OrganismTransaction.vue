@@ -23,7 +23,7 @@
                                     :alwaysShowFallback="true" :errorMessageParams="{ counterPartType: transactionType === 'revenue' ? 'Zahlungspflichtigen' : 'Zahlungsempfänger' }"
                                     @blur="blurAutoSuggest" @itemPicked="pickItem" />
 
-          <MoleculeInputCheckbox  v-if="showCheckbox" :classList="includeCounterPartAccount ? 'pb-1' : 'pb-5'" field="include-counter-part-account"
+          <MoleculeInputCheckbox  v-if="showCheckbox" :class="includeCounterPartAccount ? 'pb-1' : 'pb-5'" field="include-counter-part-account"
                                   v-model="includeCounterPartAccount" label="Bankdaten hinzufügen" :_switch="true" />
 
           <div v-if="includeCounterPartAccount" class="organism-transaction__counter-part-account pb-5">
@@ -70,7 +70,7 @@ import MoleculeInputSelect from "@/components/molecules/shared/MoleculeInputSele
 import MoleculeInputText from "@/components/molecules/shared/MoleculeInputText";
 import MoleculeLoading from '@/components/molecules/shared/MoleculeLoading';
 
-import { NumberService } from "@/services/number-service";
+import { numberService } from "@/services/number-service";
 import { AccountHolderService } from "@/services/account-holder-service";
 import { ExternalBankAccountService } from "@/services/external-bank-account-service";
 import { ExternalPartyService } from "@/services/external-party-service";
@@ -466,7 +466,7 @@ export default {
       }
 
       const currentDate = new Date().toISOString();
-      const amount = NumberService.parseFloat(this.amount);
+      const amount = numberService.parseFloat(this.amount);
 
       const externalTransaction = {
         externalBankAccountId: externalBankAccountId,

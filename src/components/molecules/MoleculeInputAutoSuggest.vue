@@ -10,7 +10,7 @@
                             @itemMouseenter="hoverOnItem = true" @itemMouseleave="hoverOnItem = false" />
 
         <template v-for="(error, index) in validation?.$errors" :key="index">
-            <AtomParagraph classList="xfin__form__error" :text="getErrorMessage(error.$property, error.$validator, errorMessageParams)" />
+            <AtomParagraph classList="xfin__form__error" :text="errorService.getErrorMessage(error.$property, error.$validator, errorMessageParams)" />
         </template>
     </div>
 </template>
@@ -21,7 +21,7 @@ import AtomLabel from "@/components/atoms/shared/AtomLabel";
 import AtomParagraph from "@/components/atoms/shared/AtomParagraph";
 import AtomUnorderedList from '@/components/atoms/shared/AtomUnorderedList';
 
-import { errorMessages } from "@/services/form-error-messages";
+import { errorService } from "@/services/form-error-service";
 export default {
     //TODO - refactor props - i might not need all of them - just copied from MoleculeInputText
     props: {
@@ -52,6 +52,7 @@ export default {
         return {
             hoverOnItem: false,
             suggestions: [],
+          errorService: errorService,
         }
     },
 
@@ -85,21 +86,6 @@ export default {
                     : [this.noItemsFallback];
             
             this.$emit('update:modelValue', event.target.value);
-        },
-
-      //TODO - make this function reusable in a service
-        getErrorMessage(property, validator, params) {
-          let errorMessage = errorMessages[`${property}_${validator}`] || errorMessages[property];
-
-          for (const key in params) {
-            errorMessage = errorMessage.replace(`{${key}}`, params[key]);
-          }
-
-          //TODO - implement error handling: if the error message contains {...} substrings, but no params were passed to this function, return an empty errorMessage to prevent outputting weird strings
-
-          return errorMessage;
-          // return  errorMessages[`${property}_${validator}`] ||
-          //         errorMessages[property]
         },
 
         pickItem(event) {

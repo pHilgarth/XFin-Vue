@@ -12,7 +12,7 @@
       <!-- TODO - build another component "MoleculeFormError" to get rid of this duplicated "getErrorMessage(error.$property, error.$validator, errorMessageParams)" -->
       <!-- TODO - in a separate component, I can fetch the error message once and then just ask if it's there, instead of calling "getErrorMessage" twice!! -->
       <!-- TODO - when splitting this whole component up into multiple ones - don't forget to implement the newly built "MoleculeFormError" in the other components as well -->
-      <AtomParagraph v-if="getErrorMessage(error.$property, error.$validator, errorMessageParams)" class="xfin__form__error" :text="getErrorMessage(error.$property, error.$validator, errorMessageParams)" />
+      <AtomParagraph v-if="errorService.getErrorMessage(error.$property, error.$validator, errorMessageParams)" class="xfin__form__error" :text="errorService.getErrorMessage(error.$property, error.$validator, errorMessageParams)" />
     </template>
   </div>
 </template>
@@ -22,12 +22,14 @@ import AtomInputText from "@/components/atoms/shared/AtomInputText";
 import AtomLabel from "@/components/atoms/shared/AtomLabel";
 import AtomParagraph from "@/components/atoms/shared/AtomParagraph";
 
-import { errorMessages } from "@/services/form-error-messages";
+import { errorService } from "@/services/form-error-service";
+
 export default {
   emits: [
     'blur',
     'update:modelValue'
   ],
+
   props: {
     field:          { type: String, required: true, },
     label:          { type: String },
@@ -47,24 +49,10 @@ export default {
     AtomParagraph,
   },
 
-  methods: {
-    //params has to be an object with at least one property - the errorMessages can have placeholders (wrapped in {}), whose names map to the property-keys
-    //this function gets a specific error message and replaces all placeholders with the values of the matching properties
-    //that's how I output dynamic error messages
-    //TODO - make this function reusable in a service
-    getErrorMessage(property, validator, params) {
-      let errorMessage = errorMessages[`${property}_${validator}`] || errorMessages[property];
-
-      for (const key in params) {
-        errorMessage = errorMessage.replace(`{${key}}`, params[key]);
-      }
-
-      //TODO - implement error handling: if the error message contains {...} substrings, but no params were passed to this function, return an empty errorMessage to prevent outputting weird strings
-
-      return errorMessage;
-      // return  errorMessages[`${property}_${validator}`] ||
-      //         errorMessages[property]
-    }
-  }
+  data() {
+    return {
+      errorService: errorService,
+    };
+  },
 };
 </script>
