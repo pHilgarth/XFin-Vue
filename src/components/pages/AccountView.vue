@@ -33,6 +33,7 @@
     <!-- TODO - check if there are any classes set, which are not used by CSS and which are NO root-classes used for clarification (component root-classes) -->
     <!-- TODO - check if <h>-tags are used anywhere else than in AtomHeadline -->
     <!-- TODO - check if <p>-tags are used anywhere else than in AtomParagraph -->
+    <!-- TODO - write a service that removes <script>-tags from text that is used in v-html somewhere -->
 
 <!--    <div class="dev-hint important">-->
 <!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->
