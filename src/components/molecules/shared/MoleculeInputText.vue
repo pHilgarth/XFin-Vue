@@ -1,9 +1,9 @@
 <template>
-  <div class="form-floating molecule-input-text">
+  <div :class="`${ !small ? 'form-floating' : ''} molecule-input-text`">
     <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :placeholder="label"
-                    :classList="`xfin__form__form-control form-control col-4${hasErrors ? ' has-errors' : ''}`"
+                    :class="`xfin__form__form-control form-control col-4${hasErrors ? ' has-errors' : ''}`"
                     @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
-    <AtomLabel class="xfin__form__label" :for="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
+    <AtomLabel v-if="label" class="xfin__form__label" :for="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
     <template v-for="(error, index) in validation?.$errors" :key="index">
       <MoleculeFormError :error="error" :errorMessageParams="errorMessageParams" />
     </template>
@@ -25,15 +25,15 @@ export default {
   ],
 
   props: {
-    field:          { type: String, required: true, },
-    label:          { type: String },
-    hasErrors:      { type: Boolean },
-    modelValue:     { type: String },
-    disabled:       { type: Boolean },
-    optional:       { type: Boolean },
+    field:              { type: String, required: true, },
+    label:              { type: String },
+    hasErrors:          { type: Boolean },
+    modelValue:         { type: String },
+    disabled:           { type: Boolean },
+    optional:           { type: Boolean },
     // validation has to be the vuelidate object of the property (i.e. v$.name)
-    validation:     { type: Object },
-    small:          { type: Boolean },
+    validation:         { type: Object },
+    small:              { type: Boolean },
     errorMessageParams: { type: Object },
   },
 

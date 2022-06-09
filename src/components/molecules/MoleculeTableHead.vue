@@ -5,14 +5,6 @@
 </template>
 
 <script>
-/* COMPONENT DOCS
-  Props:
-    config: {
-      fields: [
-        
-      ]
-    }
-*/
 import MoleculeTableRow from "@/components/molecules/shared/MoleculeTableRow";
 
 export default {

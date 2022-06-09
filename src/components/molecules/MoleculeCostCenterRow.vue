@@ -1,14 +1,16 @@
 <template>
-  <div class="molecule-cost-center-row" v-show="!edit">
-    <p>{{ costCenter.name }}</p>
-    <AtomEditIcon v-if="allowEdit" :data-id="costCenter.id" align="right" @click="editCostCenter" />
-  </div>
-  <div v-if="edit" class="molecule-cost-center-row__edit">
-    <MoleculeInputText class="mb-4" field="cost-center" :hasErrors="costCenterNameErrors" v-model="costCenterName" @blur="v$.costCenterName.$touch()" :validation="v$.costCenterName"
-                       label="Kostenstelle" />
-    <div class="molecule-cost-center-row__buttons">
-      <AtomButton type="primary-small" text="&check;" @click="updateCostCenter" :disabled="costCenterNameErrors" />
-      <AtomButton type="cancel-small" text="&times;" @click="cancelEdit" />
+  <div class="molecule-cost-center-row">
+    <template v-if="!edit">
+      <p>{{ costCenter.name }}</p>
+      <AtomEditIcon v-if="allowEdit" :data-id="costCenter.id" align="right" @click="editCostCenter" />
+    </template>
+    <div v-if="edit" class="molecule-cost-center-row__edit">
+      <MoleculeInputText field="cost-center" :hasErrors="costCenterNameErrors" v-model="costCenterName" :validation="v$.costCenterName" :small="true"
+                         @blur="v$.costCenterName.$touch()"/>
+      <div class="molecule-cost-center-row__buttons">
+        <AtomButton type="primary-small" text="&check;" @click="updateCostCenter" :disabled="costCenterNameErrors" />
+        <AtomButton type="cancel-small" text="&times;" @click="cancelEdit" />
+      </div>
     </div>
   </div>
 </template>

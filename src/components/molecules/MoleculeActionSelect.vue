@@ -1,4 +1,3 @@
-<!-- TODO - can I make the options dynamically? They're hardcoded in here ...-->
 <template>
     <select class="molecule-action-select" @change="getAccountAction($event, config.bankAccount.id)">
         <option>Aktion wählen ...</option>
@@ -11,20 +10,20 @@
 </template>
 
 <script>
+
 export default {
+    props: {
+      config: {
+        type: Object,
+        required: true,
+      },
+    },
+
     methods: {
         getAccountAction(event, id) {
         let optionId = event.target.selectedOptions[0].id;
         this.$router.push('/' + optionId + '/' + id);
         },
     },
-
-    props: {
-        config: {
-            type: Object,
-            required: true,
-        },
-
-    }
 }
 </script>

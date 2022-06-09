@@ -3,7 +3,6 @@
   <div class="account-view">
     <AtomHeadline tag="h1" text="Kontenübersicht" />
     <!-- TODO - general todos -->
-    <!-- TODO rework class structure of elements (ie here its .account-form -xfin-account-form) - don't remove this comment before all classes in project are updated, deleted, etc....-->
     <!-- TODO - when refreshing on a component, the first menu entry on the left menu is highlighted as if it were the selected item -->
     <!-- TODO - check every API call in this app for proper error handling -->
     <!-- TODO - style xfin-button hover effect -->
@@ -34,6 +33,8 @@
     <!-- TODO - check if <h>-tags are used anywhere else than in AtomHeadline -->
     <!-- TODO - check if <p>-tags are used anywhere else than in AtomParagraph -->
     <!-- TODO - write a service that removes <script>-tags from text that is used in v-html somewhere -->
+    <!-- TODO - implement detail view on budget manager (to see how the money on a given cost center is allocated on a given account) -> see comments on MoleculeBudgetManagerCategory -->
+    <!-- TODO - styling ... (SCSS styling of the app) -->
 
 <!--    <div class="dev-hint important">-->
 <!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->

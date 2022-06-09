@@ -4,7 +4,7 @@
                         :classList="`xfin__form__form-control form-control col-4 ${hasErrors ? 'has-errors' : ''}`"
                         autocomplete="off" @blur="onBlur" @input="onInput" />
                         
-        <AtomLabel class="xfin__form__label" :for="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
+        <AtomLabel class="xfin__form__label" :for="field" :text="`${label} <i>*</i>`" />
         <!-- TODO - hide ul again, if input looses focus (on blur?) -> this is almost done! But if I hover on an element and then press tab, the box wont disappear, thats a cornercase but maybe i can fix it. I would need to track if TAB was pressed i guess-->
         <AtomUnorderedList  v-if="suggestions && suggestions.length > 0" class="molecule-input-auto-suggest__suggestions" :items="suggestions" @itemClicked="pickItem"
                             @itemMouseenter="hoverOnItem = true" @itemMouseleave="hoverOnItem = false" />
@@ -22,24 +22,19 @@ import AtomUnorderedList from '@/components/atoms/shared/AtomUnorderedList';
 
 import MoleculeFormError from '@/components/molecules/shared/MoleculeFormError';
 
-import { errorService } from "@/services/form-error-service";
 export default {
-    //TODO - refactor props - i might not need all of them - just copied from MoleculeInputText
     props: {
         field:              { type: String, required: true, },
         label:              { type: String, required: true, },
         hasErrors:          { type: Boolean },
         modelValue:         { type: String },
         disabled:           { type: Boolean },
-        optional:           { type: Boolean },
         // validation has to be the vuelidate object of the property (i.e. v$.name)
         validation:         { type: Object },
-        small:              { type: Boolean },
         items:              { type: Array, required: true },
         noItemsFallback:    { type: String },
         alwaysShowFallback: { type: Boolean },
         errorMessageParams: { type: Object },
-
     },
 
     components: {
@@ -51,9 +46,8 @@ export default {
 
     data() {
         return {
-            hoverOnItem: false,
-            suggestions: [],
-          errorService: errorService,
+          hoverOnItem: false,
+          suggestions: [],
         }
     },
 
