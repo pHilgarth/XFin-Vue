@@ -10,12 +10,12 @@
 
         &:focus {
             box-shadow: none;
-            border-color: $color-secondary
+            border-color: $secondary
         }
     }
 
     &__error {
-        color: $color-form-errors;
+        color: $form-errors;
         margin: 0;
         @include rem((
             font-size: 16px,
@@ -24,7 +24,7 @@
     }
 
     &__label i {
-        color: $color-form-required;
+        color: $form-required;
     }
 }
 

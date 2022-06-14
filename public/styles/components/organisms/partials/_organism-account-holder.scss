@@ -1,6 +1,6 @@
 .organism-account-holder {
   &__name {
-    border-bottom: 1px solid $color-borders;
+    border-bottom: 1px solid $borders;
     @include rem(margin-bottom, 20px);
 
     &__error {
@@ -9,7 +9,7 @@
   }
 
   &__accounts {
-    border-bottom: 1px solid $color-borders;
+    border-bottom: 1px solid $borders;
     @include rem(margin-bottom, 20px);
     @include rem(padding-bottom, 20px);
 
@@ -41,7 +41,7 @@
   }
 
   &__new, &__changed {
-    color: $color-green;
+    color: $green;
     font-weight: 500;
     position: absolute;
     @include rem(top, 5px);
@@ -50,11 +50,11 @@
   }
 
   &__changed {
-    color: $color-orange;
+    color: $orange;
   }
 
   &__delete {
-    color: $color-red;
+    color: $red;
     cursor: pointer;
     position: absolute;
     @include rem(line-height, 10px);
@@ -63,7 +63,7 @@
   }
 
   &__account-number {
-    border-bottom: 1px solid $color-borders;
+    border-bottom: 1px solid $borders;
     width: 80%;
     text-align: center;
     @include rem(font-size, 20px);

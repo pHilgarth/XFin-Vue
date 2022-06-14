@@ -1,10 +1,10 @@
 //TODO - use variables for the colors
 .negative {
-    color: $color-red;
+    color: $red;
 
-    &:disabled { color: $color-red-light; }
+    &:disabled { color: $red-light; }
 }
 
-.has-errors { border: 1px solid $color-form-errors !important; }
+.has-errors { border: 1px solid $form-errors !important; }
 
 .text-right { text-align: right; }

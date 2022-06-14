@@ -1,6 +1,6 @@
 import { required, maxLength } from "@vuelidate/validators";
 import {
-    balanceValidator,
+    //balanceValidator,
     expensesThresholdValidator,
     bicValidator,
     ibanValidator,
@@ -13,16 +13,17 @@ export const accountHolderValidation = {
     },
 };
 
-export const newAccountValidation = {
+//export const newAccountValidation = {
+export const accountValidation = {
     iban:       { ibanValidator },
     bic:        { bicValidator },
-    balance:    { balanceValidator },
+    //balance:    { balanceValidator },
 };
 
-export const existingAccountValidation = {
-    iban:       { ibanValidator },
-    bic:        { bicValidator },
-}
+// export const existingAccountValidation = {
+//     iban:       { ibanValidator },
+//     bic:        { bicValidator },
+// }
 
 //TODO - delete if not needed
 // export const transactionValidation = {

@@ -1,26 +1,30 @@
 <template>
     <div class="organism-account-form">
-      <AtomHeadline tag="h1" :text="headline" />
+      <div class="organism-account-form__inner">
+        <AtomHeadline tag="h1" :text="headline" />
         <form>
-          <!-- TODO - add padding-classes to every molecule, atom, etc .... check every form and add it where its missing -->
           <MoleculeInputText class="pb-5" field="iban" :hasErrors="ibanErrors || duplicate" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" label="IBAN" />
           <AtomParagraph v-if="duplicate" class="organism-account-form__duplicate-account xfin__form__error" text="Diese Iban existiert bereits!" />
-            <MoleculeInputText class="pb-5" field="bic" :hasErrors="bicErrors" v-model="bic" @blur="v$.bic.$touch()" :validation="v$.bic" label="BIC" />
-            <MoleculeInputText class="pb-5" field="bank" v-model="bank" :optional="true" label="Bank" />
-            <MoleculeInputText class="pb-5" field="description" v-model="description" :optional="true" label="Beschreibung" />
-            <MoleculeInputText class="pb-5" v-if="!formData.account || formData.account.isNew" field="balance" :hasErrors="balanceErrors" v-model="balance" @blur="v$.balance.$touch()" :validation="v$.balance" label="Kontostand" />
+          <MoleculeInputText class="pb-5" field="bic" :hasErrors="bicErrors" v-model="bic" @blur="v$.bic.$touch()" :validation="v$.bic" label="BIC" />
+          <MoleculeInputText class="pb-5" field="bank" v-model="bank" :optional="true" label="Bank" />
+          <MoleculeInputText class="pb-5" field="description" v-model="description" :optional="true" label="Beschreibung" />
+          <MoleculeInputText class="pb-5" v-if="!formData.account || formData.account.isNew" field="balance" :hasErrors="balanceErrors" v-model="balance" :validation="v$.balance"
+                             label="Kontostand" @blur="v$.balance.$touch()" />
 
-            <!-- TODO - remove border on button-->
-            <AtomButton text="Konto speichern" :disabled="v$.$silentErrors.length > 0 || duplicate" type="primary" @click.prevent="save" />
-            <AtomButton text="Abbrechen" type="primary" @click.prevent="$emit('cancel')" />
+          <AtomButton text="Konto speichern" :disabled="v$.$silentErrors.length > 0 || duplicate" type="primary" @click.prevent="save" />
+          <AtomButton text="Abbrechen" type="primary" @click.prevent="$emit('cancel')" />
         </form>
+      </div>
     </div>
 </template>
 
 <script>
 import { useVuelidate } from "@vuelidate/core";
 
-import { ibanDuplicateValidator } from "@/validation/custom-validators";
+import {
+  ibanDuplicateValidator,
+  balanceValidator,
+} from "@/validation/custom-validators";
 
 import { InternalBankAccountService } from "@/services/internal-bank-account-service";
 import { numberService } from "@/services/number-service";
@@ -30,10 +34,7 @@ import AtomHeadline from "@/components/atoms/shared/AtomHeadline";
 import AtomParagraph from '@/components/atoms/shared/AtomParagraph';
 import MoleculeInputText from "@/components/molecules/shared/MoleculeInputText";
 
-import {
-  newAccountValidation,
-  existingAccountValidation,
-} from "@/validation/validations";
+import { accountValidation } from "@/validation/validations";
 
 export default {
   created() {
@@ -43,13 +44,6 @@ export default {
       const ibanIndex = this.formData.ibans.findIndex(i => i === this.formData.account.iban);
       let ibans = this.formData.ibans;
       ibans.splice(ibanIndex, 1);
-    }
-
-//TODO - maybe I can place this if else in the 'validations'-section?
-    if (!this.formData.account) {
-      newAccountValidation.iban.ibanDuplicate = ibanDuplicateValidator(this.formData.ibans);
-    } else {
-      existingAccountValidation.iban.ibanDuplicate = ibanDuplicateValidator(this.formData.ibans);
     }
   },
 
@@ -61,12 +55,6 @@ export default {
   },
 
   props: {
-    /**
-     * formData holds the required data for the account form
-     *    { account:  Object,       => if editing an existing account
-     *      ibans:    Array,        => holds the ibans for the client-side iban-duplicate check
-     *    }
-     */
     formData: { type: Object, required: true },
     headline: { type: String, required: true },
   },
@@ -105,13 +93,11 @@ export default {
 
   watch: {
     iban() {
-      //TODO - add this next line to every iban field watcher in other components and remove 'toUpperCase' afterwards where it's no longer needed
       this.iban = this.iban.toUpperCase();
       this.v$.iban.$touch();
       this.duplicate = false;
     },
     bic() {
-      //TODO - add this next line to every bic field watcher in other components and remove 'toUpperCase' afterwards where it's no longer needed
       this.bic = this.bic.toUpperCase();
       this.v$.bic.$touch();
     },
@@ -125,15 +111,16 @@ export default {
   },
 
   validations() {
-    return !this.formData.account || this.formData.account.isNew
-      ? newAccountValidation
-      : existingAccountValidation;
+    if (!this.formData.account || this.formData.account.isNew) {
+      accountValidation.balance = { balanceValidator };
+    }
+
+    accountValidation.iban.ibanDuplicate = ibanDuplicateValidator(this.formData.ibans);
+    return accountValidation;
   },
 
   methods: {
     async save() {
-      // TODO - delete console log
-      console.log('save invoked!');
       let duplicateCheckResponse = null;
       //if iban changed, check for duplicates in the db
       if (this.originalIban !== this.iban) {

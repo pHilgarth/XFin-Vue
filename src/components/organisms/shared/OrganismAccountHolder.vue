@@ -2,7 +2,7 @@
   <!-- TODO - rework this component, the form rendering shouldnt be handeled with v-if -->
   <!-- TODO - maybe another component -->
   <div class="organism-account-holder">
-    <section v-if="!showForm">
+    <section>
       <AtomHeadline tag="h1" :text="headline" />
       <article>
         <MoleculeInputText  class="organism-account-holder__name pb-5" field="name" :hasErrors="nameHasErrors || duplicatedName"
@@ -32,7 +32,7 @@
         <AtomButton :disabled="saveDisabled" text="Kontoinhaber speichern" type="primary" @click="saveAccountHolder" />
       </article>
     </section>
-    <div v-else>
+    <div v-if="showForm">
       <OrganismAccountForm @cancel="showForm = false" @save="saveAccount" :formData="formData" :headline="formHeadline"/>
     </div>
   </div>
@@ -67,8 +67,8 @@ export default {
   emits: [ 'save' ],
 
   props: {
-    accountHolder: { type: Object, default: null },
-    headline: { type: String, required: true },
+    accountHolder:  { type: Object, default: null },
+    headline:       { type: String, required: true },
   },
 
   computed: {
