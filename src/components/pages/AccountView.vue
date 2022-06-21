@@ -38,7 +38,6 @@
     <!-- TODO - add padding-classes to every molecule, atom, etc .... check every form and add it where its missing -->
     <!-- TODO - add "this.iban = this.iban.toUpperCase();" to every iban and bic field watcher in other components and remove 'toUpperCase' afterwards where it's no longer needed -->
     <!-- TODO - if no changes are made to account, disable save-button (on OrganismAccountForm) -->
-    <!-- TODO - on OrganismAccountHolder: when showForm === true, the buttons and elements of OrganismAccountHolder must not be available via tabIndex! (it has to be impossible to access them by pressing tab)-->
 
 
     <!--    <div class="dev-hint important">-->

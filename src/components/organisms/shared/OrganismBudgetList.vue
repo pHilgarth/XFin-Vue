@@ -1,5 +1,4 @@
 <template>
-  <!-- TODO - rework this component - it uses <p>-tags and one is even empty -->
   <!-- TODO - this component is only used inside config object (in component BudgetManager), passed to a collapsible component. maybe work with slots? -->
   <div class="organism-budget-list">
     <MoleculeBudgetManagerCategory  :category="transactionCategories[0]" :disabled="true" :hasErrors="freeBudgetErrors" :value="freeBudget"
@@ -9,20 +8,20 @@
       <MoleculeBudgetManagerCategory v-if="index > 0" :category="category" @amount-changed="calculateFreeBudget" @reset="resetCategory" :value="category.balance"/>
     </template>
 
-    <div class="row">
-      <p class="col-8">&nbsp;</p>
-      <p class="col-2 organism-budget-list__total">
-        <span>Total:</span><span :class="{ 'negative': total < 0 }">{{ formatCurrency(total) }}</span>
-      </p>
-      <p class="col-2">
+    <div class="organism-budget-list__total">
+      <AtomSpan text="Total:" class="col-1" />
+      <AtomSpan :class="`organism-budget-list__total__value col-1 ${ total < 0 ? 'negative' : '' }`" :text="formatCurrency(total)" />
+      <div class="col-2 organism-budget-list__total__button">
         <AtomButton type="light" text="Speichern" :disabled="saveDisabled" @click="saveChanges" />
-      </p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import AtomButton from "@/components/atoms/shared/AtomButton";
+import AtomSpan from "@/components/atoms/shared/AtomSpan";
+
 import MoleculeBudgetManagerCategory from "@/components/molecules/MoleculeBudgetManagerCategory";
 
 import { InternalTransactionService } from "@/services/internal-transaction-service";
@@ -38,6 +37,7 @@ export default {
 
   components: {
     AtomButton,
+    AtomSpan,
     MoleculeBudgetManagerCategory,
   },
 
@@ -47,10 +47,6 @@ export default {
   },
 
   computed: {
-    // budgetNegative() {
-    //   return numberService.parseFloat(this.freeBudget) < 0;
-    // },
-
     freeBudgetErrors() {
       return this.v$.freeBudget.$error;
     },
@@ -67,8 +63,7 @@ export default {
 
       //TODO - test if total is calculated correctly!
       total: this.transactionCategories.reduce((a, b) => {
-        //this step is needed because initially a is an object with a property balance
-        //but the return statement returns a number 
+        //initially a is an object with a property balance but the return statement returns a number
         let aValue = a.balance || numberService.amountToString(a);
 
         return (
@@ -94,6 +89,7 @@ export default {
         this.dirtyCategories.splice(index, 1);
       }
 
+      //TODO - do I need this? Test the calculation when allocationg budget
       //free budget is calculated on every input, so I need to check how many decimals there are, if any
       //let decimals = value.split(",")[1]?.length || 0;
 

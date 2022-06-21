@@ -12,7 +12,7 @@
                              label="Kontostand" @blur="v$.balance.$touch()" />
 
           <AtomButton text="Konto speichern" :disabled="v$.$silentErrors.length > 0 || duplicate" type="primary" @click.prevent="save" />
-          <AtomButton text="Abbrechen" type="primary" @click.prevent="$emit('cancel')" />
+          <AtomButton text="Abbrechen" type="cancel" @click.prevent="$emit('cancel')" />
         </form>
       </div>
     </div>

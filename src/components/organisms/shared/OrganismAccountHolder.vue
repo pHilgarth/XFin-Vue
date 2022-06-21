@@ -1,12 +1,10 @@
 <template>
-  <!-- TODO - rework this component, the form rendering shouldnt be handeled with v-if -->
-  <!-- TODO - maybe another component -->
   <div class="organism-account-holder">
     <section>
       <AtomHeadline tag="h1" :text="headline" />
       <article>
         <MoleculeInputText  class="organism-account-holder__name pb-5" field="name" :hasErrors="nameHasErrors || duplicatedName"
-                            :validation="v$.name" v-model="name" label="Name" @blur="v$.name.$touch()"/>
+                            :validation="v$.name" v-model="name" label="Name" @blur="v$.name.$touch()" :ignoreTab="showForm"/>
 
         <template v-if="duplicatedName" to=".organism-account-holder__name">
           <AtomParagraph class="xfin__form__error organism-account-holder__name__error" text="Dieser Name wird bereits verwendet!"/>
@@ -14,7 +12,7 @@
 
         <div class="organism-account-holder__accounts">
           <AtomHeadline class="account-holder__accounts__headline" tag="h4" text="Konten:" />
-          <AtomButton text="&plus; Neues Konto anlegen" type="light" @click="addAccount"/>
+          <AtomButton text="&plus; Neues Konto anlegen" type="light" @click="addAccount" :tabindex="showForm ? '-1' : ''" />
 
           <div v-if="bankAccounts.length" class="organism-account-holder__account-items">
             <template v-for="(account, index) in bankAccounts" :key="index">

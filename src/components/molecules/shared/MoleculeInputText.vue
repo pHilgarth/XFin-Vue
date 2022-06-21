@@ -1,6 +1,6 @@
 <template>
   <div :class="`${ !small ? 'form-floating' : ''} molecule-input-text`">
-    <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :placeholder="label"
+    <AtomInputText  :id="field" :disabled="disabled" :value="modelValue" :placeholder="label" :tabindex="ignoreTab ? '-1' : ''"
                     :class="`xfin__form__form-control form-control col-4${hasErrors ? ' has-errors' : ''}`"
                     @blur="$emit('blur')" @input="$emit('update:modelValue', $event.target.value)" />
     <AtomLabel v-if="label" class="xfin__form__label" :for="field" :text="`${label}${optional ? '' : ' <i>*</i>'}`" />
@@ -35,6 +35,7 @@ export default {
     validation:         { type: Object },
     small:              { type: Boolean },
     errorMessageParams: { type: Object },
+    ignoreTab:          { type: Boolean, default: false },
   },
 
   components: {
