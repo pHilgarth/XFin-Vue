@@ -1,8 +1,8 @@
 import { required, maxLength } from "@vuelidate/validators";
 import {
-    //balanceValidator,
-    expensesThresholdValidator,
+    amountValidator,
     bicValidator,
+    counterPartValidator,
     ibanValidator,
 } from "@/validation/custom-validators";
 
@@ -25,18 +25,15 @@ export const accountValidation = {
 //     bic:        { bicValidator },
 // }
 
-//TODO - delete if not needed
-// export const transactionValidation = {
-//     amount:                 { required, amountValidator },
-//     counterPartIban:        { ibanValidator },
-//     counterPartBic:         { bicValidator },
-// }
+export const transactionValidation = {
+    amount:                 { amountValidator },
+    counterPart:            { counterPartValidator },
+    counterPartBic:         { bicValidator },
+    counterPartIban:        { ibanValidator },
+    reference:              { required },
+};
 
 export const counterPartValidation = {
     counterPartIban:        { ibanValidator },
     counterPartBic:         { bicValidator },
-}
-
-export const accountSettingsValidation = {
-    expensesThreshold:              { expensesThresholdValidator }
 }

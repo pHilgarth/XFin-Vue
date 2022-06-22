@@ -14,7 +14,6 @@
     <!-- TODO - on account-detail: expenses table: no reference makes the amount appear in the reference column! -->
     <!-- TODO - on account-detail: expenses table: text-align: right on payee column -->
     <!-- TODO - disable budget manager, when no accountHolders are available -->
-    <!-- TODO - more information on OrganismTransaction when transactionType == 'expense' (what's the current balance, what's the budget, what's the balance threshold, expenses threshhold, etc... there is place on the right side to display these informations -->
     <!-- TODO - opening the budget manager from an accounts dropdown menu in accountview does not work -->
     <!-- TODO - xfin__form-error on budget-manager "Dieser Posten darf nicht negativ sein" -> it's not position: absolute anymore, but here it has to be -->
     <!--          TODO - i disabled position: absolute because of another component where it shouldn't be absolute -> need to find a solution here -->

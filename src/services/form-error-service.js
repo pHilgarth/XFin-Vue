@@ -1,4 +1,3 @@
-//TODO - dynamische Errormessages einbauen, z. B. amount_availableAmount: Der verfügbare Betrag liegt bei ${availableAmount}!
 const amountErrorMessage =                  'Bitte gib einen gültigen Betrag ein!';
 const bicErrorMessage =                     'Bitte gib einen gültigen BIC ein!';
 const ibanErrorMessage =                    'Bitte gib eine gültige IBAN ein!';
@@ -10,29 +9,18 @@ export const errorService = {
     errorMessages: {
         //amount errors
         amount:                                 amountErrorMessage,
-        amount_availableAmount:                 'Der Betrag übersteigt das {limitType} auf dieser Kostenstelle! (muss das nicht Konto heißen?)',
 
         //balance errors
         balance:                                amountErrorMessage,
 
-        //balanceThreshold errors
-        balanceThreshold_amount:                amountErrorMessage,
-        balanceThreshold_maxAmount:             'Der Betrag darf den aktuellen Kontostand nicht überschreiten! ({balance})',
-
         //bic errors
         bic:                                    bicErrorMessage,
 
-
-
         //counterPart errors
-        counterPart_required:                   'Bitte gib einen {counterPartType} an!',
+        counterPart:                            'Bitte gib einen {counterPartType} an!',
         counterPartIban:                        ibanErrorMessage,
         counterPartBic:                         bicErrorMessage,
         counterPartIban_ibanDuplicate:          ibanDuplicateErrorMessage,
-
-        //expense errors
-        expensesThreshold:                      amountErrorMessage,
-        expensesThreshold_minAmount:            'Der Betrag darf die aktuellen Monatsausgaben nicht unterschreiten! ({expensesSum})',
 
         //freeBudget errors                     //{...} gets replaced by the function getErrorMessage in MoleculeInputText
         //freeBudget:                             'Der Mindestbetrag für dieses Konto beträgt {minimalAmount}!',
