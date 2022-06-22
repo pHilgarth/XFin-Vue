@@ -28,7 +28,6 @@ import MoleculeLoading from '@/components/molecules/shared/MoleculeLoading';
 import OrganismCollapsible from '@/components/organisms/shared/OrganismCollapsible';
 
 import {AccountHolderService} from '@/services/account-holder-service';
-//import { AccountSettingsService } from '@/services/account-settings-service';
 import {numberService} from '@/services/number-service';
 import {CostCenterService} from '@/services/cost-center-service.js';
 

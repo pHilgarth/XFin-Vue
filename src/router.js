@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import AccountDetail from './components/pages/AccountDetail';
-import AccountSettings from './components/pages/AccountSettings';
 import AccountView from './components/pages/AccountView';
 import CostCenterManager from './components/pages/CostCenterManager';
 import BudgetManager from './components/pages/BudgetManager';
@@ -23,7 +22,6 @@ export const router = createRouter({
         { path: '/new-revenue/:id', component: NewRevenue },
         { path: '/new-expense/:id', component: NewExpense },
         { path: '/budget-manager', component: BudgetManager },
-        { path: '/account-settings/:id', component: AccountSettings },
         { path: '/design-elements', component: DesignElements},
         { path: '/cost-centers', component: CostCenterManager},
         { path: '/example', component: ExampleComponent},

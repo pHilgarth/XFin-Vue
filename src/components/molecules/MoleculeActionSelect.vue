@@ -1,11 +1,10 @@
 <template>
     <select class="molecule-action-select" @change="getAccountAction($event, config.bankAccount.id)">
         <option>Aktion wählen ...</option>
-        <option v-if="config.bankAccount.accountSettings.receivesRevenues" id="new-revenue">Einnahme eintragen</option>
-        <option v-if="config.bankAccount.accountSettings.effectsExpenses" id="new-expense">Ausgabe eintragen</option>
+        <option id="new-revenue">Einnahme eintragen</option>
+        <option id="new-expense">Ausgabe eintragen</option>
         <option id="budget-manager">Budget verwalten</option>
         <option>Fixkostenverwaltung</option>
-        <option id="account-settings">Einstellungen</option>
     </select>
 </template>
 

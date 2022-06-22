@@ -35,7 +35,7 @@ export default {
   },
 
   methods: {
-    //TODO - can I move this function into a service? It's duplicated in AccountSettings.vue
+    //TODO - maybe move this into a service
     checkForChanges(sourceAccount, bankAccount) {
       const subset = ({iban, bic, bank, description}) => ({iban, bic, bank, description});
       const sourceSubset = subset(sourceAccount);
