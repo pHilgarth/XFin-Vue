@@ -15,12 +15,12 @@
     }
 
     &__error {
+        @include rem(font-size, 16px);
+        @include rem(padding, 10px);
         color: $form-errors;
         margin: 0;
-        @include rem((
-            font-size: 16px,
-            padding: 10px,
-        ));
+        //TODO - check if this has drawbacks somewhere (it will :D but where)
+        position: absolute;
     }
 
     &__label i {

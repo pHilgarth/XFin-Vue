@@ -37,6 +37,9 @@
     <!-- TODO - add padding-classes to every molecule, atom, etc .... check every form and add it where its missing -->
     <!-- TODO - add "this.iban = this.iban.toUpperCase();" to every iban and bic field watcher in other components and remove 'toUpperCase' afterwards where it's no longer needed -->
     <!-- TODO - if no changes are made to account, disable save-button (on OrganismAccountForm) -->
+    <!-- TODO - check if position:absolute directly on .form-error has some drawbacks somewhere -->
+    <!-- TODO - OrganismTransaction: MoleculeInputAutoSuggest wont close -> reproduce: type something in - click 'add new' - type more in - blur it using tab -->
+
 
 
     <!--    <div class="dev-hint important">-->

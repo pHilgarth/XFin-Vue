@@ -36,7 +36,7 @@
       </div>
       <div class="xfin__content">
         <div class="xfin__component">
-          <router-view></router-view>
+          <router-view :key="$route.path"></router-view>
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 <template>
   <select class="atom-input-select form-select xfin__form__form-control">
-    <option v-for="(option, index) in options" :key="index" :value="option.value" :disabled="option.disabled">
-      {{ option.value }}
+    <option v-for="(option, key) in options" :key="key" :value="option.value || option.label || key" :disabled="option.disabled">
+      {{ option.label || option.value || option }}
     </option>
   </select>
 </template>

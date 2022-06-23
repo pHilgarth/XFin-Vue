@@ -28,8 +28,6 @@ export const accountValidation = {
 export const transactionValidation = {
     amount:                 { amountValidator },
     counterPart:            { counterPartValidator },
-    counterPartBic:         { bicValidator },
-    counterPartIban:        { ibanValidator },
     reference:              { required },
 };
 

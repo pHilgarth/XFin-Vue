@@ -14,12 +14,6 @@
         ));
     }
 
-    &__counter-part {
-        .xfin__form__error {
-            @include rem(( padding-top: 8px ));
-        }
-    }
-
     &__counter-part-account {
         display: flex;
         justify-content: space-around;

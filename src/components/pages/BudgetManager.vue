@@ -138,12 +138,12 @@ export default {
       if (accountHolderResponse.success && accountHolderResponse.data) {
         this.accountHolders = accountHolderResponse.data;
 
-        this.accountHolderOptions = [{disabled: true, value: '(Kontoinhaber wählen)'}];
+        this.accountHolderOptions = [{disabled: true, label: '(Kontoinhaber wählen)'}];
 
+        //TODO - check if i just can push a.name to accountHolderOptions
         this.accountHolders.forEach(a => {
           this.accountHolderOptions.push({
-            disabled: false,
-            value: a.name,
+            label: a.name,
           });
         });
       } else if (accountHolderResponse.success && !accountHolderResponse.data) {
