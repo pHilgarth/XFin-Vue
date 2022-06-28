@@ -1,5 +1,5 @@
 export const transactionRoles = {
-    default:            "reguläre Einnahme",
+    default:            "reguläre Transaktion",
     repayment:          "Tilgung",
     loan:               "Darlehen",
     savingRate:         "Sparrate",

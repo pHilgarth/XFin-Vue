@@ -1,8 +1,11 @@
 <template>
   <div class="molecule-input-select form-floating">
-    <AtomInputSelect :id="field" :value="modelValue" :options="options"
+    <AtomInputSelect :id="field" :class="`${hasErrors ? ' has-errors' : ''}`" :value="modelValue" :options="options"
                      @input="$emit('update:modelValue', $event.target.value)" @blur="$emit('blur')"/>
     <AtomLabel class="xfin__form__label" :for="field" :text="label" />
+    <template v-for="(error, index) in validation?.$errors" :key="index">
+      <MoleculeFormError :error="error" :errorMessageParams="errorMessageParams" />
+    </template>
   </div>
 </template>
 
@@ -10,6 +13,8 @@
 
 import AtomInputSelect from "@/components/atoms/AtomInputSelect";
 import AtomLabel from "@/components/atoms/shared/AtomLabel";
+import MoleculeFormError from '@/components/molecules/shared/MoleculeFormError';
+
 
 export default {
   emits: [
@@ -18,27 +23,32 @@ export default {
   ],
 
   props: {
-    field:      { type: String },
-    hasErrors:  { type: Boolean },
-    validation: { type: Object },
+    errorMessageParams: { type: Object },
+    hasErrors:          { type: Boolean },
+    validation:         { type: Object },
 
-    options: {
-      type: Array,
-      required: true,
-    },
-    modelValue: {
-      type: [String, Number],
+    field: {
+      type: String,
       required: true
     },
     label: {
       type: String,
       required: true
     },
+    modelValue: {
+      type: [String, Number],
+      required: true
+    },
+    options: {
+      type: [Array, Object],
+      required: true,
+    },
   },
 
   components: {
     AtomInputSelect,
     AtomLabel,
+    MoleculeFormError,
   },
 };
 </script>

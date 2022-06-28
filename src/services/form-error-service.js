@@ -1,9 +1,9 @@
-const amountErrorMessage =                  'Bitte gib einen gültigen Betrag ein!';
-const bicErrorMessage =                     'Bitte gib einen gültigen BIC ein!';
-const ibanErrorMessage =                    'Bitte gib eine gültige IBAN ein!';
-const ibanDuplicateErrorMessage =           'Diese IBAN existiert bereits!';
-const nameErrorMessage =                    'Bitte gib einen Namen ein!';
-const referenceErrorMessage =               'Bitte gib einen Verwendungszweck ein!';
+const amountErrorMessage =                              'Bitte gib einen gültigen Betrag ein!';
+const bicErrorMessage =                                 'Bitte gib einen gültigen BIC ein!';
+const ibanErrorMessage =                                'Bitte gib eine gültige IBAN ein!';
+const ibanDuplicateErrorMessage =                       'Diese IBAN existiert bereits!';
+const nameErrorMessage =                                'Bitte gib einen Namen ein!';
+const referenceErrorMessage =                           'Bitte gib einen Verwendungszweck ein!';
 
 export const errorService = {
     errorMessages: {
@@ -15,6 +15,9 @@ export const errorService = {
 
         //bic errors
         bic:                                    bicErrorMessage,
+
+        //costCenter errors
+        costCenter:                             'Diese Kostenstelle passt nicht zum gewählten Transaktions-Typ!',
 
         //counterPart errors
         counterPart:                            'Bitte gib einen {counterPartType} an!',
@@ -37,6 +40,9 @@ export const errorService = {
 
         //reference errors
         reference:                              referenceErrorMessage,
+
+        //transactionRole errors
+        transactionRole:                        'Dieser Transaktions-Typ passt nicht zur gewählten Kostenstelle!',
     },
 
     getErrorMessage(property, validator, params) {

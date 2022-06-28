@@ -6,11 +6,8 @@
     <form v-else>
       <MoleculeInputSelect class="organism-transaction__account" :options="bankAccountOptions" field="account" v-model="selectedAccountId" label="Konto"/>
 
-      <!--      <MoleculeInputSelect  class="organism-transaction__cost-center" :options="costCenterOptions" field="costCenter" v-model="costCenter" label="Kostenstelle"-->
-      <!--                            :validation="v$.costCenter" :hasErrors="v$.costCenter.$error" @blur="v$.costCenter.$touch()"/>-->
-
-      <MoleculeInputSelect class="organism-transaction__cost-center" :options="costCenterOptions" field="costCenter"
-                           v-model="costCenter" label="Kostenstelle"/>
+      <MoleculeInputSelect  class="organism-transaction__cost-center mb-5 pb-5" :options="costCenterOptions" field="costCenter" v-model="costCenter" label="Kostenstelle"
+                            :validation="v$.costCenter" :hasErrors="v$.costCenter.$error" @blur="v$.costCenter.$touch()"/>
 
       <div class="organism-transaction__counter-part pb-5">
         <MoleculeInputAutoSuggest field="counter-part" :hasErrors="v$.counterPart?.$error"
@@ -47,8 +44,8 @@
                          :validation="v$.amount" label="Betrag"
                          @blur="v$.amount.$touch()"/>
 
-      <MoleculeInputSelect class="pb-5" :options="transactionRoles" field="transactionRole" label="Typ"/>
-
+      <MoleculeInputSelect class="pb-5" :options="transactionRoles" field="transactionRole" v-model="transactionRole" label="Typ"
+                           :validation="v$.transactionRole" :hasErrors="v$.transactionRole.$error" @blur="v$.transactionRole.$touch()"/>
 
       <AtomButton type="primary" text="Speichern" :disabled="v$.$silentErrors.length > 0" @click.prevent="save"/>
     </form>
@@ -82,7 +79,13 @@ import {ExternalTransactionService} from "@/services/external-transaction-servic
 import {CostCenterService} from "@/services/cost-center-service";
 import {transactionRoles} from '@/services/transaction-role-service';
 import {transactionValidation} from '@/validation/validations';
-import {bicValidator, ibanValidator, ibanDuplicateValidator} from "@/validation/custom-validators";
+import {
+  bicValidator,
+  costCenterValidator,
+  ibanDuplicateValidator,
+  ibanValidator,
+  transactionRoleValidator,
+} from "@/validation/custom-validators";
 
 
 export default {
@@ -110,6 +113,10 @@ export default {
       this.loadingError = true;
       console.error(apiResponse.error);
     }
+
+    if (this.transactionType === 'expense') {
+      delete this.transactionRoles.savingRate;
+    }
   },
 
   components: {
@@ -128,6 +135,10 @@ export default {
   watch: {
     amount() {
       this.v$.amount.$touch();
+    },
+
+    costCenter() {
+      this.v$.costCenter.$touch();
     },
 
     counterPart() {
@@ -180,6 +191,10 @@ export default {
     selectedAccountId() {
       this.$router.push(`/new-${this.transactionType}/${this.selectedAccountId}`);
     },
+
+    transactionRole() {
+      this.v$.transactionRole.$touch();
+    }
   },
 
   data() {
@@ -192,21 +207,18 @@ export default {
       accountHolders: null,
       bankAccountOptions: null,
       costCenters: null,
-      costCenterOptions: null,
+      costCenter: null,
+      costCenterOptions: [],
       counterParts: null,
       counterPartNames: [],
-      transactionRoles: transactionRoles,
+      transactionRoles: CopyService.copyObject(transactionRoles),
 
       selectedAccountId: this.$route.params.id,
       selectedAccount: null,
-      costCenter: null,
       //gonna need this when implementing transactionRoles
-      //selectedCostCenterName: null,
-      selectedCostCenter: null,
-      //gonna need this when implementing transactionRoles
-      //selectedTransactionRole: transactionRoles['default'],
+      transactionRole: transactionRoles['default'],
 
-      //TODO - can I use IDs here too? As in selectedAccountId (-1 would be for new couterPart)
+      //TODO - can I use IDs here too? As in selectedAccountId (-1 would be for new counterPart)
       //counterPart is the v-model property for the input field - it refers to a counterParts name and is of type string
       counterPart: null,
       //selectedCounterPart is the actual counterPartObject which contains the id and the externalBankAccountId if it's a counterPart stored in db
@@ -283,19 +295,14 @@ export default {
             ? apiResponse.data
             : apiResponse.data.filter(c => c.name !== 'Nicht zugewiesen');
 
-        this.costCenterOptions = [{
-          value: '- Kostenstelle wählen -',
-          disabled: false,
-        }];
+        //this.costCenterOptions = ['- Kostenstelle wählen -'];
+        this.costCenterOptions = [];
 
         this.costCenters.forEach((costCenter) => {
-          this.costCenterOptions.push({
-            value: costCenter.name,
-            disabled: false,
-          });
+          this.costCenterOptions.push(costCenter.name);
         });
 
-        this.selectedCostCenter = this.costCenterOptions[0];
+        this.costCenter = this.costCenterOptions[0];
 
       } else if (apiResponse.success && !apiResponse.data) {
         this.costCenters = [];
@@ -412,6 +419,9 @@ export default {
   validations() {
     //it does not work, if I simply assign transactionValidation to validation, it has to be a separate object
     let validation = CopyService.copyObject(transactionValidation);
+
+    validation.costCenter = { costCenterValidator: costCenterValidator(this.transactionRole) };
+    validation.transactionRole = { transactionRoleValidator: transactionRoleValidator(this.costCenter) };
 
     if (this.includeCounterPartAccount) {
       validation.counterPartBic = {bicValidator};

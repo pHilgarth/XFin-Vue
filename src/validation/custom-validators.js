@@ -34,15 +34,18 @@ export const ibanDuplicateValidator = (ibans) => helpers.withParams(
 );
 export const ibanValidator =                                        (value) => value.match(/^[a-zA-Z]{2}[0-9]{20}$/);
 export const freeBudgetValidator =                                  (value) => numberService.parseFloat(value) >= 0;
-//TODO - delete, if not needed
-//export const freeBudgetValidator =          (minimalAmount) =>  (value) => minimalAmount === null || numberService.parseFloat(value) >= minimalAmount;
 
 export const costCenterValidator = (transactionRole) => helpers.withParams(
     { transactionRole },
     (value) => {
-        console.log(transactionRole);
-        console.log(value);
-        return (value !== '- Kostenstelle wählen -' && value !== '' && value !== null) && (transactionRole !== 'loan' || value !== 'Nicht zugewiesen');
+        return !(value === 'Nicht zugewiesen' && (transactionRole === 'Darlehen' || transactionRole === 'Sparrate'));
+    },
+);
+
+export const transactionRoleValidator = (costCenter) => helpers.withParams(
+    { costCenter },
+    (value) => {
+        return !(costCenter === 'Nicht zugewiesen' && (value === 'Darlehen' || value === 'Sparrate'));
     },
 );
 
