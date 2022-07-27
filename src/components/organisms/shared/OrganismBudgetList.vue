@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import AtomButton from "@/components/atoms/shared/AtomButton";
-import AtomSpan from "@/components/atoms/shared/AtomSpan";
+import AtomButton from '@/components/atoms/AtomButton';
+import AtomSpan from '@/components/atoms/AtomSpan';
 
 import MoleculeBudgetManagerCategory from "@/components/molecules/MoleculeBudgetManagerCategory";
 

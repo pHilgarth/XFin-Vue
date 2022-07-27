@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import AtomButton from '@/components/atoms/shared/AtomButton';
+import AtomButton from '@/components/atoms/AtomButton';
 
 export default {
   components: {

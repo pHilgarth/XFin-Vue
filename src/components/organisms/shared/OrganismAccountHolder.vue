@@ -39,10 +39,10 @@
 <script>
 import { useVuelidate } from '@vuelidate/core';
 
-import AtomButton from '@/components/atoms/shared/AtomButton';
+import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
 import AtomParagraph from '@/components/atoms/AtomParagraph';
-import AtomSpan from '@/components/atoms/shared/AtomSpan';
+import AtomSpan from '@/components/atoms/AtomSpan';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 import OrganismAccountForm from '@/components/organisms/shared/OrganismAccountForm';
 

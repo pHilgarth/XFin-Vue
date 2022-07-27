@@ -16,9 +16,9 @@
 </template>
 
 <script>
-import AtomInputText from "@/components/atoms/shared/AtomInputText";
+import AtomInputText from '@/components/atoms/AtomInputText';
 import AtomLabel from '@/components/atoms/AtomLabel';
-import AtomUnorderedList from '@/components/atoms/shared/AtomUnorderedList';
+import AtomUnorderedList from '@/components/atoms/AtomUnorderedList';
 
 import MoleculeFormError from '@/components/molecules/shared/MoleculeFormError';
 

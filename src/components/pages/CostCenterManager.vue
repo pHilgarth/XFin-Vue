@@ -22,7 +22,7 @@
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
-import AtomButton from "@/components/atoms/shared/AtomButton";
+import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
 
 import MoleculeInputText from "@/components/molecules/MoleculeInputText";

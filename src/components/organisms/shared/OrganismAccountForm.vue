@@ -29,7 +29,7 @@ import {
 import { InternalBankAccountService } from "@/services/internal-bank-account-service";
 import { numberService } from "@/services/number-service";
 
-import AtomButton from "@/components/atoms/shared/AtomButton";
+import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from "@/components/atoms/AtomHeadline";
 import AtomParagraph from '@/components/atoms/AtomParagraph';
 import MoleculeInputText from "@/components/molecules/MoleculeInputText";

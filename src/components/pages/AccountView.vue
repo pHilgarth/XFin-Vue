@@ -77,9 +77,9 @@
 </template>
 
 <script>
-import AtomButton from '@/components/atoms/shared/AtomButton';
+import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
-import AtomEditIcon from '@/components/atoms/shared/AtomEditIcon';
+import AtomEditIcon from '@/components/atoms/AtomEditIcon';
 import AtomParagraph from '@/components/atoms/AtomParagraph';
 
 import MoleculeAccountViewTable from '@/components/molecules/MoleculeAccountViewTable';

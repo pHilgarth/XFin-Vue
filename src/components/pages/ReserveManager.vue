@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import AtomButton from "@/components/atoms/shared/AtomButton";
+import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
 import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
 import MoleculeLoading from '@/components/molecules/shared/MoleculeLoading';

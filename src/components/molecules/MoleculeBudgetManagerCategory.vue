@@ -42,8 +42,8 @@
 </template>
 
 <script>
-import AtomInputText from '@/components/atoms/shared/AtomInputText';
-import AtomSpan from '@/components/atoms/shared/AtomSpan';
+import AtomInputText from '@/components/atoms/AtomInputText';
+import AtomSpan from '@/components/atoms/AtomSpan';
 
 import MoleculeFormError from "@/components/molecules/shared/MoleculeFormError";
 

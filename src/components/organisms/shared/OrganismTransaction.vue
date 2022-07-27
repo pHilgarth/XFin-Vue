@@ -74,7 +74,7 @@
 //TODO - refactor every component to use the same import structure: 1. third-party-libs 2. my components 3. my services
 import {useVuelidate} from "@vuelidate/core";
 
-import AtomButton from "@/components/atoms/shared/AtomButton";
+import AtomButton from '@/components/atoms/AtomButton';
 import MoleculeInputAutoSuggest from "@/components/molecules/MoleculeInputAutoSuggest";
 import MoleculeInputCheckbox from "@/components/molecules/shared/MoleculeInputCheckbox";
 import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
