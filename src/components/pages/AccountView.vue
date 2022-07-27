@@ -39,6 +39,7 @@
     <!-- TODO - if no changes are made to account, disable save-button (on OrganismAccountForm) -->
     <!-- TODO - check if position:absolute directly on .form-error has some drawbacks somewhere -->
     <!-- TODO - OrganismTransaction: MoleculeInputAutoSuggest wont close -> reproduce: type something in - click 'add new' - type more in - blur it using tab -->
+    <!-- TODO - dont place the accountId in the url in 'NewRevenue' or 'NewExpense' - just preselect the account from where the user is coming -->
 
 
 
