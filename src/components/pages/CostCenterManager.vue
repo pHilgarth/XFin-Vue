@@ -26,7 +26,7 @@ import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
 
 import MoleculeInputText from "@/components/molecules/MoleculeInputText";
-import MoleculeLoading from "@/components/molecules/shared/MoleculeLoading";
+import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeCostCenterRow from "@/components/molecules/MoleculeCostCenterRow";
 
 import { CostCenterService } from "@//services/cost-center-service";

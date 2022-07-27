@@ -14,7 +14,7 @@
 import AtomInputText from '@/components/atoms/AtomInputText';
 import AtomLabel from '@/components/atoms/AtomLabel';
 
-import MoleculeFormError from '@/components/molecules/shared/MoleculeFormError';
+import MoleculeFormError from '@/components/molecules/MoleculeFormError';
 
 import { errorService } from "@/services/form-error-service";
 

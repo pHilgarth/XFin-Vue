@@ -19,7 +19,7 @@ import OrganismBudget from "@/components/organisms/OrganismBudget";
 import OrganismExpenses from "@/components/organisms/OrganismExpenses";
 import OrganismRevenues from "@/components/organisms/OrganismRevenues";
 
-import MoleculeLoading from '@/components/molecules/shared/MoleculeLoading';
+import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeMonthSwitch from "@/components/molecules/MoleculeMonthSwitch";
 
 import {InternalBankAccountService} from '@/services/internal-bank-account-service';

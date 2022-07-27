@@ -76,10 +76,10 @@ import {useVuelidate} from "@vuelidate/core";
 
 import AtomButton from '@/components/atoms/AtomButton';
 import MoleculeInputAutoSuggest from "@/components/molecules/MoleculeInputAutoSuggest";
-import MoleculeInputCheckbox from "@/components/molecules/shared/MoleculeInputCheckbox";
+import MoleculeInputCheckbox from '@/components/molecules/MoleculeInputCheckbox';
 import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
 import MoleculeInputText from "@/components/molecules/MoleculeInputText";
-import MoleculeLoading from '@/components/molecules/shared/MoleculeLoading';
+import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 
 import {CopyService} from '@/services/copy-service';
 import {numberService} from "@/services/number-service";

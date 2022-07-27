@@ -24,7 +24,7 @@
 
 <script>
 import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
-import MoleculeLoading from '@/components/molecules/shared/MoleculeLoading';
+import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import OrganismCollapsible from '@/components/organisms/shared/OrganismCollapsible';
 
 import {AccountHolderService} from '@/services/account-holder-service';

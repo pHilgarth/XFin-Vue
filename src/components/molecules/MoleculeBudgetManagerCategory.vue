@@ -45,7 +45,7 @@
 import AtomInputText from '@/components/atoms/AtomInputText';
 import AtomSpan from '@/components/atoms/AtomSpan';
 
-import MoleculeFormError from "@/components/molecules/shared/MoleculeFormError";
+import MoleculeFormError from '@/components/molecules/MoleculeFormError';
 
 import { numberService } from '@/services/number-service';
 import { errorService } from "@/services/form-error-service";

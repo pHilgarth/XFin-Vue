@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import MoleculeTableRow from "@/components/molecules/shared/MoleculeTableRow";
+import MoleculeTableRow from '@/components/molecules/MoleculeTableRow';
 
 export default {
     components: {

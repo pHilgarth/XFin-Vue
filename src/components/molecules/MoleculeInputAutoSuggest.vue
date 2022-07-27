@@ -20,7 +20,7 @@ import AtomInputText from '@/components/atoms/AtomInputText';
 import AtomLabel from '@/components/atoms/AtomLabel';
 import AtomUnorderedList from '@/components/atoms/AtomUnorderedList';
 
-import MoleculeFormError from '@/components/molecules/shared/MoleculeFormError';
+import MoleculeFormError from '@/components/molecules/MoleculeFormError';
 
 export default {
     props: {

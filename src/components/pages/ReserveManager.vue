@@ -25,7 +25,7 @@
 import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
 import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
-import MoleculeLoading from '@/components/molecules/shared/MoleculeLoading';
+import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeReserveTable from "@/components/molecules/MoleculeReserveTable";
 
 import { AccountHolderService } from '@/services/account-holder-service';

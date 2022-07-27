@@ -83,7 +83,7 @@ import AtomEditIcon from '@/components/atoms/AtomEditIcon';
 import AtomParagraph from '@/components/atoms/AtomParagraph';
 
 import MoleculeAccountViewTable from '@/components/molecules/MoleculeAccountViewTable';
-import MoleculeLoading from "@/components/molecules/shared/MoleculeLoading";
+import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 
 //import OrganismCollapsible from "@/components/organisms/shared/OrganismCollapsible";
 import OrganismCollapsibleWithSlot from '@/components/organisms/shared/OrganismCollapsibleWithSlot';
