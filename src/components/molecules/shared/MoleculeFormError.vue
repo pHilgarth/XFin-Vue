@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import AtomParagraph from '@/components/atoms/shared/AtomParagraph';
+import AtomParagraph from '@/components/atoms/AtomParagraph';
 
 import { errorService } from '@/services/form-error-service';
 

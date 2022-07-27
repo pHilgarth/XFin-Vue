@@ -1,21 +1,18 @@
 <template>
-    <select class="molecule-action-select" @change="getAccountAction($event, config.bankAccount.id)">
-        <option>Aktion wählen ...</option>
-        <option id="new-revenue">Einnahme eintragen</option>
-        <option id="new-expense">Ausgabe eintragen</option>
-        <option id="budget-manager">Budget verwalten</option>
-        <option>Fixkostenverwaltung</option>
-    </select>
+  <select class="molecule-action-select" @change="getAccountAction($event, bankAccount.id)">
+    <option>Aktion wählen ...</option>
+    <option id="new-revenue">Einnahme eintragen</option>
+    <option id="new-expense">Ausgabe eintragen</option>
+    <option id="budget-manager">Budget verwalten</option>
+    <option>Fixkostenverwaltung</option>
+  </select>
 </template>
 
 <script>
 
 export default {
     props: {
-      config: {
-        type: Object,
-        required: true,
-      },
+      bankAccount: { type: Object, required: true },
     },
 
     methods: {

@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import MoleculeInputSelect from '@/components/molecules/shared/MoleculeInputSelect';
+import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
 import MoleculeLoading from '@/components/molecules/shared/MoleculeLoading';
 import OrganismCollapsible from '@/components/organisms/shared/OrganismCollapsible';
 

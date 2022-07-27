@@ -59,8 +59,14 @@
     <section v-else>
       <AtomParagraph class="pb-4" v-if="dataLoaded && accountHolders.length === 0" text="Keine Kontoinhaber gefunden!" />
 
+<!--      <div class="account-view__account-holder" v-for="accountHolder in accountHolders" :key="accountHolder.id">-->
+<!--        <OrganismCollapsible :config="configureCollapsible(accountHolder)" />-->
+<!--      </div>-->
+
       <div class="account-view__account-holder" v-for="accountHolder in accountHolders" :key="accountHolder.id">
-        <OrganismCollapsible :config="configureCollapsible(accountHolder)" />
+        <OrganismCollapsibleWithSlot :title="accountHolder.name">
+          <MoleculeAccountViewTable :bankAccounts="accountHolder.bankAccounts" />
+        </OrganismCollapsibleWithSlot>
         <AtomEditIcon :data-id="accountHolder.id" @click="editAccountHolder" />
       </div>
 
@@ -72,19 +78,20 @@
 
 <script>
 import AtomButton from '@/components/atoms/shared/AtomButton';
-import AtomHeadline from '@/components/atoms/shared/AtomHeadline';
+import AtomHeadline from '@/components/atoms/AtomHeadline';
 import AtomEditIcon from '@/components/atoms/shared/AtomEditIcon';
-import AtomParagraph from '@/components/atoms/shared/AtomParagraph';
+import AtomParagraph from '@/components/atoms/AtomParagraph';
 
+import MoleculeAccountViewTable from '@/components/molecules/MoleculeAccountViewTable';
 import MoleculeLoading from "@/components/molecules/shared/MoleculeLoading";
 
-import OrganismCollapsible from "@/components/organisms/shared/OrganismCollapsible";
+//import OrganismCollapsible from "@/components/organisms/shared/OrganismCollapsible";
+import OrganismCollapsibleWithSlot from '@/components/organisms/shared/OrganismCollapsibleWithSlot';
 
 import { AccountHolderService } from "@/services/account-holder-service";
 import { numberService } from "@/services/number-service";
 
 export default {
-  //TODO - try using created hook for API calls
   async created() {
     const apiResponse = await this.getAccountHolders();
 
@@ -102,7 +109,9 @@ export default {
     AtomEditIcon,
     AtomParagraph,
     MoleculeLoading,
-    OrganismCollapsible,
+    //OrganismCollapsible,
+    OrganismCollapsibleWithSlot,
+    MoleculeAccountViewTable,
   },
 
   data() {
@@ -137,7 +146,7 @@ export default {
 
       accountHolder.bankAccounts.forEach(bankAccount => {
         const balance = this.formatCurrency(bankAccount.balance);
-        const negative = bankAccount.balance < 0 ? true : false;
+        const negative = bankAccount.balance < 0;
 
         const row = {
           fields: [

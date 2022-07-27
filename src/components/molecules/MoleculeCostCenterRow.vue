@@ -21,7 +21,7 @@ import { required } from "@vuelidate/validators";
 
 import AtomButton from '@/components/atoms/shared/AtomButton';
 import AtomEditIcon from '@/components/atoms/shared/AtomEditIcon';
-import MoleculeInputText from '@/components/molecules/shared/MoleculeInputText';
+import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 
 import { CostCenterService } from '@/services/cost-center-service';
 

@@ -8,7 +8,7 @@
 
 <script>
 import AtomInputCheckbox from '@/components/atoms/AtomInputCheckbox';
-import AtomLabel from '@/components/atoms/shared/AtomLabel';
+import AtomLabel from '@/components/atoms/AtomLabel';
 
 export default {
     props: {

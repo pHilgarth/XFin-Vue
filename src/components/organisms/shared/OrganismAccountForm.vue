@@ -30,9 +30,9 @@ import { InternalBankAccountService } from "@/services/internal-bank-account-ser
 import { numberService } from "@/services/number-service";
 
 import AtomButton from "@/components/atoms/shared/AtomButton";
-import AtomHeadline from "@/components/atoms/shared/AtomHeadline";
-import AtomParagraph from '@/components/atoms/shared/AtomParagraph';
-import MoleculeInputText from "@/components/molecules/shared/MoleculeInputText";
+import AtomHeadline from "@/components/atoms/AtomHeadline";
+import AtomParagraph from '@/components/atoms/AtomParagraph';
+import MoleculeInputText from "@/components/molecules/MoleculeInputText";
 
 import { accountValidation } from "@/validation/validations";
 

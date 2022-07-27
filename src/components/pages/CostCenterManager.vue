@@ -23,9 +23,9 @@ import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
 import AtomButton from "@/components/atoms/shared/AtomButton";
-import AtomHeadline from '@/components/atoms/shared/AtomHeadline';
+import AtomHeadline from '@/components/atoms/AtomHeadline';
 
-import MoleculeInputText from "@/components/molecules/shared/MoleculeInputText";
+import MoleculeInputText from "@/components/molecules/MoleculeInputText";
 import MoleculeLoading from "@/components/molecules/shared/MoleculeLoading";
 import MoleculeCostCenterRow from "@/components/molecules/MoleculeCostCenterRow";
 

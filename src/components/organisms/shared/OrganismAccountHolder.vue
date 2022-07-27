@@ -40,10 +40,10 @@
 import { useVuelidate } from '@vuelidate/core';
 
 import AtomButton from '@/components/atoms/shared/AtomButton';
-import AtomHeadline from '@/components/atoms/shared/AtomHeadline';
-import AtomParagraph from '@/components/atoms/shared/AtomParagraph';
+import AtomHeadline from '@/components/atoms/AtomHeadline';
+import AtomParagraph from '@/components/atoms/AtomParagraph';
 import AtomSpan from '@/components/atoms/shared/AtomSpan';
-import MoleculeInputText from '@/components/molecules/shared/MoleculeInputText';
+import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 import OrganismAccountForm from '@/components/organisms/shared/OrganismAccountForm';
 
 import { AccountHolderService } from '@/services/account-holder-service';

@@ -12,7 +12,7 @@
 <script>
 
 import AtomInputSelect from "@/components/atoms/AtomInputSelect";
-import AtomLabel from "@/components/atoms/shared/AtomLabel";
+import AtomLabel from '@/components/atoms/AtomLabel';
 import MoleculeFormError from '@/components/molecules/shared/MoleculeFormError';
 
 

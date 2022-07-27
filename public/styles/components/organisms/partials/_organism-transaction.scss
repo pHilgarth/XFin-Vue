@@ -5,13 +5,10 @@
         @include rem(( padding-bottom: 20px ));
     }
 
-    &__cost-center {
-        border-bottom: 1px solid $borders;
 
-        @include rem((
-            margin-bottom: 20px,
-            padding-bottom: 20px,
-        ));
+
+    &__transaction-role-item {
+        border-bottom: 1px solid $borders;
     }
 
     &__counter-part-account {

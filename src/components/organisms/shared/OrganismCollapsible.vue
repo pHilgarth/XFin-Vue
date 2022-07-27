@@ -7,7 +7,7 @@
         <div v-if="content.content" v-html="content.content" v-bind="content.props"></div>
         <template v-else-if="content.component" v-bind="content.props">
           <component :is="content.component.tag" v-bind="content.component.props" />
-        </template> 
+        </template>
       </template>
     </MoleculeCollapsibleBody>
   </div>

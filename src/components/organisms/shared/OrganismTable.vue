@@ -37,7 +37,7 @@
                     props: <object>                             --> the props needed for the given component
                 },
                 props: <object>,
-              },  
+              },
               {
                 content: <string> || component: <object>,
                 props: <object>,

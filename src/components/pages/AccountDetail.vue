@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import AtomHeadline from '@/components/atoms/shared/AtomHeadline';
+import AtomHeadline from '@/components/atoms/AtomHeadline';
 import OrganismBudget from "@/components/organisms/OrganismBudget";
 import OrganismExpenses from "@/components/organisms/OrganismExpenses";
 import OrganismRevenues from "@/components/organisms/OrganismRevenues";

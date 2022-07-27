@@ -4,10 +4,25 @@
     <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!"/>
 
     <form v-else>
-      <MoleculeInputSelect class="organism-transaction__account" :options="bankAccountOptions" field="account" v-model="selectedAccountId" label="Konto"/>
+      <MoleculeInputSelect class="organism-transaction__account pb-5" :options="bankAccountOptions" field="account"
+                           v-model="selectedAccountId" label="Konto"/>
 
-      <MoleculeInputSelect  class="organism-transaction__cost-center mb-5 pb-5" :options="costCenterOptions" field="costCenter" v-model="costCenter" label="Kostenstelle"
-                            :validation="v$.costCenter" :hasErrors="v$.costCenter.$error" @blur="v$.costCenter.$touch()"/>
+      <MoleculeInputSelect class="pb-5" :options="costCenterOptions"
+                           field="costCenter" v-model="costCenter" label="Kostenstelle"
+                           :validation="v$.costCenter" :hasErrors="v$.costCenter.$error"
+                           @blur="v$.costCenter.$touch()"/>
+
+      <MoleculeInputSelect class="pb-5" :options="transactionRoles"
+                           field="transactionRole" v-model="transactionRole"
+                           label="Typ"
+                           :validation="v$.transactionRole" :hasErrors="v$.transactionRole.$error"
+                           @blur="v$.transactionRole.$touch()"/>
+
+      <MoleculeInputSelect v-if="transactionRole !== 'reguläre Transaktion'" class="organism-transaction__transaction-role-item mb-5 pb-5" :options="transactionRoleItems"
+                           field="transactionRole" v-model="transactionRoleItem"
+                           label="Item"
+                           :validation="v$.transactionRoleItem" :hasErrors="v$.transactionRoleItem.$error"
+                           @blur="v$.transactionRoleItem.$touch()"/>
 
       <div class="organism-transaction__counter-part pb-5">
         <MoleculeInputAutoSuggest field="counter-part" :hasErrors="v$.counterPart?.$error"
@@ -44,9 +59,6 @@
                          :validation="v$.amount" label="Betrag"
                          @blur="v$.amount.$touch()"/>
 
-      <MoleculeInputSelect class="pb-5" :options="transactionRoles" field="transactionRole" v-model="transactionRole" label="Typ"
-                           :validation="v$.transactionRole" :hasErrors="v$.transactionRole.$error" @blur="v$.transactionRole.$touch()"/>
-
       <AtomButton type="primary" text="Speichern" :disabled="v$.$silentErrors.length > 0" @click.prevent="save"/>
     </form>
   </div>
@@ -65,8 +77,8 @@ import {useVuelidate} from "@vuelidate/core";
 import AtomButton from "@/components/atoms/shared/AtomButton";
 import MoleculeInputAutoSuggest from "@/components/molecules/MoleculeInputAutoSuggest";
 import MoleculeInputCheckbox from "@/components/molecules/shared/MoleculeInputCheckbox";
-import MoleculeInputSelect from "@/components/molecules/shared/MoleculeInputSelect";
-import MoleculeInputText from "@/components/molecules/shared/MoleculeInputText";
+import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
+import MoleculeInputText from "@/components/molecules/MoleculeInputText";
 import MoleculeLoading from '@/components/molecules/shared/MoleculeLoading';
 
 import {CopyService} from '@/services/copy-service';
@@ -420,8 +432,8 @@ export default {
     //it does not work, if I simply assign transactionValidation to validation, it has to be a separate object
     let validation = CopyService.copyObject(transactionValidation);
 
-    validation.costCenter = { costCenterValidator: costCenterValidator(this.transactionRole) };
-    validation.transactionRole = { transactionRoleValidator: transactionRoleValidator(this.costCenter) };
+    validation.costCenter = {costCenterValidator: costCenterValidator(this.transactionRole)};
+    validation.transactionRole = {transactionRoleValidator: transactionRoleValidator(this.costCenter)};
 
     if (this.includeCounterPartAccount) {
       validation.counterPartBic = {bicValidator};

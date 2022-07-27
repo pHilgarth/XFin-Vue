@@ -26,7 +26,10 @@
           <li :class="selectedMenuItem == 3 ? 'active' : ''" data-route="/cost-centers" data-index="3" @click="routeToComponent">
             Kostenstellenverwaltung
           </li>
-          <li :class="selectedMenuItem == 4 ? 'active' : ''" data-route="/design-elements" data-index="4" @click="routeToComponent">
+          <li :class="selectedMenuItem == 4 ? 'active' : ''" data-route="/reserves" data-index="4" @click="routeToComponent">
+            Rücklagen
+          </li>
+          <li :class="selectedMenuItem == 5 ? 'active' : ''" data-route="/design-elements" data-index="5" @click="routeToComponent">
             Design-Elemente (Dev)
           </li>
           <li data-index="5" data-route="/example" @click="routeToComponent">
