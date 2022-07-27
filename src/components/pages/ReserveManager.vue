@@ -29,7 +29,7 @@ import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeReserveTable from "@/components/molecules/MoleculeReserveTable";
 
 import { AccountHolderService } from '@/services/account-holder-service';
-import OrganismCollapsibleWithSlot from "@/components/organisms/shared/OrganismCollapsibleWithSlot";
+import OrganismCollapsibleWithSlot from '@/components/organisms/OrganismCollapsibleWithSlot';
 
 export default {
   async created() {

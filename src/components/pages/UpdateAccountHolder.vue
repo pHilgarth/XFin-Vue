@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import OrganismAccountHolder              from '@/components/organisms/shared/OrganismAccountHolder';
+import OrganismAccountHolder              from '@/components/organisms/OrganismAccountHolder';
 
 import { AccountHolderService }           from '@/services/account-holder-service';
 import { CopyService }                    from '@/services/copy-service';

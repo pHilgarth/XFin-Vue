@@ -85,8 +85,8 @@ import AtomParagraph from '@/components/atoms/AtomParagraph';
 import MoleculeAccountViewTable from '@/components/molecules/MoleculeAccountViewTable';
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 
-//import OrganismCollapsible from "@/components/organisms/shared/OrganismCollapsible";
-import OrganismCollapsibleWithSlot from '@/components/organisms/shared/OrganismCollapsibleWithSlot';
+//import OrganismCollapsible from '@/components/organisms/OrganismCollapsible';
+import OrganismCollapsibleWithSlot from '@/components/organisms/OrganismCollapsibleWithSlot';
 
 import { AccountHolderService } from "@/services/account-holder-service";
 import { numberService } from "@/services/number-service";

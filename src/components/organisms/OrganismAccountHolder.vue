@@ -44,7 +44,7 @@ import AtomHeadline from '@/components/atoms/AtomHeadline';
 import AtomParagraph from '@/components/atoms/AtomParagraph';
 import AtomSpan from '@/components/atoms/AtomSpan';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
-import OrganismAccountForm from '@/components/organisms/shared/OrganismAccountForm';
+import OrganismAccountForm from '@/components/organisms/OrganismAccountForm';
 
 import { AccountHolderService } from '@/services/account-holder-service';
 import { CopyService } from '@/services/copy-service';

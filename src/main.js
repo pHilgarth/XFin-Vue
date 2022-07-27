@@ -3,8 +3,8 @@ import { router } from './router';
 
 import App from './App';
 
-import OrganismBudgetList from './components/organisms/shared/OrganismBudgetList';
-import OrganismTable from './components/organisms/shared/OrganismTable';
+import OrganismBudgetList from './components/organisms/OrganismBudgetList';
+import OrganismTable from './components/organisms/OrganismTable';
 
 import MoleculeActionSelect from './components/molecules/MoleculeActionSelect';
 

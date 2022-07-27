@@ -3,7 +3,7 @@
 </template>
 
 <script>
-  import OrganismTransaction from '@/components/organisms/shared/OrganismTransaction';
+  import OrganismTransaction from '@/components/organisms/OrganismTransaction';
 
   export default {
     components: {
