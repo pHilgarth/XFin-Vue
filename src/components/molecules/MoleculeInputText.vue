@@ -30,7 +30,7 @@ export default {
     hasErrors:          { type: Boolean },
     modelValue:         { type: String },
     disabled:           { type: Boolean },
-    optional:           { type: Boolean },
+    optional:           { type: Boolean, default: true },
     // validation has to be the vuelidate object of the property (i.e. v$.name)
     validation:         { type: Object },
     small:              { type: Boolean },
