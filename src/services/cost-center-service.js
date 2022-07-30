@@ -33,29 +33,29 @@ export const CostCenterService = {
 
     async getAll() {
         try {
-        return await fetch(baseUrl).then((response) => {
-            if (response.status === 200) {
-                return response.json();
-            }
-            else if (response.status === 204) {
-                return null;
-            }
-        }).then((data) => {
-            if (data != undefined) {
-                return {
-                    success: true,
-                    error: null,
-                    data: data,
-                };
-            }
-            else {
-                return {
-                    success: true,
-                    error: 'No categories found',
-                    data: null,
-                };
-            }
-        });
+            return await fetch(baseUrl).then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                else if (response.status === 204) {
+                    return null;
+                }
+            }).then((data) => {
+                if (data != undefined) {
+                    return {
+                        success: true,
+                        error: null,
+                        data: data,
+                    };
+                }
+                else {
+                    return {
+                        success: true,
+                        error: 'No categories found',
+                        data: null,
+                    };
+                }
+            });
         } catch (error) {
             return {
                 success: false,
