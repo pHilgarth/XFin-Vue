@@ -1,0 +1,4 @@
+.vuepic-datepicker .dp__input_wrap .dp__input {
+  @include rem(height, 58px);
+  @include rem(border-radius, 8px);
+}
