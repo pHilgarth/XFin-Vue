@@ -5,6 +5,7 @@ const ibanDuplicateErrorMessage =                       'Diese IBAN existiert be
 const nameErrorMessage =                                'Bitte gib einen Namen ein!';
 const referenceErrorMessage =                           'Bitte gib einen Verwendungszweck ein!';
 
+//TODO - change every service name to UpperCase
 export const errorService = {
     errorMessages: {
         //amount errors
@@ -40,6 +41,13 @@ export const errorService = {
 
         //reference errors
         reference:                              referenceErrorMessage,
+
+        //targetAmount errors
+        targetAmount:                           amountErrorMessage,
+
+        //title errors
+        title_required:                         'Bitte gib einen Titel ein!',
+        title_maxLength:                        'Der Titel darf nicht länger als 30 Zeichen sein!',
 
         //transactionRole errors
         transactionRole:                        'Dieser Transaktions-Typ passt nicht zur gewählten Kostenstelle!',
