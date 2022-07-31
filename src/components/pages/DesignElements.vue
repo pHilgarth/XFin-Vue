@@ -1,8 +1,8 @@
 <template>
   <div class="design-elements">
-    <h1>Design-Elements</h1>
+    <AtomHeadline tag="h1" text="Design-Elements" />
     <hr />
-    <h3>Buttons</h3>
+    <AtomHeadline tag="h3" text="Buttons" />
     <br>
     <AtomButton type="primary" text="Primary Button" />
     <br><br>
@@ -20,9 +20,11 @@
 
 <script>
 import AtomButton from '@/components/atoms/AtomButton';
+import AtomHeadline from '@/components/atoms/AtomHeadline';
 
 export default {
   components: {
+    AtomHeadline,
     AtomButton,
   },
 }

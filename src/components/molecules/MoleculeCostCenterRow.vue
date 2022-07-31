@@ -1,7 +1,7 @@
 <template>
   <div class="molecule-cost-center-row">
     <template v-if="!edit">
-      <p>{{ costCenter.name }}</p>
+      <AtomParagraph :text="costCenter.name" />
       <AtomEditIcon v-if="allowEdit" :data-id="costCenter.id" align="right" @click="editCostCenter" />
     </template>
     <div v-if="edit" class="molecule-cost-center-row__edit">
@@ -21,6 +21,8 @@ import { required } from "@vuelidate/validators";
 
 import AtomButton from '@/components/atoms/AtomButton';
 import AtomEditIcon from '@/components/atoms/AtomEditIcon';
+import AtomParagraph from '@/components/atoms/AtomParagraph';
+
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 
 import { CostCenterService } from '@/services/cost-center-service';
@@ -38,6 +40,7 @@ import { CostCenterService } from '@/services/cost-center-service';
     },
 
     components: {
+      AtomParagraph,
       AtomButton,
       AtomEditIcon,
       MoleculeInputText

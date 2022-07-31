@@ -1,6 +1,6 @@
 <template>
   <section class="budget-manager">
-    <h1>Budgetmanager (zweimal Speichern hintereinander liefert einen ERROR beim 2. mal</h1>
+    <AtomHeadline tag="h1" text="Budgetmanager (zweimal Speichern hintereinander liefert einen ERROR)" />
     <!-- TODO - verfügbarer Betrag einer KS muss auch geplante Ausgaben berücksichtigen! Geld für geplante Ausgaben kann nicht umgebucht werden -->
     <!-- TODO - bei offenen Änderungen wär es cool, wenn der Collapsible Header irgendwie hervorgehen würde, allerdings müsste ich die Info irgendwie ans parent übergeben (OrgansimCollapsible)-->
     <!-- TODO - error message kann unterschiedelich sein, nicht hardcoded -->
@@ -23,13 +23,16 @@
 </template>
 
 <script>
+import AtomHeadline from '@/components/atoms/AtomHeadline';
+
 import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
+
 import OrganismCollapsible from '@/components/organisms/OrganismCollapsible';
 
 import {AccountHolderService} from '@/services/account-holder-service';
 import {numberService} from '@/services/number-service';
-import {CostCenterService} from '@/services/cost-center-service.js';
+import {CostCenterService} from '@/services/cost-center-service';
 
 export default {
   async created() {
@@ -43,6 +46,7 @@ export default {
   },
 
   components: {
+    AtomHeadline,
     MoleculeInputSelect,
     MoleculeLoading,
     OrganismCollapsible,
