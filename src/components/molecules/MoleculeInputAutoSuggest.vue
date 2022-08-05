@@ -32,8 +32,8 @@ export default {
         // validation has to be the vuelidate object of the property (i.e. v$.name)
         validation:         { type: Object },
         items:              { type: Array, required: true },
-        noItemsFallback:    { type: String },
-        alwaysShowFallback: { type: Boolean },
+        noItemsFallback:    { type: String, default: "&plus; Neu hinzufügen" },
+        alwaysShowFallback: { type: Boolean, default: true },
         errorMessageParams: { type: Object },
     },
 
