@@ -1,4 +1,4 @@
-import { numberService } from '@/services/number-service';
+import { NumberService } from '@/services/number-service';
 import { helpers } from '@vuelidate/validators';
 
 /* amount regex:
@@ -26,8 +26,8 @@ export const amountValidator = (value) => value.match(/^(0|[1-9][0-9]*)?,?[0-9]{
 */
 export const balanceValidator = (value) => value.match(/^-?(0|[1-9](\.?[0-9]{3})*|[1-9][0-9]{1,2}(\.?[0-9]{3})*),[0-9]{2}$/);
 export const bicValidator = (value) => value.match(/^[a-zA-Z]{6}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?$/);
-export const counterPartValidator = (value) => value !== null && value !== undefined && typeof value === 'string' && value.trim() !== '';
-export const freeBudgetValidator = (value) => numberService.parseFloat(value) >= 0;
+export const externalPartyValidator = (value) => value !== null && value !== undefined && typeof value === 'string' && value.trim() !== '';
+export const freeBudgetValidator = (value) => NumberService.parseFloat(value) >= 0;
 export const ibanValidator = (value) => value.match(/^[a-zA-Z]{2}[0-9]{20}$/);
 export const optionalAmountValidator = (value) => (value === '' || value === null || value === undefined) || value.match(/^(0|[1-9][0-9]*)?,?[0-9]{1,2}$/);
 export const targetDateValidator = (value) => (value === '' || value === null || value === undefined) || value.match(/* TODO - regex missing!!! check how's the value of a date input looks like */);

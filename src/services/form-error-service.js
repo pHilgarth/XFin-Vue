@@ -20,11 +20,11 @@ export const errorService = {
         //costCenter errors
         costCenter:                             'Diese Kostenstelle passt nicht zum gewählten Transaktions-Typ!',
 
-        //counterPart errors
-        counterPart:                            'Bitte gib einen {counterPartType} an!',
-        counterPartIban:                        ibanErrorMessage,
-        counterPartBic:                         bicErrorMessage,
-        counterPartIban_ibanDuplicate:          ibanDuplicateErrorMessage,
+        //externalParty errors
+        externalParty:                            'Bitte gib einen {externalPartyType} an!',
+        externalPartyIban:                        ibanErrorMessage,
+        externalPartyBic:                         bicErrorMessage,
+        externalPartyIban_ibanDuplicate:          ibanDuplicateErrorMessage,
 
         //freeBudget errors                     //{...} gets replaced by the function getErrorMessage in MoleculeInputText
         //freeBudget:                             'Der Mindestbetrag für dieses Konto beträgt {minimalAmount}!',
