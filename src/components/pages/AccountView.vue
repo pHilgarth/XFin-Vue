@@ -1,4 +1,3 @@
-
 <template>
   <div class="account-view">
     <AtomHeadline tag="h1" text="Kontenübersicht" />
@@ -20,7 +19,6 @@
     <!-- TODO - dont show "Nicht zugewiesen" in CostCenterManager -->
     <!-- TODO - implement saving of new CostCenter -->
     <!-- TODO - implement custom select form control, so that the options aren't displayed in the default browser dropdown, which is ugly -->
-    <!-- TODO - rename transactionCategory to costCenter everywhere -->
     <!-- TODO - rethink the concept of dynamically rendering components by passing a config-prop to components, like in i.e. MoleculeTableBody - no one knows, what shape the config object has ... -->
     <!-- TODO - merge pages NewAccountHolder and UpdateAccountHolder into one component rendering OrganismAccountHolder accordingly-->
     <!-- TODO - move the edit account holder link out of the collapsible title into a section "settings" or else (in main menu sidebar) -->
@@ -29,8 +27,6 @@
     <!-- TODO - maybe remove "component docs" out of components into a readme or similar -->
     <!-- TODO - rework form classes -> every form should have "xfin__form" and the form-elements "xfin__form__<control|error|label|etc....>" -->
     <!-- TODO - check if there are any classes set, which are not used by CSS and which are NO root-classes used for clarification (component root-classes) -->
-    <!-- TODO - check if <h>-tags are used anywhere else than in AtomHeadline -->
-    <!-- TODO - check if <p>-tags are used anywhere else than in AtomParagraph -->
     <!-- TODO - write a service that removes <script>-tags from text that is used in v-html somewhere -->
     <!-- TODO - implement detail view on budget manager (to see how the money on a given cost center is allocated on a given account) -> see comments on MoleculeBudgetManagerCategory -->
     <!-- TODO - styling ... (SCSS styling of the app) -->
@@ -63,10 +59,6 @@
     <section v-else>
       <AtomParagraph class="pb-4" v-if="dataLoaded && accountHolders.length === 0" text="Keine Kontoinhaber gefunden!" />
 
-<!--      <div class="account-view__account-holder" v-for="accountHolder in accountHolders" :key="accountHolder.id">-->
-<!--        <OrganismCollapsible :config="configureCollapsible(accountHolder)" />-->
-<!--      </div>-->
-
       <div class="account-view__account-holder" v-for="accountHolder in accountHolders" :key="accountHolder.id">
         <OrganismCollapsibleWithSlot :title="accountHolder.name">
           <MoleculeAccountViewTable :bankAccounts="accountHolder.bankAccounts" />
@@ -89,21 +81,19 @@ import AtomParagraph from '@/components/atoms/AtomParagraph';
 import MoleculeAccountViewTable from '@/components/molecules/MoleculeAccountViewTable';
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 
-//import OrganismCollapsible from '@/components/organisms/OrganismCollapsible';
 import OrganismCollapsibleWithSlot from '@/components/organisms/OrganismCollapsibleWithSlot';
 
 import { AccountHolderService } from "@/services/account-holder-service";
-import { numberService } from "@/services/number-service";
+import { NumberService } from "@/services/number-service";
 
 export default {
   async created() {
-    const apiResponse = await this.getAccountHolders();
-
-    if (apiResponse.success) {
+    try {
+      this.accountHolders = await AccountHolderService.getAll();
       this.dataLoaded = true;
-    }
-    else {
+    } catch (error) {
       this.loadingError = true;
+      console.error(error);
     }
   },
 
@@ -113,7 +103,6 @@ export default {
     AtomEditIcon,
     AtomParagraph,
     MoleculeLoading,
-    //OrganismCollapsible,
     OrganismCollapsibleWithSlot,
     MoleculeAccountViewTable,
   },
@@ -128,71 +117,6 @@ export default {
   },
 
   methods: {
-    configureCollapsible(accountHolder) {
-      return {
-          collapsed: true,
-          title: accountHolder.name,
-          content: [
-            {
-              component: {
-                tag: 'OrganismTable',
-                props: {
-                  config: this.configureTable(accountHolder),
-                },
-              }
-            }
-          ],
-      };
-    },
-
-    configureTable(accountHolder) {
-      const rows = [];
-
-      accountHolder.bankAccounts.forEach(bankAccount => {
-        const balance = this.formatCurrency(bankAccount.balance);
-        const negative = bankAccount.balance < 0;
-
-        const row = {
-          fields: [
-            {
-              component: {
-                tag: 'router-link',
-                content: bankAccount.accountNumber,
-                props: { to: `/accounts/${bankAccount.id}` },
-              },
-            },
-            { content: bankAccount.description },
-            {
-              content: balance,
-              props: { class: negative ? 'negative' : '' },
-            },
-            {
-              component: {
-                tag: 'MoleculeActionSelect',
-                props: { config: { bankAccount: bankAccount } },
-              },
-            },
-          ],
-        };
-
-        rows.push(row);
-      });
-
-      return {
-        tableHead: {
-          fields: [
-            { content: 'Konto' },
-            { content: 'Kontotyp' },
-            { content: 'Kontostand' },
-            { content: 'Aktion' },
-          ]
-        },
-        tableBody: {
-          rows: rows
-        },
-      };
-    },
-
     editAccountHolder(event) {
       let element = event.target;
 
@@ -205,22 +129,8 @@ export default {
        this.$router.push(`/edit-account-holder/${id}`);
     },
 
-    async getAccountHolders() {
-      const includeAccounts = true;
-      const apiResponse = await AccountHolderService.getAll(includeAccounts);
-
-      if (apiResponse.success && apiResponse.data) {
-        this.accountHolders = apiResponse.data;
-      }
-      else if (apiResponse.success && !apiResponse.data) {
-        this.accountHolders = [];
-      }
-
-      return apiResponse;
-    },
-
     formatCurrency(value) {
-      return numberService.formatCurrency(value);
+      return NumberService.formatCurrency(value);
     },
   },
 };
