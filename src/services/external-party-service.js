@@ -2,7 +2,7 @@
 const baseUrl = "http://localhost:2905/api/externalParties";
 
 export const ExternalPartyService = {
-  async createExternalParty(externalParty) {
+  async create(externalParty) {
     const postObject = {
       method: 'POST',
       headers: {
@@ -33,30 +33,11 @@ export const ExternalPartyService = {
           return response.json();
         }
         else if (response.status === 204) {
-          return null;
+          return [];
         }
-      }).then((data) => {
-        if (data != undefined) {
-          return {
-            success: true,
-            error: null,
-            data: data,
-          };
-        }
-        else {
-          return {
-            success: true,
-            error: 'No external parties found!',
-            data: null,
-          };
-        }
-      });
+      }).then(data => data);
     } catch (error) {
-      return {
-        success: false,
-        error: `Error fetching external parties\n${error}`,
-        data: null,
-      };
+      throw new Error(error);
     }
   },
   // async getAll() {

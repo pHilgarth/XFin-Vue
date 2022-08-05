@@ -2,7 +2,7 @@
 const baseUrl = "http://localhost:2905/api/externalTransactions";
 
 export const ExternalTransactionService = {
-  async createExternalTransaction(transaction) {
+  async create(transaction) {
     const postObject = {
       method: 'POST',
       headers: {

@@ -2,7 +2,7 @@
 const baseUrl = "http://localhost:2905/api/externalBankAccounts";
 
 export const ExternalBankAccountService = {
-  async createExternalBankAccount(bankAccount) {
+  async create(bankAccount) {
     const postObject = {
       method: 'POST',
       headers: {

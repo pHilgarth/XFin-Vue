@@ -1,7 +1,22 @@
-
+//TODO - introduce an 'api-service', which makes all the api calls -> i.e. getALl is always the same, just with different url
 const baseUrl = "http://localhost:2905/api/internalBankAccounts";
 
 export const InternalBankAccountService = {
+  async getAll() {
+    try {
+      return await fetch(baseUrl).then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        }
+        else if (response.status === 204) {
+          return [];
+        }
+      }).then(data => data);
+    } catch (error) {
+      throw new Error(error);
+    }
+  },
+
   async getById(id, simple, year = 0, month = -1) {
 
     const url = `${baseUrl}/${id}?simple=${simple}&year=${year}&month=${++month}`

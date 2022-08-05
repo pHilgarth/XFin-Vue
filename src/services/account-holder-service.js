@@ -5,46 +5,23 @@
 const baseUrl = "http://localhost:2905/api/accountHolders";
 
 export const AccountHolderService = {
-  async getAll(includeAccounts) {
-    let url = `${baseUrl}?includeAccounts=${includeAccounts}`;
-
+  async getAll() {
     try {
-      return await fetch(url).then((response) => {
+      return await fetch(baseUrl).then((response) => {
         if (response.status === 200) {
           return response.json();
         }
         else if (response.status === 204) {
-          return null;
+          return [];
         }
-      }).then((data) => {
-        if (data != undefined) {
-          return {
-            success: true,
-            error: null,
-            data: data
-          };
-        }
-        else {
-          return {
-            success: true,
-            error: 'No account holders found!',
-            data: null,
-          };
-        }
-      });
+      }).then(data => data);
     } catch (error) {
-      return {
-        success: false,
-        error: `Error fetching account holders\n${error}`,
-        data: null,
-      };
+      throw new Error(error);
     }
   },
-  async get(id, includeAccounts = false, simpleBankAccounts = true) {
-//TODO - test this ternary
-    let url = includeAccounts
-        ? `${baseUrl}/${id}?includeAccounts=${includeAccounts}&simple=${simpleBankAccounts}`
-        : `${baseUrl}/${id}`;
+
+  async get(id) {
+    let url = `${baseUrl}/${id}`;
 
     try {
       return await fetch(url).then((response) => {
