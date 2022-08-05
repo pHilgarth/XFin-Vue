@@ -13,7 +13,7 @@ import AtomLabel from '@/components/atoms/AtomLabel';
 export default {
     props: {
         field:              { type: String },
-        renderAsSwitch:     { type: Boolean },
+        renderAsSwitch:     { type: Boolean, default: true },
         disabled:           { type: Boolean },
 
         modelValue: {
