@@ -5,7 +5,7 @@
 <script>
 import OrganismCollapsible from '@/components/organisms/OrganismCollapsible';
 
-import { numberService } from "@/services/number-service";
+import { NumberService } from "@/services/number-service";
 
 export default {
   components: {
@@ -13,7 +13,7 @@ export default {
   },
 
   props: {
-    transactionCategories: {
+    costCenters: {
       type: Array,
       required: true,
     },
@@ -40,7 +40,7 @@ export default {
     configureTable() {
       let rows = [];
 
-      this.transactionCategories.forEach(category => {
+      this.costCenters.forEach(category => {
         const row = {
           fields: [
             {
@@ -48,27 +48,27 @@ export default {
                 props: { class: 'col-2' },
             },
             {
-                content: numberService.formatCurrency(category.proportionPreviousMonth),
+                content: NumberService.formatCurrency(category.proportionPreviousMonth),
                 props: { class: (Number)(category.proportionPreviousMonth) < 0 ? 'negative col-3 align-right' : 'col-3 align-right' },
             },
             {
-                content: numberService.formatCurrency(category.revenuesTotal),
+                content: NumberService.formatCurrency(category.revenuesTotal),
                 props: { class: 'col-2 align-right' },
             },
             {
-              content: numberService.formatCurrency(category.internalTransfersAmount),
+              content: NumberService.formatCurrency(category.internalTransfersAmount),
               props: { class: (Number)(category.internalTransfersAmount) < 0 ? 'negative col-2 align-right' : 'test col-2 align-right' },
             },
             {
-                content: numberService.formatCurrency(category.budget),
+                content: NumberService.formatCurrency(category.budget),
                 props: { class: (Number)(category.budget) < 0 ? 'negative col-2 align-right' : 'col-2 align-right' },
             },
             {
-                content: numberService.formatCurrency(Math.abs(category.expensesTotal)),
+                content: NumberService.formatCurrency(Math.abs(category.expensesTotal)),
                 props: { class: 'col-2 align-right' },
             },
             {
-                content: numberService.formatCurrency(category.balance),
+                content: NumberService.formatCurrency(category.balance),
                 props: { class: (Number)(category.balance) < 0 ? 'negative col-1 align-right' : 'col-1 align-right' },
             },
           ],
@@ -155,12 +155,12 @@ export default {
     getBalanceTotal(format) {
         let balanceTotal = 0;
 
-        this.transactionCategories.forEach(transactionCategory => {
-        balanceTotal += transactionCategory.balance;
+        this.costCenters.forEach(costCenter => {
+        balanceTotal += costCenter.balance;
         });
 
         if (format) {
-        return numberService.formatCurrency(balanceTotal);
+        return NumberService.formatCurrency(balanceTotal);
         }
         else {
         return balanceTotal;
@@ -170,12 +170,12 @@ export default {
     getBudgetTotal(format) {
         let budgetTotal = 0;
 
-        this.transactionCategories.forEach(transactionCategory => {
-        budgetTotal += transactionCategory.budget;
+        this.costCenters.forEach(costCenter => {
+        budgetTotal += costCenter.budget;
         });
 
         if (format) {
-            return numberService.formatCurrency(budgetTotal);
+            return NumberService.formatCurrency(budgetTotal);
         } else {
             return budgetTotal;
         }
@@ -184,22 +184,22 @@ export default {
     getExpensesTotal() {
         let expensesTotal = 0;
 
-        this.transactionCategories.forEach(transactionCategory => {
-        expensesTotal += Math.abs(transactionCategory.expensesTotal);
+        this.costCenters.forEach(costCenter => {
+        expensesTotal += Math.abs(costCenter.expensesTotal);
         });
 
-        return numberService.formatCurrency(expensesTotal);
+        return NumberService.formatCurrency(expensesTotal);
     },
 
     getProportionTotal(format) {
         let proportionTotal = 0;
 
-        this.transactionCategories.forEach(transactionCategory => {
-        proportionTotal += transactionCategory.proportionPreviousMonth;
+        this.costCenters.forEach(costCenter => {
+        proportionTotal += costCenter.proportionPreviousMonth;
         });
 
         if (format) {
-            return numberService.formatCurrency(proportionTotal);
+            return NumberService.formatCurrency(proportionTotal);
         } else {
             return proportionTotal;            
         }
@@ -208,11 +208,11 @@ export default {
     getRevenuesTotal() {
         let revenuesTotal = 0;
 
-        this.transactionCategories.forEach(transactionCategory => {
-        revenuesTotal += transactionCategory.revenuesTotal;
+        this.costCenters.forEach(costCenter => {
+        revenuesTotal += costCenter.revenuesTotal;
         });
 
-        return numberService.formatCurrency(revenuesTotal);
+        return NumberService.formatCurrency(revenuesTotal);
     },
   },
 };

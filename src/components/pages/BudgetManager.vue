@@ -31,7 +31,7 @@ import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import OrganismCollapsible from '@/components/organisms/OrganismCollapsible';
 
 import {AccountHolderService} from '@/services/account-holder-service';
-import {numberService} from '@/services/number-service';
+import {NumberService} from '@/services/number-service';
 import {CostCenterService} from '@/services/cost-center-service';
 
 export default {
@@ -82,7 +82,7 @@ export default {
       for (let i = 0; i < accountHolder.bankAccounts.length; i++) {
         let bankAccount = accountHolder.bankAccounts[i]
 
-        const categoriesResponse = await this.getTransactionCategories(bankAccount);
+        const categoriesResponse = await this.getCostCenters(bankAccount);
 
         if (categoriesResponse.error) {
           loadingError = true;
@@ -99,19 +99,19 @@ export default {
       }
     },
 
-    async getTransactionCategories(bankAccount) {
+    async getCostCenters(bankAccount) {
       const year = new Date().getFullYear();
       const month = new Date().getMonth();
 
       const apiResponse = await CostCenterService.getAllByAccount(bankAccount.id, year, month);
 
       if (apiResponse.success && apiResponse.data) {
-        bankAccount.transactionCategories = apiResponse.data;
+        bankAccount.costCenters = apiResponse.data;
 
-        bankAccount.transactionCategories.forEach(category => {
+        bankAccount.costCenters.forEach(category => {
           //category.balance has to be a string although it's actually a number
           //this is because of the dynamic freeBudget calculation in OrganismBudgetList
-          category.balance = numberService.formatCurrency(category.balance, false);
+          category.balance = NumberService.formatCurrency(category.balance, false);
           category.bankAccountId = bankAccount.id;
         });
       }
@@ -128,7 +128,7 @@ export default {
             tag: 'OrganismBudgetList',
             props: {
               bankAccount: bankAccount,
-              transactionCategories: bankAccount.transactionCategories,
+              costCenters: bankAccount.costCenters,
             },
           },
         }],

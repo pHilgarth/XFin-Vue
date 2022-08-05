@@ -47,7 +47,7 @@ import AtomSpan from '@/components/atoms/AtomSpan';
 
 import MoleculeFormError from '@/components/molecules/MoleculeFormError';
 
-import { numberService } from '@/services/number-service';
+import { NumberService } from '@/services/number-service';
 import { errorService } from "@/services/form-error-service";
 
 export default {
@@ -82,8 +82,8 @@ export default {
       const caretPosition = event.target.selectionStart;
       const lengthBefore = event.target.value.length;
 
-      if (numberService.validateBudgetInput(event)) {
-        const formattedValue = numberService.formatBudget(event.target.value);
+      if (NumberService.validateBudgetInput(event)) {
+        const formattedValue = NumberService.formatBudget(event.target.value);
         const lengthAfter = formattedValue.length;
 
         event.target.value = formattedValue;

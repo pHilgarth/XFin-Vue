@@ -1,4 +1,4 @@
-export const numberService = {
+export const NumberService = {
     //TODO - is this method doing the same as formatCurrency with includeCurrency = false?
     amountToString(value) {
         return value !== null
@@ -9,7 +9,7 @@ export const numberService = {
     enforceNumber(value) {
         let result = typeof value === 'number' && !isNaN(value)
             ? value
-            : numberService.parseFloat(value);
+            : NumberService.parseFloat(value);
         
         return isNaN(result)
             ? null
@@ -17,7 +17,7 @@ export const numberService = {
     },
 
     formatBudget(value) {
-        const isNegative = numberService.parseFloat(value) < 0;
+        const isNegative = NumberService.parseFloat(value) < 0;
         let absValue = isNegative ? value.slice(1) : value;
         //after every input, I format the value
         let formattedValue = absValue.replaceAll(".", "");

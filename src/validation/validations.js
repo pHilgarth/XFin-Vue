@@ -3,7 +3,7 @@ import {
     optionalAmountValidator,
     amountValidator,
     bicValidator,
-    counterPartValidator,
+    externalPartyValidator,
     ibanValidator,
 } from "@/validation/custom-validators";
 
@@ -32,6 +32,6 @@ export const reserveValidation = {
 
 export const transactionValidation = {
     amount:                 { amountValidator },
-    counterPart:            { counterPartValidator },
+    externalParty:          { externalPartyValidator },
     reference:              { required },
 };

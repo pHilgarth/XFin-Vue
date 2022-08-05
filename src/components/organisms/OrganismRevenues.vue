@@ -5,7 +5,7 @@
 <script>
 import OrganismCollapsible from '@/components/organisms/OrganismCollapsible';
 
-import { numberService } from "@/services/number-service";
+import { NumberService } from "@/services/number-service";
 
 export default {
   components: {
@@ -44,7 +44,7 @@ export default {
         const row = {
           fields: [
             {
-              content: numberService.formatDate(revenue.date),
+              content: NumberService.formatDate(revenue.date),
               props: { class: 'col-3' },
             },
             {
@@ -56,7 +56,7 @@ export default {
               props: { class: 'col-3' },
             },
             {
-              content: numberService.formatCurrency(revenue.amount),
+              content: NumberService.formatCurrency(revenue.amount),
               props: { class: 'col-3 align-right' },
             },
           ],
@@ -131,7 +131,7 @@ export default {
         revenuesTotal += revenue.amount;
       });
       
-      return numberService.formatCurrency(revenuesTotal);
+      return NumberService.formatCurrency(revenuesTotal);
     },
   },
 };

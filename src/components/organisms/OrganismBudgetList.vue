@@ -1,10 +1,10 @@
 <template>
   <!-- TODO - this component is only used inside config object (in component BudgetManager), passed to a collapsible component. maybe work with slots? -->
   <div class="organism-budget-list">
-    <MoleculeBudgetManagerCategory  :category="transactionCategories[0]" :disabled="true" :hasErrors="freeBudgetErrors" :value="freeBudget"
+    <MoleculeBudgetManagerCategory  :category="costCenters[0]" :disabled="true" :hasErrors="freeBudgetErrors" :value="freeBudget"
                                     :validation="v$.freeBudget" />
 
-    <template v-for="(category, index) in transactionCategories" :key="index">
+    <template v-for="(category, index) in costCenters" :key="index">
       <MoleculeBudgetManagerCategory v-if="index > 0" :category="category" @amount-changed="calculateFreeBudget" @reset="resetCategory" :value="category.balance"/>
     </template>
 
@@ -25,7 +25,7 @@ import AtomSpan from '@/components/atoms/AtomSpan';
 import MoleculeBudgetManagerCategory from "@/components/molecules/MoleculeBudgetManagerCategory";
 
 import { InternalTransactionService } from "@/services/internal-transaction-service";
-import { numberService } from "@/services/number-service";
+import { NumberService } from "@/services/number-service";
 
 import { freeBudgetValidator } from "@/validation/custom-validators";
 import { useVuelidate } from "@vuelidate/core";
@@ -43,7 +43,7 @@ export default {
 
   props: {
     bankAccount: { type: Object, required: true },
-    transactionCategories: { type: Array, required: true },
+    costCenters: { type: Array, required: true },
   },
 
   computed: {
@@ -58,17 +58,17 @@ export default {
 
   data() {
     return {
-      freeBudget: this.transactionCategories[0].balance,
+      freeBudget: this.costCenters[0].balance,
       dirtyCategories: [],
 
       //TODO - test if total is calculated correctly!
-      total: this.transactionCategories.reduce((a, b) => {
+      total: this.costCenters.reduce((a, b) => {
         //initially a is an object with a property balance but the return statement returns a number
-        let aValue = a.balance || numberService.amountToString(a);
+        let aValue = a.balance || NumberService.amountToString(a);
 
         return (
-          numberService.parseFloat(aValue) +
-          numberService.parseFloat(b.balance)
+          NumberService.parseFloat(aValue) +
+          NumberService.parseFloat(b.balance)
         );
       }),
     };
@@ -76,7 +76,7 @@ export default {
 
   methods: {
     calculateFreeBudget(value, category, dirty = true) {      
-      if (numberService.parseFloat(value) !== category.originalBalance) {
+      if (NumberService.parseFloat(value) !== category.originalBalance) {
         category.dirty = dirty;
         
         if (!this.dirtyCategories.find(c => c.id === category.id)) {
@@ -94,16 +94,16 @@ export default {
       //let decimals = value.split(",")[1]?.length || 0;
 
       //string to number on value
-      const numValue = value !== "" ? numberService.parseFloat(value) : 0;
+      const numValue = value !== "" ? NumberService.parseFloat(value) : 0;
 
       //string to number on categoryBalance
       const numCategoryBalance =
         category.balance !== ""
-          ? numberService.parseFloat(category.balance)
+          ? NumberService.parseFloat(category.balance)
           : 0;
 
       //string to number on current free budget
-      const numFreeBudget = numberService.parseFloat(this.freeBudget);
+      const numFreeBudget = NumberService.parseFloat(this.freeBudget);
 
       //calculate new free budget
       this.freeBudget = this.formatCurrency(
@@ -124,15 +124,15 @@ export default {
             : sliceAmount;
 
         value =
-          typeof value === "number" ? value : numberService.parseFloat(value);
+          typeof value === "number" ? value : NumberService.parseFloat(value);
 
-        let result = numberService.formatCurrency(value, includeCurrency);
+        let result = NumberService.formatCurrency(value, includeCurrency);
         result = decimals < 2 ? result.slice(0, sliceAmount * -1) : result;
 
         return result;
       }
 
-      return numberService.formatCurrency(value, includeCurrency);
+      return NumberService.formatCurrency(value, includeCurrency);
     },
 
 //TODO - implement category resetting
@@ -141,19 +141,19 @@ export default {
     },
 
     async saveChanges() {
-      for (let i = 0; i < this.transactionCategories.length; i++) {
-        const category = this.transactionCategories[i];
+      for (let i = 0; i < this.costCenters.length; i++) {
+        const category = this.costCenters[i];
 
         if (category.dirty) {
           const amount =
-            numberService.parseFloat(category.balance) -
+            NumberService.parseFloat(category.balance) -
             category.originalBalance;
 
           const currentDate = new Date().toISOString();
 
           const internalTransaction = {
             internalBankAccountId: category.bankAccountId,
-            transactionCategoryId: category.id,
+            costCenterId: category.id,
             dateString: currentDate,
             amount: amount,
           };
@@ -162,7 +162,7 @@ export default {
 
           const counterPartTransaction = {
             internalBankAccountId: category.bankAccountId,
-            transactionCategoryId: this.transactionCategories.find(
+            costCenterId: this.costCenters.find(
               (c) => c.name === "Nicht zugewiesen"
             ).id,
             dateString: currentDate,
@@ -185,8 +185,8 @@ export default {
     },
 
     storeOriginalBalanceValues() {
-      this.transactionCategories.forEach((category) => {
-        category.originalBalance = numberService.parseFloat(category.balance);
+      this.costCenters.forEach((category) => {
+        category.originalBalance = NumberService.parseFloat(category.balance);
       });
     },
   },

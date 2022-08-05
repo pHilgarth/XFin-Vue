@@ -7,7 +7,7 @@
       <MoleculeMonthSwitch @month-switched="updateView"/>
       <OrganismRevenues :account="account"/>
       <!-- TODO - not all entries are visible - the height of the collapsible is too low, the last entries are cut off -->
-      <OrganismBudget :transactionCategories="transactionCategories"/>
+      <OrganismBudget :costCenters="costCenters"/>
       <OrganismExpenses :account="account"/>
     </section>
   </div>
@@ -30,7 +30,7 @@ export default {
     let apiResponse = await this.getAccount();
 
     if (apiResponse.success) {
-      apiResponse = await this.getTransactionCategories();
+      apiResponse = await this.getCostCenters();
 
       if (apiResponse.success) {
         this.dataLoaded = true;
@@ -57,7 +57,7 @@ export default {
   data() {
     return {
       account: null,
-      transactionCategories: [],
+      costCenters: [],
       dataLoaded: false,
       loadingError: false,
       accountNumber: ''
@@ -80,16 +80,16 @@ export default {
       return apiResponse;
     },
 
-    async getTransactionCategories(month) {
+    async getCostCenters(month) {
       const year = new Date().getFullYear();
       month = month !== undefined ? month : new Date().getMonth();
 
       const apiResponse = await CostCenterService.getAllByAccount(this.$route.params.id, year, month);
 
       if (apiResponse.success && apiResponse.data) {
-        this.transactionCategories = apiResponse.data;
+        this.costCenters = apiResponse.data;
       } else if (apiResponse.success && !apiResponse.data) {
-        this.transactionCategories = [];
+        this.costCenters = [];
       }
 
       return apiResponse;
@@ -99,7 +99,7 @@ export default {
       console.log(month);
       //TODO - error handling api calls
       await this.getAccount(month);
-      await this.getTransactionCategories(month);
+      await this.getCostCenters(month);
     }
   },
 };

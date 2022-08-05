@@ -48,7 +48,7 @@ import OrganismAccountForm from '@/components/organisms/OrganismAccountForm';
 
 import { AccountHolderService } from '@/services/account-holder-service';
 import { CopyService } from '@/services/copy-service';
-import { numberService } from '@/services/number-service';
+import { NumberService } from '@/services/number-service';
 
 import { accountHolderValidation } from '@/validation/validations';
 
@@ -140,7 +140,7 @@ export default {
     },
 
     formatBalance(value) {
-      return numberService.formatCurrency(value);
+      return NumberService.formatCurrency(value);
     },
 
     saveAccount(event) {
