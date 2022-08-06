@@ -1,3 +1,5 @@
+// TODO - refactor this, there's a lot I don't use
+
 @mixin rem($properties, $values...) {
 	@if type-of($properties) == "map" {
 		@each $property in map-keys($properties) {
@@ -142,4 +144,24 @@
         right: 0;
         bottom: 0;
     }
+}
+
+// Flexbox display
+@mixin flexbox() {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+// Axis Alignment
+// - applies to: flex containers
+// flex-start | flex-end | center | space-between | space-around
+@mixin justify-content($justify) {
+  -webkit-justify-content: $justify;
+  -moz-justify-content: $justify;
+  -ms-justify-content: $justify;
+  justify-content: $justify;
+  -ms-flex-pack: $justify;
 }
