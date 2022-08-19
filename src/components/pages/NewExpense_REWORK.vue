@@ -20,7 +20,7 @@
   import { ExternalPartyService } from '@/services/external-party-service';
   import { ExternalTransactionService } from '@/services/external-transaction-service';
   import { BankAccountService } from '@/services/bank-account-service';
-  import { InternalTransactionService } from '@/services/internal-transaction-service';
+  import { TransactionService } from '@/services/transaction-service';
   import { NumberService } from '@/services/number-service';
 
   export default {
@@ -101,7 +101,7 @@
             reference: formData.reference
           });
 
-          await InternalTransactionService.create({
+          await TransactionService.create({
             internalBankAccountId: formData.accountId,
             costCenterId: formData.costCenterId,
             dateString: new Date().toISOString(),

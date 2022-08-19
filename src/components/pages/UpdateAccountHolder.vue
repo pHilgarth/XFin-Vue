@@ -10,7 +10,7 @@ import OrganismAccountHolder              from '@/components/organisms/OrganismA
 import { AccountHolderService }           from '@/services/account-holder-service';
 import { CopyService }                    from '@/services/copy-service';
 import { BankAccountService }     from '@/services/bank-account-service';
-import { InternalTransactionService }     from "@/services/internal-transaction-service";
+import { TransactionService }     from "@/services/transaction-service";
 
 export default {
   components: {
@@ -106,7 +106,7 @@ export default {
               amount: account.balance,
               reference: '[Kontoinitialisierung]',
             };
-            const createdInitializationTransaction = await InternalTransactionService.create(initializationTransaction);
+            const createdInitializationTransaction = await TransactionService.create(initializationTransaction);
             if (!createdInitializationTransaction) {
               //TODO - improve error handling - maybe remove the other records again? Or just implement a task on the API that takes care of this regularly?
               this.error = 'Error during inizializationTransaction creation';

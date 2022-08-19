@@ -36,7 +36,7 @@
     <!-- TODO - check if position:absolute directly on .form-error has some drawbacks somewhere -->
     <!-- TODO - OrganismTransaction: MoleculeInputAutoSuggest wont close -> reproduce: type something in - click 'add new' - type more in - blur it using tab -->
     <!-- TODO - dont place the accountId in the url in 'NewRevenue' or 'NewExpense' - just preselect the account from where the user is coming -->
-    <!-- TODO - creation of internalTransaction does not work - try to add a reference and set breakpoint in the API, external transaction is created, but no internal transaction -> there is an frontend error in console -->
+    <!-- TODO - creation of transaction does not work - try to add a reference and set breakpoint in the API, external transaction is created, but no internal transaction -> there is an frontend error in console -->
     <!-- TODO - do I need the components in main.js globally? (OrganismBudgetList, OrganismTable, MoleculeActionSelect) -->
     <!-- TODO - maybe include a way to update externalBankAccount data? -->
     <!-- TODO - error on MoleculeActionSelect: steps to reproduce: type substring of an existing item and pick that item - change the input - tab out -> the blur event is not triggered!!! The box with suggestions stays there -->

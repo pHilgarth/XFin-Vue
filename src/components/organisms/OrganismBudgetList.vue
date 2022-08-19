@@ -24,7 +24,7 @@ import AtomSpan from '@/components/atoms/AtomSpan';
 
 import MoleculeBudgetManagerCategory from "@/components/molecules/MoleculeBudgetManagerCategory";
 
-import { InternalTransactionService } from "@/services/internal-transaction-service";
+import { TransactionService } from "@/services/transaction-service";
 import { NumberService } from "@/services/number-service";
 
 import { freeBudgetValidator } from "@/validation/custom-validators";
@@ -151,14 +151,14 @@ export default {
 
           const currentDate = new Date().toISOString();
 
-          const internalTransaction = {
+          const transaction = {
             internalBankAccountId: category.bankAccountId,
             costCenterId: category.id,
             dateString: currentDate,
             amount: amount,
           };
 
-          const createdTransaction = await InternalTransactionService.create(internalTransaction);
+          const createdTransaction = await TransactionService.create(transaction);
 
           const counterPartTransaction = {
             internalBankAccountId: category.bankAccountId,
@@ -171,7 +171,7 @@ export default {
             counterPartTransactionToken: createdTransaction.transactionToken,
           };
 
-          /*const createdCounterPartTransaction = */ await InternalTransactionService.create(
+          /*const createdCounterPartTransaction = */ await TransactionService.create(
             counterPartTransaction
           );
 

@@ -84,7 +84,7 @@ import {NumberService} from "@/services/number-service";
 import {AccountHolderService} from "@/services/account-holder-service";
 import {ExternalBankAccountService} from "@/services/external-bank-account-service";
 import {ExternalPartyService} from "@/services/external-party-service";
-import {InternalTransactionService} from "@/services/internal-transaction-service";
+import {TransactionService} from "@/services/transaction-service";
 import {ExternalTransactionService} from "@/services/external-transaction-service";
 import {CostCenterService} from "@/services/cost-center-service";
 import {transactionRoles} from '@/services/transaction-role-service';
@@ -413,7 +413,7 @@ export default {
       if (!createdExternalTransaction) {
         //TODO - something went wrong - throw an error?
       } else {
-        const internalTransaction = {
+        const transaction = {
           internalBankAccountId: this.selectedAccount.id,
           costCenterId: this.selectedCostCenter.id,
           dateString: currentDate,
@@ -426,9 +426,9 @@ export default {
           transactionToken:
           createdExternalTransaction.externalPartyTransactionToken,
         };
-        await InternalTransactionService.create(internalTransaction);
+        await TransactionService.create(transaction);
 
-        if (!internalTransaction) {
+        if (!transaction) {
           //TODO - something went wrong - throw an error?
         } else {
           this.$router.push('/');
