@@ -45,30 +45,15 @@ export const AccountHolderService = {
     try {
       return await fetch(url).then((response) => {
         if (response.status === 200) {
-          return {
-            success: true,
-            error: null,
-            duplicate: response.json(),
-          };
+          return response.json();
         }
         else if (response.status === 204) {
-          return {
-            success: true,
-            error: null,
-            duplicate: null,
-          };
+          return null;
         }
-      }).then((data) => {
-        if (data != undefined) {
-          return data;
-        }
-      });
+      }).then(data => data);
     } catch (error) {
-      return {
-        success: false,
-        error: error,
-        duplicate: null,
-      };
+      console.error(error);
+      throw new Error(error);
     }
   },
 
@@ -83,20 +68,17 @@ export const AccountHolderService = {
 
     try {
       return await fetch(baseUrl, postObject).then((response) => {
-        if (response.ok) {
+        if (response.status === 200) {
           return response.json();
         }
         //TODO - is this the right statuscode to return, when something failed? See also TODO on the API Controller Action
-        else if (response.status === 400) {
+        else if (response.status === 204) {
           return null;
         }
-      }).then((data) => {
-        if (data !== undefined) {
-          return data;
-        }
-      });
+      }).then(data => data);
     } catch (error) {
-      return error;
+      console.error(error);
+      throw new Error(error);
     }
   },
 

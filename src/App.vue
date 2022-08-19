@@ -55,6 +55,10 @@ export default {
     FakeLogin,
   },
 
+  provide: {
+    userId: 1,
+  },
+
   data() {
     return {
       selectedMenuItem: 1,

@@ -26,7 +26,7 @@ import {
   balanceValidator,
 } from "@/validation/custom-validators";
 
-import { InternalBankAccountService } from "@/services/internal-bank-account-service";
+import { BankAccountService } from "@/services/bank-account-service";
 import { NumberService } from "@/services/number-service";
 
 import AtomButton from '@/components/atoms/AtomButton';
@@ -69,7 +69,7 @@ export default {
                                 ? NumberService.amountToString(this.formData.account.balance)
                                 : null,
       bank:                   this.formData.account?.bank || "",
-      description:            this.formData.account?.description || "",
+      description:            this.formData.account?.description || null,
       bic:                    this.formData.account?.bic || "",
       originalIban:           this.formData.account?.iban || "",
       iban:                   this.formData.account?.iban || "",
@@ -121,33 +121,30 @@ export default {
 
   methods: {
     async save() {
-      let duplicateCheckResponse = null;
-      //if iban changed, check for duplicates in the db
-      if (this.originalIban !== this.iban) {
-         duplicateCheckResponse = await InternalBankAccountService.getByIban(this.iban);
-      }
+      try {
+        const bankAccountDuplicate = await BankAccountService.getByIban(this.iban);
 
-      if ((duplicateCheckResponse === null) || duplicateCheckResponse.success && !duplicateCheckResponse.duplicate) {
-        const account = {
-          id: this.id,
-          bank: this.bank,
-          description: this.description,
-          bic: this.bic,
-          iban: this.iban,
-          accountNumber: NumberService.getAccountNumber(this.iban),
-          balance: NumberService.parseFloat(this.balance),
-          index: this.accountIndex,
-        };
-      
-        this.$emit("save", account);
-      }
-      else if (duplicateCheckResponse.success && duplicateCheckResponse.duplicate) {
-        this.duplicate = true;
-      }
-      else if (!duplicateCheckResponse.success) {
-        //TODO - show something in frontend
-        alert('Error during duplicate check');
-        console.error(duplicateCheckResponse.error);
+        console.log(`description: ${this.description}(${typeof this.description})`);
+        if (!bankAccountDuplicate) {
+            const account = {
+              id: this.id,
+              bank: this.bank,
+              description: this.description,
+              bic: this.bic,
+              iban: this.iban,
+              accountNumber: NumberService.getAccountNumber(this.iban),
+              balance: NumberService.parseFloat(this.balance),
+              index: this.accountIndex,
+            };
+
+            this.$emit("save", account);
+        }
+        else {
+          this.duplicate = true;
+        }
+      } catch (error) {
+        console.error('could not check for duplicates! Aborting!');
+        console.error(error);
       }
     },
   },

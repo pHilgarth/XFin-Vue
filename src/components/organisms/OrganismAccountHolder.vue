@@ -64,6 +64,8 @@ export default {
 
   emits: [ 'save' ],
 
+  inject: [ 'userId' ],
+
   props: {
     accountHolder:  { type: Object, default: null },
     headline:       { type: String, required: true },
@@ -189,22 +191,21 @@ export default {
     },
 
     async saveAccountHolder() {
-      let duplicateCheckResponse = null;
       let save = false;
 
       if (this.originalName !== this.name) {
-        duplicateCheckResponse = await AccountHolderService.getByName(this.name);
+        try {
+          const accountHolderDuplicate = await AccountHolderService.getByName(this.name);
 
-        if (duplicateCheckResponse.success && !duplicateCheckResponse.duplicate) {
-          save = true;
-        }
-        else if (duplicateCheckResponse.success && duplicateCheckResponse.duplicate) {
-          this.duplicatedName = true;
-        }
-        else if (!duplicateCheckResponse.success) {
-          //TODO - show something in frontend
-          alert('Error during duplicated name check');
-          console.error(duplicateCheckResponse.error);
+          if (!accountHolderDuplicate) {
+            save = true;
+          }
+          else {
+            this.duplicatedName = true;
+          }
+        } catch (error) {
+          console.error('could not check for duplicates! Aborting!');
+          console.error(error);
         }
       }
       else {
@@ -212,7 +213,7 @@ export default {
       }
 
       if (save) {
-        this.$emit('save', { id: this.accountHolder?.id, name: this.name, bankAccounts: this.bankAccounts });
+        this.$emit('save', { id: this.accountHolder?.id, name: this.name, bankAccounts: this.bankAccounts, userId: this.userId });
       }
     },
   },

@@ -1,5 +1,5 @@
 
-const baseUrl = "http://localhost:2905/api/internalTransactions";
+const baseUrl = "http://localhost:2905/api/transactions";
 
 export const InternalTransactionService = {
   async create(transaction) {
@@ -13,16 +13,16 @@ export const InternalTransactionService = {
 
     try {
       return await fetch(baseUrl, postObject).then((response) => {
-        if (response.ok) {
+        if (response.status === 200) {
           return response.json();
         }
-      }).then((data) => {
-        if (data != undefined) {
-          return data;
+        else if (response.status === 204) {
+          return null;
         }
-      });
+      }).then(data => data);
     } catch (error) {
-      return null;
+      console.error(error);
+      throw new Error(error);
     }
   }
 }
