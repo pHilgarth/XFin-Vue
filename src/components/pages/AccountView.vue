@@ -91,7 +91,7 @@ import { NumberService } from "@/services/number-service";
 export default {
   async created() {
     try {
-      this.accountHolders = await AccountHolderService.getAll();
+      this.accountHolders = await AccountHolderService.getAll(this.userId);
       this.dataLoaded = true;
     } catch (error) {
       this.loadingError = true;
@@ -111,6 +111,8 @@ export default {
 
   data() {
     return {
+      //TODO - implement proper login with authentication and pass the userId to the component(s), maybe fetch from loginCookie??
+      userId: 1,
       dataLoaded: false,
       loadingError: false,
 

@@ -21,7 +21,11 @@ export const TransactionRoleService = {
     ],
 
     async getItems(transactionRole, accountId) {
-        const url = `${baseUrl}/${transactionRole}s/account/${accountId}`;
+        const endpoint = transactionRole === 'repayment'
+            ? 'loans'
+            : 'reserves';
+
+        const url = `${baseUrl}/${endpoint}/bankAccount/${accountId}`;
 
         try {
             return await fetch(url).then((response) => {

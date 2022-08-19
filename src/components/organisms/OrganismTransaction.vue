@@ -1,6 +1,5 @@
 <template>
   <div class="organism-transaction">
-    <h1>{{ transactionType === 'revenue' ? 'Einnahme' : 'Ausgabe' }} eintragen</h1>
     <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!"/>
 
     <form v-else>
@@ -25,14 +24,14 @@
                            @blur="v$.transactionRoleItem.$touch()"/>
 
       <div class="organism-transaction__counter-part pb-5">
-        <MoleculeInputAutoSuggest field="counter-part" :hasErrors="v$.counterPart?.$error"
-                                  v-model="counterPart"
-                                  :validation="v$.counterPart"
+        <MoleculeInputAutoSuggest field="counter-part" :hasErrors="v$.externalParty?.$error"
+                                  v-model="externalParty"
+                                  :validation="v$.externalParty"
                                   :label="`${transactionType === 'revenue' ? 'Zahlungspflichtiger' : 'Zahlungsempfänger'}`"
-                                  :items="counterPartNames" noItemsFallback="&plus; Neu hinzufügen"
+                                  :items="externalPartyNames" noItemsFallback="&plus; Neu hinzufügen"
                                   :alwaysShowFallback="true"
-                                  :errorMessageParams="{ counterPartType: transactionType === 'revenue' ? 'Zahlungspflichtigen' : 'Zahlungsempfänger' }"
-                                  @blur="counterPart = !selectedCounterPart ? '' : counterPart" @itemPicked="pickItem"/>
+                                  :errorMessageParams="{ externalPartyType: transactionType === 'revenue' ? 'Zahlungspflichtigen' : 'Zahlungsempfänger' }"
+                                  @blur="externalParty = !selectedCounterPart ? '' : externalParty" @itemPicked="pickItem"/>
 
         <MoleculeInputCheckbox v-if="selectedCounterPart && !selectedCounterPart.id"
                                class="pt-3" field="include-counter-part-account"
@@ -40,21 +39,20 @@
 
         <div v-if="includeCounterPartAccount" class="organism-transaction__counter-part-account pt-3">
           <MoleculeInputText class="organism-transaction__counter-part-account-data" field="counter-part-iban"
-                             :hasErrors="v$.counterPartIban.$error" v-model="counterPartIban"
-                             :validation="v$.counterPartIban" label="IBAN"
-                             @blur="v$.counterPartIban.$touch()"/>
+                             :hasErrors="v$.externalPartyIban.$error" v-model="externalPartyIban"
+                             :validation="v$.externalPartyIban" label="IBAN"
+                             @blur="v$.externalPartyIban.$touch()"/>
 
           <MoleculeInputText class="organism-transaction__counter-part-account-data" field="counter-part-bic"
-                             :hasErrors="v$.counterPartBic.$error"
-                             v-model="counterPartBic" :validation="v$.counterPartBic" label="BIC"
-                             @blur="v$.counterPartBic.$touch()"/>
+                             :hasErrors="v$.externalPartyBic.$error"
+                             v-model="externalPartyBic" :validation="v$.externalPartyBic" label="BIC"
+                             @blur="v$.externalPartyBic.$touch()"/>
         </div>
       </div>
 
       <MoleculeInputText class="pb-5" field="reference" :hasErrors="v$.reference.$error" v-model="reference"
                          :validation="v$.reference" label="Verwendungszweck"
                          @blur="v$.reference.$touch()"/>
-      <!-- TODO - den verfügbaren Betrag immer anzeigen lassen! (heute verfügbar, wie im OnlineBanking) -->
       <MoleculeInputText class="pb-5" field="amount" :hasErrors="v$.amount.$error" v-model="amount"
                          :validation="v$.amount" label="Betrag"
                          @blur="v$.amount.$touch()"/>
@@ -65,7 +63,7 @@
 </template>
 
 <script>
-//TODO - i need to refactor this component, its crap. I had to place counterPartAccountData into its own child component for the client side iban duplicate check
+//TODO - i need to refactor this component, its crap. I had to place externalPartyAccountData into its own child component for the client side iban duplicate check
 //TODO - because of async created() i dont knwow how to add the ibanDuplicateValidator or pass the ibans to it - the current way of doing this is ugly as fuck
 //TODO - watch the course on async programming on pluralsight!! There must be a way to realize this
 
@@ -82,7 +80,7 @@ import MoleculeInputText from "@/components/molecules/MoleculeInputText";
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 
 import {CopyService} from '@/services/copy-service';
-import {numberService} from "@/services/number-service";
+import {NumberService} from "@/services/number-service";
 import {AccountHolderService} from "@/services/account-holder-service";
 import {ExternalBankAccountService} from "@/services/external-bank-account-service";
 import {ExternalPartyService} from "@/services/external-party-service";
@@ -103,6 +101,8 @@ import {
 export default {
   //TODO - tweak this error handling -  it is so ugly
   async created() {
+    await this.getData();
+
     let apiResponse = await this.getAccountHolders();
 
     if (apiResponse.success) {
@@ -153,29 +153,29 @@ export default {
       this.v$.costCenter.$touch();
     },
 
-    counterPart() {
-      this.v$.counterPart.$touch();
+    externalParty() {
+      this.v$.externalParty.$touch();
 
-      if (!this.counterPart) {
+      if (!this.externalParty) {
         this.includeCounterPartAccount = false;
       }
 
-      if (!this.counterParts.find((c) => c.name === this.counterPart)) {
+      if (!this.externalParties.find((c) => c.name === this.externalParty)) {
         this.selectedCounterPart = null;
       }
     },
 
-    counterPartBic() {
-      if (this.counterPartBic) {
-        this.counterPartBic = this.counterPartBic.toUpperCase();
-        this.v$.counterPartBic.$touch();
+    externalPartyBic() {
+      if (this.externalPartyBic) {
+        this.externalPartyBic = this.externalPartyBic.toUpperCase();
+        this.v$.externalPartyBic.$touch();
       }
     },
 
-    counterPartIban() {
-      if (this.counterPartIban) {
-        this.counterPartIban = this.counterPartIban.toUpperCase();
-        this.v$.counterPartIban.$touch();
+    externalPartyIban() {
+      if (this.externalPartyIban) {
+        this.externalPartyIban = this.externalPartyIban.toUpperCase();
+        this.v$.externalPartyIban.$touch();
       }
     },
 
@@ -184,15 +184,15 @@ export default {
         this.ibans = this.ibans === null
             ? Array.from([
               this.accountHolders.map((a) => a.bankAccounts.map((b) => b.iban)).flat(),
-              ...this.counterParts.map((c) => c.externalBankAccount.iban),
+              ...this.externalParties.map((c) => c.externalBankAccount.iban),
             ]).flat().filter((i) => i !== null)
             : this.ibans;
       } else {
         this.ibans = null;
-        this.counterPartIban = null;
-        this.counterPartBic = null;
-        this.v$.counterPartIban.$reset();
-        this.v$.counterPartBic.$reset();
+        this.externalPartyIban = null;
+        this.externalPartyBic = null;
+        this.v$.externalPartyIban.$reset();
+        this.v$.externalPartyBic.$reset();
       }
     },
 
@@ -221,8 +221,8 @@ export default {
       costCenters: null,
       costCenter: null,
       costCenterOptions: [],
-      counterParts: null,
-      counterPartNames: [],
+      externalParties: null,
+      externalPartyNames: [],
       transactionRoles: CopyService.copyObject(transactionRoles),
 
       selectedAccountId: this.$route.params.id,
@@ -230,21 +230,36 @@ export default {
       //gonna need this when implementing transactionRoles
       transactionRole: transactionRoles['default'],
 
-      //TODO - can I use IDs here too? As in selectedAccountId (-1 would be for new counterPart)
-      //counterPart is the v-model property for the input field - it refers to a counterParts name and is of type string
-      counterPart: null,
-      //selectedCounterPart is the actual counterPartObject which contains the id and the externalBankAccountId if it's a counterPart stored in db
+      //TODO - can I use IDs here too? As in selectedAccountId (-1 would be for new externalParty)
+      //externalParty is the v-model property for the input field - it refers to a externalParties name and is of type string
+      externalParty: null,
+      //selectedCounterPart is the actual externalPartyObject which contains the id and the externalBankAccountId if it's a externalParty stored in db
       selectedCounterPart: null,
       reference: "",
       amount: "",
 
       includeCounterPartAccount: false,
-      counterPartIban: null,
-      counterPartBic: null,
+      externalPartyIban: null,
+      externalPartyBic: null,
     };
   },
 
   methods: {
+    async getData() {
+      const accountHolders = AccountHolderService.getAll();
+      const externalParties = ExternalPartyService.getAll();
+      const costCenters = CostCenterService.getAll();
+
+      this.accountHolders = await accountHolders;
+      this.externalParties = await externalParties;
+      this.costCenters = await costCenters;
+    },
+
+
+
+
+
+
     //TODO - i should move these get....() methods into the service or update the services, so I can call them from the created method
     async getAccountHolders() {
       const includeBankAccounts = true;
@@ -285,13 +300,13 @@ export default {
       const apiResponse = await ExternalPartyService.getAll();
 
       if (apiResponse.success && apiResponse.data) {
-        this.counterParts = apiResponse.data;
+        this.externalParties = apiResponse.data;
 
-        this.counterParts.forEach((counterPart) => {
-          this.counterPartNames.push(counterPart.name);
+        this.externalParties.forEach((externalParty) => {
+          this.externalPartyNames.push(externalParty.name);
         });
       } else if (apiResponse.success && !apiResponse.data) {
-        this.counterParts = [];
+        this.externalParties = [];
       }
 
       return apiResponse;
@@ -332,13 +347,13 @@ export default {
               : event.target.textContent;
 
       if (clickedItem.includes("Neu hinzufügen")) {
-        this.selectedCounterPart = {name: this.counterPart.trim()};
+        this.selectedCounterPart = {name: this.externalParty.trim()};
       } else {
         this.includeCounterPartAccount = false;
-        this.selectedCounterPart = this.counterParts.find(
+        this.selectedCounterPart = this.externalParties.find(
             (c) => c.name === clickedItem
         );
-        this.counterPart = this.selectedCounterPart.name;
+        this.externalParty = this.selectedCounterPart.name;
       }
     },
 
@@ -347,10 +362,10 @@ export default {
       let externalBankAccountId = null;
 
       //TODO - if creation of new externalPary fails, it still tries to create an externalTransaction - I need to update the error handling here
-      //if !this.selectedCounterPart.id -> it's a new counterPart, create a new one
+      //if !this.selectedCounterPart.id -> it's a new externalParty, create a new one
       if (!this.selectedCounterPart.id) {
         const externalParty = {
-          name: this.counterPart,
+          name: this.externalParty,
         };
 
         const createdExternalParty = await ExternalPartyService.createExternalParty(externalParty);
@@ -358,8 +373,8 @@ export default {
         if (createdExternalParty) {
           const externalBankAccount = {
             externalPartyId: createdExternalParty.id,
-            iban: this.counterPartIban?.toUpperCase(),
-            bic: this.counterPartBic?.toUpperCase(),
+            iban: this.externalPartyIban?.toUpperCase(),
+            bic: this.externalPartyBic?.toUpperCase(),
           };
 
           const createdExternalBankAccount =
@@ -380,7 +395,7 @@ export default {
       }
 
       const currentDate = new Date().toISOString();
-      const amount = numberService.parseFloat(this.amount);
+      const amount = NumberService.parseFloat(this.amount);
 
       const externalTransaction = {
         externalBankAccountId: externalBankAccountId,
@@ -406,10 +421,10 @@ export default {
               ? amount
               : amount * -1,
           reference: this.reference,
-          counterPartTransactionToken:
+          externalPartyTransactionToken:
           createdExternalTransaction.transactionToken,
           transactionToken:
-          createdExternalTransaction.counterPartTransactionToken,
+          createdExternalTransaction.externalPartyTransactionToken,
         };
         await InternalTransactionService.create(internalTransaction);
 
@@ -436,8 +451,8 @@ export default {
     validation.transactionRole = {transactionRoleValidator: transactionRoleValidator(this.costCenter)};
 
     if (this.includeCounterPartAccount) {
-      validation.counterPartBic = {bicValidator};
-      validation.counterPartIban = {ibanValidator, ibanDuplicate: ibanDuplicateValidator(this.ibans)};
+      validation.externalPartyBic = {bicValidator};
+      validation.externalPartyIban = {ibanValidator, ibanDuplicate: ibanDuplicateValidator(this.ibans)};
     }
 
     return validation;

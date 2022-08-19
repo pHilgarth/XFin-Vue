@@ -5,9 +5,9 @@
 const baseUrl = "http://localhost:2905/api/accountHolders";
 
 export const AccountHolderService = {
-  async getAll() {
+  async getAll(userId) {
     try {
-      return await fetch(baseUrl).then((response) => {
+      return await fetch(`${baseUrl}/${userId}`).then((response) => {
         if (response.status === 200) {
           return response.json();
         }
@@ -16,6 +16,7 @@ export const AccountHolderService = {
         }
       }).then(data => data);
     } catch (error) {
+      console.error(error);
       throw new Error(error);
     }
   },

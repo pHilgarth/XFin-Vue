@@ -1,0 +1,17 @@
+.molecule-expense-form {
+  &__external-party-account {
+    @include flexbox();
+    @include justify-content(space-between);
+
+    .molecule-input-text {
+      &:first-child {
+        @include rem(margin-right, 20px);
+      }
+
+      .xfin__form__error {
+        @include rem(font-size, 14px);
+        @include rem(padding-left, 2px);
+      }
+    }
+  }
+}

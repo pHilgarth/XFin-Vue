@@ -14,7 +14,7 @@
         </svg>
       </div>
     </div>
-    <div class="xfin__body">
+    <div v-if="user" class="xfin__body">
       <div class="xfin__sidebar">
         <ul class="xfin__menu">
           <li :class="selectedMenuItem == 1 ? 'active' : ''" data-route="/" data-index="1" @click="routeToComponent">
@@ -43,18 +43,33 @@
         </div>
       </div>
     </div>
+    <FakeLogin v-else @login="login" />
   </div>
 </template>
 
 <script>
+import FakeLogin from '@/components/organisms/OrganismFakeLogin'
+
 export default {
+  components: {
+    FakeLogin,
+  },
+
   data() {
     return {
       selectedMenuItem: 1,
+      user: null,
     };
   },
 
   methods: {
+    login(user) {
+      this.user = user;
+      //TODO - implement proper login with authentication, then add the proper id
+      //TODO - I need to pass the userId to the components, not sure how yet, so it's hardcoded in AccountView atm
+      this.user.id = 1;
+    },
+
     routeToComponent(event) {
       this.selectedMenuItem = event.target.dataset.index;
       this.$router.push(event.target.dataset.route);

@@ -35,3 +35,8 @@ export const transactionValidation = {
     externalParty:          { externalPartyValidator },
     reference:              { required },
 };
+
+export const userValidation = {
+    userMail:               { required },
+    userPassword:           { required },
+};
