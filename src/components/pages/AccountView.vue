@@ -40,6 +40,8 @@
     <!-- TODO - do I need the components in main.js globally? (OrganismBudgetList, OrganismTable, MoleculeActionSelect) -->
     <!-- TODO - maybe include a way to update externalBankAccount data? -->
     <!-- TODO - error on MoleculeActionSelect: steps to reproduce: type substring of an existing item and pick that item - change the input - tab out -> the blur event is not triggered!!! The box with suggestions stays there -->
+    <!-- TODO - adjust regex on all amount fields to allow numbers without decimals (i.e. just 100) -->
+    <!-- TODO - default value for bankAccount description (in API) -->
 
 
 
