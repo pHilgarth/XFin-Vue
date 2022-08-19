@@ -36,7 +36,9 @@ export const errorService = {
 
         //name errors
         name_required:                          nameErrorMessage,
-        name_maxLength:                         'Der Name darf nicht länger als 15 Zeichen sein!',
+        //TODO - make this work ({maxLength}, so I can pass the length dynamically and so it's not hardcoded here)
+        //name_maxLength:                         'Der Name darf nicht länger als {maxLength} Zeichen sein!',
+        name_maxLength:                         'Der Name darf nicht länger als 25 Zeichen sein!',
         name_nameDuplicate:                     'Dieser Name existiert bereits!',
 
         //reference errors

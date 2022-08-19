@@ -10,7 +10,7 @@ import {
 
 export const accountHolderValidation = {
     name: {
-        required, maxLength: maxLength(15),
+        required, maxLength: maxLength(25),
     },
 };
 
