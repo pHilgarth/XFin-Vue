@@ -19,7 +19,7 @@
   import { ExternalBankAccountService } from '@/services/external-bank-account-service';
   import { ExternalPartyService } from '@/services/external-party-service';
   import { ExternalTransactionService } from '@/services/external-transaction-service';
-  import { InternalBankAccountService } from '@/services/internal-bank-account-service';
+  import { BankAccountService } from '@/services/bank-account-service';
   import { InternalTransactionService } from '@/services/internal-transaction-service';
   import { NumberService } from '@/services/number-service';
 
@@ -57,7 +57,7 @@
     methods: {
       async getData() {
         try {
-          const bankAccounts = InternalBankAccountService.getAll();
+          const bankAccounts = BankAccountService.getAll();
           const externalParties = ExternalPartyService.getAll();
           const costCenters = CostCenterService.getAll();
 

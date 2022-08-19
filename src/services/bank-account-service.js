@@ -1,7 +1,7 @@
 //TODO - introduce an 'api-service', which makes all the api calls -> i.e. getALl is always the same, just with different url
-const baseUrl = "http://localhost:2905/api/internalBankAccounts";
+const baseUrl = "http://localhost:2905/api/bankAccounts";
 
-export const InternalBankAccountService = {
+export const BankAccountService = {
   async getAll() {
     try {
       return await fetch(baseUrl).then((response) => {
@@ -53,30 +53,15 @@ export const InternalBankAccountService = {
     try {
       return await fetch(url).then((response) => {
         if (response.status === 200) {
-          return {
-            success: true,
-            error: null,
-            duplicate: response.json(),
-          };
+          return response.json();
         }
         else if (response.status === 204) {
-          return {
-            success: true,
-            error: null,
-            duplicate: null,
-          };
+          return null;
         }
-      }).then((data) => {
-        if (data != undefined) {
-          return data;
-        }
-      });
+      }).then(data => data);
     } catch (error) {
-      return {
-        success: false,
-        error: error,
-        duplicate: null,
-      };
+      console.error(error);
+      throw new Error(error);
     }
   },
 
@@ -91,20 +76,16 @@ export const InternalBankAccountService = {
 
     try {
       return await fetch(baseUrl, postObject).then((response) => {
-        if (response.ok) {
+        if (response.status === 200) {
           return response.json();
         }
-        else if (response.status === 409) {
-          console.log(409)
-          return { duplicate: true };
+        else if (response.status === 204) {
+          return null;
         }
-      }).then((data) => {
-        if (data != undefined) {
-          return data;
-        }
-      });
+      }).then(data => data);
     } catch (error) {
-      return null;
+      console.error(error);
+      throw new Error(error);
     }
   },
 
