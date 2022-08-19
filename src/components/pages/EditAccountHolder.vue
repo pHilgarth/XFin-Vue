@@ -1,5 +1,6 @@
 <template>
-  <div v-if="dataLoaded" class="update-account-holder" style="display:block;overflow:visible">
+  <!-- TODO - implement MoleculeLoading on every component, where an API call is made -->
+  <div v-if="dataLoaded" class="edit-account-holder">
     <OrganismAccountHolder headline="Kontoinhaber bearbeiten" :accountHolder="copiedAccountHolder" @save="updateAccountHolder" />
   </div>
 </template>
@@ -17,11 +18,21 @@ export default {
     OrganismAccountHolder,
   },
 
-  async created() {
-    const result = await this.getAccountHolder(this.$route.params.id);
+  props: {
+    accountHolderId: { type: String, required: true },
+  },
 
-    if (result.success) {
+  async created() {
+    try {
+      this.originalAccountHolder = await AccountHolderService.getSingle(this.accountHolderId);
+
+      if (this.originalAccountHolder) {
+        this.copiedAccountHolder = CopyService.copyObject(this.originalAccountHolder);
+      }
       this.dataLoaded = true;
+    } catch (error) {
+      this.loadingError = true;
+      console.error(error);
     }
   },
 
@@ -51,25 +62,6 @@ export default {
       return changed;
     },
 
-    async getAccountHolder(id) {
-      const includeAccounts = true;
-      this.originalAccountHolder = await AccountHolderService.get(id, includeAccounts);
-
-      if (this.originalAccountHolder) {
-        this.copiedAccountHolder = CopyService.copyObject(this.originalAccountHolder);
-        return {
-          success: true,
-          error: null,
-        };
-      }
-      else {
-        return {
-          success: false,
-          error: 'Error while fetching accountHolder',
-        };
-      }
-    },
-
     async updateAccountHolder(accountHolder) {
       let error = false;
 
@@ -79,16 +71,15 @@ export default {
           path: `/name`,
           value: accountHolder.name,
         };
-        const updateResponse = await AccountHolderService.update(this.originalAccountHolder.id, [namePatch]);
 
-        if (!updateResponse.success) {
-          error = true;
-          alert(updateResponse.error);
+        try {
+          await AccountHolderService.update(this.originalAccountHolder.id, [ namePatch ]);
+        } catch(error) {
+          console.error(error)
         }
       }
 
       const accountsToSave = accountHolder.bankAccounts.filter(b => b.changed || b.isNew);
-      console.log(accountsToSave);
 
       for (let i = 0; i < accountsToSave.length; i++) {
         const account = accountsToSave[i];

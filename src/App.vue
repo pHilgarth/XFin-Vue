@@ -56,6 +56,7 @@ export default {
   },
 
   provide: {
+    //TODO - implement proper login with authentication, then somehow pass the userId to everyComponent
     userId: 1,
   },
 
@@ -67,11 +68,9 @@ export default {
   },
 
   methods: {
+    //TODO - implement proper login with authentication
     login(user) {
       this.user = user;
-      //TODO - implement proper login with authentication, then add the proper id
-      //TODO - I need to pass the userId to the components, not sure how yet, so it's hardcoded in AccountView atm
-      this.user.id = 1;
     },
 
     routeToComponent(event) {

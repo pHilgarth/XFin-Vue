@@ -9,7 +9,7 @@ import NewExpenseRework from './components/pages/NewExpense_REWORK';
 import NewAccountHolder from './components/pages/NewAccountHolder';
 import NewReserve from './components/pages/NewReserve';
 import NewRevenue from './components/pages/NewRevenue';
-import UpdateAccountHolder from './components/pages/UpdateAccountHolder';
+import EditAccountHolder from './components/pages/EditAccountHolder';
 import ReserveManager from './components/pages/ReserveManager';
 import ExampleComponent from './components/tempComponents/ExampleComponent';
 
@@ -21,7 +21,7 @@ export const router = createRouter({
         { path: '/', component: AccountView },
         { path: '/accounts/:id', component: AccountDetail },
         { path: '/new-account-holder', component: NewAccountHolder },
-        { path: '/edit-account-holder/:id', component: UpdateAccountHolder },
+        { path: '/edit-account-holder', name: 'edit-account-holder', component: EditAccountHolder, props: true },
         { path: '/new-reserve/', component: NewReserve },
         { path: '/new-revenue/:id', component: NewRevenue },
         { path: '/new-expense/:id', component: NewExpense },

@@ -7,35 +7,37 @@ const baseUrl = "http://localhost:2905/api/accountHolders";
 export const AccountHolderService = {
   async getAll(userId) {
     try {
-      return await fetch(`${baseUrl}/${userId}`).then((response) => {
+      return await fetch(`${baseUrl}/user/${userId}`).then((response) => {
         if (response.status === 200) {
           return response.json();
         }
         else if (response.status === 204) {
           return [];
         }
+        else if (response.status === 404) {
+          throw new Error(`no user with id ${userId} found!`);
+        }
       }).then(data => data);
     } catch (error) {
-      console.error(error);
       throw new Error(error);
     }
   },
 
-  async get(id) {
+  async getSingle(id) {
     let url = `${baseUrl}/${id}`;
 
     try {
       return await fetch(url).then((response) => {
-        if (response.ok) {
+        if (response.status === 200) {
           return response.json();
         }
-      }).then((data) => {
-        if (data != undefined) {
-          return data;
+        else if (response.status === 204) {
+          return null;
         }
-      });
+      }).then(data => data);
     } catch (error) {
-      return null;
+      console.error(error);
+      throw new Error(error);
     }
   },
 
@@ -72,8 +74,8 @@ export const AccountHolderService = {
           return response.json();
         }
         //TODO - is this the right statuscode to return, when something failed? See also TODO on the API Controller Action
-        else if (response.status === 204) {
-          return null;
+        else if (response.status === 404) {
+          throw new Error(`no user with id ${accountHolder.userId} found!`);
         }
       }).then(data => data);
     } catch (error) {
@@ -84,6 +86,7 @@ export const AccountHolderService = {
 
 //TODO - this api call never returns the actual data - it returns a promise, so it doesnt work the way it should
 //TODO - on the get requests i still have the old way which is returning the data, i need to find another way of doing things
+//TODO - test this endpoint again
   async update(id, jsonPatchDocument) {
     const url = `${baseUrl}/${id}`
 
@@ -98,30 +101,12 @@ export const AccountHolderService = {
     try {
       return await fetch(url, postObject).then((response) => {
         if (response.status === 200) {
-          return {
-            success: true,
-            error: null,
-            updatedRecord: response.json(),
-          };
+          return response.json();
         }
-        else if (response.status === 404) {
-          return {
-            success: false,
-            error: 'This record was not found in the database!',
-            updatedRecord: null,
-          };
-        }
-      }).then((data) => {
-        if (data != undefined) {
-          return data;
-        }
-      });
+      }).then(data => data);
     } catch (error) {
-      return {
-        success: false,
-        error: `Error while updating accountHolder (error: ${error})`,
-        updatedRecord: null,
-      };
+      console.error(error);
+      throw new Error(error);
     }
   },
 }

@@ -1,8 +1,6 @@
 <template>
-<!-- TODO remove style attribute again -->
-  <div style="overflow:visible" class="new-account-holder">
+  <div class="new-account-holder">
     <OrganismAccountHolder headline="Kontoinhaber hinzufügen" @save="saveAccountHolder" />
-    <!-- TODO - implement MoleculeLoading on every component, where an API call is made -->
   </div>
 </template>
 
@@ -14,67 +12,42 @@ import { BankAccountService } from "@/services/bank-account-service";
 import { TransactionService }   from '@/services/transaction-service';
 
 export default {
+  inject: [ 'userId' ],
+
   components: {
     OrganismAccountHolder
   },
 
   data() {
     return {
-      accountHolder: null,
-      error: null,
+      //accountHolder: null,
+      //error: null,
     };
   },
 
   methods: {
     async saveAccountHolder(accountHolder) {
-      this.accountHolder = accountHolder;
-      //TODO - do I need a try catch here?
-      const createdAccountHolder = await AccountHolderService.create({ name: accountHolder.name, userId: accountHolder.userId });
-    
-        if (createdAccountHolder) {
-          for (let i = 0; i < accountHolder.bankAccounts.length; i++) {
-            const bankAccount = accountHolder.bankAccounts[i];
-            bankAccount.accountHolderId = createdAccountHolder.id;
+      try {
+        const createdAccountHolder = await AccountHolderService.create({ name: accountHolder.name, userId: this.userId });
 
-            //TODO - and a try catch here?
-            const createdBankAccount = await BankAccountService.create(bankAccount);
-            console.log(createdBankAccount);
+        for (const bankAccount of accountHolder.bankAccounts) {
+          bankAccount.accountHolderId = createdAccountHolder.id;
 
-            if (createdBankAccount) {
-              const initializationTransaction = {
-                targetBankAccountId: createdBankAccount.id,
-                //TODO - remove this hardcoded targetCostCenterId - it should fetch always the id of costCenter "Unallocated"!
-                targetCostCenterId: 1,
-                dateString: new Date().toISOString(),
-                amount: bankAccount.balance,
-                reference: '[Kontoinitialisierung]',
-              };
-              const createdInitializationTransaction = await TransactionService.create(initializationTransaction);
+          const createdBankAccount = await BankAccountService.create(bankAccount);
 
-              if (!createdInitializationTransaction) {
-                //TODO - improve error handling - maybe remove the other records again? Or just implement a task on the API that takes care of this regularly?
-                this.error = 'Error during inizializationTransaction creation';
-                alert(this.error);
-                break;
-              }
-            }
-            else {
-              //TODO - improve error handling
-              this.error = 'Error during bankAccountCreation';
-              alert(this.error);
-              break;
-            }
-          }
+          await TransactionService.create({
+            targetBankAccountId: createdBankAccount.id,
+            dateString: new Date().toISOString(),
+            amount: bankAccount.balance,
+            reference: '[Kontoinitialisierung]',
+          });
 
-          if (!this.error) {
-            this.$router.push('/');
-          }
+          this.$router.push('/');
         }
-        else {
-          //TODO - improve error handling
-          this.error = 'Error during accountHolder creation';
-          alert(this.error);
-        }
+      } catch(error) {
+        console.error(error);
+        alert(error + ' - show something in frontend');
+      }
     },
   }
 }

@@ -79,8 +79,8 @@ export const BankAccountService = {
         if (response.status === 200) {
           return response.json();
         }
-        else if (response.status === 204) {
-          return null;
+        else if (response.status === 404) {
+          throw new Error(`no accountHolder with id ${bankAccount.accountHolderId} found!`);
         }
       }).then(data => data);
     } catch (error) {

@@ -3,7 +3,7 @@
     <section>
       <AtomHeadline tag="h1" :text="headline" />
       <article>
-        <MoleculeInputText  class="organism-account-holder__name pb-5" field="name" :hasErrors="nameHasErrors || duplicatedName"
+        <MoleculeInputText  class="organism-account-holder__name pb-5" field="name" :hasErrors="v$.name.$error || duplicatedName"
                             :validation="v$.name" v-model="name" label="Name" @blur="v$.name.$touch()" :ignoreTab="showForm"/>
 
         <template v-if="duplicatedName" to=".organism-account-holder__name">
@@ -15,13 +15,14 @@
           <AtomButton text="&plus; Neues Konto anlegen" type="light" @click="addAccount" :tabindex="showForm ? '-1' : ''" />
 
           <div v-if="bankAccounts.length" class="organism-account-holder__account-items">
+            <!-- TODO - move this into another component? -->
             <template v-for="(account, index) in bankAccounts" :key="index">
               <div class="organism-account-holder__account">
                 <AtomSpan v-if="account.isNew" class="organism-account-holder__new" text="NEU" />
                 <AtomSpan v-else-if="account.changed" class="organism-account-holder__changed" text="GEÄNDERT" />
                 <AtomSpan class="organism-account-holder__delete" :data-index="index" text="&times;" @click="deleteAccount" />
-                <AtomSpan class="organism-account-holder__account-number" :text="account.accountNumber" @click="deleteAccount" />
-                <AtomSpan class="organism-account-holder__balance" :text="formatBalance(account.balance)" @click="deleteAccount" />
+                <AtomSpan class="organism-account-holder__account-number" :text="account.accountNumber" />
+                <AtomSpan class="organism-account-holder__balance" :text="formatBalance(account.balance)" />
                 <AtomButton :data-index="index" text="Bearbeiten" type="light-small" @click="editAccount" />
               </div>
             </template>
@@ -64,18 +65,12 @@ export default {
 
   emits: [ 'save' ],
 
-  inject: [ 'userId' ],
-
   props: {
     accountHolder:  { type: Object, default: null },
     headline:       { type: String, required: true },
   },
 
   computed: {
-    nameHasErrors() {
-      return this.v$.name.$error;
-    },
-
     saveDisabled() {
       return this.v$.name.$invalid || this.duplicatedName || !this.bankAccounts.length
     },
@@ -145,13 +140,7 @@ export default {
       return NumberService.formatCurrency(value);
     },
 
-    saveAccount(event) {
-      const bankAccount = {};
-
-      for (const prop in event) {
-        bankAccount[prop] = event[prop];
-      }
-
+    saveAccount(bankAccount) {
       // if !this.accountHolder -> user is creating a new accountHolder
       if (!this.accountHolder) {
         bankAccount.isNew = true;
@@ -213,7 +202,7 @@ export default {
       }
 
       if (save) {
-        this.$emit('save', { id: this.accountHolder?.id, name: this.name, bankAccounts: this.bankAccounts, userId: this.userId });
+        this.$emit('save', { id: this.accountHolder?.id, name: this.name, bankAccounts: this.bankAccounts });
       }
     },
   },

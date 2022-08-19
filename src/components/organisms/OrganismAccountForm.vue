@@ -13,6 +13,7 @@
 
           <AtomButton text="Konto speichern" :disabled="v$.$silentErrors.length > 0 || duplicate" type="primary" @click.prevent="save" />
           <AtomButton text="Abbrechen" type="cancel" @click.prevent="$emit('cancel')" />
+          <AtomParagraph v-if="duplicateCheckError" text="Speichern nicht möglich!" class="mt-3 xfin__form__error"/>
         </form>
       </div>
     </div>
@@ -76,6 +77,7 @@ export default {
 
       ibans:                  this.formData.account?.ibans || [],
       duplicate:              false,
+      duplicateCheckError:    false,
     };
   },
 
@@ -124,7 +126,6 @@ export default {
       try {
         const bankAccountDuplicate = await BankAccountService.getByIban(this.iban);
 
-        console.log(`description: ${this.description}(${typeof this.description})`);
         if (!bankAccountDuplicate) {
             const account = {
               id: this.id,
@@ -145,6 +146,7 @@ export default {
       } catch (error) {
         console.error('could not check for duplicates! Aborting!');
         console.error(error);
+        this.duplicateCheckError = true;
       }
     },
   },
