@@ -45,6 +45,7 @@
       <!-- TODO - default value for bankAccount description (in API) -->
       <!-- TODO - on OrganismAccountHolder: center the accountData vertically (on the account cards), there is too less space at the top -->
       <!-- TODO - remember to pass the proper transactionType int value, when posting new transactions of type != neutral (its an enum in api) -->
+      <!-- TODO - select fields in forms should not have a preselected value, users should be forced to select a value (for now at least in transaction form -->
 
 
       <!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->
@@ -96,7 +97,7 @@ export default {
 
   async created() {
     try {
-      this.accountHolders = await AccountHolderService.getAll(this.userId);
+      this.accountHolders = await AccountHolderService.getAllByUser(this.userId);
       this.dataLoaded = true;
     } catch (error) {
       this.loadingError = true;
