@@ -5,7 +5,6 @@ import AccountView from './components/pages/AccountView';
 import CostCenterManager from './components/pages/CostCenterManager';
 import BudgetManager from './components/pages/BudgetManager';
 import NewExpense from './components/pages/NewExpense';
-import NewExpenseRework from './components/pages/NewExpense_REWORK';
 import NewAccountHolder from './components/pages/NewAccountHolder';
 import NewReserve from './components/pages/NewReserve';
 import NewRevenue from './components/pages/NewRevenue';
@@ -24,8 +23,7 @@ export const router = createRouter({
         { path: '/edit-account-holder', name: 'edit-account-holder', component: EditAccountHolder, props: true },
         { path: '/new-reserve/', component: NewReserve },
         { path: '/new-revenue/:id', component: NewRevenue },
-        { path: '/new-expense/:id', component: NewExpense },
-        { path: '/new-expense-rework/', name: 'new-expense-rework', component: NewExpenseRework, props: true },
+        { path: '/new-expense', name: 'new-expense', component: NewExpense, props: true },
         { path: '/budget-manager', component: BudgetManager },
         { path: '/design-elements', component: DesignElements},
         { path: '/cost-centers', component: CostCenterManager},

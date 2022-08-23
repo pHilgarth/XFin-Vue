@@ -137,7 +137,7 @@ export default {
 //TODO - die ganzen API-Calls müssen optimiert werden, bzw. das Error-Handling ...
     async getAccountHolders() {
       const includeAccounts = true;
-      const accountHolderResponse = await AccountHolderService.getAll(includeAccounts);
+      const accountHolderResponse = await AccountHolderService.getAllByUser(includeAccounts);
 
       if (accountHolderResponse.success && accountHolderResponse.data) {
         this.accountHolders = accountHolderResponse.data;

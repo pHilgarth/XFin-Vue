@@ -51,8 +51,8 @@ export const errorService = {
         title_required:                         'Bitte gib einen Titel ein!',
         title_maxLength:                        'Der Titel darf nicht länger als 30 Zeichen sein!',
 
-        //transactionRole errors
-        transactionRole:                        'Dieser Transaktions-Typ passt nicht zur gewählten Kostenstelle!',
+        //transactionType errors
+        transactionType:                        'Dieser Transaktions-Typ passt nicht zur gewählten Kostenstelle!',
     },
 
     getErrorMessage(property, validator, params) {

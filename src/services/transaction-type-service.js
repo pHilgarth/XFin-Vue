@@ -1,7 +1,7 @@
 const baseUrl = "http://localhost:2905/api";
 
-export const TransactionRoleService = {
-    transactionRoles: [
+export const TransactionTypeService = {
+    transactionTypes: [
         {
             value: 'default',
             label: 'reguläre Transaktion',
@@ -20,8 +20,8 @@ export const TransactionRoleService = {
         },
     ],
 
-    async getItems(transactionRole, accountId) {
-        const endpoint = transactionRole === 'repayment'
+    async getItems(transactionType, accountId) {
+        const endpoint = transactionType === 'repayment'
             ? 'loans'
             : 'reserves';
 

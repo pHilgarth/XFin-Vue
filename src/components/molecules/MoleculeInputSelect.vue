@@ -1,7 +1,7 @@
 <template>
   <div class="molecule-input-select form-floating">
     <AtomInputSelect :id="field" :class="`${hasErrors ? ' has-errors' : ''}`" :value="modelValue" :options="options"
-                     @input="$emit('update:modelValue', $event.target.value)" @blur="$emit('blur')"/>
+                     @input="$emit('update:modelValue', $event.target.value)" @blur="$emit('blur')" :disabled="disabled"/>
     <AtomLabel class="xfin__form__label" :for="field" :text="label" />
     <template v-for="(error, index) in validation?.$errors" :key="index">
       <MoleculeFormError :error="error" :errorMessageParams="errorMessageParams" />
@@ -23,6 +23,7 @@ export default {
   ],
 
   props: {
+    disabled:           { type: Boolean, default: false },
     errorMessageParams: { type: Object },
     hasErrors:          { type: Boolean },
     validation:         { type: Object },

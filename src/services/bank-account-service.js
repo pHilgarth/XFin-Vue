@@ -17,37 +17,25 @@ export const BankAccountService = {
     }
   },
 
-  async getById(id, simple, year = 0, month = -1) {
+  async getSingleById(accountId, year = 0, month = -1) {
 
-    const url = `${baseUrl}/${id}?simple=${simple}&year=${year}&month=${++month}`
+    const url = `${baseUrl}/${accountId}?year=${year}&month=${++month}`
 
     try {
       return await fetch(url).then((response) => {
         if (response.status === 200) {
           return response.json();
         }
-        else if (response.status === 204) {
-          return null;
+        else if (response.status === 404) {
+          throw new Error(`no bankAccount found with id ${accountId}!`);
         }
-      }).then((data) => {
-        if (data != undefined) {
-          return {
-            success: true,
-            error: null,
-            data: data,
-          };
-        }
-      });
+      }).then(data => data);
     } catch (error) {
-      return {
-        success: null,
-        error: `Error fetching categories\n${error}`,
-        data: null,
-      };
+      throw new Error(error);
     }
   },
 
-  async getByIban(iban) {
+  async getSingleByIban(iban) {
     const url = `${baseUrl}/iban/${iban}`
 
     try {
@@ -89,8 +77,8 @@ export const BankAccountService = {
     }
   },
 
-  async update(accountNumber, jsonPatchDocument) {
-    const url = `${baseUrl}/${accountNumber}`
+  async update(accountId, jsonPatchDocument) {
+    const url = `${baseUrl}/${accountId}`
 
     const postObject = {
       method: 'PATCH',
@@ -103,30 +91,14 @@ export const BankAccountService = {
     try {
       return await fetch(url, postObject).then((response) => {
         if (response.status === 200) {
-          return {
-            success: true,
-            error: null,
-            updatedRecord: response.json(),
-          };
+          return response.json();
         }
         else if (response.status === 404) {
-          return {
-            success: false,
-            error: 'This record was not found in the database!',
-            updatedRecord: null,
-          };
+          throw new Error(`no bankAccount found with id ${accountId}!`);
         }
-      }).then((data) => {
-        if (data != undefined) {
-          return data;
-        }
-      });
+      }).then(data => data);
     } catch (error) {
-      return {
-        success: false,
-        error: `Error while updating bankAccount (error: ${error})`,
-        updatedRecord: null,
-      };
+      throw new Error(error);
     }
   }
 }

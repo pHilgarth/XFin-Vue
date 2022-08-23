@@ -1,13 +1,11 @@
 <template>
   <div class="new-revenue">
     <AtomHeadline tag="h1" text="Einnahme eintragen" />
-    <OrganismTransaction transactionType="revenue" />
   </div>
 </template>
 
 <script>
   import AtomHeadline from '@/components/atoms/AtomHeadline';
-  import OrganismTransaction from '@/components/organisms/OrganismTransaction';
 
   import { AccountHolderService } from '@/services/account-holder-service';
 
@@ -40,12 +38,11 @@
 
     components: {
       AtomHeadline,
-      OrganismTransaction,
     },
 
     methods: {
       async getAccountHolders() {
-        const apiResponse = await AccountHolderService.getAll();
+        const apiResponse = await AccountHolderService.getAllByUser();
 
         if (apiResponse.success && apiResponse.data) {
           this.accountHolders = apiResponse.data;

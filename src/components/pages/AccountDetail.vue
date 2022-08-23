@@ -70,7 +70,7 @@ export default {
       const simpleBankAccount = false;
       month = month !== undefined ? month : new Date().getMonth();
 
-      const apiResponse = await BankAccountService.getById(this.$route.params.id, simpleBankAccount, year, month);
+      const apiResponse = await BankAccountService.getSingleById(this.$route.params.id, simpleBankAccount, year, month);
 
       if (apiResponse.success && apiResponse.data) {
         this.account = apiResponse.data;

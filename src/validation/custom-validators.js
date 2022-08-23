@@ -32,10 +32,10 @@ export const ibanValidator = (value) => value.match(/^[a-zA-Z]{2}[0-9]{20}$/);
 export const optionalAmountValidator = (value) => (value === '' || value === null || value === undefined) || value.match(/^(0|[1-9][0-9]*)?,?[0-9]{1,2}$/);
 export const targetDateValidator = (value) => (value === '' || value === null || value === undefined) || value.match(/* TODO - regex missing!!! check how's the value of a date input looks like */);
 
-export const costCenterValidator = (transactionRole) => helpers.withParams(
-    { transactionRole },
+export const costCenterValidator = (transactionType) => helpers.withParams(
+    { transactionType },
     (value) => {
-        return !(value === 'Nicht zugewiesen' && (transactionRole === 'Darlehen' || transactionRole === 'Sparrate'));
+        return !(value === 'Nicht zugewiesen' && (transactionType === 'Darlehen' || transactionType === 'Sparrate'));
     },
 );
 
@@ -77,7 +77,7 @@ export const secondSelectValidator = (firstSelect) => (value) => {
     //return value !== 'C' && value !== '';
 }
 
-export const transactionRoleValidator = (costCenter) => helpers.withParams(
+export const transactionTypeValidator = (costCenter) => helpers.withParams(
     { costCenter },
     (value) => {
         return !(costCenter === 'Nicht zugewiesen' && (value === 'Darlehen' || value === 'Sparrate'));

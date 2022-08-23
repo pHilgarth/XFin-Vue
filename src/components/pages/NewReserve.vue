@@ -80,7 +80,7 @@ export default {
     //TODO - i should move these get....() methods into the service or update the services, so I can call them from the created method
     async getAccountHolders() {
       const includeBankAccounts = true;
-      const apiResponse = await AccountHolderService.getAll(includeBankAccounts);
+      const apiResponse = await AccountHolderService.getAllByUser(includeBankAccounts);
 
       if (apiResponse.success && apiResponse.data) {
         this.accountHolders = apiResponse.data;

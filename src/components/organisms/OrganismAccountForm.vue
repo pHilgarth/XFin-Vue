@@ -124,7 +124,7 @@ export default {
   methods: {
     async save() {
       try {
-        const bankAccountDuplicate = await BankAccountService.getByIban(this.iban);
+        const bankAccountDuplicate = await BankAccountService.getSingleByIban(this.iban);
 
         if (!bankAccountDuplicate) {
             const account = {

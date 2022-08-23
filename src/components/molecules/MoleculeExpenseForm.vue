@@ -1,33 +1,33 @@
 <template>
   <form class="molecule-expense-form">
     <MoleculeInputSelect class="organism-transaction__account pb-5" field="account" label="Konto" v-model="accountId"
-                         :options="bankAccounts.map(b => { return { value: b.id, label: `${b.accountNumber} (${b.accountHolderName})`} })" />
+                         :options="[{ value: bankAccount.id, label: `${bankAccount.accountNumber}`}]" :disabled="true" />
 
-    <MoleculeInputSelect class="pb-5" :options="costCenters.map(c => { return { value: c.id, label: c.name } })" field="costCenter" v-model="costCenterId" label="Kostenstelle" />
+    <MoleculeInputSelect class="pb-5" field="costCenter" v-model="costCenterId" label="Kostenstelle"
+                         :options="costCenters.map(c => { return { value: c.id, label: c.name } })" />
 
-    <MoleculeInputSelect class="pb-5" :options="transactionRoles" field="transactionRole" v-model="transactionRole" label="Typ" />
+    <MoleculeInputSelect class="pb-5" :options="transactionTypes" field="transactionType" v-model="transactionType" label="Typ" />
 
-    <!-- TODO - API endpoints for loan and repayments are missing -->
-    <MoleculeInputSelect v-if="transactionRoleItems !== null" class="organism-transaction__transaction-role-item pb-5" field="transactionRoleItem"
-                         :options="transactionRoleItems.map(t => { return { value: t.id, label: t.reference }})" v-model="transactionRoleItem" label="Darlehen" />
+    <!-- TODO - API endpoints for loan and repayments are missing, so this is commented out -->
+<!--    <MoleculeInputSelect v-if="transactionTypeItems !== null" class="organism-transaction__transaction-type-item pb-5" field="transactionTypeItem"-->
+<!--                         :options="transactionTypeItems.map(t => { return { value: t.id, label: t.reference }})" v-model="transactionTypeItem" label="Darlehen" />-->
 
     <div class="molecule-expense-form__external-party pb-5">
-
-      <!-- TODO - when saving is implemented, test this, if the checkbox is only shown, when either a new externalParty is created or an existing one without account data is selected -->
       <MoleculeInputAutoSuggest field="external-party" v-model="externalParty" label="Zahlungsempfänger" :items="externalParties.map(e => e.name)"
                                 :validation="v$.externalParty" :hasErrors="v$.externalParty?.$error"
                                 :errorMessageParams="{ externalPartyType: 'Zahlungsempfänger' }"
-                                @blur="onBlurExternalParty"
-                                @itemPicked="pickExternalParty"/>
+                                @blur="onBlurExternalParty" @itemPicked="pickExternalParty" />
 
-      <!-- TODO - test if the checkbox is shown / hidden properly -->
-      <!-- TODO - the box is not shown when typing a substring of an existing externalParty without accountData and then clicking on the item -->
-      <MoleculeInputCheckbox v-if="selectedExternalParty && !selectedExternalParty.externalBankAccount?.iban" class="pt-3" field="include-external-party-account"
+      <MoleculeInputCheckbox v-if="selectedExternalParty && selectedExternalParty.bankAccount.iban == null" class="pt-3" field="include-external-party-account"
                              v-model="includeExternalPartyAccount" label="Bankdaten hinzufügen" />
 
       <div v-if="includeExternalPartyAccount" class="molecule-expense-form__external-party-account pt-3">
-        <MoleculeInputText class="col-6" field="external-party-iban" v-model="externalPartyIban" label="IBAN" :small="true"
+        <MoleculeInputText class="molecule-expense-form__external-party-iban col-6" field="external-party-iban" v-model="externalPartyIban" label="IBAN" :small="true"
                            :hasErrors="v$.externalPartyIban.$error" :validation="v$.externalPartyIban" @blur="v$.externalPartyIban.$touch()" />
+
+        <Teleport v-if="duplicatedIban" to=".molecule-expense-form__external-party-iban">
+          <AtomParagraph class="xfin__form__error molecule-expense-form__iban__error" text="Diese IBAN wird bereits verwendet!"/>
+        </Teleport>
 
         <MoleculeInputText class="col-5" field="external-party-bic" v-model="externalPartyBic" label="BIC" :small="true"
                            :hasErrors="v$.externalPartyBic.$error" :validation="v$.externalPartyBic" @blur="v$.externalPartyBic.$touch()" />
@@ -40,30 +40,37 @@
     <MoleculeInputText class="pb-5" field="amount" v-model="amount" label="Betrag"
                        :validation="v$.amount" :hasErrors="v$.amount.$error" @blur="v$.amount.$touch()"/>
 
-    <AtomButton type="primary" text="Speichern" :disabled="v$.$silentErrors.length" @click.prevent="save" />
+    <AtomButton type="primary" text="Speichern" :disabled="v$.$silentErrors.length || duplicatedIban" @click.prevent="save" />
   </form>
 </template>
 
 <script>
-import {useVuelidate} from "@vuelidate/core";
+import { useVuelidate } from "@vuelidate/core";
 
 import AtomButton from '@/components/atoms/AtomButton';
+import AtomParagraph from '@/components/atoms/AtomParagraph';
 import MoleculeInputAutoSuggest from '@/components/molecules/MoleculeInputAutoSuggest';
 import MoleculeInputCheckbox from '@/components/molecules/MoleculeInputCheckbox';
 import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 
-import {CopyService} from '@/services/copy-service';
-import {TransactionRoleService} from '@/services/transaction-role-service';
-import {transactionValidation} from '@/validation/validations';
-import {bicValidator, ibanDuplicateValidator, ibanValidator,} from "@/validation/custom-validators";
+import { AccountHolderService } from '@/services/account-holder-service';
+import { BankAccountService } from '@/services/bank-account-service';
+import { CopyService } from '@/services/copy-service';
+import { NumberService } from '@/services/number-service';
+import { TransactionService } from '@/services/transaction-service';
+import { TransactionTypeService } from '@/services/transaction-type-service';
+import { transactionValidation } from '@/validation/validations';
+import { bicValidator, ibanValidator } from "@/validation/custom-validators";
 
 
 export default {
   emit: [ 'save' ],
+  inject: [ 'userId' ],
 
   components: {
     AtomButton,
+    AtomParagraph,
     MoleculeInputAutoSuggest,
     MoleculeInputCheckbox,
     MoleculeInputSelect,
@@ -71,16 +78,10 @@ export default {
   },
 
   props: {
-    bankAccounts: { type: Array, required: true },
+    bankAccount: { type: Object, required: true },
     costCenters: { type: Array, required: true },
     externalParties: { type: Array },
-    ibans: { type: Array },
     initialBankAccountId: { type: String },
-  },
-
-  created() {
-    this.accountId = this.initialBankAccountId || this.bankAccounts[0].id;
-    this.costCenterId = this.costCenters[0].id;
   },
 
   watch: {
@@ -91,9 +92,10 @@ export default {
     externalParty() {
       this.v$.externalParty.$touch();
 
-      this.selectedExternalParty = this.setSelectedExternalPartyToNull
-        ? null
-        : this.selectedExternalParty;
+      if (this.setSelectedExternalPartyToNull) {
+        this.selectedExternalParty = null;
+        this.includeExternalPartyAccount = false;
+      }
 
       this.setSelectedExternalPartyToNull = true;
     },
@@ -109,6 +111,7 @@ export default {
       if (this.externalPartyIban) {
         this.externalPartyIban = this.externalPartyIban.toUpperCase();
         this.v$.externalPartyIban.$touch();
+        this.duplicatedIban = false;
       }
     },
 
@@ -122,26 +125,27 @@ export default {
       }
     },
 
-    async transactionRole() {
-      if (['repayment', 'reserve'].indexOf(this.transactionRole) !== -1) {
+    async transactionType() {
+      if (['repayment', 'reserve'].indexOf(this.transactionType) !== -1) {
         try {
-          this.transactionRoleItems = await TransactionRoleService.getItems(this.transactionRole, this.accountId);
-          this.transactionRoleItem = this.transactionRoleItems[0].id;
+          this.transactionTypeItems = await TransactionTypeService.getItems(this.transactionType, this.accountId);
+          this.transactionTypeItem = this.transactionTypeItems[0].id;
         } catch (error) {
           console.error(error);
         }
       } else {
-        this.transactionRoleItems = null;
-        this.transactionRoleItem = null;
+        this.transactionTypeItems = null;
+        this.transactionTypeItem = null;
       }
     },
   },
 
   data() {
     return {
-      accountId: null,
+      accountId: this.bankAccount.id,
       amount: '',
-      costCenterId: null,
+      costCenterId: this.costCenters[0].id,
+      duplicatedIban: false,
       externalParty: '',
       externalPartyIban: null,
       externalPartyBic: null,
@@ -150,10 +154,10 @@ export default {
       setSelectedExternalPartyToNull: true,
       reference: '',
       selectedExternalParty: null,
-      transactionRole: TransactionRoleService.transactionRoles[0].value,
-      transactionRoles: CopyService.copyArray(TransactionRoleService.transactionRoles).filter(t => t.value !== 'reserve'),
-      transactionRoleItem: null,
-      transactionRoleItems: null,
+      transactionType: TransactionTypeService.transactionTypes[0].value,
+      transactionTypes: CopyService.copyArray(TransactionTypeService.transactionTypes).filter(t => t.value !== 'reserve'),
+      transactionTypeItem: null,
+      transactionTypeItems: null,
     }
   },
 
@@ -163,7 +167,6 @@ export default {
       this.externalParty = '';
     },
 
-    //TODO - I need to test this and the MoleculeInputAutoSuggest in general
     pickExternalParty(event) {
       // highlighting the match is realized by wrapping it in a <strong>-element
       // if the user clicks that part, we get the complete string from parentNode
@@ -176,22 +179,71 @@ export default {
       this.externalParty = clickedItem.includes('Neu hinzufügen') ? this.externalParty : clickedItem;
       this.setSelectedExternalPartyToNull = externalPartyValue === this.externalParty;
 
-      this.selectedExternalParty = this.externalParties.find(e => e.name === clickedItem) || { name: this.externalParty }
+      this.selectedExternalParty = this.externalParties.find(e => e.name === clickedItem) || { name: this.externalParty, bankAccount: {} }
     },
 
-    save() {
-      this.selectedExternalParty.iban = this.externalPartyIban;
-      this.selectedExternalParty.bic = this.externalPartyBic;
+    async save() {
+      try {
+        if (this.externalPartyIban) {
+          const duplicatedBankAccount = this.externalPartyIban
+              ? await BankAccountService.getSingleByIban(this.externalPartyIban)
+              : null;
 
-      this.$emit('save', {
-        accountId: this.accountId,
-        costCenterId: this.costCenterId,
-        transactionRole: this.transactionRole,
-        transactionRoleItem: this.transactionRoleItem,
-        externalParty: this.selectedExternalParty,
-        reference: this.reference,
-        amount: this.amount
-      });
+          if (duplicatedBankAccount) {
+            this.duplicatedIban = true;
+            throw new Error(`A bankAccount with iban ${this.externalPartyIban} already exists!`);
+          }
+          else {
+            if (this.selectedExternalParty.id) {
+              await BankAccountService.update(this.selectedExternalParty.bankAccount.id, [
+                {
+                  op: "replace",
+                  path: `/iban`,
+                  value: this.externalPartyIban,
+                },
+                {
+                  op: "replace",
+                  path: `/bic`,
+                  value: this.externalPartyBic,
+                }
+              ]);
+            }
+            else {
+              this.selectedExternalParty = await AccountHolderService.create({
+                userId: this.userId,
+                name: this.selectedExternalParty.name,
+                external: true,
+              });
+
+              this.selectedExternalParty.bankAccount = await BankAccountService.create({
+                accountHolderId: this.selectedExternalParty.id,
+                iban: this.externalPartyIban,
+                bic: this.externalPartyBic,
+                external: true,
+              });
+            }
+          }
+        }
+
+        await TransactionService.create({
+          sourceBankAccountId: this.accountId,
+          targetBankAccountId: this.selectedExternalParty.bankAccount.id,
+          sourceCostCenterId: this.costCenterId,
+          //TODO - add transactionType and recurringTransactionId, ReserveId, LoanId in MoleculeExpenseForm
+          transactionType: this.transactionType,
+          //recurringTransactionId: formData.recurringTransactionId,
+          //reserveId: formData.reserveId,
+          //loanId: formData.loanId,
+          reference: this.reference,
+          amount: NumberService.parseFloat(this.amount),
+          dateString: new Date().toISOString(),
+        });
+
+        this.$router.push('/');
+      }
+      catch (error) {
+        console.error(error);
+      }
     },
   },
 
@@ -207,7 +259,7 @@ export default {
 
     if (this.includeExternalPartyAccount) {
       validation.externalPartyBic = { bicValidator };
-      validation.externalPartyIban = { ibanValidator, ibanDuplicate: ibanDuplicateValidator(this.ibans) };
+      validation.externalPartyIban = { ibanValidator };
     }
 
     return validation;

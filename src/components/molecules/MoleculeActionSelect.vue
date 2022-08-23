@@ -2,8 +2,7 @@
   <select class="molecule-action-select" @change="getAccountAction($event, bankAccount.id)">
     <option>Aktion wählen ...</option>
     <option id="new-revenue">Einnahme eintragen</option>
-<!--    <option id="new-expense">Ausgabe eintragen</option>-->
-    <option id="new-expense-rework">Ausgabe eintragen (Rework-Component)</option>
+    <option id="new-expense">Ausgabe eintragen</option>
     <option id="budget-manager">Budget verwalten</option>
     <option>Fixkostenverwaltung</option>
   </select>
@@ -17,10 +16,10 @@ export default {
     },
 
     methods: {
-        getAccountAction(event, bankAccountId) {
+      getAccountAction(event, bankAccountId) {
         let optionId = event.target.selectedOptions[0].id;
         this.$router.push({ name: optionId, params: { bankAccountId } });
-        },
+      },
     },
 }
 </script>
