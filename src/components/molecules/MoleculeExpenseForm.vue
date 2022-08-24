@@ -1,5 +1,6 @@
 <template>
   <form class="molecule-expense-form">
+    <!-- TODO - check if v-model accountId can be removed -->
     <MoleculeInputSelect class="organism-transaction__account pb-5" field="account" label="Konto" v-model="accountId"
                          :options="[{ value: bankAccount.id, label: `${bankAccount.accountNumber}`}]" :disabled="true" />
 

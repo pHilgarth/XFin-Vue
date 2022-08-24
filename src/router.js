@@ -4,6 +4,7 @@ import AccountDetail from './components/pages/AccountDetail';
 import AccountView from './components/pages/AccountView';
 import CostCenterManager from './components/pages/CostCenterManager';
 import BudgetManager from './components/pages/BudgetManager';
+import LoanManager from './components/pages/LoanManager';
 import NewExpense from './components/pages/NewExpense';
 import NewAccountHolder from './components/pages/NewAccountHolder';
 import NewReserve from './components/pages/NewReserve';
@@ -29,5 +30,6 @@ export const router = createRouter({
         { path: '/cost-centers', component: CostCenterManager},
         { path: '/reserves', component: ReserveManager},
         { path: '/example', component: ExampleComponent},
+        { path: '/loans', name: 'loan-manager', component: LoanManager, props: true },
     ],
 });

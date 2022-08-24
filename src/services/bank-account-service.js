@@ -1,7 +1,30 @@
 //TODO - introduce an 'api-service', which makes all the api calls -> i.e. getALl is always the same, just with different url
-const baseUrl = "http://localhost:2905/api/bankAccounts";
+const baseUrl = 'http://localhost:2905/api/bankAccounts';
 
 export const BankAccountService = {
+  accountActions: [
+    {
+      id: 'new-revenue',
+      label: 'Einnahme eintragen',
+    },
+    {
+      id: 'new-expense',
+      label: 'Ausgabe eintragen',
+    },
+    {
+      id: 'budget-manager',
+      label: 'Budget verwalten',
+    },
+    {
+      id: 'loan-manager',
+      label: 'Darlehen verwalten',
+    },
+    {
+      id: 'fixed-costs-manager',
+      label: 'Fixkosten verwalten',
+    },
+  ],
+
   async getAll() {
     try {
       return await fetch(baseUrl).then((response) => {
