@@ -7,6 +7,7 @@
     <MoleculeInputSelect class="pb-5" field="costCenter" v-model="costCenterId" label="Kostenstelle"
                          :options="costCenters.map(c => { return { value: c.id, label: c.name } })" />
 
+    {{ transactionType }}
     <MoleculeInputSelect class="pb-5" :options="transactionTypes" field="transactionType" v-model="transactionType" label="Typ" />
 
     <!-- TODO - API endpoints for loan and repayments are missing, so this is commented out -->

@@ -5,22 +5,23 @@
     <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!" />
 
     <template v-else>
-      <MoleculeNotice v-if="!loans || loans.length === 0" type="info" :text="`Kein Darlehen für Konto ${bankAccount.accountNumber} gefunden!`" />
+      <MoleculeNotice v-if="creditorLoans?.length === 0 && debitorLoans?.length === 0" type="info"
+                      :text="`Kein Darlehen für Konto ${bankAccount.accountNumber} gefunden!`" />
 
-      <template v-else>
-        <OrganismCollapsibleWithSlot title="Gläubiger">
+<!--      <template v-else>-->
+<!--        <OrganismCollapsibleWithSlot title="Gläubiger">-->
 
-        </OrganismCollapsibleWithSlot>
+<!--        </OrganismCollapsibleWithSlot>-->
 
-        <OrganismCollapsibleWithSlot title="Schuldner">
+<!--        <OrganismCollapsibleWithSlot title="Schuldner">-->
 
-        </OrganismCollapsibleWithSlot>
-      </template>
+<!--        </OrganismCollapsibleWithSlot>-->
+<!--      </template>-->
 
       <AtomButton type="light" text="Darlehen erstellen" @click="showForm = true"/>
 
       <div v-if="showForm">
-        <OrganismLoanForm />
+        <OrganismLoanForm :costCenters="costCenters" :counterParties="counterParties" />
       </div>
 
     </template>
@@ -33,10 +34,12 @@ import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeNotice from '@/components/molecules/MoleculeNotice';
-import OrganismCollapsibleWithSlot from '@/components/organisms/OrganismCollapsibleWithSlot';
+//import OrganismCollapsibleWithSlot from '@/components/organisms/OrganismCollapsibleWithSlot';
 import OrganismLoanForm from '@/components/organisms/OrganismLoanForm';
 
+import { AccountHolderService } from '@/services/account-holder-service';
 import { BankAccountService } from '@/services/bank-account-service';
+import { CostCenterService } from '@/services/cost-center-service';
 import { LoanService } from '@/services/loan-service';
 
 export default {
@@ -52,7 +55,7 @@ export default {
 
   components: {
     AtomButton,
-    OrganismCollapsibleWithSlot,
+    //OrganismCollapsibleWithSlot,
     AtomHeadline,
     MoleculeLoading,
     MoleculeNotice,
@@ -69,6 +72,8 @@ export default {
     return {
       accountHolders: null,
       bankAccount: null,
+      costCenters: null,
+      counterParties: null,
       creditorLoans: null,
       dataLoaded: false,
       loadingError: false,
@@ -81,6 +86,9 @@ export default {
     async getData() {
       try {
         const bankAccount = BankAccountService.getSingleById(this.bankAccountId);
+        const costCenters = CostCenterService.getAll();
+        const accountHolders = AccountHolderService.getAllByUser(this.userId);
+        const externalParties = AccountHolderService.getAllByUser(this.userId, true);
         const loans = LoanService.getAllByAccount(this.bankAccountId);
 
         this.bankAccount = await bankAccount;
@@ -88,6 +96,13 @@ export default {
         const allLoans = await loans;
         this.creditorLoans = allLoans.filter(l => l.creditorBankAccountId === this.bankAccountId);
         this.debitorLoans = allLoans.filter(l => l.debitorBankAccountId === this.bankAccountId);
+
+        const costCentersResult = await costCenters;
+        this.costCenters = Array.from([
+          costCentersResult.filter(c => c.name !== 'Nicht zugewiesen')
+        ]).flat();
+
+        this.counterParties = [ await accountHolders, await externalParties ].flat();
       }
       catch (error) {
         console.error(error);
