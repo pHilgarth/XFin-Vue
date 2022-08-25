@@ -8,50 +8,33 @@ const referenceErrorMessage =                           'Bitte gib einen Verwend
 //TODO - change every service name to UpperCase
 export const errorService = {
     errorMessages: {
-        //amount errors
+        accountRole:                            'Bitte wähle eine Rolle für dieses Konto aus!',
         amount:                                 amountErrorMessage,
-
-        //balance errors
         balance:                                amountErrorMessage,
-
-        //bic errors
         bic:                                    bicErrorMessage,
-
-        //costCenter errors
         costCenter:                             'Diese Kostenstelle passt nicht zum gewählten Transaktions-Typ!',
-
-        //externalParty errors
+        costCenterId:                           'Bitte wähle eine Kostenstelle!',
+        counterParty:                           'Bitte gib einen {counterPartyType} an!',
         externalParty:                            'Bitte gib einen {externalPartyType} an!',
         externalPartyIban:                        ibanErrorMessage,
         externalPartyBic:                         bicErrorMessage,
         externalPartyIban_ibanDuplicate:          ibanDuplicateErrorMessage,
-
-        //freeBudget errors                     //{...} gets replaced by the function getErrorMessage in MoleculeInputText
         //freeBudget:                             'Der Mindestbetrag für dieses Konto beträgt {minimalAmount}!',
         freeBudget:                             'Dieser Posten darf nicht negativ sein!',
-
-        //iban errors
         iban_ibanValidator:                     ibanErrorMessage,
         iban_ibanDuplicate:                     ibanDuplicateErrorMessage,
-
-        //name errors
+        life:                                   'Bitte gib eine Laufzeit an!',
+        monthlyInstallment:                     'Bitte gib eine gültige Monatsrate an',
         name_required:                          nameErrorMessage,
         //TODO - make this work ({maxLength}, so I can pass the length dynamically and so it's not hardcoded here)
         //name_maxLength:                         'Der Name darf nicht länger als {maxLength} Zeichen sein!',
         name_maxLength:                         'Der Name darf nicht länger als 25 Zeichen sein!',
         name_nameDuplicate:                     'Dieser Name existiert bereits!',
-
-        //reference errors
+        rateOfInterest:                         'Bitte gib einen gültigen Zinssatz an!',
         reference:                              referenceErrorMessage,
-
-        //targetAmount errors
         targetAmount:                           amountErrorMessage,
-
-        //title errors
         title_required:                         'Bitte gib einen Titel ein!',
         title_maxLength:                        'Der Titel darf nicht länger als 30 Zeichen sein!',
-
-        //transactionType errors
         transactionType:                        'Dieser Transaktions-Typ passt nicht zur gewählten Kostenstelle!',
     },
 

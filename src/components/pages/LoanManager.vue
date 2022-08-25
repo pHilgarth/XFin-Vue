@@ -21,7 +21,7 @@
       <AtomButton type="light" text="Darlehen erstellen" @click="showForm = true"/>
 
       <div v-if="showForm">
-        <OrganismLoanForm :costCenters="costCenters" :counterParties="counterParties" />
+        <OrganismLoanForm :costCenters="costCenters" :counterParties="counterParties" @cancel="showForm = false"/>
       </div>
 
     </template>

@@ -18,4 +18,10 @@
     transform: translate(-50%, -50%);
     width: 40%;
   }
+
+  &__form {
+    @include flexbox();
+    @include flex-wrap(wrap);
+    @include justify-content(space-between);
+  }
 }

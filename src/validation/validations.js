@@ -1,10 +1,13 @@
 import { required, maxLength } from "@vuelidate/validators";
 import {
-    optionalAmountValidator,
+    accountRoleValidator,
     amountValidator,
     bicValidator,
-    externalPartyValidator,
     ibanValidator,
+    lifeValidator,
+    monthlyInstallmentValidator,
+    optionalAmountValidator,
+    rateOfInterestValidator,
 } from "@/validation/custom-validators";
 
 
@@ -25,6 +28,16 @@ export const counterPartValidation = {
     counterPartBic:         { bicValidator },
 };
 
+export const loanValidation = {
+    accountRole:            { accountRoleValidator },
+    amount:                 { amountValidator },
+    counterParty:           { required },
+    life:                   { lifeValidator },
+    monthlyInstallment:     { monthlyInstallmentValidator },
+    rateOfInterest:         { rateOfInterestValidator },
+    reference:              { required },
+}
+
 export const reserveValidation = {
     title: { required, maxLength: maxLength(30) },
     targetAmount: { optionalAmountValidator }
@@ -32,7 +45,7 @@ export const reserveValidation = {
 
 export const transactionValidation = {
     amount:                 { amountValidator },
-    externalParty:          { externalPartyValidator },
+    externalParty:          { required },
     reference:              { required },
 };
 
