@@ -29,7 +29,7 @@ import MoleculeInputText from "@/components/molecules/MoleculeInputText";
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeCostCenterRow from "@/components/molecules/MoleculeCostCenterRow";
 
-import { CostCenterService } from "@//services/cost-center-service";
+import { costCenterService } from "@//services/cost-center-service";
 
 export default {
   components: {
@@ -84,7 +84,7 @@ export default {
     },
 
     async getCostCenters() {
-      const apiResponse = await CostCenterService.getAll();
+      const apiResponse = await costCenterService.getAll();
 
       if (apiResponse.success && apiResponse.data) {
         apiResponse.data.splice(apiResponse.data.findIndex(t => t.name === 'Nicht zugewiesen'), 1);
@@ -102,7 +102,7 @@ export default {
       this.v$.$touch();
 
       if (!this.nameErrors) {
-        await CostCenterService.create({ name: this.newCostCenter });
+        await costCenterService.create({ name: this.newCostCenter });
         await this.getCostCenters();
 
         this.cancelCostCenterCreation();

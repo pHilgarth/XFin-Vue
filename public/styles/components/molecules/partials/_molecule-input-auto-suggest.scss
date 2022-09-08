@@ -1,27 +1,36 @@
-.molecule-input-auto-suggest__suggestions {
-    background-color: $white;
-    border: 1px solid $secondary;
-    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, .5);
-    list-style-type: none;
-    position: absolute;
-    width: 100%;
-    //TODO - implement smart z-indices
-    z-index: 1;
-    @include rem((
-        border-radius: 0 0 5px 5px,
-        padding: 10px,
-        transform: translateY(-5px)
-    ));
+.molecule-input-auto-suggest {
+    &__chevron {
+        @include rem(right, 20px);
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    &__suggestions {
+        @include rem(border-radius, 0 0 5px 5px);
+        @include rem(transform, translateY(-5px));
+        @include rem(max-height, 500px);
+        background-color: $white;
+        border: 1px solid $secondary;
+        box-shadow: 0 2px 5px 0px rgba(0, 0, 0, .5);
+        list-style-type: none;
+        overflow-y: auto;
+        padding: 0;
+        position: absolute;
+        width: 100%;
+        //TODO - implement smart z-indices
+        z-index: 1;
 
-    li {
-        @include rem(( padding: 5px ));
+        li {
+            @include rem(padding, 10px);
+            border-bottom: 1px solid $borders;
 
-        &:hover, &:hover strong {
-            background-color: $secondary;
-            color: $white;
-            cursor: pointer;
+            &:hover, &:hover strong {
+                background-color: $secondary;
+                color: $white;
+                cursor: pointer;
+            }
+
+            strong { color: $secondary }
         }
-
-        strong { color: $secondary }
     }
 }

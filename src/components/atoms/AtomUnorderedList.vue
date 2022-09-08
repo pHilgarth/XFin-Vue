@@ -1,8 +1,10 @@
 <template>
   <!-- TODO - this component is using the v-html directive - make sure it always gets trusted content! -->
   <ul class="atom-unordered-list">
-    <li v-for="(item, index) in items" :key="index" @click="$emit('itemClicked', $event)" @mouseenter="$emit('itemMouseenter')"
-        @mouseleave="$emit('itemMouseleave')" v-html="item"></li>
+    <li v-for="item in items" :key="item.id" :id="item.id"
+        @click="$emit('itemClicked', $event)" @mouseenter="$emit('itemMouseenter')" @mouseleave="$emit('itemMouseleave')">
+      {{ item.label }}
+    </li>
   </ul>
 </template>
 

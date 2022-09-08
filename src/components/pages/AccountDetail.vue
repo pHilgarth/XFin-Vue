@@ -22,8 +22,8 @@ import OrganismRevenues from "@/components/organisms/OrganismRevenues";
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeMonthSwitch from "@/components/molecules/MoleculeMonthSwitch";
 
-import {BankAccountService} from '@/services/bank-account-service';
-import {CostCenterService} from '@/services/cost-center-service';
+import { bankAccountService } from '@/services/bank-account-service';
+import {costCenterService} from '@/services/cost-center-service';
 
 export default {
   async created() {
@@ -70,7 +70,7 @@ export default {
       const simpleBankAccount = false;
       month = month !== undefined ? month : new Date().getMonth();
 
-      const apiResponse = await BankAccountService.getSingleById(this.$route.params.id, simpleBankAccount, year, month);
+      const apiResponse = await bankAccountService.getSingleById(this.$route.params.id, simpleBankAccount, year, month);
 
       if (apiResponse.success && apiResponse.data) {
         this.account = apiResponse.data;
@@ -84,7 +84,7 @@ export default {
       const year = new Date().getFullYear();
       month = month !== undefined ? month : new Date().getMonth();
 
-      const apiResponse = await CostCenterService.getAllByAccount(this.$route.params.id, year, month);
+      const apiResponse = await costCenterService.getAllByAccount(this.$route.params.id, year, month);
 
       if (apiResponse.success && apiResponse.data) {
         this.costCenters = apiResponse.data;

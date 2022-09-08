@@ -1,4 +1,4 @@
-export const CopyService = {
+export const copyService = {
     copyArray(sourceArray) {
         const targetArray = [];
 

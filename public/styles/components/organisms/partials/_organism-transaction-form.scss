@@ -1,0 +1,10 @@
+.organism-transaction-form {
+  &__payer, &__payee, &__details {
+    @include flexbox();
+    @include flex-wrap(wrap);
+  }
+
+  &__headline {
+    width: 100%;
+  }
+}

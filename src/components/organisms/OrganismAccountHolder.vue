@@ -48,7 +48,7 @@ import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 import OrganismAccountForm from '@/components/organisms/OrganismAccountForm';
 
 import { AccountHolderService } from '@/services/account-holder-service';
-import { CopyService } from '@/services/copy-service';
+import { copyService } from '@/services/copy-service';
 import { NumberService } from '@/services/number-service';
 
 import { accountHolderValidation } from '@/validation/validations';
@@ -99,7 +99,7 @@ export default {
       name: this.accountHolder?.name || '',
       originalName: this.accountHolder?.name || '',
       duplicatedName: false,
-      bankAccounts: CopyService.copyArray(this.accountHolder?.bankAccounts || []),
+      bankAccounts: copyService.copyArray(this.accountHolder?.bankAccounts || []),
       formData: null,
       formHeadline: null,
     };

@@ -50,7 +50,7 @@ import MoleculeInputAutoSuggest from '@/components/molecules/MoleculeInputAutoSu
 import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 
-import { CopyService } from '@/services/copy-service';
+import { copyService } from '@/services/copy-service';
 import { loanValidation } from '@/validation/validations';
 import { costCenterIdValidator }from '@/validation/custom-validators';
 
@@ -112,7 +112,7 @@ export default {
 
   validations() {
     //it does not work, if I simply assign transactionValidation to validation, it has to be a separate object
-    let validation = CopyService.copyObject(loanValidation);
+    let validation = copyService.copyObject(loanValidation);
 
      if (this.accountRole === 'debitor') {
        validation.costCenterId = { costCenterIdValidator }

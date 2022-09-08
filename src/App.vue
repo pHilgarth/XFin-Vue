@@ -20,20 +20,20 @@
           <li :class="selectedMenuItem == 1 ? 'active' : ''" data-route="/" data-index="1" @click="routeToComponent">
             Kontenübersicht
           </li>
-          <li :class="selectedMenuItem == 2 ? 'active' : ''" data-route="/budget-manager" data-index="2" @click="routeToComponent">
+          <li :class="selectedMenuItem == 2 ? 'active' : ''" data-route="/transaction" data-index="2" @click="routeToComponent">
+            Transaktion
+          </li>
+          <li :class="selectedMenuItem == 3 ? 'active' : ''" data-route="/budget-manager" data-index="3" @click="routeToComponent">
             Budgetmanager
           </li>
-          <li :class="selectedMenuItem == 3 ? 'active' : ''" data-route="/cost-centers" data-index="3" @click="routeToComponent">
+          <li :class="selectedMenuItem == 4 ? 'active' : ''" data-route="/cost-centers" data-index="4" @click="routeToComponent">
             Kostenstellenverwaltung
           </li>
-          <li :class="selectedMenuItem == 4 ? 'active' : ''" data-route="/reserves" data-index="4" @click="routeToComponent">
+          <li :class="selectedMenuItem == 5 ? 'active' : ''" data-route="/reserves" data-index="5" @click="routeToComponent">
             Rücklagen
           </li>
-          <li :class="selectedMenuItem == 5 ? 'active' : ''" data-route="/design-elements" data-index="5" @click="routeToComponent">
+          <li :class="selectedMenuItem == 6 ? 'active' : ''" data-route="/design-elements" data-index="6" @click="routeToComponent">
             Design-Elemente (Dev)
-          </li>
-          <li data-index="5" data-route="/example" @click="routeToComponent">
-            ExampleComponent
           </li>
         </ul>
       </div>

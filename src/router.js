@@ -11,7 +11,7 @@ import NewReserve from './components/pages/NewReserve';
 import NewRevenue from './components/pages/NewRevenue';
 import EditAccountHolder from './components/pages/EditAccountHolder';
 import ReserveManager from './components/pages/ReserveManager';
-import ExampleComponent from './components/tempComponents/ExampleComponent';
+import TransactionManager from './components/pages/TransactionManager';
 
 import DesignElements from './components/pages/DesignElements';
 
@@ -29,7 +29,7 @@ export const router = createRouter({
         { path: '/design-elements', component: DesignElements},
         { path: '/cost-centers', component: CostCenterManager},
         { path: '/reserves', component: ReserveManager},
-        { path: '/example', component: ExampleComponent},
         { path: '/loans', name: 'loan-manager', component: LoanManager, props: true },
+        { path: '/transaction', name: 'transaction-manager', component: TransactionManager, props: true },
     ],
 });

@@ -45,7 +45,10 @@ export const reserveValidation = {
 
 export const transactionValidation = {
     amount:                 { amountValidator },
-    externalParty:          { required },
+    payerAccount:           { required },
+    payerCostCenter:        { required },
+    payeeAccount:           { required },
+    payeeCostCenter:        { required },
     reference:              { required },
 };
 

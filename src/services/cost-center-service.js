@@ -2,7 +2,7 @@
 
 const baseUrl = "http://localhost:2905/api/costCenters";
 
-export const CostCenterService = {
+export const costCenterService = {
     async create(costCenter) {
         const postObject = {
             method: 'POST',

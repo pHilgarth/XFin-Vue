@@ -15,6 +15,9 @@
 <!--                         :options="transactionTypeItems.map(t => { return { value: t.id, label: t.reference }})" v-model="transactionTypeItem" label="Darlehen" />-->
 
     <div class="molecule-expense-form__external-party pb-5">
+      <MoleculeInputAutoSuggest field="counter-party" v-model="counterParty" label="Zahlungsempfänger" :items="autoSuggestDevItems"
+                                :selectedItem="autoSuggestDevItem" :data-selected-item="autoSuggestDevItemId" @itemPicked="pickItem" />
+
       <MoleculeInputAutoSuggest field="external-party" v-model="externalParty" label="Zahlungsempfänger" :items="externalParties.map(e => e.name)"
                                 :validation="v$.externalParty" :hasErrors="v$.externalParty?.$error"
                                 :errorMessageParams="{ externalPartyType: 'Zahlungsempfänger' }"
@@ -57,8 +60,8 @@ import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 
 import { AccountHolderService } from '@/services/account-holder-service';
-import { BankAccountService } from '@/services/bank-account-service';
-import { CopyService } from '@/services/copy-service';
+import { bankAccountService } from '@/services/bank-account-service';
+import { copyService } from '@/services/copy-service';
 import { NumberService } from '@/services/number-service';
 import { TransactionService } from '@/services/transaction-service';
 import { TransactionTypeService } from '@/services/transaction-type-service';
@@ -157,7 +160,7 @@ export default {
       reference: '',
       selectedExternalParty: null,
       transactionType: TransactionTypeService.transactionTypes[0].value,
-      transactionTypes: CopyService.copyArray(TransactionTypeService.transactionTypes).filter(t => t.value !== 'reserve'),
+      transactionTypes: copyService.copyArray(TransactionTypeService.transactionTypes).filter(t => t.value !== 'reserve'),
       transactionTypeItem: null,
       transactionTypeItems: null,
     }
@@ -188,7 +191,7 @@ export default {
       try {
         if (this.externalPartyIban) {
           const duplicatedBankAccount = this.externalPartyIban
-              ? await BankAccountService.getSingleByIban(this.externalPartyIban)
+              ? await bankAccountService.getSingleByIban(this.externalPartyIban)
               : null;
 
           if (duplicatedBankAccount) {
@@ -197,7 +200,7 @@ export default {
           }
           else {
             if (this.selectedExternalParty.id) {
-              await BankAccountService.update(this.selectedExternalParty.bankAccount.id, [
+              await bankAccountService.update(this.selectedExternalParty.bankAccount.id, [
                 {
                   op: "replace",
                   path: `/iban`,
@@ -217,7 +220,7 @@ export default {
                 external: true,
               });
 
-              this.selectedExternalParty.bankAccount = await BankAccountService.create({
+              this.selectedExternalParty.bankAccount = await bankAccountService.create({
                 accountHolderId: this.selectedExternalParty.id,
                 iban: this.externalPartyIban,
                 bic: this.externalPartyBic,
@@ -257,7 +260,7 @@ export default {
 
   validations() {
     //it does not work, if I simply assign transactionValidation to validation, it has to be a separate object
-    let validation = CopyService.copyObject(transactionValidation);
+    let validation = copyService.copyObject(transactionValidation);
 
     if (this.includeExternalPartyAccount) {
       validation.externalPartyBic = { bicValidator };

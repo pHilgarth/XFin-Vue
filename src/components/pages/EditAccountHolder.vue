@@ -9,8 +9,8 @@
 import OrganismAccountHolder              from '@/components/organisms/OrganismAccountHolder';
 
 import { AccountHolderService }           from '@/services/account-holder-service';
-import { CopyService }                    from '@/services/copy-service';
-import { BankAccountService }     from '@/services/bank-account-service';
+import { copyService }                    from '@/services/copy-service';
+import { bankAccountService }     from '@/services/bank-account-service';
 import { TransactionService }     from "@/services/transaction-service";
 
 export default {
@@ -27,7 +27,7 @@ export default {
       this.originalAccountHolder = await AccountHolderService.getSingle(this.accountHolderId);
 
       if (this.originalAccountHolder) {
-        this.copiedAccountHolder = CopyService.copyObject(this.originalAccountHolder);
+        this.copiedAccountHolder = copyService.copyObject(this.originalAccountHolder);
       }
       this.dataLoaded = true;
     } catch (error) {
@@ -88,7 +88,7 @@ export default {
           //TODO - this code is duplicated in NewAccountHolder when creating the accounts
           account.accountHolderId = accountHolder.id;
 
-          const createdBankAccount = await BankAccountService.create(account);
+          const createdBankAccount = await bankAccountService.create(account);
 
           if (createdBankAccount) {
             const initializationTransaction = {
@@ -123,7 +123,7 @@ export default {
             });
           }
 
-          const updateResponse = await BankAccountService.update(account.id, jsonPatch);
+          const updateResponse = await bankAccountService.update(account.id, jsonPatch);
 
           if (!updateResponse.success) {
             error = true;

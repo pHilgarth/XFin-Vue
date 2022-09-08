@@ -1,7 +1,7 @@
 //TODO - introduce an 'api-service', which makes all the api calls -> i.e. getALl is always the same, just with different url
 const baseUrl = 'http://localhost:2905/api/bankAccounts';
 
-export const BankAccountService = {
+export const bankAccountService = {
   accountActions: [
     {
       id: 'new-revenue',
