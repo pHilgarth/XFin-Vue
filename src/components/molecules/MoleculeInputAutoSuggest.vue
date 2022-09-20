@@ -10,7 +10,7 @@
         <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
       </svg>
     </div>
-    <AtomLabel class="xfin__form__label" :for="field" :text="`${label} <i>*</i>`"/>
+    <AtomLabel class="xfin__form__label" :for="field" :text="`${label}${ required ? ' <i>*</i>' : ''}`"/>
     <!-- TODO - hide ul again, if input looses focus (on blur?) -> this is almost done! But if I hover on an element and then press tab, the box wont disappear, thats a cornercase but maybe i can fix it. I would need to track if TAB was pressed i guess-->
     <AtomUnorderedList v-if="inputHasFocus" class="molecule-input-auto-suggest__suggestions"
                        :items="suggestions" @itemClicked="pickItem"
@@ -39,6 +39,7 @@ export default {
     items: {type: Array, required: true},
     label: {type: String, required: true,},
     modelValue: { type: Object },
+    required: { type: Boolean, default: false },
     // validation has to be the vuelidate object of the property (i.e. v$.name)
     validation: {type: Object},
   },
@@ -61,6 +62,14 @@ export default {
         return { id: `suggestion-${s.id}`, label: s.label};
       }),
     }
+  },
+
+  watch: {
+    items() {
+      this.suggestions = this.items.map(s => {
+        return { id: `suggestion-${s.id}`, label: s.label };
+      });
+    },
   },
 
   methods: {
@@ -119,10 +128,10 @@ export default {
       if (this.selectedItem) {
         this.inputValue = this.selectedItem.label;
         //TODO - when an item was picked -> should suggestions include ALL items or just the selected one (because it will be the value of the input field)
-        this.suggestions = [{ id: `suggestion-${this.selectedItem.id}`, label: this.selectedItem.label }];
-        // this.suggestions = this.items.map(s => {
-        //   return { id: `suggestion-${s.id}`, label: s.label }
-        // });
+        //this.suggestions = [{ id: `suggestion-${this.selectedItem.id}`, label: this.selectedItem.label }];
+        this.suggestions = this.items.map(s => {
+          return { id: `suggestion-${s.id}`, label: s.label }
+        });
 
         this.$emit('itemPicked', event);
       }

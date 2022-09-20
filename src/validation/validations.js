@@ -7,6 +7,7 @@ import {
     lifeValidator,
     monthlyInstallmentValidator,
     optionalAmountValidator,
+    payerCostCenterValidator,
     rateOfInterestValidator,
 } from "@/validation/custom-validators";
 
@@ -45,11 +46,11 @@ export const reserveValidation = {
 
 export const transactionValidation = {
     amount:                 { amountValidator },
-    payerAccount:           { required },
-    payerCostCenter:        { required },
     payeeAccount:           { required },
-    payeeCostCenter:        { required },
+    payerAccount:           { required },
+    payerCostCenter:        { payerCostCenterValidator: payerCostCenterValidator(null) },
     reference:              { required },
+    transactionType:        { required },
 };
 
 export const userValidation = {

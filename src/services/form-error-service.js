@@ -30,12 +30,17 @@ export const errorService = {
         //name_maxLength:                         'Der Name darf nicht länger als {maxLength} Zeichen sein!',
         name_maxLength:                         'Der Name darf nicht länger als 25 Zeichen sein!',
         name_nameDuplicate:                     'Dieser Name existiert bereits!',
+        payerAccount:                           'Bitte wähle einen Zahlungspflichtigen aus!',
+        payerCostCenter:                        'Bitte wähle eine Kostenstelle aus!',
+        payeeAccount:                           'Bitte wähle einen Zahlungsempfänger aus!',
+        payeeCostCenter:                        'Bitte wähle eine Kostenstelle aus!',
         rateOfInterest:                         'Bitte gib einen gültigen Zinssatz an!',
         reference:                              referenceErrorMessage,
         targetAmount:                           amountErrorMessage,
         title_required:                         'Bitte gib einen Titel ein!',
         title_maxLength:                        'Der Titel darf nicht länger als 30 Zeichen sein!',
-        transactionType:                        'Dieser Transaktions-Typ passt nicht zur gewählten Kostenstelle!',
+        //transactionType:                        'Dieser Transaktions-Typ passt nicht zur gewählten Kostenstelle!',
+        transactionType:                        'Bitte wähle einen Transaktionstyp aus!',
     },
 
     getErrorMessage(property, validator, params) {
