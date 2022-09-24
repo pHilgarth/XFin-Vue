@@ -48,6 +48,7 @@
       <!-- TODO - remember to pass the proper transactionType int value, when posting new transactions of type != neutral (its an enum in api) -->
       <!-- TODO - select fields in forms should not have a preselected value, users should be forced to select a value (for now at least in transaction form -->
       <!-- TODO - use MoleculeNotice for notifications / errros etc.. -> auch für Meldungen wie "Keine .... für dieses Konto gefunden" oder ähnliche Meldungen -->
+      <!-- TODO - set "required" prop on input fields, where it is needed, to render a little asterisk -->
 
 
 
