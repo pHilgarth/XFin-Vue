@@ -1,21 +1,6 @@
 <template>
   <div class="account-view">
     <AtomHeadline tag="h1" text="Kontenübersicht" />
-    <br />
-    <br />
-    <h3>Weiterentwicklung MoleculeInputAutoSuggest</h3>
-    <h4>Next Step: dropdown box implementieren: items stylen, "Neu hinzufügen" immer anzeigen, wenn input focus hat und getippt wurde</h4>
-    <br />
-    <br />
-
-    <pre>{{ autoSuggestDevItem }}</pre>
-    <pre>{{ autoSuggestDevItemId }}</pre>
-    <MoleculeInputAutoSuggest class="pb-5" field="auto-suggest-dev" label="Items" :items="autoSuggestDevItems"
-                              :selectedItem="autoSuggestDevItem" :data-selected-item="autoSuggestDevItemId" @itemPicked="pickItem" />
-
-    <div v-if="showForm">
-      <OrganismExternalPartyForm ibans=""/>
-    </div>
 
     <div style="display:none" class="todo-items">
       <!-- TODO - general todos -->
@@ -102,11 +87,9 @@ import AtomEditIcon from '@/components/atoms/AtomEditIcon';
 import AtomParagraph from '@/components/atoms/AtomParagraph';
 
 import MoleculeAccountViewTable from '@/components/molecules/MoleculeAccountViewTable';
-import MoleculeInputAutoSuggest from '@/components/molecules/MoleculeInputAutoSuggest';
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 
 import OrganismCollapsibleWithSlot from '@/components/organisms/OrganismCollapsibleWithSlot';
-import OrganismExternalPartyForm from '@/components/organisms/OrganismExternalPartyForm';
 
 import { AccountHolderService } from "@/services/account-holder-service";
 import { NumberService } from "@/services/number-service";
@@ -129,10 +112,8 @@ export default {
     AtomHeadline,
     AtomEditIcon,
     AtomParagraph,
-    MoleculeInputAutoSuggest,
     MoleculeLoading,
     OrganismCollapsibleWithSlot,
-    OrganismExternalPartyForm,
     MoleculeAccountViewTable,
   },
 
@@ -143,58 +124,6 @@ export default {
 
       accountHolders: null,
 
-      autoSuggestDevItem: null,
-      autoSuggestDevItemId: null,
-      autoSuggestDevItems: [
-        {
-          id: 'suggestion-1', accountHolder: 'Patrick',
-          iban: 'DE21654913200071808000',
-        },
-        {
-          id: 2, accountHolder: 'Patrick',
-          iban: 'DE21654913200071808019',
-        },
-        {
-          id: 3, accountHolder: 'Patrick',
-          iban: 'DE21654913200071808400',
-        },
-        {
-          id: 4, accountHolder: 'Ilona',
-          iban: 'DE21654913200027911004',
-        },
-        {
-          id: 5, accountHolder: 'Ilona',
-          iban: 'DE21654913200027911403',
-        },
-        {
-          id: 6, accountHolder: 'Matthias',
-          iban: 'DE21654913200012385648',
-        },
-        {
-          id: 7, accountHolder: 'Aldi',
-          iban: 'DE12345678912345678912',
-        },
-        {
-          id: 8, accountHolder: 'Lidl',
-          iban: 'DE98765432198765432198',
-        },
-        {
-          id: 9, accountHolder: 'Netto',
-          iban: 'DE11122233344455566677',
-        },
-        {
-          id: 10, accountHolder: 'Norma',
-          iban: 'DE99988877766655544433',
-        },
-        {
-          id: 11, accountHolder: 'Feneberg',
-          iban: 'DE66666666666666666666',
-        },
-        {
-          id: 12, accountHolder: 'Edeka',
-          iban: 'DE77777777777777777777',
-        },
-      ],
     };
   },
 
@@ -202,24 +131,6 @@ export default {
     formatCurrency(value) {
       return NumberService.formatCurrency(value);
     },
-
-    pickItem(event) {
-      const clickedItem = event.target.textContent;
-
-      if (clickedItem === '+ Neu hinzufügen') {
-        this.showForm = true;
-      }
-
-      this.autoSuggestDevItem = clickedItem;
-      this.autoSuggestDevItemId = event.target.id.substring(('suggestion-').length);
-
-
-      // const externalPartyValue = this.externalParty;
-      // this.externalParty = clickedItem.includes('Neu hinzufügen') ? this.externalParty : clickedItem;
-      // this.setSelectedExternalPartyToNull = externalPartyValue === this.externalParty;
-      //
-      // this.selectedExternalParty = this.externalParties.find(e => e.name === clickedItem) || { name: this.externalParty, bankAccount: {} }
-    }
   },
 };
 </script>
