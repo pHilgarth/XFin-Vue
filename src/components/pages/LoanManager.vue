@@ -38,7 +38,7 @@ import MoleculeNotice from '@/components/molecules/MoleculeNotice';
 import OrganismLoanForm from '@/components/organisms/OrganismLoanForm';
 
 import { AccountHolderService } from '@/services/account-holder-service';
-import { bankAccountService } from '@/services/bank-account-service';
+import { BankAccountService } from '@/services/bank-account-service';
 import { costCenterService } from '@/services/cost-center-service';
 import { LoanService } from '@/services/loan-service';
 
@@ -85,7 +85,7 @@ export default {
   methods: {
     async getData() {
       try {
-        const bankAccount = bankAccountService.getSingleById(this.bankAccountId);
+        const bankAccount = BankAccountService.getSingleById(this.bankAccountId);
         const costCenters = costCenterService.getAll();
         const accountHolders = AccountHolderService.getAllByUser(this.userId);
         const externalParties = AccountHolderService.getAllByUser(this.userId, true);

@@ -22,7 +22,7 @@ import OrganismRevenues from "@/components/organisms/OrganismRevenues";
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeMonthSwitch from "@/components/molecules/MoleculeMonthSwitch";
 
-import { bankAccountService } from '@/services/bank-account-service';
+import { BankAccountService } from '@/services/bank-account-service';
 import {costCenterService} from '@/services/cost-center-service';
 
 export default {
@@ -70,7 +70,7 @@ export default {
       const simpleBankAccount = false;
       month = month !== undefined ? month : new Date().getMonth();
 
-      const apiResponse = await bankAccountService.getSingleById(this.$route.params.id, simpleBankAccount, year, month);
+      const apiResponse = await BankAccountService.getSingleById(this.$route.params.id, simpleBankAccount, year, month);
 
       if (apiResponse.success && apiResponse.data) {
         this.account = apiResponse.data;

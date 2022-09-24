@@ -22,7 +22,7 @@ import { useVuelidate } from "@vuelidate/core";
 
 import { ibanDuplicateValidator } from "@/validation/custom-validators";
 
-import { bankAccountService } from "@/services/bank-account-service";
+import { BankAccountService } from "@/services/bank-account-service";
 import { NumberService } from "@/services/number-service";
 
 import AtomButton from '@/components/atoms/AtomButton';
@@ -88,7 +88,7 @@ export default {
   methods: {
     async save() {
       try {
-        const bankAccountDuplicate = await bankAccountService.getSingleByIban(this.iban);
+        const bankAccountDuplicate = await BankAccountService.getSingleByIban(this.iban);
 
         if (!bankAccountDuplicate) {
           const account = {

@@ -19,7 +19,7 @@ import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import OrganismExternalPartyForm from '@/components/organisms/OrganismExternalPartyForm';
 import OrganismTransactionForm from '@/components/organisms/OrganismTransactionForm';
 
-import { bankAccountService } from '@/services/bank-account-service';
+import { BankAccountService } from '@/services/bank-account-service';
 import { costCenterService } from '@/services/cost-center-service';
 
 export default {
@@ -58,7 +58,7 @@ export default {
   methods: {
     async getData() {
       try {
-        const bankAccounts = bankAccountService.getAll();
+        const bankAccounts = BankAccountService.getAll();
         const costCenters = costCenterService.getAll();
 
         const bankAccountsResult = await bankAccounts;
