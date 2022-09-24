@@ -47,7 +47,8 @@
       <!-- TODO - on OrganismAccountHolder: center the accountData vertically (on the account cards), there is too less space at the top -->
       <!-- TODO - remember to pass the proper transactionType int value, when posting new transactions of type != neutral (its an enum in api) -->
       <!-- TODO - select fields in forms should not have a preselected value, users should be forced to select a value (for now at least in transaction form -->
-      <!-- TODO - use MoleculeNotice for notifications / errros etc.. -->
+      <!-- TODO - use MoleculeNotice for notifications / errros etc.. -> auch für Meldungen wie "Keine .... für dieses Konto gefunden" oder ähnliche Meldungen -->
+
 
 
       <!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->
