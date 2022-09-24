@@ -25,7 +25,7 @@ import AtomParagraph from '@/components/atoms/AtomParagraph';
 
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 
-import { costCenterService } from '@/services/cost-center-service';
+import { CostCenterService } from '@/services/cost-center-service';
 
   export default {
     emits: [
@@ -84,7 +84,7 @@ import { costCenterService } from '@/services/cost-center-service';
             path: `/name`,
             value: this.costCenterName,
           };
-          const updateResponse = await costCenterService.update(this.costCenter.id, [costCenterPatch]);
+          const updateResponse = await CostCenterService.update(this.costCenter.id, [costCenterPatch]);
 
           if (!updateResponse.success) {
             alert(updateResponse.error);

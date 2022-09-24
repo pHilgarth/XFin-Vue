@@ -23,7 +23,7 @@ import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeMonthSwitch from "@/components/molecules/MoleculeMonthSwitch";
 
 import { BankAccountService } from '@/services/bank-account-service';
-import {costCenterService} from '@/services/cost-center-service';
+import {CostCenterService} from '@/services/cost-center-service';
 
 export default {
   async created() {
@@ -84,7 +84,7 @@ export default {
       const year = new Date().getFullYear();
       month = month !== undefined ? month : new Date().getMonth();
 
-      const apiResponse = await costCenterService.getAllByAccount(this.$route.params.id, year, month);
+      const apiResponse = await CostCenterService.getAllByAccount(this.$route.params.id, year, month);
 
       if (apiResponse.success && apiResponse.data) {
         this.costCenters = apiResponse.data;

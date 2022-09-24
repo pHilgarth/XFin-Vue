@@ -20,7 +20,7 @@ import OrganismExternalPartyForm from '@/components/organisms/OrganismExternalPa
 import OrganismTransactionForm from '@/components/organisms/OrganismTransactionForm';
 
 import { BankAccountService } from '@/services/bank-account-service';
-import { costCenterService } from '@/services/cost-center-service';
+import { CostCenterService } from '@/services/cost-center-service';
 
 export default {
   components: {
@@ -59,7 +59,7 @@ export default {
     async getData() {
       try {
         const bankAccounts = BankAccountService.getAll();
-        const costCenters = costCenterService.getAll();
+        const costCenters = CostCenterService.getAll();
 
         const bankAccountsResult = await bankAccounts;
         //TODO - place sort function into service
