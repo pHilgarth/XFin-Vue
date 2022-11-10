@@ -3,11 +3,13 @@
     <div class="organism-external-party-form__inner">
       <AtomHeadline tag="h1" text="Externen Zahlungspartner anlegen" />
       <form>
-        <MoleculeInputText class="pb-5" field="name" :hasErrors="nameErrors || nameDuplicate" v-model="name" @blur="v$.name.$touch()" :validation="v$.name" label="Name" />
+        <MoleculeInputText class="pb-5" field="name" :hasErrors="v$.name.$error || nameDuplicate" v-model="name" @blur="v$.name.$touch()" :validation="v$.name" label="Name" />
         <AtomParagraph v-if="nameDuplicate" class="organism-external-party-form__duplicate-account xfin__form__error" text="Dieser Name existiert bereits!" />
-        <MoleculeInputText class="pb-5" field="iban" :hasErrors="ibanErrors || ibanDuplicate" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" label="IBAN" />
+
+        <MoleculeInputText class="pb-5" field="iban" :hasErrors="v$.iban.$error || ibanDuplicate" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" label="IBAN" />
         <AtomParagraph v-if="ibanDuplicate" class="organism-external-party-form__duplicate-account xfin__form__error" text="Diese Iban existiert bereits!" />
-        <MoleculeInputText class="pb-5" field="bic" :hasErrors="bicErrors" v-model="bic" @blur="v$.bic.$touch()" :validation="v$.bic" label="BIC" />
+
+        <MoleculeInputText class="pb-5" field="bic" :hasErrors="v$.bic.$error" v-model="bic" @blur="v$.bic.$touch()" :validation="v$.bic" label="BIC" />
 
         <AtomButton text="Speichern" :disabled="v$.$silentErrors.length > 0 || nameDuplicate || ibanDuplicate" type="primary" @click.prevent="save" />
         <AtomButton text="Abbrechen" type="cancel" @click.prevent="$emit('cancel')" />
@@ -20,17 +22,12 @@
 <script>
 import { useVuelidate } from "@vuelidate/core";
 
-import { ibanDuplicateValidator } from "@/validation/custom-validators";
-
-import { BankAccountService } from "@/services/bank-account-service";
-import { NumberService } from "@/services/number-service";
-
 import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from "@/components/atoms/AtomHeadline";
 import AtomParagraph from '@/components/atoms/AtomParagraph';
 import MoleculeInputText from "@/components/molecules/MoleculeInputText";
 
-import { accountValidation } from "@/validation/validations";
+import { externalPartyValidation } from "@/validation/validations";
 
 export default {
   components: {
@@ -49,31 +46,32 @@ export default {
     return {
       bic:                    null,
       iban:                   null,
-      //ibans:                  null,
       name:                   null,
-      //names:                  null, //TODO - what should that be?
-      duplicateCheckError:    false,
     };
   },
 
   computed: {
-    bicErrors() {
-      return this.v$.bic.$error;
+    ibanDuplicate() {
+      return this.ibans.includes(this.iban);
     },
-    ibanErrors() {
-      return this.v$.iban.$error || this.ibans.includes(this.iban);
+    nameDuplicate() {
+      return this.names.includes(this.name);
     },
   },
 
   watch: {
+    bic() {
+      this.bic = this.bic.toUpperCase();
+      this.v$.bic.$touch();
+      this.v$.bic.$touch();
+    },
     iban() {
       this.iban = this.iban.toUpperCase();
       this.v$.iban.$touch();
     },
-    bic() {
-      this.bic = this.bic.toUpperCase();
-      this.v$.bic.$touch();
-    },
+    name() {
+      this.v$.name.$touch();
+    }
   },
 
   setup() {
@@ -81,37 +79,18 @@ export default {
   },
 
   validations() {
-    accountValidation.iban.ibanDuplicate = ibanDuplicateValidator(this.ibans);
-    return accountValidation;
+    return externalPartyValidation;
   },
 
   methods: {
-    async save() {
-      try {
-        const bankAccountDuplicate = await BankAccountService.getSingleByIban(this.iban);
+    save() {
+      const data = {
+        name: this.name,
+        bic: this.bic,
+        iban: this.iban,
+      };
 
-        if (!bankAccountDuplicate) {
-          const account = {
-            id: this.id,
-            bank: this.bank,
-            description: this.description,
-            bic: this.bic,
-            iban: this.iban,
-            accountNumber: NumberService.getAccountNumber(this.iban),
-            balance: NumberService.parseFloat(this.balance),
-            index: this.accountIndex,
-          };
-
-          this.$emit("save", account);
-        }
-        else {
-          this.ibanDuplicate = true;
-        }
-      } catch (error) {
-        console.error('could not check for duplicates! Aborting!');
-        console.error(error);
-        this.duplicateCheckError = true;
-      }
+      this.$emit("save", data);
     },
   },
 };

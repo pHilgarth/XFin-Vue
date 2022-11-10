@@ -6,8 +6,8 @@
           <MoleculeInputText class="pb-5" field="iban" :hasErrors="ibanErrors || duplicate" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" label="IBAN" />
           <AtomParagraph v-if="duplicate" class="organism-account-form__duplicate-account xfin__form__error" text="Diese Iban existiert bereits!" />
           <MoleculeInputText class="pb-5" field="bic" :hasErrors="bicErrors" v-model="bic" @blur="v$.bic.$touch()" :validation="v$.bic" label="BIC" />
-          <MoleculeInputText class="pb-5" field="bank" v-model="bank" :optional="true" label="Bank" />
-          <MoleculeInputText class="pb-5" field="description" v-model="description" :optional="true" label="Beschreibung" />
+          <MoleculeInputText class="pb-5" field="bank" v-model="bank" label="Bank" />
+          <MoleculeInputText class="pb-5" field="description" v-model="description" label="Beschreibung" />
           <MoleculeInputText class="pb-5" v-if="!formData.account || formData.account.isNew" field="balance" :hasErrors="balanceErrors" v-model="balance" :validation="v$.balance"
                              label="Kontostand" @blur="v$.balance.$touch()" />
 

@@ -13,7 +13,7 @@ export default {
   },
 
   props: {
-      account: {
+      bankAccount: {
           type: Object,
           required: true,
       },
@@ -40,7 +40,7 @@ export default {
     configureTable() {
       let rows = [];
 
-      this.account.expenses.forEach((expense) => {
+      this.bankAccount.expenses.forEach((expense) => {
         const row = {
           fields: [
             { content: NumberService.formatDate(expense.date) },
@@ -57,7 +57,7 @@ export default {
         rows.push(row);
       });
 
-      if (this.account.expenses.length === 0) {
+      if (this.bankAccount.expenses.length === 0) {
         rows.push({
           fields: [
             {
@@ -109,7 +109,7 @@ export default {
     getExpensesSum() {
       let expensesTotal = 0;
 
-      this.account.expenses.forEach(expense => {
+      this.bankAccount.expenses.forEach(expense => {
         expensesTotal += expense.amount;
       });
       

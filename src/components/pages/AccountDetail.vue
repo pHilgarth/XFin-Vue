@@ -1,15 +1,19 @@
 <template>
   <div class="account-detail">
-    <AtomHeadline tag="h1" :text="`Detailansicht (${accountNumber})`"/>
-    <!-- TODO - Einnahmen stimmen hier (macbook) bei zweiter KS noch nicht, die Umbuchung ist als Einnahme aufgeführt -->
     <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!"/>
-    <section v-else>
-      <MoleculeMonthSwitch @month-switched="updateView"/>
-      <OrganismRevenues :account="account"/>
-      <!-- TODO - not all entries are visible - the height of the collapsible is too low, the last entries are cut off -->
-      <OrganismBudget :costCenters="costCenters"/>
-      <OrganismExpenses :account="account"/>
-    </section>
+
+    <template v-else>
+      <AtomHeadline tag="h1" :text="`Detailansicht (${bankAccount.accountNumber})`"/>
+      <h3>Hier muss noch das alte OrganismCollapsible durch das neue mit Slot abgelöst werden und anschließend TransactionDetail als Modal implementiert werden</h3>
+      <!-- TODO - Einnahmen stimmen hier (macbook) bei zweiter KS noch nicht, die Umbuchung ist als Einnahme aufgeführt -->
+      <section>
+        <MoleculeMonthSwitch @month-switched="updateView"/>
+        <OrganismRevenues :bankAccount="bankAccount"/>
+        <!-- TODO - not all entries are visible - the height of the collapsible is too low, the last entries are cut off -->
+        <OrganismBudget :costCenters="costCenters"/>
+        <OrganismExpenses :bankAccount="bankAccount"/>
+      </section>
+    </template>
   </div>
 </template>
 
@@ -23,26 +27,17 @@ import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeMonthSwitch from "@/components/molecules/MoleculeMonthSwitch";
 
 import { BankAccountService } from '@/services/bank-account-service';
-import {CostCenterService} from '@/services/cost-center-service';
+import {costCenterService} from '@/services/cost-center-service';
 
 export default {
   async created() {
-    let apiResponse = await this.getAccount();
+    try {
+      await this.getData();
 
-    if (apiResponse.success) {
-      apiResponse = await this.getCostCenters();
-
-      if (apiResponse.success) {
-        this.dataLoaded = true;
-      } else {
-        this.loadingError = true;
-        console.error(apiResponse.error);
-      }
-    } else {
+      this.dataLoaded = true;
+    } catch (error) {
       this.loadingError = true;
-      console.error(apiResponse.error);
     }
-
   },
 
   components: {
@@ -56,43 +51,28 @@ export default {
 
   data() {
     return {
-      account: null,
-      costCenters: [],
+      bankAccount: null,
+      costCenters: null,
       dataLoaded: false,
       loadingError: false,
-      accountNumber: ''
     };
   },
 
   methods: {
-    async getAccount(month) {
-      const year = new Date().getFullYear();
-      const simpleBankAccount = false;
-      month = month !== undefined ? month : new Date().getMonth();
+    async getData(month) {
+      try {
+        const year = new Date().getFullYear();
+        month = month !== undefined ? month : new Date().getMonth();
 
-      const apiResponse = await BankAccountService.getSingleById(this.$route.params.id, simpleBankAccount, year, month);
+        const bankAccount = BankAccountService.getSingleById(this.$route.params.id, year, month);
+        const costCenters = costCenterService.getAllByAccount(this.$route.params.id, year, month);
 
-      if (apiResponse.success && apiResponse.data) {
-        this.account = apiResponse.data;
-        this.accountNumber = this.account.accountNumber;
+        this.bankAccount = await bankAccount;
+        this.costCenters = await costCenters;
+      } catch (error) {
+        console.error(error);
+        throw new Error(error);
       }
-
-      return apiResponse;
-    },
-
-    async getCostCenters(month) {
-      const year = new Date().getFullYear();
-      month = month !== undefined ? month : new Date().getMonth();
-
-      const apiResponse = await CostCenterService.getAllByAccount(this.$route.params.id, year, month);
-
-      if (apiResponse.success && apiResponse.data) {
-        this.costCenters = apiResponse.data;
-      } else if (apiResponse.success && !apiResponse.data) {
-        this.costCenters = [];
-      }
-
-      return apiResponse;
     },
 
     async updateView(month) {

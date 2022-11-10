@@ -2,9 +2,9 @@
   <div class="fake-login">
     <AtomHeadline tag="h1" text="Fake-Login" />
     <form>
-      <MoleculeInputText  class="xfin__login__email pb-5" field="email" label="E-Mail" type="email" v-model="userMail"
+      <MoleculeInputText  class="xfin__login__email pb-5" field="email" label="E-Mail" type="email" autocomplete="username" v-model="userMail"
                           :hasErrors="v$.userMail.$error" :validation="v$.userMail" @blur="v$.userMail.$touch()" />
-      <MoleculeInputText  class="xfin__login__password pb-5" field="password" label="Passwort" type="password" v-model="userPassword"
+      <MoleculeInputText  class="xfin__login__password pb-5" field="password" label="Passwort" type="password" autocomplete="current-password" v-model="userPassword"
                           :hasErrors="v$.userPassword.$error" :validation="v$.userPassword" @blur="v$.userPassword.$touch()" />
       <AtomButton type="primary" text="Login" :disabled="v$.$silentErrors.length" @click.prevent="login"/>
     </form>

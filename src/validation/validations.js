@@ -24,9 +24,10 @@ export const accountValidation = {
     //balance:    { balanceValidator },
 };
 
-export const counterPartValidation = {
-    counterPartIban:        { ibanValidator },
-    counterPartBic:         { bicValidator },
+export const externalPartyValidation = {
+    bic:        { bicValidator },
+    iban:       { ibanValidator },
+    name:       { required },
 };
 
 export const loanValidation = {
@@ -40,6 +41,8 @@ export const loanValidation = {
 }
 
 export const reserveValidation = {
+    bankAccount: { required },
+    costCenter: { required },
     title: { required, maxLength: maxLength(30) },
     targetAmount: { optionalAmountValidator }
 };
@@ -51,6 +54,7 @@ export const transactionValidation = {
     payerCostCenter:        { payerCostCenterValidator: payerCostCenterValidator(null) },
     reference:              { required },
     transactionType:        { required },
+    transactionTypeItem:    { required },
 };
 
 export const userValidation = {

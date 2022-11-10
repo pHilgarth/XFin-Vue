@@ -1,17 +1,24 @@
 <template>
   <section class="reserve-manager">
     <AtomHeadline tag="h1" text="Rücklagen" />
-    <MoleculeLoading v-if="!accountHoldersLoaded" :loadingError="accountHoldersLoadingError" errorMessage="Fehler beim Laden der Kontoinhaber!"/>
+    <p style="color:red">Validation bei Kostenstelle fehlt beim Erstellen einer Rücklage!</p>
+    <p style="color:red">Betrag wird nicht korrekt gespeichert, wenn Kommazahlen verwendet werden! 44,50 € ergibt 4450 €</p>
+    <MoleculeLoading v-if="!bankAccountsLoaded" :loadingError="bankAccountsLoadingError" errorMessage="Fehler beim Laden der Kontoinhaber!"/>
 
     <template v-else>
-      <MoleculeInputSelect class="reserve-manager__account-holder pb-5" :options="accountHolderOptions"
-                           field="accountHolder" v-model="selectedAccountHolderId" label="Konto"/>
+      <div class="pb-5">
+        <MoleculeInputAutoSuggest field="bank-account" v-model="bankAccount" label="Konto"
+                                  :items="bankAccounts" @itemPicked="pickBankAccount" />
+      </div>
 
-      <template v-if="selectedAccountHolderId > 0 && this.reserves">
-        <template v-for="bankAccount in accountHolders.find(a => a.id == selectedAccountHolderId).bankAccounts" :key="bankAccount.id">
-          <OrganismCollapsibleWithSlot :title="bankAccount.accountNumber" v-if="reserves[bankAccount.id].length > 0">
-            <MoleculeReserveTable :reserves="reserves[bankAccount.id]" />
-          </OrganismCollapsibleWithSlot>
+      <template v-if="bankAccount">
+        <MoleculeLoading v-if="!reservesLoaded" :loadingError="reservesLoadingError" errorMessage="Fehler beim Laden der Rücklagen!"/>
+
+        <template v-else>
+          <MoleculeReserveTable v-if="reservesLoaded && reserves && reserves.length > 0" :reserves="reserves" />
+          <AtomParagraph v-else text="Keine Rücklagen auf diesem Konto gefunden!" />
+          <pre>{{reserves}}</pre>
+
         </template>
       </template>
       <AtomParagraph v-else-if="selectedAccountHolderId > 0" text="Keine Rücklagen vorhanden!"/>
@@ -23,98 +30,104 @@
 <script>
 import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
-import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
+import AtomParagraph from '@/components/atoms/AtomParagraph';
+import MoleculeInputAutoSuggest from '@/components/molecules/MoleculeInputAutoSuggest';
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeReserveTable from "@/components/molecules/MoleculeReserveTable";
 
-import {AccountHolderService} from '@/services/account-holder-service';
-import {ReserveService} from '@/services/reserve-service';
-import OrganismCollapsibleWithSlot from '@/components/organisms/OrganismCollapsibleWithSlot';
-import AtomParagraph from "../atoms/AtomParagraph";
+import { BankAccountService } from '@/services/bank-account-service';
+import { NumberService } from '@/services/number-service';
+import { reserveService } from '@/services/reserve-service';
 
 export default {
   async created() {
-    const apiResponse = await this.getAccountHolders();
+    try {
+      await this.getBankAccounts();
 
-    if (apiResponse.success) {
-      this.accountHoldersLoaded = true;
-    } else {
-      this.accountHoldersLoadingError = true;
+      this.bankAccountsLoaded = true;
+    } catch (error) {
+      this.bankAccountsLoadingError = true;
     }
   },
 
   components: {
     AtomParagraph,
     AtomButton,
-    OrganismCollapsibleWithSlot,
     AtomHeadline,
-    MoleculeInputSelect,
+    MoleculeInputAutoSuggest,
     MoleculeLoading,
     MoleculeReserveTable,
-    //OrganismCollapsible,
   },
 
   data() {
     return {
       accountHolders: [],
-      accountHoldersLoaded: false,
-      accountHoldersLoadingError: false,
       accountHolderOptions: null,
-      selectedAccountHolderId : -1,
+      bankAccount: null,
+      bankAccounts: null,
+      bankAccountsLoaded: false,
+      bankAccountsLoadingError: false,
       reserves: null,
+      reservesLoaded: false,
+      reservesLoadingError: false,
     }
   },
 
   methods: {
-//TODO - die ganzen API-Calls müssen optimiert werden, bzw. das Error-Handling ...
-    async getAccountHolders() {
-      const accountHolderResponse = await AccountHolderService.getAllByUser(true);
+    calculateCurrentAmount(reserve) {
+      const revenuesSum = reserve.revenues.length
+          ? reserve.revenues.reduce((a, b) => {
+            //initially a is an object with a property amount but the return statement returns a number
+            let aValue = a.amount || NumberService.amountToString(a);
+            return (aValue + b.amount); })
+          : 0;
 
-      if (accountHolderResponse.success && accountHolderResponse.data) {
-        this.accountHolders = accountHolderResponse.data;
+      const expensesSum = reserve.expenses.length
+          ? reserve.expenses.reduce((a, b) => {
+            //initially a is an object with a property amount but the return statement returns a number
+            let aValue = a.amount || NumberService.amountToString(a);
+            return (aValue + b.amount); })
+          : 0;
 
-        this.accountHolderOptions = [{disabled: true, value: -1, label: '(Kontoinhaber wählen)'}];
-
-        //TODO - check if i just can push a.name to accountHolderOptions
-        this.accountHolders.forEach(a => {
-          this.accountHolderOptions.push({
-            value: a.id,
-            label: a.name,
-          });
-        });
-      } else if (accountHolderResponse.success && !accountHolderResponse.data) {
-        this.accountHolders = [];
-      }
-
-      return accountHolderResponse;
+      reserve.currentAmount = revenuesSum - expensesSum;
     },
 
-    async getReserves(accountHolderId) {
-      //return ReserveService.getAllByAccountHolder(accountHolderId);
-      return await ReserveService.getAll(accountHolderId);
-    }
+    async getBankAccounts() {
+      try {
+        let bankAccounts = await BankAccountService.getAll();
+        bankAccounts = bankAccounts.filter(b => !b.external).map(
+            b => { return { id: b.id, label: `${b.accountHolderName} (${b.iban})`} });
+
+        this.bankAccounts = bankAccounts;
+      } catch (error) {
+        console.error(error);
+        throw new Error(error);
+      }
+    },
+
+    pickBankAccount(id) {
+      this.bankAccount = this.bankAccounts.find(b => b.id == id);
+    },
   },
 
   watch: {
-    async selectedAccountHolderId() {
-      const apiResponse = await this.getReserves(this.accountHolders.find(a => a.id == this.selectedAccountHolderId).id);
+    async bankAccount() {
+      this.reservesLoaded = false;
+      this.reserveLoadingError = false;
 
-      if (apiResponse.success && apiResponse.data) {
-        if (apiResponse.data.length > 0) {
-          const bankAccountIds = this.accountHolders.find(a => a.id == this.selectedAccountHolderId).bankAccounts.map(b => b.id);
+      try {
+        this.reserves = await reserveService.getAllByAccount(this.bankAccount.id);
 
-          this.reserves = {}
+        this.reserves.forEach(r => {
+          this.calculateCurrentAmount(r);
+        });
 
-          //TODO - check if I can use triple equal sign (===) (so if its both number type)
-          bankAccountIds.forEach(id => {
-            this.reserves[id] = apiResponse.data.filter(r => r.internalBankAccountId == id);
-          });
-        }
+        this.reservesLoaded = true;
+      } catch (error) {
+        this.reservesLoadingError = true;
+        console.error(error);
       }
-      else if (apiResponse.success && !apiResponse.data) {
-        console.log('success with no data');
-      }
-    }
+    },
   }
 };
 

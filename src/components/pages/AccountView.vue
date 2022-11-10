@@ -2,6 +2,18 @@
   <div class="account-view">
     <AtomHeadline tag="h1" text="Kontenübersicht" />
 
+    <h2 style="color:red">Next Step: CostCenterAssets Implementation</h2>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <h4>reguläre Einnahme klappt! als nächstes dann nach und nach die anderen TransactionTypes einbauen </h4>
+    <h4>next steps: ReserveManager -> Current Amount in der API berechnen lassen. Dazu muss ich mir erst überlegen, wie Entnahmen aus einer Rücklage realisiert werden</h4>
+    <h4>-> Dazu evtl. auch nochmal TransaktionsManager überarbeiten, um kontointerne Umbuchungen (von KS zu KS) zu erlauben -> dann muss evtl. ausgewählt werden, ob die Umbuchung aus der Rücklage entnommen wird oder so</h4>
     <div style="display:none" class="todo-items">
       <!-- TODO - general todos -->
       <!-- TODO - when refreshing on a component, the first menu entry on the left menu is highlighted as if it were the selected item -->
@@ -49,6 +61,12 @@
       <!-- TODO - select fields in forms should not have a preselected value, users should be forced to select a value (for now at least in transaction form -->
       <!-- TODO - use MoleculeNotice for notifications / errros etc.. -> auch für Meldungen wie "Keine .... für dieses Konto gefunden" oder ähnliche Meldungen -->
       <!-- TODO - set "required" prop on input fields, where it is needed, to render a little asterisk -->
+      <!-- TODO - replace old OrganismCollapsible with OrganismCollapsibleWithSlot and rename the new afterwards to just OrganismCollapsible -->
+      <!-- TODO - implement transaction detail view as model in accountDetail -->
+      <!-- TODO - cancel button on NewReserve.vue -->
+      <!-- TODO - update BudgetManager -> budgetManager is used to organize the money on a single costCenter on the same account, i.e. 20 € for XY, 30 € for AB, .... -->
+      <!-- TODO - refactor styles for "modal" components (i.e. OrganismExternalPartyForm, OrganismCostCenterForm, ....) -> they're duplicated right now in the css-files for the individual components -->
+      <!-- TODO - rename class "......duplicate-account" on the different Organism......Forms to the correct thing (i.e. OrganismCostCenterAssetForm -> it should be duplicated-name or -cost-center-asset... something like that-->
 
 
 

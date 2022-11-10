@@ -4,8 +4,9 @@
 
 const baseUrl = "http://localhost:2905/api/reserves";
 
-export const ReserveService = {
+export const reserveService = {
     async create(reserve) {
+        console.log('abcdef')
         const postObject = {
             method: 'POST',
             headers: {
@@ -14,92 +15,50 @@ export const ReserveService = {
             body: JSON.stringify(reserve)
         };
 
-        console.log('im gonna try this');
+
         try {
             return await fetch(baseUrl, postObject).then((response) => {
-                if (response.ok) {
-                    console.log('response is ok');
-                    return response.json();
-                }
-                else {
-                    console.log('response is not ok');
-                }
-            }).then((data) => {
-                if (data != undefined) {
-                    return data;
-                }
-            });
-        } catch (error) {
-            console.log(error);
-            return error;
-        }
-    },
-
-    // async getAllByAccountHolder(accountHolderId) {
-    //     let url = `${baseUrl}/accountHolder/${accountHolderId}`;
-    //
-    //     try {
-    //         return await fetch(url).then((response) => {
-    //             if (response.status === 200) {
-    //                 return response.json();
-    //             }
-    //             else if (response.status === 204) {
-    //                 return null;
-    //             }
-    //         }).then((data) => {
-    //             if (data != undefined) {
-    //                 return {
-    //                     success: true,
-    //                     error: null,
-    //                     data: data
-    //                 };
-    //             }
-    //             else {
-    //                 return {
-    //                     success: true,
-    //                     error: 'No reserves found!',
-    //                     data: null,
-    //                 };
-    //             }
-    //         });
-    //     } catch (error) {
-    //         return {
-    //             success: false,
-    //             error: `Error fetching reserves\n${error}`,
-    //         };
-    //     }
-    // },
-
-    async getAll(accountHolderId) {
-        try {
-            return await fetch(`${baseUrl}/accountHolder/${accountHolderId}`).then((response) => {
                 if (response.status === 200) {
                     return response.json();
                 }
-                else if (response.status === 204) {
-                    return null;
+                else if (response.status === 400) {
+                    throw new Error(`this error message is stupid and needs to be replaced`);
                 }
-            }).then((data) => {
-                if (data != undefined) {
-                    return {
-                        success: true,
-                        error: null,
-                        data: data,
-                    };
-                }
-                else {
-                    return {
-                        success: true,
-                        error: 'No categories found',
-                        data: null,
-                    };
-                }
-            });
+            }).then(data => data);
         } catch (error) {
-            return {
-                success: false,
-                error: `Error fetching categories\n${error}`,
-            };
+            console.error(error);
+            throw new Error(error);
         }
     },
+
+    async getAll() {
+        return get(baseUrl);
+    },
+
+    async getAllByAccount(accountId) {
+        return get(`${baseUrl}/account/${accountId}`);
+    },
+
+    async getAllByCostCenter(costCenterId) {
+        return get(`${baseUrl}/costCenter/${costCenterId}`);
+    },
+
+    async getAllByAccountAndCostCenter(accountId, costCenterId) {
+        return get(`${baseUrl}/${accountId}/${costCenterId}`);
+    }
+};
+
+const get = async function(url) {
+    try {
+        return await fetch(url).then((response) => {
+            if (response.status === 200) {
+                return response.json();
+            }
+            else if (response.status === 204) {
+                return [];
+            }
+        }).then(data => data);
+    } catch (error) {
+        throw new Error(error);
+    }
 }

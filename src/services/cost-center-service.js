@@ -2,7 +2,7 @@
 
 const baseUrl = "http://localhost:2905/api/costCenters";
 
-export const CostCenterService = {
+export const costCenterService = {
     async create(costCenter) {
         const postObject = {
             method: 'POST',
@@ -84,35 +84,16 @@ export const CostCenterService = {
         const url = `${baseUrl}/${id}?year=${year}&month=${++month}`
 
         try {
-        return await fetch(url).then((response) => {
-            if (response.status === 200) {
-                return response.json();
-            }
-            else if (response.status === 204) {
-                return null;
-            }
-        }).then((data) => {
-            if (data != undefined) {
-                return {
-                    success: true,
-                    error: null,
-                    data: data,
-                };
-            }
-            else {
-                return {
-                    success: true,
-                    error: 'No categories found',
-                    data: null,
-                };
-            }
-        });
+            return await fetch(url).then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                else if (response.status === 404) {
+                    throw new Error(`no bankAccount found with id ${id}!`);
+                }
+            }).then(data => data);
         } catch (error) {
-            return {
-                success: false,
-                error: `Error fetching categories\n${error}`,
-                data: null,
-            };
+            throw new Error(error);
         }
     },
 

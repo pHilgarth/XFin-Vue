@@ -1,12 +1,23 @@
 <template>
   <div class="new-reserve">
     <AtomHeadline tag="h1" text="Rücklage anlegen" />
-    <form>
-      <MoleculeInputSelect class="new-reserve__account pb-5" :options="bankAccountOptions" field="account"
-                           v-model="selectedAccountId" label="Konto"/>
+
+    <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!"/>
+
+    <form v-else>
+      <div class="pb-5">
+        <MoleculeInputAutoSuggest field="bank-account" v-model="bankAccount" label="Konto" :required="true" :items="bankAccounts" :validation="v$.bankAccount"
+                                  :hasErrors="v$.bankAccount?.$error" @blur="v$.bankAccount.$touch()" @itemPicked="pickItem($event, 'bankAccount')"/>
+      </div>
+
+      <div class="pb-5">
+        <MoleculeInputAutoSuggest field="cost-center" v-model="costCenter" label="Kostenstelle" :required="true" :items="costCenters" :validation="v$.costCenter"
+                                  :hasErrors="v$.costCenter.$error" @blur="v$.costCenter.$touch()" @itemPicked="pickItem($event, 'costCenter')"/>
+      </div>
 
       <!-- TODO - I need to check for duplicated reserve titles in the database -->
-      <MoleculeInputText class="pb-5" field="title" :hasErrors="v$.title.$error" v-model="title" @blur="v$.title.$touch()" :validation="v$.title" label="Titel" />
+      <MoleculeInputText class="pb-5" field="title" :hasErrors="v$.title.$error" v-model="title" :required="true"
+                         @blur="v$.title.$touch()" :validation="v$.title" label="Titel" />
 <!--      <AtomParagraph v-if="duplicate" class="new-reserve__duplicate-title xfin__form__error" text="Dieser Titel existiert bereits!" />-->
 
       <MoleculeInputText class="pb-5" field="targetAmount" :hasErrors="v$.targetAmount.$error" v-model="targetAmount" :validation="v$.targetAmount"
@@ -14,16 +25,12 @@
 
       <Datepicker class="vuepic-datepicker pb-5" v-model="targetDate" placeholder="Zieldatum" locale="de" :minDate="new Date()" :enableTimePicker="false" autoApply />
 
-      <AtomButton type="primary" text="Speichern" @click.prevent="saveReserve"/>
+      <AtomButton type="primary" text="Speichern" @click.prevent="saveReserve" :disabled="v$.$silentErrors.length"/>
 
 <!--      <AtomButton text="Konto speichern" :disabled="v$.$silentErrors.length > 0 || duplicate" type="primary" @click.prevent="save" />-->
 <!--      <AtomButton text="Abbrechen" type="cancel" @click.prevent="$emit('cancel')" />-->
     </form>
-
-    <pre>{{selectedAccountId}}</pre>
-    <pre>{{title}}</pre>
-    <pre>{{targetAmount}}</pre>
-    <pre>{{targetDate}}</pre>
+    {{ bankAccount }}
   </div>
 </template>
 
@@ -37,11 +44,13 @@ import { useVuelidate } from "@vuelidate/core";
 import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
 
-import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
+import MoleculeInputAutoSuggest from '@/components/molecules/MoleculeInputAutoSuggest';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
+import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 
-import { AccountHolderService } from '@/services/account-holder-service';
-import { ReserveService } from '@/services/reserve-service';
+import { BankAccountService } from '@/services/bank-account-service';
+import { costCenterService } from '@/services/cost-center-service';
+import { reserveService } from '@/services/reserve-service';
 import { reserveValidation } from "@/validation/validations";
 
 export default {
@@ -49,27 +58,36 @@ export default {
     Datepicker,
     AtomButton,
     AtomHeadline,
-    MoleculeInputSelect,
+    MoleculeInputAutoSuggest,
     MoleculeInputText,
+    MoleculeLoading,
   },
 
-  //TODO - tweak this error handling -  it is so ugly
   async created() {
-    let apiResponse = await this.getAccountHolders();
+    try {
+      await this.getData();
 
-    if (apiResponse.success) {
       this.dataLoaded = true;
-    } else {
+    } catch (error) {
       this.loadingError = true;
-      console.error(apiResponse.error);
+    }
+  },
+
+  watch: {
+    targetAmount() {
+      this.v$.targetAmount.$touch();
     }
   },
 
   data() {
     return {
       accountHolders: null,
-      bankAccountOptions: null,
-      selectedAccountId: -1,
+      bankAccount: null,
+      bankAccounts: null,
+      costCenter: null,
+      costCenters: null,
+      dataLoaded: false,
+      loadingError: false,
       targetAmount: null,
       targetDate: null,
       title: '',
@@ -78,47 +96,46 @@ export default {
 
   methods: {
     //TODO - i should move these get....() methods into the service or update the services, so I can call them from the created method
-    async getAccountHolders() {
-      const includeBankAccounts = true;
-      const apiResponse = await AccountHolderService.getAllByUser(includeBankAccounts);
+    async getData() {
+      try {
+        const bankAccountsResult = BankAccountService.getAll();
+        let costCentersResult = costCenterService.getAll();
 
-      if (apiResponse.success && apiResponse.data) {
-        this.accountHolders = apiResponse.data;
-        this.bankAccountOptions = [];
-        this.selectedAccountId = this.accountHolders[0].bankAccounts[0].id;
+        let bankAccounts = await bankAccountsResult;
+        bankAccounts = bankAccounts.filter(b => !b.external).map(
+            b => { return { id: b.id, label: `${b.accountHolderName} (${b.iban})`} });
 
-        this.accountHolders.forEach((accountHolder) => {
-          this.bankAccountOptions.push({
-            label: accountHolder.name,
-            disabled: true,
-          });
+        let costCenters = await costCentersResult;
 
-          accountHolder.bankAccounts.forEach((bankAccount) => {
-            this.bankAccountOptions.push({
-              value: bankAccount.id,
-              label: bankAccount.accountNumber,
-            });
-          });
+        this.bankAccounts = bankAccounts;
+        this.costCenters = costCenters.filter(c => c.name !== 'Nicht zugewiesen').map(c => {
+          return { id: c.id, label: c.name }
         });
-      } else if (apiResponse.success && !apiResponse.data) {
-        this.accountHolders = [];
-      }
 
-      return apiResponse;
+        this.dataLoaded = true;
+      } catch (error) {
+        console.error(error);
+        throw new Error(error);
+      }
+    },
+
+    pickItem(id, prop) {
+      this[prop] = this[`${prop}s`].find(p => p.id == id);
     },
 
     async saveReserve() {
       const newReserve = {
-        internalBankAccountId: this.selectedAccountId,
-        title: this.title,
+        bankAccountId: this.bankAccount.id,
+        costCenterId: this.costCenter.id,
+        reference: this.title,
         targetAmount: this.targetAmount,
         targetDate: this.targetDate?.toISOString() || null,
       };
+
       console.log(newReserve);
 
-      const createdReserve = await ReserveService.create(newReserve);
+      const createdReserve = await reserveService.create(newReserve);
       console.log(createdReserve);
-
     },
   },
 

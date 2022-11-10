@@ -1,5 +1,11 @@
 <template>
   <form class="organism-transaction-form">
+    <h5>Ich mache 3 Radio-Buttons, über die man die Art der Transaktion wählen kann: Einnahme, Ausgabe, Umbuchung</h5>
+    <h5>Einnahme: nur externe Konten sind als Zahlungspflichtiger, nur interne als Zahlungsempfänger auswählbar - keine Kostenstelle beim Zahlungspflichtigen</h5>
+    <h5>Ausgabe: nur interne Konten sind als Zahlungspflichtiger, nur externe als Zahlungsempfänger auswählbar - keine Kostenstelle beim Zahlungsempfänger</h5>
+    <h5>Umbuchung: nur interne Konten sind sowohl als Zahlungspflichtiger als auch als Zahlungsempfänger auswählbar</h5>
+    <MoleculeInputRadioButtons :options="[{ id: 'revenue', label: 'Einnahme' }, { id: 'expense', label: 'Ausgabe' }, { id: 'transfer', label: 'Umbuchung' }]"
+                                group="transaction-type" />
     <div class="organism-transaction-form__payer">
       <AtomHeadline class="organism-transaction-form__headline" tag="h5" text="Zahlungspflichtiger" />
       <div class="col-6 pb-5 pe-3">
@@ -94,6 +100,7 @@
 //import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
 import MoleculeInputAutoSuggest from '@/components/molecules/MoleculeInputAutoSuggest';
+import MoleculeInputRadioButtons from '@/components/molecules/MoleculeInputRadioButtons';
 //import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 
@@ -109,6 +116,7 @@ export default {
     //AtomButton,
     AtomHeadline,
     MoleculeInputAutoSuggest,
+    MoleculeInputRadioButtons,
     //MoleculeInputSelect,
     MoleculeInputText,
   },
@@ -118,6 +126,7 @@ export default {
     costCenters: { type: Array, required: true },
     initialPayerAccount: { type: Object },
     initialPayeeAccount: { type: Object },
+    payerAccounts: { type: Array, required: true },
   },
 
   data() {
@@ -138,8 +147,8 @@ export default {
           p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} }),
       payeeCostCenters: copyService.copyArray(this.costCenters).map(
           p => { return { id: p.id, label: p.name } }),
-      payerAccounts: copyService.copyArray(this.bankAccounts).map(
-          p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} }),
+      //payerAccounts: copyService.copyArray(this.bankAccounts).map(
+          //p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} }),
       payerCostCenters: copyService.copyArray(this.costCenters).map(
           p => { return { id: p.id, label: p.name}}),
     }
@@ -266,9 +275,7 @@ export default {
 
     },
 
-    pickItem(event, prop) {
-      //event.target.id is always "suggestion-xy", where xy is the id, so I need the substring from index 11
-      const id = event.target.id.substring(11);
+    pickItem(id, prop) {
 
       if (id == -1) {
         //no items found

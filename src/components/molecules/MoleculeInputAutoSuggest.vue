@@ -1,7 +1,7 @@
 <template>
   <div class="molecule-input-auto-suggest form-floating">
-
-    <AtomInputText :id="field" :disabled="disabled" :value="inputValue" :placeholder="label"
+    <!-- TODO - I removed :placeholder="label" in the AtomInputText - test, if this works everywhere - the placeholder seems to have no function. I have the AtomLabel instead -->
+    <AtomInputText :id="field" :disabled="(noItems && !allowNewItems) || disabled" :value="noItems ? 'Keine Einträge vorhanden' : modelValue?.label" :placeholder="label"
                    :classList="`xfin__form__form-control form-control molecule-input-auto-suggest__input col-4${hasErrors ? ' has-errors' : ''}`"
                    autocomplete="off" @blur="onBlur" @input="onInput" @focus="inputHasFocus = true"/>
 
@@ -51,25 +51,37 @@ export default {
     MoleculeFormError,
   },
 
+  computed: {
+    noItems() {
+      return this.items.length === 0;
+    }
+  },
+
   data() {
     return {
       hoverOnItem: false,
       inputHasFocus: false,
-      inputValue: this.modelValue?.label || null,
       selectedItem: this.modelValue || null,
 
-      suggestions: this.items.map(s => {
-        return { id: `suggestion-${s.id}`, label: s.label};
-      }),
+      suggestions: this.allowNewItems
+          ? Array.from([{ id: 'suggestion-0', label: '+ Neu hinzufügen' },
+            this.items.map(s => { return { id: `suggestion-${s.id}`, label: s.label};}) ]).flat()
+          : this.items.map(s => { return { id: `suggestion-${s.id}`, label: s.label}; }),
     }
   },
 
   watch: {
-    items() {
-      this.suggestions = this.items.map(s => {
-        return { id: `suggestion-${s.id}`, label: s.label };
-      });
+    allowNewItems() {
+      this.resetSuggestions();
     },
+
+    items() {
+      this.resetSuggestions();
+    },
+
+    modelValue() {
+      console.log('modelValue changed!');
+    }
   },
 
   methods: {
@@ -77,12 +89,20 @@ export default {
       if (!this.hoverOnItem) {
         this.inputHasFocus = false;
 
-        if (!this.selectedItem) {
+        //if (!this.selectedItem) {
+        if (!this.modelValue) {
           this.suggestions = this.items.map(s => {
             return { id: `suggestion-${s.id}`, label: s.label};
           });
 
-          this.inputValue = this.selectedItem ? this.inputValue : null;
+          if (this.allowNewItems) {
+            this.suggestions.unshift({
+              id: 'suggestion-0', label: '+ Neu hinzufügen'
+            });
+          }
+
+          //TODO - funktioniert das?
+          //this.$emit('update:modelValue', null)
         }
 
         this.$emit('blur')
@@ -90,34 +110,23 @@ export default {
     },
 
     onInput(event) {
-      this.inputValue = event.target.value;
-
-      this.selectedItem = null;
-      this.$emit('update:modelValue', null);
-
+      this.validation.$reset();
       const input = event.target.value.trim().toLowerCase();
 
       const filteredSuggestions = input === ''
         ? this.items
         : this.items.filter(i => i.label.toLowerCase().includes(input));
 
-      this.suggestions = filteredSuggestions.length === 0
-        ? this.allowNewItems
-          ? [ { id: 'suggestion-0', label: '+ Neu hinzufügen' } ]
-          : [ { id: 'suggestion--1', label: '(keine Einträge gefunden)' } ]
-        : filteredSuggestions.map(s => {
+      this.suggestions = filteredSuggestions.map(s => {
           return { id: `suggestion-${s.id}`, label: s.label }
-          });
+      });
 
-      // for (let i = 0; i < filteredSuggestions.length; i++) {
-      //     const suggestion = filteredSuggestions[i];
-      //     const match = suggestion.substring(0, input.length);
-      //     filteredSuggestions[i] = suggestion.replace(match, `<strong>${match}</strong>`);
-      // }
-
-      //
-      //
-      //this.$emit('update:modelValue', event.target.value);
+      if (this.allowNewItems) {
+        this.suggestions.unshift({ id: 'suggestion-0', label: '+ Neu hinzufügen' });
+      }
+      else if (this.suggestions.length === 0) {
+        this.suggestions.unshift({ id: -1, label: '(keine Einträge gefunden)' });
+      }
     },
 
     pickItem(event) {
@@ -126,23 +135,29 @@ export default {
       this.selectedItem = this.items.find(i => i.id == id);
 
       if (this.selectedItem) {
-        this.inputValue = this.selectedItem.label;
+        //TODO - in OrganismTransactionFormNew hat z.B. payerAccount noch die property "external: <boolean>" --- prüfen, ob das nach dem emit noch der Fall ist!
+        this.$emit('update:modelValue', this.selectedItem)
+
         //TODO - when an item was picked -> should suggestions include ALL items or just the selected one (because it will be the value of the input field)
         //this.suggestions = [{ id: `suggestion-${this.selectedItem.id}`, label: this.selectedItem.label }];
         this.suggestions = this.items.map(s => {
           return { id: `suggestion-${s.id}`, label: s.label }
         });
 
-        this.$emit('itemPicked', event);
+        if (this.allowNewItems) {
+          this.suggestions.unshift({ id: 'suggestion-0', label: '+ Neu hinzufügen' });
+        }
+
+        this.$emit('itemPicked', id);
       }
       else {
-        this.inputValue = null;
-
         if(id == 0) {
-          //add new item
+          this.$emit('addItem');
         }
         else if(id == -1) {
           //no items found!
+          this.$emit('update:modelValue', null);
+
           this.suggestions = this.items.map(i => {
             return { id: `suggestion-${i.id}`, label: i.label }
           });
@@ -153,9 +168,14 @@ export default {
       this.inputHasFocus = false;
     },
 
-    test() {
-      console.log('focus!');
-    },
+    resetSuggestions() {
+      this.suggestions = this.allowNewItems
+          ? Array.from([
+            { id: 'suggestion-0', label: '+ Neu hinzufügen' },
+            this.items.map(s => { return { id: `suggestion-${s.id}`, label: s.label};}) ])
+              .flat()
+          : this.items.map(s => { return { id: `suggestion-${s.id}`, label: s.label}; });
+    }
   }
 };
 </script>

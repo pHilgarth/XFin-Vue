@@ -11,15 +11,16 @@ export const errorService = {
         accountRole:                            'Bitte wähle eine Rolle für dieses Konto aus!',
         amount:                                 amountErrorMessage,
         balance:                                amountErrorMessage,
+        bankAccount:                            'Bitte wähle ein Konto aus!',
         bic:                                    bicErrorMessage,
-        costCenter:                             'Diese Kostenstelle passt nicht zum gewählten Transaktions-Typ!',
-        costCenterId:                           'Bitte wähle eine Kostenstelle!',
+        //costCenter:                             'Diese Kostenstelle passt nicht zum gewählten Transaktions-Typ!',
+        costCenter:                             'Bitte wähle eine Kostenstelle aus!',
+        //costCenterId:                           'Bitte wähle eine Kostenstelle!',
         counterParty:                           'Bitte gib einen {counterPartyType} an!',
         externalParty:                            'Bitte gib einen {externalPartyType} an!',
         externalPartyIban:                        ibanErrorMessage,
         externalPartyBic:                         bicErrorMessage,
         externalPartyIban_ibanDuplicate:          ibanDuplicateErrorMessage,
-        //freeBudget:                             'Der Mindestbetrag für dieses Konto beträgt {minimalAmount}!',
         freeBudget:                             'Dieser Posten darf nicht negativ sein!',
         iban_ibanValidator:                     ibanErrorMessage,
         iban_ibanDuplicate:                     ibanDuplicateErrorMessage,
@@ -41,6 +42,7 @@ export const errorService = {
         title_maxLength:                        'Der Titel darf nicht länger als 30 Zeichen sein!',
         //transactionType:                        'Dieser Transaktions-Typ passt nicht zur gewählten Kostenstelle!',
         transactionType:                        'Bitte wähle einen Transaktionstyp aus!',
+        transactionTypeItem:                    'Bitte wähle ein/e Darlehen/Rücklage aus!'
     },
 
     getErrorMessage(property, validator, params) {

@@ -1,12 +1,13 @@
 <template>
-  <input class="atom-input-text" :type="type" />
+  <input class="atom-input-text" :type="type" :autocomplete="autocomplete" />
 </template>
 
 <script>
 
 export default {
   props: {
-    type:       { type: String, default: 'text' },
+    autocomplete: { type: String, required: true },
+    type:         { type: String, default: 'text' },
   },
 };
 

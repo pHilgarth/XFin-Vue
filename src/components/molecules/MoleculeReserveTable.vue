@@ -3,21 +3,20 @@
     <thead>
       <tr>
         <th>Titel</th>
+        <th>Kostenstelle</th>
         <th>Aktueller Betrag</th>
         <th>Zielbetrag</th>
         <th>Zieldatum</th>
       </tr>
     </thead>
     <tbody>
-      <p v-if="reserves.length === 0">Keine Rücklagen für dieses Konto vorhanden!</p>
-      <template v-else>
-        <tr v-for="reserve in reserves" :key="reserve.id">
-          <td>{{ reserve.title }}</td>
-          <td>{{ formatCurrency(reserve.amount) }}</td>
-          <td>{{ reserve.targetAmount ? formatCurrency(reserve.targetAmount) : '-'}}</td>
-          <td>{{ reserve.targetDate ? formatDate(reserve.targetDate) : '-' }}</td>
-        </tr>
-      </template>
+      <tr v-for="reserve in reserves" :key="reserve.id">
+        <td>{{ reserve.reference }}</td>
+        <td>{{ reserve.costCenter.name }}</td>
+        <td>{{ formatCurrency(reserve.currentAmount) }}</td>
+        <td>{{ reserve.targetAmount ? formatCurrency(reserve.targetAmount) : '-'}}</td>
+        <td>{{ reserve.targetDate ? formatDate(reserve.targetDate) : '-' }}</td>
+      </tr>
     </tbody>
   </table>
 </template>
