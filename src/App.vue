@@ -17,23 +17,26 @@
     <div v-if="user" class="xfin__body">
       <div class="xfin__sidebar">
         <ul class="xfin__menu">
-          <li :class="selectedMenuItem == 1 ? 'active' : ''" data-route="/" data-index="1" @click="routeToComponent">
-            Kontenübersicht
+          <li id="account-view" :class="selectedMenuItem == 1 ? 'active' : ''">
+            <a href="/">Kontenübersicht</a>
           </li>
-          <li :class="selectedMenuItem == 2 ? 'active' : ''" data-route="/transaction" data-index="2" @click="routeToComponent">
-            Transaktion
+          <li id="transaction" :class="selectedMenuItem == 2 ? 'active' : ''">
+            <a href="/transaction">Transaktion</a>
           </li>
-          <li :class="selectedMenuItem == 3 ? 'active' : ''" data-route="/budget-manager" data-index="3" @click="routeToComponent">
-            Budgetmanager
+          <li id="budget-manager" :class="selectedMenuItem == 3 ? 'active' : ''">
+            <a href="/budget-manager">Budgetmanager</a>
           </li>
-          <li :class="selectedMenuItem == 4 ? 'active' : ''" data-route="/cost-centers" data-index="4" @click="routeToComponent">
-            Kostenstellenverwaltung
+          <li id="cost-centers" :class="selectedMenuItem == 4 ? 'active' : ''">
+            <a href="/cost-centers">Kostenstellenverwaltung</a>
           </li>
-          <li :class="selectedMenuItem == 5 ? 'active' : ''" data-route="/reserves" data-index="5" @click="routeToComponent">
-            Rücklagen
+          <li id="reserves" :class="selectedMenuItem == 5 ? 'active' : ''">
+            <a href="/reserves">Rücklagen</a>
           </li>
-          <li :class="selectedMenuItem == 6 ? 'active' : ''" data-route="/design-elements" data-index="6" @click="routeToComponent">
-            Design-Elemente (Dev)
+          <li id="design-elements" :class="selectedMenuItem == 6 ? 'active' : ''">
+            <a href="/design-elements">Design-Elemente (Dev)</a>
+          </li>
+          <li>
+            <pre>{{ selectedMenuItem }}</pre>
           </li>
         </ul>
       </div>
@@ -51,6 +54,10 @@
 import FakeLogin from '@/components/organisms/OrganismFakeLogin'
 
 export default {
+  created() {
+    this.selectedMenuItem = this.menuItems.indexOf()
+  },
+
   components: {
     FakeLogin,
   },
@@ -63,6 +70,14 @@ export default {
   data() {
     return {
       selectedMenuItem: 1,
+      menuItems: [
+          'account-view',
+          'transaction',
+          'budget-manager',
+          'cost-centers',
+          'reserves',
+          'design-elements',
+      ],
       user: null,
     };
   },

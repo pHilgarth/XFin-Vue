@@ -8,10 +8,10 @@
 <script>
 import OrganismAccountHolder              from '@/components/organisms/OrganismAccountHolder';
 
-import { AccountHolderService }           from '@/services/account-holder-service';
+import { accountHolderService }           from '@/services/account-holder-service';
 import { copyService }                    from '@/services/copy-service';
-import { BankAccountService }     from '@/services/bank-account-service';
-import { TransactionService }     from "@/services/transaction-service";
+import { bankAccountService }     from '@/services/bank-account-service';
+import { transactionService }     from "@/services/transaction-service";
 
 export default {
   components: {
@@ -24,7 +24,7 @@ export default {
 
   async created() {
     try {
-      this.originalAccountHolder = await AccountHolderService.getSingle(this.accountHolderId);
+      this.originalAccountHolder = await accountHolderService.getSingle(this.accountHolderId);
 
       if (this.originalAccountHolder) {
         this.copiedAccountHolder = copyService.copyObject(this.originalAccountHolder);
@@ -73,7 +73,7 @@ export default {
         };
 
         try {
-          await AccountHolderService.update(this.originalAccountHolder.id, [ namePatch ]);
+          await accountHolderService.update(this.originalAccountHolder.id, [ namePatch ]);
         } catch(error) {
           console.error(error)
         }
@@ -88,7 +88,7 @@ export default {
           //TODO - this code is duplicated in NewAccountHolder when creating the accounts
           account.accountHolderId = accountHolder.id;
 
-          const createdBankAccount = await BankAccountService.create(account);
+          const createdBankAccount = await bankAccountService.create(account);
 
           if (createdBankAccount) {
             const initializationTransaction = {
@@ -97,7 +97,7 @@ export default {
               amount: account.balance,
               reference: '[Kontoinitialisierung]',
             };
-            const createdInitializationTransaction = await TransactionService.create(initializationTransaction);
+            const createdInitializationTransaction = await transactionService.create(initializationTransaction);
             if (!createdInitializationTransaction) {
               //TODO - improve error handling - maybe remove the other records again? Or just implement a task on the API that takes care of this regularly?
               this.error = 'Error during inizializationTransaction creation';
@@ -123,7 +123,7 @@ export default {
             });
           }
 
-          const updateResponse = await BankAccountService.update(account.id, jsonPatch);
+          const updateResponse = await bankAccountService.update(account.id, jsonPatch);
 
           if (!updateResponse.success) {
             error = true;

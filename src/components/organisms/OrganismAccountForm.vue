@@ -27,8 +27,8 @@ import {
   balanceValidator,
 } from "@/validation/custom-validators";
 
-import { BankAccountService } from "@/services/bank-account-service";
-import { NumberService } from "@/services/number-service";
+import { bankAccountService } from "@/services/bank-account-service";
+import { numberService } from "@/services/number-service";
 
 import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from "@/components/atoms/AtomHeadline";
@@ -67,7 +67,7 @@ export default {
       id:                     this.formData.account?.id || null,
       accountHolderId:        this.formData.account?.accountHolderId || null,
       balance:                this.formData.account?.balance
-                                ? NumberService.amountToString(this.formData.account.balance)
+                                ? numberService.amountToString(this.formData.account.balance)
                                 : null,
       bank:                   this.formData.account?.bank || "",
       description:            this.formData.account?.description || null,
@@ -124,7 +124,7 @@ export default {
   methods: {
     async save() {
       try {
-        const bankAccountDuplicate = await BankAccountService.getSingleByIban(this.iban);
+        const bankAccountDuplicate = await bankAccountService.getSingleByIban(this.iban);
 
         if (!bankAccountDuplicate) {
             const account = {
@@ -133,8 +133,8 @@ export default {
               description: this.description,
               bic: this.bic,
               iban: this.iban,
-              accountNumber: NumberService.getAccountNumber(this.iban),
-              balance: NumberService.parseFloat(this.balance),
+              accountNumber: numberService.getAccountNumber(this.iban),
+              balance: numberService.parseFloat(this.balance),
               index: this.accountIndex,
             };
 

@@ -47,9 +47,9 @@ import AtomSpan from '@/components/atoms/AtomSpan';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 import OrganismAccountForm from '@/components/organisms/OrganismAccountForm';
 
-import { AccountHolderService } from '@/services/account-holder-service';
+import { accountHolderService } from '@/services/account-holder-service';
 import { copyService } from '@/services/copy-service';
-import { NumberService } from '@/services/number-service';
+import { numberService } from '@/services/number-service';
 
 import { accountHolderValidation } from '@/validation/validations';
 
@@ -137,7 +137,7 @@ export default {
     },
 
     formatBalance(value) {
-      return NumberService.formatCurrency(value);
+      return numberService.formatCurrency(value);
     },
 
     saveAccount(bankAccount) {
@@ -184,7 +184,7 @@ export default {
 
       if (this.originalName !== this.name) {
         try {
-          const accountHolderDuplicate = await AccountHolderService.getByName(this.name);
+          const accountHolderDuplicate = await accountHolderService.getByName(this.name);
 
           if (!accountHolderDuplicate) {
             save = true;

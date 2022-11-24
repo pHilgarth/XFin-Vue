@@ -4,7 +4,7 @@
 
 const baseUrl = "http://localhost:2905/api/accountHolders";
 
-export const AccountHolderService = {
+export const accountHolderService = {
   async getAllByUser(userId, external = false) {
     try {
       return await fetch(`${baseUrl}/user/${userId}?external=${external}`).then((response) => {

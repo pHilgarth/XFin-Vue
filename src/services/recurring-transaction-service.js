@@ -1,14 +1,14 @@
 
-const baseUrl = "http://localhost:2905/api/transactions";
+const baseUrl = "http://localhost:2905/api/recurringTransactions";
 
-export const transactionService = {
-  async create(transaction) {
+export const recurringTransactionService = {
+  async create(recurringTransaction) {
     const postObject = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(transaction)
+      body: JSON.stringify(recurringTransaction)
     };
 
     try {

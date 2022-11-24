@@ -7,7 +7,7 @@
 <script>
   import AtomHeadline from '@/components/atoms/AtomHeadline';
 
-  import { AccountHolderService } from '@/services/account-holder-service';
+  import { accountHolderService } from '@/services/account-holder-service';
 
   export default {
     //TODO - rework these nested api calls ...
@@ -42,7 +42,7 @@
 
     methods: {
       async getAccountHolders() {
-        const apiResponse = await AccountHolderService.getAllByUser();
+        const apiResponse = await accountHolderService.getAllByUser();
 
         if (apiResponse.success && apiResponse.data) {
           this.accountHolders = apiResponse.data;

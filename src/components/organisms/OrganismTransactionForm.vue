@@ -50,7 +50,7 @@
       </div>
 
       <div class="col-md-6 ps-3">
-        <MoleculeInputAutoSuggest v-if="transactionType && transactionType.id !== 'default'" field="transaction-type" :selectedItem="transactionType" label="Transaktionstyp" :items="transactionTypes"
+        <MoleculeInputAutoSuggest v-if="transactionType && transactionType.id !== 'regular'" field="transaction-type" :selectedItem="transactionType" label="Transaktionstyp" :items="transactionTypes"
                                   @itemPicked="pickItem($event, 'transactionType')" />
       </div>
 
@@ -105,10 +105,10 @@ import MoleculeInputRadioButtons from '@/components/molecules/MoleculeInputRadio
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 
 import { copyService } from '@/services/copy-service';
-import { TransactionTypeService } from '@/services/transaction-type-service';
+import { transactionTypeService } from '@/services/transaction-type-service';
 
 import { transactionValidation } from '@/validation/validations';
-import { payerCostCenterValidator } from '@/validation/custom-validators';
+//import { payerCostCenterValidator } from '@/validation/custom-validators';
 import { useVuelidate } from "@vuelidate/core";
 
 export default {
@@ -140,7 +140,7 @@ export default {
       payerCostCenter: null,
       reference: null,
       transactionType: null,
-      transactionTypes: copyService.copyArray(TransactionTypeService.transactionTypes).map(
+      transactionTypes: copyService.copyArray(transactionTypeService.transactionTypes).map(
           t => { return { id: t.value, label: t.label } }),
 
       payeeAccounts: copyService.copyArray(this.bankAccounts).map(
@@ -166,11 +166,11 @@ export default {
 
         this.transactionTypes = this.payeeAccount.external
           ? this.transactionTypes.filter(t => t.id !== 'reserve')
-          : copyService.copyArray(TransactionTypeService.transactionTypes).map(
+          : copyService.copyArray(transactionTypeService.transactionTypes).map(
                 t => { return { id: t.value, label: t.label } });
       }
       else {
-        this.transactionTypes = copyService.copyArray(TransactionTypeService.transactionTypes).map(
+        this.transactionTypes = copyService.copyArray(transactionTypeService.transactionTypes).map(
             t => { return { id: t.value, label: t.label } });
 
         this.payerAccounts = copyService.copyArray(this.bankAccounts).map(
@@ -319,7 +319,7 @@ export default {
     const validation = copyService.copyObject(transactionValidation);
 
     if (this.payerAccount) {
-      validation.payerCostCenter.payerCostCenterValidator = payerCostCenterValidator(this.payerAccount);
+      //validation.payerCostCenter.payerCostCenterValidator = payerCostCenterValidator(this.payerAccount);
     }
 
     return validation;

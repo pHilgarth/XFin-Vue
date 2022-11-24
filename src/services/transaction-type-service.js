@@ -1,9 +1,9 @@
 const baseUrl = "http://localhost:2905/api";
 
-export const TransactionTypeService = {
+export const transactionTypeService = {
     transactionTypes: [
         {
-            value: 'default',
+            value: 'regular',
             label: 'reguläre Transaktion',
         },
         {

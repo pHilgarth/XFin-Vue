@@ -26,7 +26,7 @@
 <script>
 import MoleculeActionSelect from '@/components/molecules/MoleculeActionSelect';
 
-import { NumberService } from "@/services/number-service";
+import { numberService } from "@/services/number-service";
 
 export default {
   components: {
@@ -39,7 +39,7 @@ export default {
 
   methods: {
     formatCurrency(value) {
-      return NumberService.formatCurrency(value);
+      return numberService.formatCurrency(value);
     }
   }
 }

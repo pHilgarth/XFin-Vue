@@ -7,7 +7,6 @@
     <MoleculeInputSelect class="pb-5" field="costCenter" v-model="costCenterId" label="Kostenstelle"
                          :options="costCenters.map(c => { return { value: c.id, label: c.name } })" />
 
-    {{ transactionType }}
     <MoleculeInputSelect class="pb-5" :options="transactionTypes" field="transactionType" v-model="transactionType" label="Typ" />
 
     <!-- TODO - API endpoints for loan and repayments are missing, so this is commented out -->
@@ -59,12 +58,12 @@ import MoleculeInputCheckbox from '@/components/molecules/MoleculeInputCheckbox'
 import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 
-import { AccountHolderService } from '@/services/account-holder-service';
-import { BankAccountService } from '@/services/bank-account-service';
+import { accountHolderService } from '@/services/account-holder-service';
+import { bankAccountService } from '@/services/bank-account-service';
 import { copyService } from '@/services/copy-service';
-import { NumberService } from '@/services/number-service';
-import { TransactionService } from '@/services/transaction-service';
-import { TransactionTypeService } from '@/services/transaction-type-service';
+import { numberService } from '@/services/number-service';
+import { transactionService } from '@/services/transaction-service';
+import { transactionTypeService } from '@/services/transaction-type-service';
 import { transactionValidation } from '@/validation/validations';
 import { bicValidator, ibanValidator } from "@/validation/custom-validators";
 
@@ -133,7 +132,7 @@ export default {
     async transactionType() {
       if (['repayment', 'reserve'].indexOf(this.transactionType) !== -1) {
         try {
-          this.transactionTypeItems = await TransactionTypeService.getItems(this.transactionType, this.accountId);
+          this.transactionTypeItems = await transactionTypeService.getItems(this.transactionType, this.accountId);
           this.transactionTypeItem = this.transactionTypeItems[0].id;
         } catch (error) {
           console.error(error);
@@ -159,8 +158,8 @@ export default {
       setSelectedExternalPartyToNull: true,
       reference: '',
       selectedExternalParty: null,
-      transactionType: TransactionTypeService.transactionTypes[0].value,
-      transactionTypes: copyService.copyArray(TransactionTypeService.transactionTypes).filter(t => t.value !== 'reserve'),
+      transactionType: transactionTypeService.transactionTypes[0].value,
+      transactionTypes: copyService.copyArray(transactionTypeService.transactionTypes).filter(t => t.value !== 'reserve'),
       transactionTypeItem: null,
       transactionTypeItems: null,
     }
@@ -191,7 +190,7 @@ export default {
       try {
         if (this.externalPartyIban) {
           const duplicatedBankAccount = this.externalPartyIban
-              ? await BankAccountService.getSingleByIban(this.externalPartyIban)
+              ? await bankAccountService.getSingleByIban(this.externalPartyIban)
               : null;
 
           if (duplicatedBankAccount) {
@@ -200,7 +199,7 @@ export default {
           }
           else {
             if (this.selectedExternalParty.id) {
-              await BankAccountService.update(this.selectedExternalParty.bankAccount.id, [
+              await bankAccountService.update(this.selectedExternalParty.bankAccount.id, [
                 {
                   op: "replace",
                   path: `/iban`,
@@ -214,13 +213,13 @@ export default {
               ]);
             }
             else {
-              this.selectedExternalParty = await AccountHolderService.create({
+              this.selectedExternalParty = await accountHolderService.create({
                 userId: this.userId,
                 name: this.selectedExternalParty.name,
                 external: true,
               });
 
-              this.selectedExternalParty.bankAccount = await BankAccountService.create({
+              this.selectedExternalParty.bankAccount = await bankAccountService.create({
                 accountHolderId: this.selectedExternalParty.id,
                 iban: this.externalPartyIban,
                 bic: this.externalPartyBic,
@@ -230,7 +229,7 @@ export default {
           }
         }
 
-        await TransactionService.create({
+        await transactionService.create({
           sourceBankAccountId: this.accountId,
           targetBankAccountId: this.selectedExternalParty.bankAccount.id,
           sourceCostCenterId: this.costCenterId,
@@ -240,7 +239,7 @@ export default {
           //reserveId: formData.reserveId,
           //loanId: formData.loanId,
           reference: this.reference,
-          amount: NumberService.parseFloat(this.amount),
+          amount: numberService.parseFloat(this.amount),
           dateString: new Date().toISOString(),
         });
 

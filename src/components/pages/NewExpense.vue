@@ -15,8 +15,8 @@
   import MoleculeExpenseForm from '@/components/molecules/MoleculeExpenseForm';
   import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 
-  import { AccountHolderService } from '@/services/account-holder-service';
-  import { BankAccountService } from '@/services/bank-account-service';
+  import { accountHolderService } from '@/services/account-holder-service';
+  import { bankAccountService } from '@/services/bank-account-service';
   import { costCenterService } from '@/services/cost-center-service';
 
   export default {
@@ -56,8 +56,8 @@
     methods: {
       async getData() {
         try {
-          const bankAccount = BankAccountService.getSingleById(this.bankAccountId);
-          const externalParties = AccountHolderService.getAllByUser(this.userId, true);
+          const bankAccount = bankAccountService.getSingleById(this.bankAccountId);
+          const externalParties = accountHolderService.getAllByUser(this.userId, true);
           const costCenters = costCenterService.getAll();
 
           this.bankAccount = await bankAccount;

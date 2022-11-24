@@ -5,7 +5,7 @@
 <script>
 import OrganismCollapsible from '@/components/organisms/OrganismCollapsible';
 
-import { NumberService } from "@/services/number-service";
+import { numberService } from "@/services/number-service";
 
 export default {
   components: {
@@ -43,12 +43,12 @@ export default {
       this.bankAccount.expenses.forEach((expense) => {
         const row = {
           fields: [
-            { content: NumberService.formatDate(expense.date) },
+            { content: numberService.formatDate(expense.date) },
             { content: expense.costCenterName },
             { content: expense.counterParty },
             { content: expense.reference },
             {
-              content: NumberService.formatCurrency(Math.abs(expense.amount)),
+              content: numberService.formatCurrency(Math.abs(expense.amount)),
               props: { class: 'align-right' },
             },
           ],
@@ -113,7 +113,7 @@ export default {
         expensesTotal += expense.amount;
       });
       
-      return NumberService.formatCurrency(Math.abs(expensesTotal));
+      return numberService.formatCurrency(Math.abs(expensesTotal));
     },
   },
 };

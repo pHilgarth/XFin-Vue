@@ -7,12 +7,12 @@
     <form v-else>
       <div class="pb-5">
         <MoleculeInputAutoSuggest field="bank-account" v-model="bankAccount" label="Konto" :required="true" :items="bankAccounts" :validation="v$.bankAccount"
-                                  :hasErrors="v$.bankAccount?.$error" @blur="v$.bankAccount.$touch()" @itemPicked="pickItem($event, 'bankAccount')"/>
+                                  :hasErrors="v$.bankAccount?.$error" @blur="onBlurBankAccount" @itemPicked="pickItem($event, 'bankAccount')"/>
       </div>
 
       <div class="pb-5">
         <MoleculeInputAutoSuggest field="cost-center" v-model="costCenter" label="Kostenstelle" :required="true" :items="costCenters" :validation="v$.costCenter"
-                                  :hasErrors="v$.costCenter.$error" @blur="v$.costCenter.$touch()" @itemPicked="pickItem($event, 'costCenter')"/>
+                                  :hasErrors="v$.costCenter.$error" @blur="onBlurCostCenter" @itemPicked="pickItem($event, 'costCenter')"/>
       </div>
 
       <!-- TODO - I need to check for duplicated reserve titles in the database -->
@@ -26,11 +26,8 @@
       <Datepicker class="vuepic-datepicker pb-5" v-model="targetDate" placeholder="Zieldatum" locale="de" :minDate="new Date()" :enableTimePicker="false" autoApply />
 
       <AtomButton type="primary" text="Speichern" @click.prevent="saveReserve" :disabled="v$.$silentErrors.length"/>
-
-<!--      <AtomButton text="Konto speichern" :disabled="v$.$silentErrors.length > 0 || duplicate" type="primary" @click.prevent="save" />-->
-<!--      <AtomButton text="Abbrechen" type="cancel" @click.prevent="$emit('cancel')" />-->
+      <AtomButton text="Abbrechen" type="cancel" @click.prevent="$router.push('/reserves')" />
     </form>
-    {{ bankAccount }}
   </div>
 </template>
 
@@ -48,8 +45,9 @@ import MoleculeInputAutoSuggest from '@/components/molecules/MoleculeInputAutoSu
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 
-import { BankAccountService } from '@/services/bank-account-service';
+import { bankAccountService } from '@/services/bank-account-service';
 import { costCenterService } from '@/services/cost-center-service';
+import { numberService } from '@/services/number-service';
 import { reserveService } from '@/services/reserve-service';
 import { reserveValidation } from "@/validation/validations";
 
@@ -98,7 +96,7 @@ export default {
     //TODO - i should move these get....() methods into the service or update the services, so I can call them from the created method
     async getData() {
       try {
-        const bankAccountsResult = BankAccountService.getAll();
+        const bankAccountsResult = bankAccountService.getAll();
         let costCentersResult = costCenterService.getAll();
 
         let bankAccounts = await bankAccountsResult;
@@ -119,23 +117,43 @@ export default {
       }
     },
 
+    onBlurBankAccount(event) {
+      if (this.bankAccount?.label !== event.target.value) {
+        this.bankAccount = null;
+      }
+
+      this.v$.bankAccount.$touch()
+    },
+
+    onBlurCostCenter(event) {
+      if (this.costCenter?.label !== event.target.value) {
+        this.costCenter = null;
+      }
+
+      this.v$.costCenter.$touch()
+    },
+
     pickItem(id, prop) {
       this[prop] = this[`${prop}s`].find(p => p.id == id);
     },
 
     async saveReserve() {
-      const newReserve = {
-        bankAccountId: this.bankAccount.id,
-        costCenterId: this.costCenter.id,
-        reference: this.title,
-        targetAmount: this.targetAmount,
-        targetDate: this.targetDate?.toISOString() || null,
-      };
+      try {
+        const newReserve = {
+          bankAccountId: this.bankAccount.id,
+          costCenterId: this.costCenter.id,
+          reference: this.title,
+          targetAmount: numberService.parseFloat(this.targetAmount),
+          targetDate: this.targetDate?.toISOString() || null,
+        };
 
-      console.log(newReserve);
-
-      const createdReserve = await reserveService.create(newReserve);
-      console.log(createdReserve);
+        await reserveService.create(newReserve);
+        this.$router.push('/reserves');
+      }
+      catch (error) {
+        console.error('Error while creating new reserve');
+        console.error(error);
+      }
     },
   },
 

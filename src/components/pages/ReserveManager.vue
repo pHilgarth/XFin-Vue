@@ -1,8 +1,6 @@
 <template>
   <section class="reserve-manager">
     <AtomHeadline tag="h1" text="Rücklagen" />
-    <p style="color:red">Validation bei Kostenstelle fehlt beim Erstellen einer Rücklage!</p>
-    <p style="color:red">Betrag wird nicht korrekt gespeichert, wenn Kommazahlen verwendet werden! 44,50 € ergibt 4450 €</p>
     <MoleculeLoading v-if="!bankAccountsLoaded" :loadingError="bankAccountsLoadingError" errorMessage="Fehler beim Laden der Kontoinhaber!"/>
 
     <template v-else>
@@ -17,7 +15,6 @@
         <template v-else>
           <MoleculeReserveTable v-if="reservesLoaded && reserves && reserves.length > 0" :reserves="reserves" />
           <AtomParagraph v-else text="Keine Rücklagen auf diesem Konto gefunden!" />
-          <pre>{{reserves}}</pre>
 
         </template>
       </template>
@@ -35,8 +32,7 @@ import MoleculeInputAutoSuggest from '@/components/molecules/MoleculeInputAutoSu
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeReserveTable from "@/components/molecules/MoleculeReserveTable";
 
-import { BankAccountService } from '@/services/bank-account-service';
-import { NumberService } from '@/services/number-service';
+import { bankAccountService } from '@/services/bank-account-service';
 import { reserveService } from '@/services/reserve-service';
 
 export default {
@@ -76,17 +72,11 @@ export default {
   methods: {
     calculateCurrentAmount(reserve) {
       const revenuesSum = reserve.revenues.length
-          ? reserve.revenues.reduce((a, b) => {
-            //initially a is an object with a property amount but the return statement returns a number
-            let aValue = a.amount || NumberService.amountToString(a);
-            return (aValue + b.amount); })
+          ? reserve.revenues.reduce((a, b) => a + b.amount, 0)
           : 0;
 
       const expensesSum = reserve.expenses.length
-          ? reserve.expenses.reduce((a, b) => {
-            //initially a is an object with a property amount but the return statement returns a number
-            let aValue = a.amount || NumberService.amountToString(a);
-            return (aValue + b.amount); })
+          ? reserve.expenses.reduce((a, b) => a + b.amount, 0)
           : 0;
 
       reserve.currentAmount = revenuesSum - expensesSum;
@@ -94,7 +84,7 @@ export default {
 
     async getBankAccounts() {
       try {
-        let bankAccounts = await BankAccountService.getAll();
+        let bankAccounts = await bankAccountService.getAll();
         bankAccounts = bankAccounts.filter(b => !b.external).map(
             b => { return { id: b.id, label: `${b.accountHolderName} (${b.iban})`} });
 

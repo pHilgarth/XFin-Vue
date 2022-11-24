@@ -1,7 +1,7 @@
 
 const baseUrl = "http://localhost:2905/api/externalParties";
 
-export const ExternalPartyService = {
+export const externalPartyService = {
   async create(externalParty) {
     const postObject = {
       method: 'POST',

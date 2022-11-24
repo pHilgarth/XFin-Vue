@@ -2,10 +2,11 @@
   <div class="transaction-manager">
     <AtomHeadline tag="h1" text="Transaktion"/>
 
-    <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!" />
+    <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!"/>
 
     <template v-else>
-      <MoleculeInputRadioButtons :options="transactionDirections" group="transaction-type" preselectedOptionId="revenue" @change="updateTransactionType"/>
+      <MoleculeInputRadioButtons :options="transactionDirections" group="transaction-type" preselectedOptionId="revenue"
+                                 @change="updateTransactionType"/>
 
       <OrganismTransactionFormNew
           :costCenters="costCenters"
@@ -13,35 +14,28 @@
           :payeeAccounts="payeeAccounts"
           :transactionDirection="transactionDirection"
           :initialPayeeAccount="payeeAccount"
-          :initialPayeeCostCenter="payeeCostCenter"
-          :initialPayeeCostCenterAsset="payeeCostCenterAsset"
           :initialPayerAccount="payerAccount"
-          :initialPayerCostCenter="payerCostCenter"
-          :initialPayerCostCenterAsset="payerCostCenterAsset"
+          :newPayeeCostCenterAsset="payeeCostCenterAsset"
           @addExternalParty="showExternalPartyForm = true"
-          @addPayeeCostCenter="addPayeeCostCenter"
-          @addPayeeCostCenterAsset="addPayeeCostCenterAsset"
-          @addPayerCostCenter="addPayerCostCenter"
-          @addPayerCostCenterAsset="addPayerCostCenterAsset" />
+          @addCostCenterAsset="addCostCenterAsset"
+          @saveTransaction="saveTransaction" />
 
-<!--      <OrganismTransactionForm :initialPayerAccount="payerAccount" :initialPayeeAccount="payeeAccount"-->
-<!--                               :bankAccounts="bankAccounts" :costCenters="costCenters"-->
-<!--                               @addExternalParty="showExternalPartyForm = true"/>-->
+      <!--      <OrganismTransactionForm :initialPayerAccount="payerAccount" :initialPayeeAccount="payeeAccount"-->
+      <!--                               :bankAccounts="bankAccounts" :costCenters="costCenters"-->
+      <!--                               @addExternalParty="showExternalPartyForm = true"/>-->
 
     </template>
 
-<!--    <pre>{{ externalPartyToSave }}</pre>-->
+    <!--    <pre>{{ externalPartyToSave }}</pre>-->
 
     <div v-if="showExternalPartyForm">
-      <OrganismExternalPartyForm :ibans="ibans" :names="accountHolderNames" @save="saveExternalParty" @cancel="showExternalPartyForm = false" />
-    </div>
-
-    <div v-if="showCostCenterForm">
-      <OrganismCostCenterForm :names="costCenterNames" @save="saveCostCenter" @cancel="showCostCenterForm = false" />
+      <OrganismExternalPartyForm :ibans="ibans" :names="accountHolderNames" @save="saveExternalParty"
+                                 @cancel="showExternalPartyForm = false"/>
     </div>
 
     <div v-if="showCostCenterAssetForm">
-      <OrganismCostCenterAssetForm :names="costCenterAssetNames" :costCenterName="costCenterForAsset.label" @save="saveCostCenterAsset" @cancel="showCostCenterAssetForm = false" />
+      <OrganismCostCenterAssetForm :names="costCenterAssetNames" :costCenterName="costCenterForAsset.label"
+                                   @save="saveCostCenterAsset" @cancel="showCostCenterAssetForm = false"/>
     </div>
   </div>
 </template>
@@ -51,24 +45,25 @@ import AtomHeadline from '@/components/atoms/AtomHeadline';
 import MoleculeInputRadioButtons from '@/components/molecules/MoleculeInputRadioButtons';
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import OrganismCostCenterAssetForm from '@/components/organisms/OrganismCostCenterAssetForm';
-import OrganismCostCenterForm from '@/components/organisms/OrganismCostCenterForm';
 import OrganismExternalPartyForm from '@/components/organisms/OrganismExternalPartyForm';
 //import OrganismTransactionForm from '@/components/organisms/OrganismTransactionForm';
 import OrganismTransactionFormNew from '@/components/organisms/OrganismTransactionFormNew';
 
-//import { AccountHolderService } from '@/services/account-holder-service';
-import {BankAccountService} from '@/services/bank-account-service';
-import {costCenterService} from '@/services/cost-center-service';
+import { accountHolderService } from '@/services/account-holder-service';
+import { bankAccountService } from '@/services/bank-account-service';
+import { costCenterService } from '@/services/cost-center-service';
+import { costCenterAssetService } from '@/services/cost-center-asset-service';
+import { recurringTransactionService } from '@/services/recurring-transaction-service';
+import { transactionService } from '@/services/transaction-service';
 
 export default {
-  inject: [ 'userId' ],
+  inject: ['userId'],
 
   components: {
     AtomHeadline,
     MoleculeInputRadioButtons,
     MoleculeLoading,
     OrganismCostCenterAssetForm,
-    OrganismCostCenterForm,
     OrganismExternalPartyForm,
     //OrganismTransactionForm,
     OrganismTransactionFormNew,
@@ -89,11 +84,9 @@ export default {
       accountHolderNames: null,
       bankAccounts: null,
       costCenterAssetNames: null,
+      costCenterAssetToSave: null,
       costCenterForAsset: null,
-      costCenterNames: null,
       costCenters: null,
-      costCenterToSave: null,
-      costCenterToSelect: null,
       dataLoaded: false,
       externalPartyToSave: null,
       ibans: null,
@@ -105,7 +98,6 @@ export default {
       payerAccount: null,
       payerAccounts: null,
       payerCostCenter: null,
-      payerCostCenterAsset: null,
       showCostCenterAssetForm: false,
       showCostCenterForm: false,
       showExternalPartyForm: false,
@@ -120,33 +112,16 @@ export default {
   },
 
   methods: {
-    addPayeeCostCenter() {
-      this.costCenterToSelect = 'payeeCostCenter';
-      this.showCostCenterForm = true;
-    },
-
-    addPayeeCostCenterAsset(costCenter, costCenterAssetNames) {
+    addCostCenterAsset(bankAccount, costCenter, costCenterAssetNames) {
+      this.bankAccountForCostCenterAsset = bankAccount,
       this.costCenterForAsset = costCenter;
-      this.costCenterToSelect = 'payeeCostCenter';
-      this.costCenterAssetNames = costCenterAssetNames;
-      this.showCostCenterAssetForm = true;
-    },
-
-    addPayerCostCenter() {
-      this.costCenterToSelect = 'payerCostCenter';
-      this.showCostCenterForm = true;
-    },
-
-    addPayerCostCenterAsset(costCenter, costCenterAssetNames) {
-      this.costCenterForAsset = costCenter;
-      this.costCenterToSelect = 'payerCostCenter';
       this.costCenterAssetNames = costCenterAssetNames;
       this.showCostCenterAssetForm = true;
     },
 
     async getData() {
       try {
-        const bankAccounts = BankAccountService.getAll();
+        const bankAccounts = bankAccountService.getAll();
         const costCenters = costCenterService.getAll();
 
         const bankAccountsResult = await bankAccounts;
@@ -161,11 +136,15 @@ export default {
         });
         this.payerAccounts = this.bankAccounts
             .filter(b => b.external)
-            .map(p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} });
+            .map(p => {
+              return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
+            });
 
         this.payeeAccounts = this.bankAccounts
             .filter(b => !b.external)
-            .map(p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} });
+            .map(p => {
+              return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
+            });
 
         // this.bankAccounts = Array.from([
         //   this.bankAccounts.filter(b => !b.external).sort((a, b) => {
@@ -179,11 +158,12 @@ export default {
         // ]).flat();
 
         const costCentersResult = await costCenters;
-        this.costCenterNames = costCentersResult.map(c => c.name);
 
         this.costCenters = costCentersResult
             .filter(c => c.name !== 'Nicht zugewiesen')
-            .map(p => { return { id: p.id, label: p.name } });
+            .map(p => {
+              return {id: p.id, label: p.name}
+            });
 
       } catch (error) {
         console.error(error);
@@ -191,49 +171,21 @@ export default {
       }
     },
 
-    saveCostCenter(name) {
-      this.costCenterToSave = {
-        name: name,
-      }
-
-      const costCenterItem = {
-        id: 'new',
-        label: name,
-        new: true,
-      }
-
-      this.costCenters = Array.from([
-        this.costCenters.filter(p => !p.new ),
-        costCenterItem
-      ]).flat().sort((a, b) => {
-        return a.label < b.label ? -1 :
-            a.label === b.label ? 0 : 1;
-      });
-
-      if (this.transactionDirection === 'expense') {
-        this.payerCostCenter = costCenterItem;
-      }
-      else if (this.transactionDirection === 'revenue') {
-        this.payeeCostCenter = costCenterItem;
-      }
-      else if (this.transactionDirection === 'transfer') {
-        this[this.costCenterToSelect] = costCenterItem;
-      }
-
-      this.showCostCenterForm = false;
-    },
-
     saveCostCenterAsset(name) {
       this.costCenterAssetToSave = {
         name: name,
-        costCenterId: this.costCenterForAsset.id
+        bankAccountId: this.bankAccountForCostCenterAsset.id,
+        costCenterId: this.costCenterForAsset.id,
+        amount: 0,
       };
 
-      this[`${this.costCenterToSelect}Asset`] = {
+      this.payeeCostCenterAsset = {
         id: 'new',
         label: name,
         new: true,
       };
+
+
 
       this.showCostCenterAssetForm = false;
     },
@@ -253,7 +205,7 @@ export default {
           bic: data.bic,
           external: true
         }
-      }
+      };
 
       const accountItem = {
         id: 'new',
@@ -264,17 +216,15 @@ export default {
 
       if (this.transactionDirection === 'revenue') {
         this.payerAccount = accountItem;
-
+//TODO - this can be simplified (don't use Array.from twice, place it in a function with parameter, that has a value 'payee' oder 'payer')
         this.payerAccounts = Array.from([
-            this.payerAccounts.filter(p => !p.new ),
-            accountItem
+          this.payerAccounts.filter(p => !p.new),
+          accountItem
         ]).flat().sort((a, b) => {
           return a.label < b.label ? -1 :
               a.label === b.label ? 0 : 1;
         });
-      }
-
-      else if(this.transactionDirection === 'expense') {
+      } else if (this.transactionDirection === 'expense') {
         this.payeeAccount = accountItem;
 
         this.payeeAccounts = Array.from([
@@ -287,42 +237,80 @@ export default {
       }
 
       this.showExternalPartyForm = false;
+    },
 
-      // try {
-      //   const createdAccountHolder = await AccountHolderService.create({ userId: this.userId, name: data.name, external: true });
-      //   const createdBankAccount = await BankAccountService.create({ accountHolderId: createdAccountHolder.id, iban: data.iban, bic: data.bic, external: true });
-      //
-      //   const accountHolderItem = {
-      //     id: createdAccountHolder.id,
-      //     label: `${createdAccountHolder.name} (${createdBankAccount.iban})`,
-      //     external: true,
-      //   };
-      //
-      //   this.showExternalPartyForm = false;
-      //
-      //   if (this.transactionDirection === 'revenue') {
-      //     this.payerAccounts = Array.from([
-      //         this.payerAccounts,
-      //         accountHolderItem
-      //     ]).flat().sort((a, b) => {
-      //       return a.label < b.label ? -1 :
-      //           a.label === b.label ? 0 : 1;
-      //     });
-      //   }
-      //   else if(this.transactionDirection === 'expense') {
-      //     this.payeeAccounts = Array.from([
-      //       this.payeeAccounts,
-      //       accountHolderItem
-      //     ]).flat().sort((a, b) => {
-      //       return a.label < b.label ? -1 :
-      //           a.label === b.label ? 0 : 1;
-      //     });
-      //   }
-      //
-      // } catch(error) {
-      //   console.error(error);
-      //   alert(error + ' - show something in frontend');
-      // }
+    async saveTransaction(transaction) {
+      try {
+        if (this.externalPartyToSave) {
+          const createdAccountHolder = await accountHolderService.create(this.externalPartyToSave.accountHolder);
+
+          this.externalPartyToSave.bankAccount.accountHolderId = createdAccountHolder.id;
+
+          const createdBankAccount = await bankAccountService.create(this.externalPartyToSave.bankAccount);
+
+          if (this.transactionDirection === 'revenue') {
+            transaction.sourceBankAccountId = createdBankAccount.id;
+          }
+          else if (this.transactionDirection === 'expense') {
+            transaction.targetBankAccountId = createdBankAccount.id;
+          }
+        }
+
+        if (this.costCenterAssetToSave) {
+          this.costCenterAssetToSave.amount += transaction.amount;
+          await costCenterAssetService.create(this.costCenterAssetToSave);
+        }
+        else {
+          //TODO - delete else block?
+
+        }
+
+        if (transaction.updateCostCenterAssets) {
+          await this.updateCostCenterAssets(transaction);
+        }
+
+        if (transaction.reserve) {
+          //if it's reserve id has prefix "reserve-"
+          transaction.reserveId = transaction.reserve.id.substring(8);
+        }
+
+        if (transaction.isRecurring) {
+          await recurringTransactionService.create(transaction);
+        }
+
+        await transactionService.create(transaction);
+
+        this.$router.push('/');
+      } catch (error) {
+        console.error('Error while saving transaction!')
+        console.error(error);
+      }
+    },
+
+    async updateCostCenterAssets(transaction) {
+      if (transaction.sourceCostCenterAsset) {
+        const newAmount = transaction.sourceCostCenterAsset.amount -= transaction.amount;
+        await costCenterAssetService.update(
+            transaction.sourceCostCenterAsset.id,
+            [{
+              op: "replace",
+              path: "/amount",
+              value: newAmount
+            }],
+        )
+      }
+
+      if (transaction.targetCostCenterAsset) {
+        const newAmount = transaction.targetCostCenterAsset.amount += transaction.amount;
+        await costCenterAssetService.update(
+            transaction.targetCostCenterAsset.id,
+            [{
+              op: "replace",
+              path: "/amount",
+              value: newAmount
+            }],
+        );
+      }
     },
 
     updateTransactionType(event) {
@@ -331,29 +319,39 @@ export default {
       if (this.transactionDirection === 'revenue') {
         this.payerAccounts = this.bankAccounts
             .filter(b => b.external)
-            .map(p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} });
+            .map(p => {
+              return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
+            });
 
         this.payeeAccounts = this.bankAccounts
             .filter(b => !b.external)
-            .map(p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} });
-      }
-      else if (this.transactionDirection === 'expense') {
+            .map(p => {
+              return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
+            });
+      } else if (this.transactionDirection === 'expense') {
         this.payerAccounts = this.bankAccounts
             .filter(b => !b.external)
-            .map(p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} });
+            .map(p => {
+              return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
+            });
 
         this.payeeAccounts = this.bankAccounts
             .filter(b => b.external)
-            .map(p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} });
-      }
-      else if (this.transactionDirection === 'transfer') {
+            .map(p => {
+              return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
+            });
+      } else if (this.transactionDirection === 'transfer') {
         this.payerAccounts = this.bankAccounts
             .filter(b => !b.external)
-            .map(p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} });
+            .map(p => {
+              return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
+            });
 
         this.payeeAccounts = this.bankAccounts
             .filter(b => !b.external)
-            .map(p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} });
+            .map(p => {
+              return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
+            });
       }
     }
   }

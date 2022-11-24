@@ -23,7 +23,7 @@
 
 <script>
 
-import { NumberService } from '@/services/number-service';
+import { numberService } from '@/services/number-service';
 
 export default {
   props: {
@@ -32,11 +32,11 @@ export default {
 
   methods: {
     formatDate(value) {
-      return NumberService.formatDate(value);
+      return numberService.formatDate(value);
     },
 
     formatCurrency(value) {
-      return NumberService.formatCurrency(value);
+      return numberService.formatCurrency(value);
     }
   }
 };

@@ -30,8 +30,8 @@ import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 
 import OrganismCollapsible from '@/components/organisms/OrganismCollapsible';
 
-import {AccountHolderService} from '@/services/account-holder-service';
-import {NumberService} from '@/services/number-service';
+import {accountHolderService} from '@/services/account-holder-service';
+import {numberService} from '@/services/number-service';
 import {costCenterService} from '@/services/cost-center-service';
 
 export default {
@@ -111,7 +111,7 @@ export default {
         bankAccount.costCenters.forEach(category => {
           //category.balance has to be a string although it's actually a number
           //this is because of the dynamic freeBudget calculation in OrganismBudgetList
-          category.balance = NumberService.formatCurrency(category.balance, false);
+          category.balance = numberService.formatCurrency(category.balance, false);
           category.bankAccountId = bankAccount.id;
         });
       }
@@ -137,7 +137,7 @@ export default {
 //TODO - die ganzen API-Calls müssen optimiert werden, bzw. das Error-Handling ...
     async getAccountHolders() {
       const includeAccounts = true;
-      const accountHolderResponse = await AccountHolderService.getAllByUser(includeAccounts);
+      const accountHolderResponse = await accountHolderService.getAllByUser(includeAccounts);
 
       if (accountHolderResponse.success && accountHolderResponse.data) {
         this.accountHolders = accountHolderResponse.data;

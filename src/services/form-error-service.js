@@ -3,7 +3,6 @@ const bicErrorMessage =                                 'Bitte gib einen gültig
 const ibanErrorMessage =                                'Bitte gib eine gültige IBAN ein!';
 const ibanDuplicateErrorMessage =                       'Diese IBAN existiert bereits!';
 const nameErrorMessage =                                'Bitte gib einen Namen ein!';
-const referenceErrorMessage =                           'Bitte gib einen Verwendungszweck ein!';
 
 //TODO - change every service name to UpperCase
 export const errorService = {
@@ -17,6 +16,8 @@ export const errorService = {
         costCenter:                             'Bitte wähle eine Kostenstelle aus!',
         //costCenterId:                           'Bitte wähle eine Kostenstelle!',
         counterParty:                           'Bitte gib einen {counterPartyType} an!',
+        cycleItem:                              'Bitte wähle einen Turnus!',
+        dayOfMonth:                             'Bitte gib eine Zahl zwischen 1 und 28 an!',
         externalParty:                            'Bitte gib einen {externalPartyType} an!',
         externalPartyIban:                        ibanErrorMessage,
         externalPartyBic:                         bicErrorMessage,
@@ -36,7 +37,8 @@ export const errorService = {
         payeeAccount:                           'Bitte wähle einen Zahlungsempfänger aus!',
         payeeCostCenter:                        'Bitte wähle eine Kostenstelle aus!',
         rateOfInterest:                         'Bitte gib einen gültigen Zinssatz an!',
-        reference:                              referenceErrorMessage,
+        reference:                              'Bitte gib einen Verwendungszweck ein!',
+        reference_maxLength:                    'Der Verwendungszweck darf nicht länger als 25 Zeichen sein!',
         targetAmount:                           amountErrorMessage,
         title_required:                         'Bitte gib einen Titel ein!',
         title_maxLength:                        'Der Titel darf nicht länger als 30 Zeichen sein!',

@@ -1,9 +1,10 @@
 <template>
   <div class="molecule-input-auto-suggest form-floating">
     <!-- TODO - I removed :placeholder="label" in the AtomInputText - test, if this works everywhere - the placeholder seems to have no function. I have the AtomLabel instead -->
-    <AtomInputText :id="field" :disabled="(noItems && !allowNewItems) || disabled" :value="noItems ? 'Keine Einträge vorhanden' : modelValue?.label" :placeholder="label"
+    <AtomInputText :id="field" :disabled="(noItems && !allowNewItems) || disabled" :value="noItems && !allowNewItems ? noItemsLabel : modelValue?.label"
+                   :placeholder="label" autocomplete="off"
                    :classList="`xfin__form__form-control form-control molecule-input-auto-suggest__input col-4${hasErrors ? ' has-errors' : ''}`"
-                   autocomplete="off" @blur="onBlur" @input="onInput" @focus="inputHasFocus = true"/>
+                   @blur="onBlur($event)" @input="onInput" @focus="inputHasFocus = true"/>
 
     <div class="molecule-input-auto-suggest__chevron">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
@@ -14,7 +15,7 @@
     <!-- TODO - hide ul again, if input looses focus (on blur?) -> this is almost done! But if I hover on an element and then press tab, the box wont disappear, thats a cornercase but maybe i can fix it. I would need to track if TAB was pressed i guess-->
     <AtomUnorderedList v-if="inputHasFocus" class="molecule-input-auto-suggest__suggestions"
                        :items="suggestions" @itemClicked="pickItem"
-                       @itemMouseenter="hoverOnItem = true" @itemMouseleave="hoverOnItem = false"/>
+                       @itemMouseenter="hoverOnItem = true" @itemMouseleave="hoverOnItem = false" />
 
     <template v-for="(error, index) in validation?.$errors" :key="index">
       <MoleculeFormError :error="error" :errorMessageParams="errorMessageParams"/>
@@ -36,9 +37,10 @@ export default {
     errorMessageParams: {type: Object},
     field: {type: String, required: true,},
     hasErrors: {type: Boolean},
-    items: {type: Array, required: true},
-    label: {type: String, required: true,},
+    items: {type: Array, required: true },
+    label: {type: String, required: true },
     modelValue: { type: Object },
+    noItemsLabel: { type: String, default: 'Keine Einträge vorhanden' },
     required: { type: Boolean, default: false },
     // validation has to be the vuelidate object of the property (i.e. v$.name)
     validation: {type: Object},
@@ -80,17 +82,23 @@ export default {
     },
 
     modelValue() {
-      console.log('modelValue changed!');
+      if (this.modelValue === null) {
+        this.resetSuggestions();
+      }
     }
   },
 
   methods: {
-    onBlur() {
+    onBlur(event) {
+      //TODO - check if I can empty the field here, instead of doing it with v$....$touch in OrganismTransactionFormNew
+      //TODO - because for payeeCostCenter I need to empty the field here onBlur, because there is no validation property, so $touch won't empty it!
       if (!this.hoverOnItem) {
         this.inputHasFocus = false;
 
         //if (!this.selectedItem) {
         if (!this.modelValue) {
+          //TODO - test this, if it works for the required proeprties, which have a validation property, as well
+          event.target.value = "";
           this.suggestions = this.items.map(s => {
             return { id: `suggestion-${s.id}`, label: s.label};
           });
@@ -105,12 +113,12 @@ export default {
           //this.$emit('update:modelValue', null)
         }
 
-        this.$emit('blur')
+        this.$emit('blur', event)
       }
     },
 
     onInput(event) {
-      this.validation.$reset();
+      this.validation?.$reset();
       const input = event.target.value.trim().toLowerCase();
 
       const filteredSuggestions = input === ''
@@ -125,7 +133,7 @@ export default {
         this.suggestions.unshift({ id: 'suggestion-0', label: '+ Neu hinzufügen' });
       }
       else if (this.suggestions.length === 0) {
-        this.suggestions.unshift({ id: -1, label: '(keine Einträge gefunden)' });
+        this.suggestions.unshift({ id: 'suggestion--1', label: '(keine Einträge gefunden)' });
       }
     },
 
@@ -154,14 +162,7 @@ export default {
         if(id == 0) {
           this.$emit('addItem');
         }
-        else if(id == -1) {
-          //no items found!
-          this.$emit('update:modelValue', null);
 
-          this.suggestions = this.items.map(i => {
-            return { id: `suggestion-${i.id}`, label: i.label }
-          });
-        }
       }
 
       this.hoverOnItem = false;
