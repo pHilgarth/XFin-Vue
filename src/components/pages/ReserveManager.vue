@@ -103,7 +103,7 @@ export default {
   watch: {
     async bankAccount() {
       this.reservesLoaded = false;
-      this.reserveLoadingError = false;
+      this.reservesLoadingError = false;
 
       try {
         this.reserves = await reserveService.getAllByAccount(this.bankAccount.id);

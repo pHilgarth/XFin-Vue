@@ -12,6 +12,8 @@ import NewRevenue from './components/pages/NewRevenue';
 import EditAccountHolder from './components/pages/EditAccountHolder';
 import ReserveManager from './components/pages/ReserveManager';
 import TransactionManager from './components/pages/TransactionManager';
+import DebtManager from './components/pages/DebtManager';
+import OverheadsManager from './components/pages/OverheadsManager';
 
 import DesignElements from './components/pages/DesignElements';
 
@@ -26,10 +28,12 @@ export const router = createRouter({
         { path: '/new-revenue/:id', component: NewRevenue },
         { path: '/new-expense', name: 'new-expense', component: NewExpense, props: true },
         { path: '/budget-manager', component: BudgetManager },
-        { path: '/design-elements', component: DesignElements},
-        { path: '/cost-centers', component: CostCenterManager},
-        { path: '/reserves', component: ReserveManager},
+        { path: '/design-elements', component: DesignElements },
+        { path: '/cost-centers', component: CostCenterManager },
+        { path: '/reserves', component: ReserveManager },
+        { path: '/debt-manager', component: DebtManager },
         { path: '/loans', name: 'loan-manager', component: LoanManager, props: true },
         { path: '/transaction', name: 'transaction-manager', component: TransactionManager, props: true },
+        { path: '/overheads-manager', name: 'overheads-manager', component: OverheadsManager}
     ],
 });

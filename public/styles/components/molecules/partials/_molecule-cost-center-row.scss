@@ -1,6 +1,6 @@
 .molecule-cost-center-row {
-  background-color: $primary;
-  color: $white;
+  background-color: $color-primary;
+  color: $color-white;
   position: relative;
   @include rem(border-radius, 5px);
   @include rem(padding, 15px 20px);

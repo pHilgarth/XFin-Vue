@@ -1,5 +1,5 @@
 <template>
-  <div v-for="option in options" :key="option.id">
+  <div class="molecule-input-radio-buttons" v-for="option in options" :key="option.id">
     <AtomInputRadioButton :group="group" :id="option.id" :label="option.label" @change="$emit('change', $event)" :checked="preselectedOptionId === option.id"/>
   </div>
 </template>

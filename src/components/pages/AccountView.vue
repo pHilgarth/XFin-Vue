@@ -58,6 +58,7 @@
       <!-- TODO - rename class "......duplicate-account" on the different Organism......Forms to the correct thing (i.e. OrganismCostCenterAssetForm -> it should be duplicated-name or -cost-center-asset... something like that-->
       <!-- TODO - Betrag Verfügbarkeit auf CostCenters, Rücklagen und CostCenterAssets berücksichtigen!! -->
       <!-- TODO  - Rücklagen und CostCenterAssets können nicht überzogen werden - CostCenters selber schon (wenn kein Asset / keine Rücklage beim Zahlungspflichtigen ausgewählt wird)-->
+      <!-- TODO - rework Login / Authentication -->
 
 
 

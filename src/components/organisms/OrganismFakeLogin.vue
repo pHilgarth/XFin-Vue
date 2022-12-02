@@ -1,6 +1,8 @@
 <template>
   <div class="fake-login">
     <AtomHeadline tag="h1" text="Fake-Login" />
+    <p style="font-size:10px">differenzierte Fehlermeldungen einbauen! Es kommt immer "Falsche Login-Daten" - auch wenn der Server grad einfach down ist</p>
+    <MoleculeNotice v-if="loginError" type="danger" text="Falsche Login-Daten!" />
     <form>
       <MoleculeInputText  class="xfin__login__email pb-5" field="email" label="E-Mail" type="email" autocomplete="username" v-model="userMail"
                           :hasErrors="v$.userMail.$error" :validation="v$.userMail" @blur="v$.userMail.$touch()" />
@@ -15,6 +17,9 @@
 import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
+import MoleculeNotice from '@/components/molecules/MoleculeNotice';
+
+import { userService } from '@/services/user-service';
 
 import { useVuelidate } from "@vuelidate/core";
 import { userValidation } from '@/validation/validations';
@@ -25,8 +30,10 @@ export default {
   data() {
     return {
       user: null,
+      userId: '',
       userMail: '',
       userPassword: '',
+      loginError: false,
     };
   },
 
@@ -34,11 +41,24 @@ export default {
     AtomButton,
     AtomHeadline,
     MoleculeInputText,
+    MoleculeNotice,
   },
 
   methods: {
-    login() {
-      this.$emit('login', { userMail: this.userMail, userPassword: this.userPassword })
+    async login() {
+      this.loginError = false;
+      try {
+        const user = await userService.get({
+          email: this.userMail,
+          password: this.userPassword,
+        });
+
+        this.$emit('login', user)
+      }
+      catch (error) {
+        console.error(error);
+        this.loginError = true;
+      }
     }
   },
 

@@ -1,31 +1,31 @@
-$primary:                                   #222222;
-$secondary:                                 #235baf;
-$secondary-dark:                            #1f4989;
-$secondary-light:                           #3f72bf;
+$color-primary:                                   #222222;
+$color-secondary:                                 #235baf;
+$color-secondary-dark:                            #1f4989;
+$color-secondary-light:                           #3f72bf;
 
-$black:                                     #000000;
-$green:                                     #178009;
-$light-gray:                                #cccccc;
-$orange:                                    #ff8936;
-$red:                                       #f04124;
-$red-dark:                                  #bb331d;
-$red-light:                                 #ff7373;
-$white:                                     #ffffff;
+$color-black:                                     #000000;
+$color-green:                                     #178009;
+$color-light-gray:                                #cccccc;
+$color-orange:                                    #ff8936;
+$color-red:                                       #f04124;
+$color-red-dark:                                  #bb331d;
+$color-red-light:                                 #ff7373;
+$color-white:                                     #ffffff;
 
-$borders:                                   $light-gray;
+$color-borders:                                   $color-light-gray;
 
-$background-button-primary:                 $secondary;
-$background-button-primary-dark:            $secondary-dark;
-$background-button-primary-disabled:        $light-gray;
-$text-button-primary:                       $white;
-$text-button-light:                         $secondary;
-$border-button-light:                       $secondary;
-$background-button-cancel:                  $red;
-$background-button-cancel-dark:             $red-dark;
-$text-button-cancel:                        $white;
+$color-background-button-primary:                 $color-secondary;
+$color-background-button-primary-dark:            $color-secondary-dark;
+$color-background-button-primary-disabled:        $color-light-gray;
+$color-text-button-primary:                       $color-white;
+$color-text-button-light:                         $color-secondary;
+$color-border-button-light:                       $color-secondary;
+$color-background-button-cancel:                  $color-red;
+$color-background-button-cancel-dark:             $color-red-dark;
+$color-text-button-cancel:                        $color-white;
 
-$font-dark:                                 $black;
-$font-light:                                $white;
+$color-font-dark:                                 $color-black;
+$color-font-light:                                $color-white;
 
-$form-errors:                               $red;
-$form-required:                             $red;
+$color-form-errors:                               $color-red;
+$color-form-required:                             $color-red;

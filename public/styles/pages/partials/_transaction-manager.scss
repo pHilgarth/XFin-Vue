@@ -1,0 +1,4 @@
+.transaction-manager__transaction-direction {
+  @include rem(margin-bottom, 30px);
+  display: flex;
+}

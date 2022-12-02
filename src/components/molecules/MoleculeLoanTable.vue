@@ -3,26 +3,28 @@
     <thead>
     <tr>
       <th>Verwendungszweck</th>
-      <th>Kontotyp</th>
-      <th>Kontostand</th>
-      <th>Aktion</th>
+      <th>Betrag</th>
+      <th>Getilgter Betrag</th>
+      <th>Offener Betrag</th>
     </tr>
     </thead>
     <tbody>
     <tr v-for="loan in loans" :key="loan.id">
       <td>
-        {{ loan.title }}
+        {{ loan.reference }}
       </td>
-      <td>{{ bankAccount.description }}</td>
-      <td>{{formatCurrency(bankAccount.balance)}}</td>
-      <td>
-        <MoleculeActionSelect :bankAccount="bankAccount" />
-      </td>
+      <td></td>
+      <td></td>
+      <td></td>
     </tr>
     </tbody>
   </table>
 </template>
 
 <script>
-
+  export default {
+    props: {
+      loans: { type: Array, required: true },
+    }
+  }
 </script>

@@ -17,26 +17,29 @@
     <div v-if="user" class="xfin__body">
       <div class="xfin__sidebar">
         <ul class="xfin__menu">
-          <li id="account-view" :class="selectedMenuItem == 1 ? 'active' : ''">
+          <li id="account-view" :class="selectedMenuItem === 0 ? 'active' : ''">
             <a href="/">Kontenübersicht</a>
           </li>
-          <li id="transaction" :class="selectedMenuItem == 2 ? 'active' : ''">
+          <li id="transaction" :class="selectedMenuItem === 1 ? 'active' : ''">
             <a href="/transaction">Transaktion</a>
           </li>
-          <li id="budget-manager" :class="selectedMenuItem == 3 ? 'active' : ''">
+          <li id="budget-manager" :class="selectedMenuItem === 2 ? 'active' : ''">
             <a href="/budget-manager">Budgetmanager</a>
           </li>
-          <li id="cost-centers" :class="selectedMenuItem == 4 ? 'active' : ''">
+          <li id="overheads-manager" :class="selectedMenuItem === 3 ? 'active' : ''">
+            <a href="/overheads-manager">Fixkosten</a>
+          </li>
+          <li id="cost-centers" :class="selectedMenuItem === 4 ? 'active' : ''">
             <a href="/cost-centers">Kostenstellenverwaltung</a>
           </li>
-          <li id="reserves" :class="selectedMenuItem == 5 ? 'active' : ''">
+          <li id="reserves" :class="selectedMenuItem === 5 ? 'active' : ''">
             <a href="/reserves">Rücklagen</a>
           </li>
-          <li id="design-elements" :class="selectedMenuItem == 6 ? 'active' : ''">
-            <a href="/design-elements">Design-Elemente (Dev)</a>
+          <li id="debt-manager" :class="selectedMenuItem === 6 ? 'active' : ''">
+            <a href="/debt-manager">Schuldenmanager</a>
           </li>
-          <li>
-            <pre>{{ selectedMenuItem }}</pre>
+          <li id="design-elements" :class="selectedMenuItem === 7 ? 'active' : ''">
+            <a href="/design-elements">Design-Elemente (Dev)</a>
           </li>
         </ul>
       </div>
@@ -46,25 +49,34 @@
         </div>
       </div>
     </div>
-    <FakeLogin v-else @login="login" />
+    <OrganismFakeLogin v-else @login="login" />
   </div>
 </template>
 
 <script>
-import FakeLogin from '@/components/organisms/OrganismFakeLogin'
+import OrganismFakeLogin from '@/components/organisms/OrganismFakeLogin'
 
 export default {
   created() {
-    this.selectedMenuItem = this.menuItems.indexOf()
+    if (this.$cookies.get('user')) {
+      this.user = this.$cookies.get('user');
+    }
+  },
+
+  updated() {
+    const indexRoutePath = this.menuItems.indexOf(this.$route.path.substring(1));
+    this.selectedMenuItem = indexRoutePath === -1 ? 0 : indexRoutePath;
   },
 
   components: {
-    FakeLogin,
+    OrganismFakeLogin,
   },
 
-  provide: {
+  provide() {
     //TODO - implement proper login with authentication, then somehow pass the userId to everyComponent
-    userId: 1,
+    return {
+      userId: 1,//this.user?.id,
+    }
   },
 
   data() {
@@ -74,11 +86,14 @@ export default {
           'account-view',
           'transaction',
           'budget-manager',
+          'overheads-manager',
           'cost-centers',
           'reserves',
+          'debt-manager',
           'design-elements',
       ],
       user: null,
+      test: 'hi',
     };
   },
 
@@ -86,6 +101,7 @@ export default {
     //TODO - implement proper login with authentication
     login(user) {
       this.user = user;
+      this.$cookies.set('user', user, '', '', 'localhost', '', '')
     },
 
     routeToComponent(event) {

@@ -10,21 +10,21 @@
 
         &:focus {
             box-shadow: none;
-            border-color: $secondary
+            border-color: $color-secondary
         }
     }
 
     &__error {
         @include rem(font-size, 16px);
         @include rem(padding, 10px 0);
-        color: $form-errors;
+        color: $color-form-errors;
         margin: 0;
         //TODO - check if this has drawbacks somewhere (it will :D but where)
         position: absolute;
     }
 
     &__label i {
-        color: $form-required;
+        color: $color-form-required;
     }
 }
 

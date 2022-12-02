@@ -1,7 +1,7 @@
 .xfin {
   &__header {
-    background-color: $primary;
-    color: $font-dark;
+    background-color: $color-primary;
+    color: $color-font-dark;
     position: fixed;
     top: 0;
     width: 100vw;
@@ -28,7 +28,7 @@
   }
 
   &__sidebar {
-    background-color: $primary;
+    background-color: $color-primary;
     height: 95vh;
     position: fixed;
     width: 12.5vw;
@@ -43,18 +43,26 @@
     padding: 0;
 
     li {
-      background-color: $white;
-      border: solid $borders;
+      background-color: $color-white;
+      border: solid $color-borders;
       border-width: 1px 1px 0 0;
       cursor: pointer;
-      @include rem((
-              padding: 10px,
-      ));
 
       &:hover, &.active {
-        background-color: $secondary;
-        border-color: $secondary;
-        color: $font-light;
+        background-color: $color-secondary;
+        border-color: $color-secondary;
+
+        a {
+          color: $color-white;
+        }
+      }
+
+      a {
+        @include rem(padding, 10px);
+        color: $color-font-dark;
+        text-decoration: none;
+        display: inline-block;
+        width: 100%;
       }
     }
   }

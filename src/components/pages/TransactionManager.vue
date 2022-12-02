@@ -5,8 +5,10 @@
     <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!"/>
 
     <template v-else>
-      <MoleculeInputRadioButtons :options="transactionDirections" group="transaction-type" preselectedOptionId="revenue"
-                                 @change="updateTransactionType"/>
+      <div class="transaction-manager__transaction-direction">
+        <MoleculeInputRadioButtons :options="transactionDirections" group="transaction-type" preselectedOptionId="revenue"
+                                   @change="updateTransactionType"/>
+      </div>
 
       <OrganismTransactionFormNew
           :costCenters="costCenters"

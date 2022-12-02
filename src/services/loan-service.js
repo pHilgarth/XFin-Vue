@@ -5,9 +5,9 @@
 const baseUrl = "http://localhost:2905/api/loans";
 
 export const loanService = {
-    async getAllByDebitor(accountId, costCenterId) {
+    async getAllByBankAccount(accountId) {
         try {
-            return await fetch(`${baseUrl}/account/${accountId}/costCenter/${costCenterId}`).then((response) => {
+            return await fetch(`${baseUrl}/${accountId}`).then((response) => {
                 if (response.status === 200) {
                     return response.json();
                 }

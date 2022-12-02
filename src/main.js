@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import { router } from './router';
+import VueCookies from 'vue-cookies';
 
 import App from './App';
 
@@ -16,4 +17,5 @@ app.component('OrganismTable', OrganismTable);
 app.component('MoleculeActionSelect', MoleculeActionSelect);
 
 app.use(router);
+app.use(VueCookies);
 app.mount('#app');
