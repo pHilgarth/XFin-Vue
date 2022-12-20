@@ -1,6 +1,6 @@
 <template>
-  <div class="molecule-loan-detail">
-    <div class="molecule-loan-detail__inner">
+  <div class="organism-loan-modal">
+    <div class="organism-loan-modal__inner">
       <AtomHeadline tag="h1" text="Darlehen-Details" />
 
       <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden des Darlehens!"/>
@@ -8,7 +8,7 @@
       <template v-else>
         <MoleculeLoanDetailTable :loan="loan" @update-loan="getData()"/>
         <OrganismCollapsibleWithSlot v-if="loan.repayments.length" title="Transaktionen">
-          <MoleculeLoanTransactionsTable :repayments="loan.repayments" />
+          <MoleculeLoanTransactions :repayments="loan.repayments" />
         </OrganismCollapsibleWithSlot>
       </template>
 
@@ -24,7 +24,7 @@ import AtomHeadline from '@/components/atoms/AtomHeadline';
 
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeLoanDetailTable from '@/components/molecules/MoleculeLoanDetailTable';
-import MoleculeLoanTransactionsTable from '@/components/molecules/MoleculeLoanTransactionsTable';
+import MoleculeLoanTransactions from '@/components/molecules/MoleculeLoanTransactions';
 
 import OrganismCollapsibleWithSlot from '@/components/organisms/OrganismCollapsibleWithSlot';
 
@@ -37,7 +37,7 @@ export default {
     AtomHeadline,
     MoleculeLoading,
     MoleculeLoanDetailTable,
-    MoleculeLoanTransactionsTable,
+    MoleculeLoanTransactions,
     OrganismCollapsibleWithSlot,
   },
 

@@ -22,7 +22,7 @@
 
           <AtomParagraph v-if="creditorLoans.length === 0 && debitorLoans.length === 0" text="Keine Darlehen auf diesem Konto gefunden!" />
 
-          <MoleculeLoanDetail v-if="showLoan" :loanId="selectedLoan.id" @close-loan="hideLoanModal"/>
+          <OrganismLoanModal v-if="showLoan" :loanId="selectedLoan.id" @close-loan="hideLoanModal"/>
         </template>
       </template>
 
@@ -38,9 +38,9 @@ import AtomHeadline from '@/components/atoms/AtomHeadline';
 import AtomParagraph from "../atoms/AtomParagraph";
 import MoleculeInputAutoSuggest from '@/components/molecules/MoleculeInputAutoSuggest';
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
-import MoleculeLoanDetail from '@/components/molecules/MoleculeLoanDetail';
 import MoleculeLoanTable from '@/components/molecules/MoleculeLoanTable';
 import OrganismCollapsibleWithSlot from "../organisms/OrganismCollapsibleWithSlot";
+import OrganismLoanModal from '@/components/organisms/OrganismLoanModal';
 
 import { accountService } from '@/services/account-service';
 import { loanService } from '@/services/loan-service';
@@ -52,9 +52,9 @@ export default {
     AtomParagraph,
     MoleculeInputAutoSuggest,
     MoleculeLoading,
-    MoleculeLoanDetail,
     MoleculeLoanTable,
     OrganismCollapsibleWithSlot,
+    OrganismLoanModal,
   },
 
   async created() {

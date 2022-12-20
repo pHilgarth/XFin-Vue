@@ -1,10 +1,11 @@
 .organism-reserve-modal {
+  background-color: rgba(0, 0, 0, .5);
+  height: 100vh;
+  left: 0;
+  overflow-y: scroll;
   position: fixed;
   top: 0;
-  left: 0;
   width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, .5);
   z-index: z('modal');
 
   &__inner {

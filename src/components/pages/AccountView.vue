@@ -79,6 +79,7 @@
       <!-- TODO - Löschen von jeglichen Daten fehlt noch komplett -->
       <!-- TODO - im Budgetmanager gibt es keine Error-Messages / Validation-Messages -->
       <!-- TODO - im Budgetmanager verschiebt sich das Layout, wenn ein Posten bearbeitet wird -->
+      <!-- TODO - jedes Modal: max-height 800px oder so (nochmal prüfen) und overflow-y: scroll -->
 
 
 

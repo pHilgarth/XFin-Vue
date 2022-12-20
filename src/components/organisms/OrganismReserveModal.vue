@@ -2,6 +2,7 @@
   <div class="organism-reserve-modal">
     <div class="organism-reserve-modal__inner">
       <AtomHeadline tag="h1" text="Rücklagendetails" />
+      <!-- TODO move this table into its own file -->
       <table class="organism-reserve-modal__details">
         <tbody>
         <tr>
@@ -52,6 +53,10 @@
         </tbody>
       </table>
 
+      <OrganismCollapsibleWithSlot v-if="transactions.length" title="Transaktionen">
+        <p>hier könnte ich einen Slider für die verschiedenen Monate einbauen, sonst sind es irgendwann sehr viele Transactions nach unten</p>
+        <MoleculeReserveTransactions :transactions="transactions" :accountId="reserve.bankAccount.id"/>
+      </OrganismCollapsibleWithSlot>
       <AtomButton type="primary" :disabled="v$.$silentErrors.length" text="Speichern" @click="save" />
       <AtomButton type="cancel" text="Abbrechen" @click="$emit('cancel')" />
     </div>
@@ -64,6 +69,8 @@ import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
 import MoleculeFormError from '@/components/molecules/MoleculeFormError';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
+import MoleculeReserveTransactions from "@/components/molecules/MoleculeReserveTransactions";
+import OrganismCollapsibleWithSlot from "@/components/organisms/OrganismCollapsibleWithSlot";
 
 import { numberService } from '@/services/number-service';
 
@@ -79,6 +86,8 @@ export default {
     AtomHeadline,
     MoleculeFormError,
     MoleculeInputText,
+    MoleculeReserveTransactions,
+    OrganismCollapsibleWithSlot,
     Datepicker,
   },
 
@@ -101,6 +110,13 @@ export default {
       reference: this.reserve.reference,
       targetAmount: numberService.amountToString(this.reserve.targetAmount),
       targetDate: this.reserve.targetDate,
+      transactions: Array.from([
+          this.reserve.revenues.map(r => ({ ...r, cssClass: '' }) ),
+          this.reserve.expenses.map(e => ({ ...e, cssClass: 'negative' }) ),
+      ]).flat().sort((a, b) => {
+        return a.date < b.date ? 1 :
+            a.date === b.date ? 0 : -1;
+      }),
     };
   },
 

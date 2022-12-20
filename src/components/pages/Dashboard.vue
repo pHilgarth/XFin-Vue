@@ -5,7 +5,7 @@
     <OrganismTransactionsDue />
 <!--    <MoleculeTransactionsDue />-->
 
-    <h3>NextSteps: Reserve Detailansicht (+ Bearbeiten) / Verknüpfung von Transaktionen zu Rücklagen testen (wiederkehrend / Sparraten)</h3>
+    <h3>NextSteps: <ul><li>Verknüpfung von Transaktionen zu Rücklagen testen (wiederkehrend / Sparraten)</li><li>Kontodetailansicht!</li></ul></h3>
   </div>
 </template>
 <script>
