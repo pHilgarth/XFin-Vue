@@ -20,7 +20,7 @@
 }
 
 .molecule-collapsible-body {
-    overflow: hidden;
+    overflow: scroll;
     transition: max-height 1s;
     @include rem((
             max-height: 1000px,

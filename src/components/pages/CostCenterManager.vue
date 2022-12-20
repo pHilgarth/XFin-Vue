@@ -1,19 +1,23 @@
 <template>
   <div class="cost-center-manager">
-    <AtomHeadline tag="h1" text="Kostenstellenverwaltung" />
+    <AtomHeadline tag="h1" text="Kostenstellen" />
 
     <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Kostenstellen!"/>
 
     <template v-else>
-      <AtomButton v-if="!createNew" type="primary" text="Kostenstelle hinzufügen" @click="createNew = true" :disabled="editCostCenter"/>
-      <AtomButton class="me-3" v-if="createNew" type="primary" text="Speichern" @click="saveCostCenter" />
-      <AtomButton v-if="createNew" type="cancel" text="Abbrechen" @click="cancelCostCenterCreation"/>
+
+
+      <MoleculeCostCenterRow v-for="costCenter in costCenters" :key="costCenter.id" :costCenter="costCenter" :allowEdit="!createNew" @edit-cost-center="editCostCenter = true"
+                             @cancel-edit="editCostCenter = false" @update-cost-center="updateCostCenter"/>
 
       <MoleculeInputText v-if="createNew" class="pb-4" field="cost-center" :hasErrors="nameErrors" v-model="newCostCenter" @blur="v$.newCostCenter.$touch()" :validation="v$.newCostCenter"
                          label="Neue Kostenstelle" />
 
-      <MoleculeCostCenterRow v-for="costCenter in costCenters" :key="costCenter.id" :costCenter="costCenter" :allowEdit="!createNew" @edit-cost-center="editCostCenter = true"
-                             @cancel-edit="editCostCenter = false" @update-cost-center="updateCostCenter"/>
+      <AtomButton class="me-3" v-if="createNew" type="primary" text="Speichern" @click="saveCostCenter" />
+      <AtomButton v-if="createNew" type="cancel" text="Abbrechen" @click="cancelCostCenterCreation"/>
+
+      <AtomButton v-if="!createNew" type="primary" text="Kostenstelle hinzufügen" @click="createNew = true" :disabled="editCostCenter"/>
+
     </template>
   </div>
 </template>
@@ -40,14 +44,15 @@ export default {
     MoleculeCostCenterRow
   },
 
-  data() {
-    return {
-      costCenters: null,
-      createNew: false,
-      dataLoaded: false,
-      editCostCenter: false,
-      loadingError: false,
-      newCostCenter: null,
+  async created() {
+    try {
+      await this.getCostCenters()
+
+      this.dataLoaded = true;
+    }
+    catch (error) {
+      console.error(error);
+      this.loadingError = true;
     }
   },
 
@@ -65,14 +70,14 @@ export default {
     },
   },
 
-  async created() {
-    let apiResponse = await this.getCostCenters();
-
-    if (apiResponse.success) {
-      this.dataLoaded = true;
-    } else {
-      this.loadingError = true;
-      console.error(apiResponse.error);
+  data() {
+    return {
+      costCenters: null,
+      createNew: false,
+      dataLoaded: false,
+      editCostCenter: false,
+      loadingError: false,
+      newCostCenter: null,
     }
   },
 
@@ -84,18 +89,14 @@ export default {
     },
 
     async getCostCenters() {
-      const apiResponse = await costCenterService.getAll();
-
-      if (apiResponse.success && apiResponse.data) {
-        apiResponse.data.splice(apiResponse.data.findIndex(t => t.name === 'Nicht zugewiesen'), 1);
-
-        this.costCenters = apiResponse.data;
+      try {
+        this.costCenters = await costCenterService.getAll();
+        this.costCenters.splice(this.costCenters.findIndex(t => t.name === 'Nicht zugewiesen'), 1);
       }
-      else if (apiResponse.success && !apiResponse.data) {
-        this.costCenters = [];
+      catch (error) {
+        console.error(error);
+        throw new Error(error);
       }
-
-      return apiResponse;
     },
 
     async saveCostCenter() {

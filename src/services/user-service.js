@@ -10,7 +10,7 @@ export const userService = {
                     return response.json();
                 }
                 else if (response.status === 404) {
-                    throw new Error('wrong login data');
+                    return null;
                 }
             }).then(data => data);
         } catch (error) {

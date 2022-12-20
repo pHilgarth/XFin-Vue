@@ -15,10 +15,10 @@
                                   :hasErrors="v$.costCenter.$error" @blur="onBlurCostCenter" @itemPicked="pickItem($event, 'costCenter')"/>
       </div>
 
-      <!-- TODO - I need to check for duplicated reserve titles in the database -->
-      <MoleculeInputText class="pb-5" field="title" :hasErrors="v$.title.$error" v-model="title" :required="true"
-                         @blur="v$.title.$touch()" :validation="v$.title" label="Titel" />
-<!--      <AtomParagraph v-if="duplicate" class="new-reserve__duplicate-title xfin__form__error" text="Dieser Titel existiert bereits!" />-->
+      <!-- TODO - I need to check for duplicated reserve references in the database -->
+      <MoleculeInputText class="pb-5" field="reference" :hasErrors="v$.reference.$error" v-model="reference" :required="true"
+                         @blur="v$.reference.$touch()" :validation="v$.reference" label="Titel" />
+<!--      <AtomParagraph v-if="duplicate" class="new-reserve__duplicate-reference xfin__form__error" text="Dieser Titel existiert bereits!" />-->
 
       <MoleculeInputText class="pb-5" field="targetAmount" :hasErrors="v$.targetAmount.$error" v-model="targetAmount" :validation="v$.targetAmount"
                          label="Zielbetrag" @blur="v$.targetAmount.$touch()" />
@@ -34,7 +34,6 @@
 <script>
 
 import Datepicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css'
 
 import { useVuelidate } from "@vuelidate/core";
 
@@ -45,7 +44,7 @@ import MoleculeInputAutoSuggest from '@/components/molecules/MoleculeInputAutoSu
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 
-import { bankAccountService } from '@/services/bank-account-service';
+import { accountService } from '@/services/account-service';
 import { costCenterService } from '@/services/cost-center-service';
 import { numberService } from '@/services/number-service';
 import { reserveService } from '@/services/reserve-service';
@@ -88,7 +87,7 @@ export default {
       loadingError: false,
       targetAmount: null,
       targetDate: null,
-      title: '',
+      reference: '',
     }
   },
 
@@ -96,7 +95,7 @@ export default {
     //TODO - i should move these get....() methods into the service or update the services, so I can call them from the created method
     async getData() {
       try {
-        const bankAccountsResult = bankAccountService.getAll();
+        const bankAccountsResult = accountService.getAll();
         let costCentersResult = costCenterService.getAll();
 
         let bankAccounts = await bankAccountsResult;
@@ -142,7 +141,7 @@ export default {
         const newReserve = {
           bankAccountId: this.bankAccount.id,
           costCenterId: this.costCenter.id,
-          reference: this.title,
+          reference: this.reference,
           targetAmount: numberService.parseFloat(this.targetAmount),
           targetDate: this.targetDate?.toISOString() || null,
         };
@@ -169,3 +168,7 @@ export default {
 };
 
 </script>
+
+<style>
+@import '~@vuepic/vue-datepicker/dist/main.css';
+</style>

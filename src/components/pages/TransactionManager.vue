@@ -6,7 +6,7 @@
 
     <template v-else>
       <div class="transaction-manager__transaction-direction">
-        <MoleculeInputRadioButtons :options="transactionDirections" group="transaction-type" preselectedOptionId="revenue"
+        <MoleculeInputRadioButtons :options="transactionTypes" group="transaction-type" preselectedOptionId="Revenue"
                                    @change="updateTransactionType"/>
       </div>
 
@@ -14,7 +14,7 @@
           :costCenters="costCenters"
           :payerAccounts="payerAccounts"
           :payeeAccounts="payeeAccounts"
-          :transactionDirection="transactionDirection"
+          :transactionType="transactionType"
           :initialPayeeAccount="payeeAccount"
           :initialPayerAccount="payerAccount"
           :newPayeeCostCenterAsset="payeeCostCenterAsset"
@@ -31,7 +31,7 @@
     <!--    <pre>{{ externalPartyToSave }}</pre>-->
 
     <div v-if="showExternalPartyForm">
-      <OrganismExternalPartyForm :ibans="ibans" :names="accountHolderNames" @save="saveExternalParty"
+      <OrganismExternalPartyModal :ibans="ibans" :names="accountHolderNames" @save="saveExternalParty"
                                  @cancel="showExternalPartyForm = false"/>
     </div>
 
@@ -47,14 +47,15 @@ import AtomHeadline from '@/components/atoms/AtomHeadline';
 import MoleculeInputRadioButtons from '@/components/molecules/MoleculeInputRadioButtons';
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import OrganismCostCenterAssetForm from '@/components/organisms/OrganismCostCenterAssetForm';
-import OrganismExternalPartyForm from '@/components/organisms/OrganismExternalPartyForm';
+import OrganismExternalPartyModal from '@/components/organisms/OrganismExternalPartyModal';
 //import OrganismTransactionForm from '@/components/organisms/OrganismTransactionForm';
 import OrganismTransactionFormNew from '@/components/organisms/OrganismTransactionFormNew';
 
 import { accountHolderService } from '@/services/account-holder-service';
-import { bankAccountService } from '@/services/bank-account-service';
+import { accountService } from '@/services/account-service';
 import { costCenterService } from '@/services/cost-center-service';
 import { costCenterAssetService } from '@/services/cost-center-asset-service';
+import { loanService } from '@/services/loan-service';
 import { recurringTransactionService } from '@/services/recurring-transaction-service';
 import { transactionService } from '@/services/transaction-service';
 
@@ -66,7 +67,7 @@ export default {
     MoleculeInputRadioButtons,
     MoleculeLoading,
     OrganismCostCenterAssetForm,
-    OrganismExternalPartyForm,
+    OrganismExternalPartyModal,
     //OrganismTransactionForm,
     OrganismTransactionFormNew,
   },
@@ -103,12 +104,12 @@ export default {
       showCostCenterAssetForm: false,
       showCostCenterForm: false,
       showExternalPartyForm: false,
-      transactionDirection: 'revenue',
+      transactionType: 'Revenue',
 
-      transactionDirections: [
-        {id: 'revenue', label: 'Einnahme'},
-        {id: 'expense', label: 'Ausgabe'},
-        {id: 'transfer', label: 'Umbuchung'}
+      transactionTypes: [
+        {id: 'Revenue', label: 'Einnahme'},
+        {id: 'Expense', label: 'Ausgabe'},
+        {id: 'Transfer', label: 'Umbuchung'}
       ],
     }
   },
@@ -123,7 +124,7 @@ export default {
 
     async getData() {
       try {
-        const bankAccounts = bankAccountService.getAll();
+        const bankAccounts = accountService.getAll();
         const costCenters = costCenterService.getAll();
 
         const bankAccountsResult = await bankAccounts;
@@ -216,7 +217,7 @@ export default {
         new: true,
       }
 
-      if (this.transactionDirection === 'revenue') {
+      if (this.transactionType === 'Revenue') {
         this.payerAccount = accountItem;
 //TODO - this can be simplified (don't use Array.from twice, place it in a function with parameter, that has a value 'payee' oder 'payer')
         this.payerAccounts = Array.from([
@@ -226,7 +227,7 @@ export default {
           return a.label < b.label ? -1 :
               a.label === b.label ? 0 : 1;
         });
-      } else if (this.transactionDirection === 'expense') {
+      } else if (this.transactionType === 'Expense') {
         this.payeeAccount = accountItem;
 
         this.payeeAccounts = Array.from([
@@ -248,12 +249,12 @@ export default {
 
           this.externalPartyToSave.bankAccount.accountHolderId = createdAccountHolder.id;
 
-          const createdBankAccount = await bankAccountService.create(this.externalPartyToSave.bankAccount);
+          const createdBankAccount = await accountService.create(this.externalPartyToSave.bankAccount);
 
-          if (this.transactionDirection === 'revenue') {
+          if (this.transactionType === 'Revenue') {
             transaction.sourceBankAccountId = createdBankAccount.id;
           }
-          else if (this.transactionDirection === 'expense') {
+          else if (this.transactionType === 'Expense') {
             transaction.targetBankAccountId = createdBankAccount.id;
           }
         }
@@ -261,10 +262,6 @@ export default {
         if (this.costCenterAssetToSave) {
           this.costCenterAssetToSave.amount += transaction.amount;
           await costCenterAssetService.create(this.costCenterAssetToSave);
-        }
-        else {
-          //TODO - delete else block?
-
         }
 
         if (transaction.updateCostCenterAssets) {
@@ -276,10 +273,36 @@ export default {
           transaction.reserveId = transaction.reserve.id.substring(8);
         }
 
+        if (transaction.loan) {
+          //TODO - maybe rethink the process of loans (creation, actual receipt, repayment,....)
+          const loan = transaction.loan;
+          if (loan.creditorBankAccount.id === transaction.sourceBankAccountId) {
+            //if the creditor of the selected loan is the source, it's the actual receipt of the loan amount
+            //this should only happen once for every loan - multiple receipts per loan is not allowed / should not be allowed
+            loan.balance = loan.amount;
+          }
+          else if (loan.creditorBankAccount.id === transaction.targetBankAccountId) {
+            //if the creditor of the selected loan is the target, it's a repayment and I need to calculate the repaymentAmount
+            //because every repayment contains an amount just for the interest
+            const repaymentAmount = loan.monthlyInstallment - (loan.balance * loan.rateOfInterest / 100 / 12);
+
+            loan.balance -= repaymentAmount;
+          }
+
+          await loanService.update(
+              loan.id,
+              [{
+                op: "replace",
+                path: "/balance",
+                value: loan.balance
+              }],
+          );
+        }
+
         if (transaction.isRecurring) {
           await recurringTransactionService.create(transaction);
         }
-
+console.log(transaction);
         await transactionService.create(transaction);
 
         this.$router.push('/');
@@ -316,9 +339,9 @@ export default {
     },
 
     updateTransactionType(event) {
-      this.transactionDirection = event.target.id;
+      this.transactionType = event.target.id;
 
-      if (this.transactionDirection === 'revenue') {
+      if (this.transactionType === 'Revenue') {
         this.payerAccounts = this.bankAccounts
             .filter(b => b.external)
             .map(p => {
@@ -330,7 +353,7 @@ export default {
             .map(p => {
               return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
             });
-      } else if (this.transactionDirection === 'expense') {
+      } else if (this.transactionType === 'Expense') {
         this.payerAccounts = this.bankAccounts
             .filter(b => !b.external)
             .map(p => {
@@ -342,7 +365,7 @@ export default {
             .map(p => {
               return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
             });
-      } else if (this.transactionDirection === 'transfer') {
+      } else if (this.transactionType === 'Transfer') {
         this.payerAccounts = this.bankAccounts
             .filter(b => !b.external)
             .map(p => {

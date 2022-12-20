@@ -1,14 +1,16 @@
 import { required, maxLength } from "@vuelidate/validators";
 import {
-    accountRoleValidator,
+    //accountRoleValidator,
     amountValidator,
+    balanceValidator,
     bicValidator,
+    dayOfMonthValidator,
     ibanValidator,
     lifeValidator,
-    monthlyInstallmentValidator,
+    //monthlyInstallmentValidator,
     optionalAmountValidator,
     //payerCostCenterValidator,
-    rateOfInterestValidator,
+    //rateOfInterestValidator,
 } from "@/validation/custom-validators";
 
 
@@ -24,6 +26,12 @@ export const accountValidation = {
     //balance:    { balanceValidator },
 };
 
+export const costCenterAssetValidation = {
+    updatedCostCenterAssetName:     { required },
+    updatedCostCenterAssetAmount:   { balanceValidator },
+    newCostCenterAssetName:         { required },
+};
+
 export const externalPartyValidation = {
     bic:        { bicValidator },
     iban:       { ibanValidator },
@@ -31,21 +39,35 @@ export const externalPartyValidation = {
 };
 
 export const loanValidation = {
-    accountRole:            { accountRoleValidator },
     amount:                 { amountValidator },
-    counterParty:           { required },
+    creditorAccount:        { required },
+    debitorAccount:         { required },
     life:                   { lifeValidator },
-    monthlyInstallment:     { monthlyInstallmentValidator },
-    rateOfInterest:         { rateOfInterestValidator },
+    monthlyInstallment:     { optionalAmountValidator },
+    rateOfInterest:         { optionalAmountValidator },
     reference:              { required },
-}
+};
+
+export const recurringTransactionValidation = {
+    amount:                 { amountValidator },
+    dayOfMonth:             { dayOfMonthValidator },
+    cycleItem:              { required },
+    endDate:                { required },
+    reference:              { required },
+    startDate:              { required },
+};
 
 export const reserveValidation = {
-    bankAccount: { required },
-    costCenter: { required },
-    title: { required, maxLength: maxLength(30) },
-    targetAmount: { optionalAmountValidator }
+    bankAccount:    { required },
+    costCenter:     { required },
+    reference:      { required, maxLength: maxLength(30) },
+    targetAmount:   { optionalAmountValidator }
 };
+
+export const reserveEditValidation = {
+    reference:      { required, maxLength: maxLength(30) },
+    targetAmount:   { optionalAmountValidator },
+}
 
 export const transactionValidation = {
     amount:                 { amountValidator },

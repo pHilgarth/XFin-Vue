@@ -1,7 +1,7 @@
 .xfin__form {
     &__form-control {
-        border-radius: .5rem;
-        border-width: .1rem;
+        @include rem(border-radius, 8px);
+        border-width: 1px;
         box-shadow: none;
         @include rem((
             font-size: 18px,

@@ -1,4 +1,24 @@
-.vuepic-datepicker .dp__input_wrap .dp__input {
-  @include rem(height, 58px);
-  @include rem(border-radius, 8px);
+.vuepic-datepicker {
+  .dp__input_wrap .dp__input {
+    @include rem(height, 58px);
+    @include rem(border-radius, 8px);
+  }
+
+  &--small {
+    .dp__input_wrap .dp__input {
+      @include rem(height, 38px);
+    }
+  }
+
+  &.has-errors {
+    border: none !important;
+
+    .dp__input_wrap .dp__input  {
+      border: 1px solid $color-form-errors !important;
+    }
+  }
+}
+
+.dp__menu.dp__menu_index {
+  z-index: z('datepicker');
 }

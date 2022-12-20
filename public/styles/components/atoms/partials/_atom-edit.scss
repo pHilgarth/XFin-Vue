@@ -1,6 +1,5 @@
 .atom-edit-icon {
   cursor: pointer;
-  display: none;
   position: absolute;
   transform: translateY(-50%);
   @include rem(top, 25px);
@@ -11,5 +10,9 @@
 
   &--right {
     @include rem(right, 20px);
+  }
+
+  &--hover {
+    display: none;
   }
 }

@@ -1,7 +1,11 @@
 .budget-manager {
-    width: 100%;
+    &__unallocated {
+        @include rem(font-size, 20px);
+        display: flex;
+        width: 30%;
 
-    &__account-holder {
-        width: fit-content;
+        &__name {
+            font-weight: bold;
+        }
     }
 }

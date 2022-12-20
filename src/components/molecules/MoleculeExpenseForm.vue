@@ -59,7 +59,7 @@ import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 
 import { accountHolderService } from '@/services/account-holder-service';
-import { bankAccountService } from '@/services/bank-account-service';
+import { accountService } from '@/services/account-service';
 import { copyService } from '@/services/copy-service';
 import { numberService } from '@/services/number-service';
 import { transactionService } from '@/services/transaction-service';
@@ -190,7 +190,7 @@ export default {
       try {
         if (this.externalPartyIban) {
           const duplicatedBankAccount = this.externalPartyIban
-              ? await bankAccountService.getSingleByIban(this.externalPartyIban)
+              ? await accountService.getSingleByIban(this.externalPartyIban)
               : null;
 
           if (duplicatedBankAccount) {
@@ -199,7 +199,7 @@ export default {
           }
           else {
             if (this.selectedExternalParty.id) {
-              await bankAccountService.update(this.selectedExternalParty.bankAccount.id, [
+              await accountService.update(this.selectedExternalParty.bankAccount.id, [
                 {
                   op: "replace",
                   path: `/iban`,
@@ -219,7 +219,7 @@ export default {
                 external: true,
               });
 
-              this.selectedExternalParty.bankAccount = await bankAccountService.create({
+              this.selectedExternalParty.bankAccount = await accountService.create({
                 accountHolderId: this.selectedExternalParty.id,
                 iban: this.externalPartyIban,
                 bic: this.externalPartyBic,

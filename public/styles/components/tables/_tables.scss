@@ -26,7 +26,8 @@ table {
     }
 
     th {
-        width: 25%;
+        //TODO - check if the tables look ok everywhere without this width
+        //width: 25%;
         @include rem((
             padding: 20px 15px,
         ));

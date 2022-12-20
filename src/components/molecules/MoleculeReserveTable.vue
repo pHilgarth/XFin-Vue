@@ -2,7 +2,7 @@
   <table class="molecule-reserve-table">
     <thead>
       <tr>
-        <th>Titel</th>
+        <th>Verwendungszweck</th>
         <th>Kostenstelle</th>
         <th>Aktueller Betrag</th>
         <th>Zielbetrag</th>
@@ -11,7 +11,7 @@
     </thead>
     <tbody>
       <tr v-for="reserve in reserves" :key="reserve.id">
-        <td>{{ reserve.reference }}</td>
+        <td class="molecule-reserve-table__reference" @click="$emit('show-detail', reserve)">{{ reserve.reference }}</td>
         <td>{{ reserve.costCenter.name }}</td>
         <td>{{ formatCurrency(reserve.currentAmount) }}</td>
         <td>{{ reserve.targetAmount ? formatCurrency(reserve.targetAmount) : '-'}}</td>

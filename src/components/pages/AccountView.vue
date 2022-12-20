@@ -2,8 +2,20 @@
   <div class="account-view">
     <AtomHeadline tag="h1" text="Kontenübersicht" />
 
+    <h6>
+      <ul>
+        <li>überall, wo Balance berechnet wird, muss die neue Property 'Executed' berücksichtigt werden (im backend)!!!!</li>
+        <li>Problem beim Monatsübergang (recurringTransactions)</li>
+        <li>AccountView Component muss aktualisiert werden, wenn die recurringTransactions sich aktualisieren</li>
+        <li>Das Bestätigen / Verwerfen von Transactions soll animiert werden</li>
+      </ul>
+    </h6>
+
     <div style="display:none" class="todo-items">
       <!-- TODO - general todos -->
+      <!-- TODO - unbedingt genau prüfen, ob die Summen im Budget-Manager mit dem Kontostand in der AccountView und den Daten in der AccountDetail übereinstimmen, habe da bei 27911004 eine Diskrepanz entdeckt, die aber auch durch die Testdaten verursacht worden sein könnte -->
+      <!-- TODO - UPDATE zu TODO eine Zeile drüber: da fehlten noch die Rücklagen im Budget-Manager, daher evtl. die Diskrepanz !!! -->
+      <!-- TODO - überall, wo Namen vergeben werden können, prüfen, ob der Name in der DB für die Entity bereits existiert! (Kontoinhaber, Rücklagen, Darlehen, etc....) -->
       <!-- TODO - hier auf AccountView jeden Tag die wiederkehrenden Einnahmen kontrollieren - wenn für den Tag eine vorhanden ist, muss diese dann noch bestätigt werden- der Betrag und die Referenz nochmal geändert werden, bevor sie verbucht wird-->
       <!-- TODO - when refreshing on a component, the first menu entry on the left menu is highlighted as if it were the selected item -->
       <!-- TODO - check every API call in this app for proper error handling -->
@@ -54,11 +66,19 @@
       <!-- TODO - implement transaction detail view as model in accountDetail -->
       <!-- TODO - cancel button on NewReserve.vue -->
       <!-- TODO - update BudgetManager -> budgetManager is used to organize the money on a single costCenter on the same account, i.e. 20 € for XY, 30 € for AB, .... -->
-      <!-- TODO - refactor styles for "modal" components (i.e. OrganismExternalPartyForm, OrganismCostCenterForm, ....) -> they're duplicated right now in the css-files for the individual components -->
+      <!-- TODO - refactor styles for "modal" components (i.e. OrganismExternalPartyModal, OrganismCostCenterForm, ....) -> they're duplicated right now in the css-files for the individual components -->
       <!-- TODO - rename class "......duplicate-account" on the different Organism......Forms to the correct thing (i.e. OrganismCostCenterAssetForm -> it should be duplicated-name or -cost-center-asset... something like that-->
       <!-- TODO - Betrag Verfügbarkeit auf CostCenters, Rücklagen und CostCenterAssets berücksichtigen!! -->
       <!-- TODO  - Rücklagen und CostCenterAssets können nicht überzogen werden - CostCenters selber schon (wenn kein Asset / keine Rücklage beim Zahlungspflichtigen ausgewählt wird)-->
       <!-- TODO - rework Login / Authentication -->
+      <!-- TODO - beim Anlegen eines Darlehens wird die Einnahme direkt verbucht, also die Auszahlung des Darlehensbetrags! Im Transaktionsmanager kann dann keine Einnahme mehr für das Darlehen verbucht werden, d.h. es darf auch nicht ausgewählt werden können, wenn die Accounts entsprechend ausgewählt wurden! -->
+      <!-- TODO - Rücklage anlegen: hier wird im Menü "Dashboard" blau angezeigt, anstatt "Rücklagen" -->
+      <!-- TODO - Beschränkungen für TextInputs für jedes Feld in jeder Form festlegen, z.B. Name max. 25 zeichen oder so -->
+      <!-- TODO - MoleculeInputText in der Länge beschränken! Je nachdem, wie lang der Input sein darf, dürfen nicht mehr Zeichen eingetragen werden können! Das erste Zeichen, das zuviel ist, muss also immer sofort wieder gelöscht werden! -->
+      <!-- TODO - AccountNumber nur anzeigen bei internen Konten und nur, wenn der AccountHolder mehr als einen Account hat!!! -->
+      <!-- TODO - Löschen von jeglichen Daten fehlt noch komplett -->
+      <!-- TODO - im Budgetmanager gibt es keine Error-Messages / Validation-Messages -->
+      <!-- TODO - im Budgetmanager verschiebt sich das Layout, wenn ein Posten bearbeitet wird -->
 
 
 
@@ -83,11 +103,10 @@
         <OrganismCollapsibleWithSlot :title="accountHolder.name">
           <MoleculeAccountViewTable :bankAccounts="accountHolder.bankAccounts" />
         </OrganismCollapsibleWithSlot>
-        <AtomEditIcon @click="$router.push({ name: 'edit-account-holder', params: { accountHolderId: accountHolder.id }})" />
+        <AtomEditIcon :showOnHover="true" @click="$router.push({ name: 'edit-account-holder', params: { accountHolderId: accountHolder.id }})" />
       </div>
 
       <AtomButton type="light" text="Kontoinhaber hinzufügen" @click.prevent="$router.push('/new-account-holder')" />
-
     </section>
   </div>
 </template>

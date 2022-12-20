@@ -1,0 +1,44 @@
+.molecule-recurring-transaction-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, .5);
+  //TODO - use smart z-indices
+  //z-index: 345435872034985;
+  z-index: z('modal');
+
+  &__inner {
+    @include rem(padding, 50px);
+    background-color: $color-white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+  }
+
+  &__details {
+    @include rem(margin, 0 0 20px);
+
+    th {
+      padding: 0;
+      width: auto;
+    }
+
+    tbody tr {
+      border: none;
+    }
+
+    td:last-child {
+      @include rem(width, 450px);
+    }
+  }
+
+  &__error .atom-paragraph {
+    position: static;
+    padding: 0;
+  }
+}

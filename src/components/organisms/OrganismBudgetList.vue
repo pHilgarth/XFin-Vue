@@ -1,8 +1,7 @@
 <template>
   <!-- TODO - this component is only used inside config object (in component BudgetManager), passed to a collapsible component. maybe work with slots? -->
   <div class="organism-budget-list">
-    <MoleculeBudgetManagerCategory  :category="costCenters[0]" :disabled="true" :hasErrors="freeBudgetErrors" :value="freeBudget"
-                                    :validation="v$.freeBudget" />
+    <MoleculeBudgetManagerCategory  :category="costCenters[0]" :disabled="true" :value="freeBudget" />
 
     <template v-for="(category, index) in costCenters" :key="index">
       <MoleculeBudgetManagerCategory v-if="index > 0" :category="category" @amount-changed="calculateFreeBudget" @reset="resetCategory" :value="category.balance"/>
@@ -27,9 +26,6 @@ import MoleculeBudgetManagerCategory from "@/components/molecules/MoleculeBudget
 import { transactionService } from "@/services/transaction-service";
 import { numberService } from "@/services/number-service";
 
-import { freeBudgetValidator } from "@/validation/custom-validators";
-import { useVuelidate } from "@vuelidate/core";
-
 export default {
   beforeMount() {
     this.storeOriginalBalanceValues();
@@ -47,17 +43,14 @@ export default {
   },
 
   computed: {
-    freeBudgetErrors() {
-      return this.v$.freeBudget.$error;
-    },
-
     saveDisabled() {
-      return this.dirtyCategories.length === 0 || this.v$.freeBudget.$error;
+      return this.dirtyCategories.length === 0;
     },
   },
 
   data() {
     return {
+      //TODO - dont use index 0, use name
       freeBudget: this.costCenters[0].balance,
       dirtyCategories: [],
 
@@ -110,7 +103,7 @@ export default {
         numFreeBudget + (numCategoryBalance - numValue),
         false
       );
-      this.v$.freeBudget.$touch();
+
       //category.balance = this.formatCurrency(value, false, decimals);
       category.balance = value;
     },
@@ -189,18 +182,6 @@ export default {
         category.originalBalance = numberService.parseFloat(category.balance);
       });
     },
-  },
-
-  setup() {
-    return {
-      v$: useVuelidate(),
-    };
-  },
-
-  validations() {
-    return {
-      freeBudget: { freeBudgetValidator },
-    };
   },
 };
 </script>

@@ -26,7 +26,7 @@ import OrganismRevenues from "@/components/organisms/OrganismRevenues";
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeMonthSwitch from "@/components/molecules/MoleculeMonthSwitch";
 
-import { bankAccountService } from '@/services/bank-account-service';
+import { accountService } from '@/services/account-service';
 import {costCenterService} from '@/services/cost-center-service';
 
 export default {
@@ -64,7 +64,7 @@ export default {
         const year = new Date().getFullYear();
         month = month !== undefined ? month : new Date().getMonth();
 
-        const bankAccount = bankAccountService.getSingleById(this.$route.params.id, year, month);
+        const bankAccount = accountService.getSingleById(this.$route.params.id, year, month);
         const costCenters = costCenterService.getAllByAccount(this.$route.params.id, year, month);
 
         this.bankAccount = await bankAccount;

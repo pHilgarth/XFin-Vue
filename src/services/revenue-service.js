@@ -1,7 +1,7 @@
 
 const baseUrl = "http://localhost:2905/api/revenues";
 
-export const RevenueService = {
+export const revenueService = {
   async createRevenue(revenue) {
     const postObject = {
       method: 'POST',

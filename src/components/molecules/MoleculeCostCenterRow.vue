@@ -2,7 +2,7 @@
   <div class="molecule-cost-center-row">
     <template v-if="!edit">
       <AtomParagraph :text="costCenter.name" />
-      <AtomEditIcon v-if="allowEdit" :data-id="costCenter.id" align="right" @click="editCostCenter" />
+      <AtomEditIcon v-if="allowEdit" :data-id="costCenter.id" align="right" :showOnHover="true" @click="editCostCenter" />
     </template>
     <div v-if="edit" class="molecule-cost-center-row__edit">
       <MoleculeInputText field="cost-center" :hasErrors="costCenterNameErrors" v-model="costCenterName" :validation="v$.costCenterName" :small="true"
@@ -54,6 +54,7 @@ import { costCenterService } from '@/services/cost-center-service';
     },
 
     computed: {
+      //TODO - this can be placed in template directly -->
       costCenterNameErrors() {
         return this.v$.costCenterName.$error;
       },

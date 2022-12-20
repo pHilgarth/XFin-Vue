@@ -15,37 +15,44 @@
       </div>
     </div>
     <div v-if="user" class="xfin__body">
-      <div class="xfin__sidebar">
+      <div class="xfin__navigation">
         <ul class="xfin__menu">
-          <li id="account-view" :class="selectedMenuItem === 0 ? 'active' : ''">
-            <a href="/">Kontenübersicht</a>
+          <!-- TODO - make this dynamic? -->
+          <li id="dashboard" :class="selectedMenuItem === 0 ? 'active' : ''">
+            <a href="/">Dashboard</a>
           </li>
-          <li id="transaction" :class="selectedMenuItem === 1 ? 'active' : ''">
+          <li id="account-view" :class="selectedMenuItem === 1 ? 'active' : ''">
+            <a href="/accounts">Kontenübersicht</a>
+          </li>
+          <li id="transaction" :class="selectedMenuItem === 2 ? 'active' : ''">
             <a href="/transaction">Transaktion</a>
           </li>
-          <li id="budget-manager" :class="selectedMenuItem === 2 ? 'active' : ''">
+          <li id="budget-manager" :class="selectedMenuItem === 3 ? 'active' : ''">
             <a href="/budget-manager">Budgetmanager</a>
           </li>
-          <li id="overheads-manager" :class="selectedMenuItem === 3 ? 'active' : ''">
+          <li id="overheads-manager" :class="selectedMenuItem === 4 ? 'active' : ''">
             <a href="/overheads-manager">Fixkosten</a>
           </li>
-          <li id="cost-centers" :class="selectedMenuItem === 4 ? 'active' : ''">
-            <a href="/cost-centers">Kostenstellenverwaltung</a>
+          <li id="recurring-revenues" :class="selectedMenuItem === 5 ? 'active' : ''">
+            <a href="/recurring-revenues">Regelmäßige Einnahmen</a>
           </li>
-          <li id="reserves" :class="selectedMenuItem === 5 ? 'active' : ''">
+          <li id="cost-centers" :class="selectedMenuItem === 6 ? 'active' : ''">
+            <a href="/cost-centers">Kostenstellen</a>
+          </li>
+          <li id="reserves" :class="selectedMenuItem === 7 ? 'active' : ''">
             <a href="/reserves">Rücklagen</a>
           </li>
-          <li id="debt-manager" :class="selectedMenuItem === 6 ? 'active' : ''">
+          <li id="debt-manager" :class="selectedMenuItem === 8 ? 'active' : ''">
             <a href="/debt-manager">Schuldenmanager</a>
           </li>
-          <li id="design-elements" :class="selectedMenuItem === 7 ? 'active' : ''">
+          <li id="design-elements" :class="selectedMenuItem === 9 ? 'active' : ''">
             <a href="/design-elements">Design-Elemente (Dev)</a>
           </li>
         </ul>
       </div>
       <div class="xfin__content">
-        <div class="xfin__component">
-          <router-view :key="$route.path"></router-view>
+        <div class="xfin__component col-12">
+          <router-view :key="$route.path" ></router-view>
         </div>
       </div>
     </div>
@@ -83,17 +90,18 @@ export default {
     return {
       selectedMenuItem: 1,
       menuItems: [
-          'account-view',
+          'dashboard',
+          'accounts',
           'transaction',
           'budget-manager',
           'overheads-manager',
+          'recurring-revenues',
           'cost-centers',
           'reserves',
           'debt-manager',
           'design-elements',
       ],
       user: null,
-      test: 'hi',
     };
   },
 
@@ -107,7 +115,7 @@ export default {
     routeToComponent(event) {
       this.selectedMenuItem = event.target.dataset.index;
       this.$router.push(event.target.dataset.route);
-    }
+    },
   }
 }
 </script>

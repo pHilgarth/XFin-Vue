@@ -1,8 +1,0 @@
-h1 {
-    letter-spacing: 0.5rem;
-    text-transform: uppercase;
-    @include rem((
-        font-size: 30px,
-        margin-bottom: 30px,
-    ));
-}

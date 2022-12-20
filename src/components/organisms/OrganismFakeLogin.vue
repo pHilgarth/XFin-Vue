@@ -2,7 +2,7 @@
   <div class="fake-login">
     <AtomHeadline tag="h1" text="Fake-Login" />
     <p style="font-size:10px">differenzierte Fehlermeldungen einbauen! Es kommt immer "Falsche Login-Daten" - auch wenn der Server grad einfach down ist</p>
-    <MoleculeNotice v-if="loginError" type="danger" text="Falsche Login-Daten!" />
+    <MoleculeNotice v-if="loginError" type="danger" :text="loginErrorMessage" />
     <form>
       <MoleculeInputText  class="xfin__login__email pb-5" field="email" label="E-Mail" type="email" autocomplete="username" v-model="userMail"
                           :hasErrors="v$.userMail.$error" :validation="v$.userMail" @blur="v$.userMail.$touch()" />
@@ -34,6 +34,7 @@ export default {
       userMail: '',
       userPassword: '',
       loginError: false,
+      loginErrorMessage: null,
     };
   },
 
@@ -53,10 +54,17 @@ export default {
           password: this.userPassword,
         });
 
-        this.$emit('login', user)
+        if (!user) {
+          this.loginErrorMessage = 'Falsche Login-Daten!';
+          this.loginError = true;
+        }
+        else {
+          this.$emit('login', user)
+        }
       }
       catch (error) {
         console.error(error);
+        this.loginErrorMessage = 'Fehler beim Prüfen der Login-Daten!';
         this.loginError = true;
       }
     }

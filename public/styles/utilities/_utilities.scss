@@ -1,8 +1,11 @@
-//TODO - use variables for the colors
 .negative {
     color: $color-red;
 
     &:disabled { color: $color-red-light; }
+}
+
+.positive {
+    color: $color-green;
 }
 
 .has-errors { border: 1px solid $color-form-errors !important; }

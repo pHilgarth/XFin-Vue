@@ -1,0 +1,9 @@
+.molecule-reserve-table {
+  margin: 0;
+
+  &__reference {
+    color: $color-secondary;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}

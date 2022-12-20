@@ -8,7 +8,7 @@
 import OrganismAccountHolder from '@/components/organisms/OrganismAccountHolder';
 
 import { accountHolderService } from '@/services/account-holder-service';
-import { bankAccountService } from "@/services/bank-account-service";
+import { accountService } from "@/services/account-service";
 import { transactionService }   from '@/services/transaction-service';
 
 export default {
@@ -33,7 +33,7 @@ export default {
         for (const bankAccount of accountHolder.bankAccounts) {
           bankAccount.accountHolderId = createdAccountHolder.id;
 
-          const createdBankAccount = await bankAccountService.create(bankAccount);
+          const createdBankAccount = await accountService.create(bankAccount);
 
           await transactionService.create({
             targetBankAccountId: createdBankAccount.id,

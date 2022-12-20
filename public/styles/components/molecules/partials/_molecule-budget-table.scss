@@ -1,0 +1,27 @@
+.molecule-budget-table {
+  &__edit {
+    position: relative;
+  }
+
+  &__unallocated {
+    color: $color-secondary;
+    font-weight: bold;
+
+    &--negative {
+      color: $color-form-errors;
+    }
+
+    &--error {
+      color: $color-form-errors;
+    }
+  }
+
+  &__total {
+    font-weight: bold;
+  }
+
+  &__buttons {
+    @include rem(margin, 20px auto 20px);
+    width: 90%;
+  }
+}

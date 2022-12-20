@@ -77,8 +77,8 @@ export const costCenterService = {
         }
     },
 
-    async getAllByAccount(id, year, month) {
-        const url = `${baseUrl}/${id}?year=${year}&month=${++month}`
+    async getAllByAccount(accountId, year, month) {
+        const url = `${baseUrl}/${accountId}?year=${year}&month=${++month}`
 
         try {
             return await fetch(url).then((response) => {
@@ -86,7 +86,7 @@ export const costCenterService = {
                     return response.json();
                 }
                 else if (response.status === 404) {
-                    throw new Error(`no bankAccount found with id ${id}!`);
+                    throw new Error(`no account found with id ${accountId}!`);
                 }
             }).then(data => data);
         } catch (error) {

@@ -4,22 +4,25 @@
     <MoleculeLoading v-if="!bankAccountsLoaded" :loadingError="bankAccountsLoadingError" errorMessage="Fehler beim Laden der Kontoinhaber!"/>
 
     <template v-else>
-      <div class="pb-5">
+      <div class="pb-4">
         <MoleculeInputAutoSuggest field="bank-account" v-model="bankAccount" label="Konto"
-                                  :items="bankAccounts" @itemPicked="pickBankAccount" />
+                                  :items="bankAccounts" @itemPicked="pickBankAccount" @blur="onBlurAccount" />
       </div>
 
       <template v-if="bankAccount">
         <MoleculeLoading v-if="!reservesLoaded" :loadingError="reservesLoadingError" errorMessage="Fehler beim Laden der Rücklagen!"/>
 
         <template v-else>
-          <MoleculeReserveTable v-if="reservesLoaded && reserves && reserves.length > 0" :reserves="reserves" />
+          <MoleculeReserveTable class="mb-5" v-if="reservesLoaded && reserves && reserves.length > 0" :reserves="reserves"
+                                @show-detail="activateReserveModal" />
           <AtomParagraph v-else text="Keine Rücklagen auf diesem Konto gefunden!" />
 
         </template>
       </template>
-      <AtomParagraph v-else-if="selectedAccountHolderId > 0" text="Keine Rücklagen vorhanden!"/>
-      <AtomButton type="primary" text="Rücklage erstellen" @click.prevent="$router.push('/new-reserve')" />
+
+      <AtomButton type="primary" text="Rücklage anlegen" @click.prevent="$router.push('/new-reserve')" />
+
+      <OrganismReserveModal v-if="reserveModalActive" :reserve="selectedReserve" @cancel="reserveModalActive = false" @save="updateReserve"/>
     </template>
   </section>
 </template>
@@ -31,8 +34,9 @@ import AtomParagraph from '@/components/atoms/AtomParagraph';
 import MoleculeInputAutoSuggest from '@/components/molecules/MoleculeInputAutoSuggest';
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeReserveTable from "@/components/molecules/MoleculeReserveTable";
+import OrganismReserveModal from "@/components/organisms/OrganismReserveModal";
 
-import { bankAccountService } from '@/services/bank-account-service';
+import { accountService } from '@/services/account-service';
 import { reserveService } from '@/services/reserve-service';
 
 export default {
@@ -53,6 +57,24 @@ export default {
     MoleculeInputAutoSuggest,
     MoleculeLoading,
     MoleculeReserveTable,
+    OrganismReserveModal,
+  },
+
+  watch: {
+    async bankAccount() {
+      this.reservesLoaded = false;
+      this.reservesLoadingError = false;
+
+      try {
+        await this.getReserves();
+
+        this.reservesLoaded = true;
+      }
+      catch (error) {
+        this.reservesLoadingError = true;
+        console.error(error);
+      }
+    },
   },
 
   data() {
@@ -63,13 +85,20 @@ export default {
       bankAccounts: null,
       bankAccountsLoaded: false,
       bankAccountsLoadingError: false,
+      reserveModalActive: false,
       reserves: null,
       reservesLoaded: false,
       reservesLoadingError: false,
+      selectedReserve: null,
     }
   },
 
   methods: {
+    activateReserveModal(reserve) {
+      this.reserveModalActive = true;
+      this.selectedReserve = reserve;
+    },
+
     calculateCurrentAmount(reserve) {
       const revenuesSum = reserve.revenues.length
           ? reserve.revenues.reduce((a, b) => a + b.amount, 0)
@@ -84,7 +113,7 @@ export default {
 
     async getBankAccounts() {
       try {
-        let bankAccounts = await bankAccountService.getAll();
+        let bankAccounts = await accountService.getAll();
         bankAccounts = bankAccounts.filter(b => !b.external).map(
             b => { return { id: b.id, label: `${b.accountHolderName} (${b.iban})`} });
 
@@ -95,16 +124,7 @@ export default {
       }
     },
 
-    pickBankAccount(id) {
-      this.bankAccount = this.bankAccounts.find(b => b.id == id);
-    },
-  },
-
-  watch: {
-    async bankAccount() {
-      this.reservesLoaded = false;
-      this.reservesLoadingError = false;
-
+    async getReserves() {
       try {
         this.reserves = await reserveService.getAllByAccount(this.bankAccount.id);
 
@@ -112,13 +132,56 @@ export default {
           this.calculateCurrentAmount(r);
         });
 
-        this.reservesLoaded = true;
       } catch (error) {
+        throw new Error(error);
+      }
+    },
+
+    deactivateReserveModal() {
+      this.reserveModalActive = false;
+      this.selectedReserve = null;
+    },
+
+    onBlurAccount(event) {
+      if (this.bankAccount?.label !== event.target.value) {
+        this.bankAccount = null;
+      }
+    },
+
+    pickBankAccount(id) {
+      this.bankAccount = this.bankAccounts.find(b => b.id == id);
+    },
+
+    async updateReserve(updatedValues) {
+      try {
+        const jsonPatchDocument = [];
+
+        for (const prop in updatedValues) {
+          if (updatedValues[prop] !== this.selectedReserve[prop]) {
+            jsonPatchDocument.push({
+              op: 'replace',
+              path: `/${prop}`,
+              value: updatedValues[prop],
+            });
+          }
+        }
+
+        await reserveService.update(this.selectedReserve.id, jsonPatchDocument);
+
+        this.reserveModalActive = false;
+        this.selectedReserve = null;
+
+        await this.getReserves();
+
+        this.reservesLoaded = true;
+      }
+      catch (error) {
+        this.reservesLoaded = false;
         this.reservesLoadingError = true;
         console.error(error);
       }
-    },
-  }
+    }
+  },
 };
 
 </script>

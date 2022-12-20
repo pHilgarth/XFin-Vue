@@ -10,7 +10,7 @@
                                   @itemPicked="pickItem($event, 'payerAccount')" @addItem="$emit('addExternalParty')" @blur="onBlurPayerAccount"/>
       </div>
 
-      <div v-if="transactionDirection !== 'revenue'" class="col-6 pb-5 ps-3">
+      <div v-if="transactionType !== 'Revenue'" class="col-6 pb-5 ps-3">
         <MoleculeInputAutoSuggest field="payer-cost-center" v-model="payerCostCenter" label="Kostenstelle" :items="payerCostCenters"
                                   :disabled="payerAccount?.external" :validation="v$.payerCostCenter"
                                   :hasErrors="v$.payerCostCenter?.$error" @itemPicked="pickItem($event, 'payerCostCenter')"
@@ -35,7 +35,7 @@
 
       </div>
 
-      <div v-if="transactionDirection !== 'expense'" class="col-6 pb-5 ps-3">
+      <div v-if="transactionType !== 'Expense'" class="col-6 pb-5 ps-3">
         <MoleculeInputAutoSuggest field="payee-cost-center" v-model="payeeCostCenter" label="Kostenstelle" :items="payeeCostCenters"
                                   :validation="v$.payeeCostCenter" :hasErrors="v$.payeeCostCenter?.$error"
                                   @itemPicked="pickItem($event, 'payeeCostCenter')" @blur="onBlurPayeeCostCenter" />
@@ -67,15 +67,17 @@
       <AtomHeadline class="organism-transaction-form__headline mb-3" tag="h4" text="Zusätzliche Optionen" />
 
       <div class="col-md-6 pb-5">
-        <MoleculeInputAutoSuggest field="loan" label="Darlehen" noItemsLabel=""
-                                  v-model="loan" :items="loans" @itemPicked="pickItem($event, 'loan')" />
+        <MoleculeInputAutoSuggest field="loan" label="Darlehen" noItemsLabel="" v-model="loan" :items="loans"
+                                  @itemPicked="pickItem($event, 'loan')" />
       </div>
 
       <AtomHeadline class="organism-transaction-form__headline mb-3" tag="h5" text="Wiederkehrende Transaktion" />
 
+      <!-- TODO - see paragraph -->
+      <p style="color:red">ich muss hier noch die Möglichkeit für ein Start- und Enddatum anbieten</p>
+
       <div class="organism-transaction-form__recurring-transaction">
         <MoleculeInputCheckbox class="col-md-12 pb-3" v-model="recurringTransaction" label="Wiederkehrende Transaktion" />
-
         <div class="col-md-6 pb-5 pe-3">
           <MoleculeInputAutoSuggest field="cycle" label="Turnus" :required="recurringTransaction" v-model="cycleItem" :items="cycleItems"
                                     :validation="v$.cycleItem" :hasErrors="v$.cycleItem?.$error" :disabled="!recurringTransaction"
@@ -110,7 +112,6 @@ import { costCenterAssetService } from "@/services/cost-center-asset-service";
 import { loanService } from '@/services/loan-service';
 import { numberService } from '@/services/number-service';
 import { reserveService } from '@/services/reserve-service';
-import { transactionTypeService } from '@/services/transaction-type-service';
 
 import { transactionValidation } from '@/validation/validations';
 import { dayOfMonthValidator } from '@/validation/custom-validators';
@@ -138,7 +139,7 @@ export default {
     initialPayerAccount: { type: Object },
     payeeAccounts: { type: Array, required: true},
     payerAccounts: { type: Array, required: true },
-    transactionDirection: { type: String, required: true },
+    transactionType: { type: String, required: true },
   },
 
   data() {
@@ -175,24 +176,16 @@ export default {
       payerReserves: null,
       recurringTransaction: false,
       reference: null,
-      transactionType: null,
-      transactionTypeItem: null,
-      transactionTypeItems: null,
-      transactionTypeItemsLoaded: false,
-      transactionTypeItemsLoadingError: false,
-
-      transactionTypes: copyService.copyArray(transactionTypeService.transactionTypes)
-          .map(t => { return { id: t.value, label: t.label } }),
     }
   },
 
   computed: {
     allowNewPayee() {
-      return this.transactionDirection === 'expense';
+      return this.transactionType === 'Exppense';
     },
 
     allowNewPayer() {
-      return this.transactionDirection === 'revenue'
+      return this.transactionType === 'Revenue'
     },
 
     payeeAndPayerEqual() {
@@ -283,21 +276,21 @@ export default {
       this.v$.reference.$touch();
     },
 
-    transactionDirection() {
+    transactionType() {
       this.v$.$reset();
 
-      this.payerAccount = null;
-      this.payerCostCenter = null;
-      this.payerCostCenterAsset = null;
+      this.amount = null;
+      this.cycleItem = null;
+      this.dayOfMonth = null;
+      this.loan = null;
       this.payeeAccount = null;
       this.payeeCostCenter = null;
       this.payeeCostCenterAsset = null;
-      this.reference = null;
-      this.amount = null;
-      this.loan = null;
+      this.payerAccount = null;
+      this.payerCostCenter = null;
+      this.payerCostCenterAsset = null;
       this.recurringTransaction = false;
-      this.cycleItem = null;
-      this.dayOfMonth = null;
+      this.reference = null;
     },
   },
 
@@ -307,6 +300,7 @@ export default {
         try {
           const loans = await loanService.getAllByCreditorAndDebitor(this.payerAccount.id, this.payeeAccount.id);
 
+          this.fullLoans = loans;
           this.loans = loans.map(l => { return { id: l.id, label: l.reference} });
         }
         catch (error) {
@@ -423,15 +417,19 @@ export default {
           sourceCostCenterAsset: this.payerCostCenterAsset?.isReserve ? null : this.payerCostCenterAsset,
           targetCostCenterId: this.payeeCostCenter?.id,
           targetCostCenterAsset: this.payeeCostCenterAsset?.isReserve ? null : this.payeeCostCenterAsset,
+          //TODO - einmalig geplante transactions einführen! (Datum auswählen, wann verbucht werden soll) Muss dann auch auf der Startseite bestätigt werden
+          dueDateString: new Date().toISOString(),
           dateString: new Date().toISOString(),
           reserve: this.payerCostCenterAsset?.isReserve
               ? this.payerCostCenterAsset
               : this.payeeCostCenterAsset?.isReserve
                   ? this.payeeCostCenterAsset
                   : null,
+          loan: this.fullLoans.find(l => l.id === this.loan?.id),
           loanId: this.loan?.id,
           reference: this.reference,
           amount: numberService.parseFloat(this.amount),
+          transactionType: this.transactionType,
         };
 
         //TODO - i need to change this, that's not good
@@ -455,13 +453,13 @@ export default {
     updateCostCenterAssets() {
       this.payeeCostCenterAsset = null;
 
-      if (this.transactionDirection === 'expense') {
+      if (this.transactionType === 'Expense') {
         this.updatePayerCostCenterAssets();
       }
-      else if (this.transactionDirection === 'revenue') {
+      else if (this.transactionType === 'Revenue') {
         this.updatePayeeCostCenterAssets();
       }
-      else if (this.transactionDirection === 'transfer') {
+      else if (this.transactionType === 'Transfer') {
         this.updatePayerCostCenterAssets();
         this.updatePayeeCostCenterAssets();
       }
@@ -494,10 +492,6 @@ export default {
 
   validations() {
     const validation = copyService.copyObject(transactionValidation);
-
-    if (['loan', 'repayment', 'reserve'].includes(this.transactionType?.id)) {
-      validation.transactionTypeItem = { required };
-    }
 
     if (this.recurringTransaction) {
       validation.cycleItem = { required };

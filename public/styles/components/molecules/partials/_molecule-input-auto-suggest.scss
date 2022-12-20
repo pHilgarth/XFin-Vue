@@ -1,10 +1,21 @@
 .molecule-input-auto-suggest {
+    position: relative;
+
+    &--small &__suggestions {
+        @include rem(font-size, 18px);
+
+        li {
+            @include rem(padding, 5px 15px);
+        }
+    }
+
     &__chevron {
         @include rem(right, 20px);
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
     }
+
     &__suggestions {
         @include rem(border-radius, 0 0 5px 5px);
         @include rem(transform, translateY(-5px));

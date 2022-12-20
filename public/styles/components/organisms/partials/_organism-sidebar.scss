@@ -1,0 +1,15 @@
+.organism-sidebar {
+  @include rem(padding, 30px 30px 30px 15px);
+
+  &__inner {
+    @include rem(padding, 25px);
+    box-shadow: 0 0 5px 0 rgba(0,0,0,.5);
+    height: 100%;
+
+    //TODO - this is just samplecode to visualize, how the cards should look
+    .card {
+      margin-bottom: 20px;
+      padding: 20px;
+    }
+  }
+}

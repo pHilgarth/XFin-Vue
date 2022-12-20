@@ -282,7 +282,7 @@ export default {
       }
       else if (id == 0) {
         //add new item
-        //TODO - in the OrganismExternalPartyForm add a note that only an external party can be created here, internal parties (accountHolders) are created somewhere else
+        //TODO - in the OrganismExternalPartyModal add a note that only an external party can be created here, internal parties (accountHolders) are created somewhere else
         this.$emit('addExternalParty');
       }
       else {

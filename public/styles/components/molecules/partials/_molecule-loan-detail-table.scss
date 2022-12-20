@@ -1,0 +1,52 @@
+.molecule-loan-detail-table {
+  @include rem(margin, 0 0 20px);
+  width: 90%;
+
+  th {
+    padding: 0;
+    width: auto;
+  }
+
+  tbody tr {
+    border: none;
+  }
+
+  td:last-child {
+    @include rem(width, 350px);
+  }
+
+  &__monthly-installment {
+    position: relative;
+
+    &.edit {
+      @include rem(padding, 5px 15px);
+    }
+  }
+  
+  &__edit {
+    position: relative;
+
+    .xfin__form__error {
+      padding: 0;
+      position: static;
+    }
+  }
+
+  &__buttons {
+    @include rem(right, 20px);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+
+    .atom-button {
+      &:first-child {
+        @include rem(padding, 2px 6px);
+      }
+
+      &:last-child {
+        @include rem(margin-left, 5px);
+        @include rem(padding, 2px 7px);
+      }
+    }
+  }
+}

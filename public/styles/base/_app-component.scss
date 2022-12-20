@@ -5,7 +5,8 @@
     position: fixed;
     top: 0;
     width: 100vw;
-    z-index: 999;
+    //z-index: 999;
+    z-index: z('header');
     @include rem(height, 60px);
   }
 
@@ -27,7 +28,7 @@
     @include rem(margin-top, 60px);
   }
 
-  &__sidebar {
+  &__navigation {
     background-color: $color-primary;
     height: 95vh;
     position: fixed;
@@ -68,19 +69,18 @@
   }
 
   &__content {
-    height: 100%;
+    display: flex;
     margin-left: 12.5vw;
     width: 87.5vw;
   }
 
   &__component {
-    //display: flex;
-    //width: 100%;
+    @include rem(padding, 30px);
 
     & > * {
-      @include rem(padding, 25px 50px 25px);
-      @include rem(margin, 50px);
-      box-shadow: 0 0 5px 0 rgba($black, .5);
+      //TODO - delete if not needed (renders the component as cards, with box shadow
+      //@include rem(padding, 25px 50px 25px);
+      //box-shadow: 0 0 5px 0 rgba($black, .5);
     }
   }
 }

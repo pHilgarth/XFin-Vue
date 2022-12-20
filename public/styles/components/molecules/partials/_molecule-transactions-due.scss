@@ -1,0 +1,50 @@
+.molecule-transactions-due {
+  h2 {
+    @include rem(margin-bottom, 20px);
+  }
+
+  &__swiper {
+    position: relative;
+  }
+
+  .swiper {
+    position: static;
+  }
+
+  .swiper-slide {
+    @include rem(padding, 10px);
+
+    &.removing {
+      max-height:222px;
+      margin: 0 !important;
+      padding: 0;
+      overflow: hidden;
+      min-width: 0 !important;
+      width: 0 !important;
+      opacity: 0;
+      transition: margin 1s, opacity .4s, padding 1s, width 1s;
+    }
+  }
+
+  &__body {
+    @include rem(margin-bottom, 10px);
+    @include rem(padding-bottom, 10px);
+    border-bottom: 1px solid $color-borders;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &__counter-part {
+    @include rem(margin, 10px 0);
+    color: $color-gray;
+    font-style: italic;
+  }
+
+  &__amount {
+    font-weight: bold;
+  }
+
+  &__edit {
+    float: right;
+  }
+}

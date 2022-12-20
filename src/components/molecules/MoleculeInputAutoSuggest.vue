@@ -1,5 +1,5 @@
 <template>
-  <div class="molecule-input-auto-suggest form-floating">
+  <div :class="`molecule-input-auto-suggest${ small ? ' molecule-input-auto-suggest--small' : ' form-floating'}`">
     <!-- TODO - I removed :placeholder="label" in the AtomInputText - test, if this works everywhere - the placeholder seems to have no function. I have the AtomLabel instead -->
     <AtomInputText :id="field" :disabled="(noItems && !allowNewItems) || disabled" :value="noItems && !allowNewItems ? noItemsLabel : modelValue?.label"
                    :placeholder="label" autocomplete="off"
@@ -11,7 +11,7 @@
         <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
       </svg>
     </div>
-    <AtomLabel class="xfin__form__label" :for="field" :text="`${label}${ required ? ' <i>*</i>' : ''}`"/>
+    <AtomLabel v-if="label" class="xfin__form__label" :for="field" :text="`${label}${ required ? ' <i>*</i>' : ''}`"/>
     <!-- TODO - hide ul again, if input looses focus (on blur?) -> this is almost done! But if I hover on an element and then press tab, the box wont disappear, thats a cornercase but maybe i can fix it. I would need to track if TAB was pressed i guess-->
     <AtomUnorderedList v-if="inputHasFocus" class="molecule-input-auto-suggest__suggestions"
                        :items="suggestions" @itemClicked="pickItem"
@@ -38,10 +38,11 @@ export default {
     field: {type: String, required: true,},
     hasErrors: {type: Boolean},
     items: {type: Array, required: true },
-    label: {type: String, required: true },
+    label: {type: String },
     modelValue: { type: Object },
     noItemsLabel: { type: String, default: 'Keine Einträge vorhanden' },
     required: { type: Boolean, default: false },
+    small: { type: Boolean, default: false },
     // validation has to be the vuelidate object of the property (i.e. v$.name)
     validation: {type: Object},
   },

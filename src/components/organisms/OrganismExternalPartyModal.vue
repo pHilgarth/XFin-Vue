@@ -1,13 +1,13 @@
 <template>
-  <div class="organism-external-party-form">
-    <div class="organism-external-party-form__inner">
+  <div class="organism-external-party-modal">
+    <div class="organism-external-party-modal__inner">
       <AtomHeadline tag="h1" text="Externen Zahlungspartner anlegen" />
       <form>
         <MoleculeInputText class="pb-5" field="name" :hasErrors="v$.name.$error || nameDuplicate" v-model="name" @blur="v$.name.$touch()" :validation="v$.name" label="Name" />
-        <AtomParagraph v-if="nameDuplicate" class="organism-external-party-form__duplicate-account xfin__form__error" text="Dieser Name existiert bereits!" />
+        <AtomParagraph v-if="nameDuplicate" class="organism-external-party-modal__duplicate-account xfin__form__error" text="Dieser Name existiert bereits!" />
 
         <MoleculeInputText class="pb-5" field="iban" :hasErrors="v$.iban.$error || ibanDuplicate" v-model="iban" @blur="v$.iban.$touch()" :validation="v$.iban" label="IBAN" />
-        <AtomParagraph v-if="ibanDuplicate" class="organism-external-party-form__duplicate-account xfin__form__error" text="Diese Iban existiert bereits!" />
+        <AtomParagraph v-if="ibanDuplicate" class="organism-external-party-modal__duplicate-account xfin__form__error" text="Diese Iban existiert bereits!" />
 
         <MoleculeInputText class="pb-5" field="bic" :hasErrors="v$.bic.$error" v-model="bic" @blur="v$.bic.$touch()" :validation="v$.bic" label="BIC" />
 

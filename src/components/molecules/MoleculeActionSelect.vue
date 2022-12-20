@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { bankAccountService } from '@/services/bank-account-service';
+import { accountService } from '@/services/account-service';
 
 export default {
   props: {
@@ -17,7 +17,7 @@ export default {
 
   data() {
     return {
-      accountActions: bankAccountService.accountActions,
+      accountActions: accountService.accountActions,
     };
   },
 

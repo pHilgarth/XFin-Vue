@@ -10,7 +10,7 @@ import OrganismAccountHolder              from '@/components/organisms/OrganismA
 
 import { accountHolderService }           from '@/services/account-holder-service';
 import { copyService }                    from '@/services/copy-service';
-import { bankAccountService }     from '@/services/bank-account-service';
+import { accountService }     from '@/services/account-service';
 import { transactionService }     from "@/services/transaction-service";
 
 export default {
@@ -88,7 +88,7 @@ export default {
           //TODO - this code is duplicated in NewAccountHolder when creating the accounts
           account.accountHolderId = accountHolder.id;
 
-          const createdBankAccount = await bankAccountService.create(account);
+          const createdBankAccount = await accountService.create(account);
 
           if (createdBankAccount) {
             const initializationTransaction = {
@@ -123,7 +123,7 @@ export default {
             });
           }
 
-          const updateResponse = await bankAccountService.update(account.id, jsonPatch);
+          const updateResponse = await accountService.update(account.id, jsonPatch);
 
           if (!updateResponse.success) {
             error = true;

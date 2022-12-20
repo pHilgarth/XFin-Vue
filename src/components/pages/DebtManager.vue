@@ -12,40 +12,47 @@
         <MoleculeLoading v-if="!loansLoaded" :loadingError="loansLoadingError" errorMessage="Fehler beim Laden der Rücklagen!"/>
 
         <template v-else>
-          <OrganismCollapsibleWithSlot v-if="creditorLoans.length > 0" title="Gläubiger">
-            <MoleculeLoanTable :loans="creditorLoans" />
+          <OrganismCollapsibleWithSlot v-if="creditorLoans.length > 0" title="Forderungen">
+            <MoleculeLoanTable :loans="creditorLoans" @show-loan="showLoanModal" />
           </OrganismCollapsibleWithSlot>
 
-          <OrganismCollapsibleWithSlot v-if="debitorLoans.length > 0" title="Schuldner">
-            <MoleculeLoanTable :loans="debitorLoans" />
+          <OrganismCollapsibleWithSlot v-if="debitorLoans.length > 0" title="Verbindlichkeiten">
+            <MoleculeLoanTable :loans="debitorLoans" @show-loan="showLoanModal"/>
           </OrganismCollapsibleWithSlot>
 
           <AtomParagraph v-if="creditorLoans.length === 0 && debitorLoans.length === 0" text="Keine Darlehen auf diesem Konto gefunden!" />
 
+          <MoleculeLoanDetail v-if="showLoan" :loanId="selectedLoan.id" @close-loan="hideLoanModal"/>
         </template>
       </template>
+
+      <AtomButton type="primary" text="Darlehen anlegen" @click.prevent="$router.push('/new-loan')" />
     </template>
   </div>
 </template>
 
 <script>
 
+import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
 import AtomParagraph from "../atoms/AtomParagraph";
 import MoleculeInputAutoSuggest from '@/components/molecules/MoleculeInputAutoSuggest';
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
+import MoleculeLoanDetail from '@/components/molecules/MoleculeLoanDetail';
 import MoleculeLoanTable from '@/components/molecules/MoleculeLoanTable';
 import OrganismCollapsibleWithSlot from "../organisms/OrganismCollapsibleWithSlot";
 
-import { bankAccountService } from '@/services/bank-account-service';
+import { accountService } from '@/services/account-service';
 import { loanService } from '@/services/loan-service';
 
 export default {
   components: {
+    AtomButton,
     AtomHeadline,
     AtomParagraph,
     MoleculeInputAutoSuggest,
     MoleculeLoading,
+    MoleculeLoanDetail,
     MoleculeLoanTable,
     OrganismCollapsibleWithSlot,
   },
@@ -70,13 +77,15 @@ export default {
       debitorLoans: null,
       loansLoaded: false,
       loansLoadingError: false,
+      selectedLoan: null,
+      showLoan: false,
     }
   },
 
   methods: {
     async getBankAccounts() {
       try {
-        let bankAccounts = await bankAccountService.getAll();
+        let bankAccounts = await accountService.getAll();
         bankAccounts = bankAccounts.filter(b => !b.external).map(
             b => { return { id: b.id, label: `${b.accountHolderName} (${b.iban})`} });
 
@@ -87,9 +96,19 @@ export default {
       }
     },
 
+    hideLoanModal() {
+      this.showLoan = false;
+      this.selectedLoan = null;
+    },
+
     pickBankAccount(id) {
       this.bankAccount = this.bankAccounts.find(b => b.id == id);
     },
+
+    showLoanModal(loanId) {
+      this.showLoan = true;
+      this.selectedLoan = this.allLoans.find(l => l.id == loanId);
+    }
   },
 
   watch: {
@@ -98,10 +117,10 @@ export default {
       this.loansLoadingError = false;
 
       try {
-        const loans = await loanService.getAllByBankAccount(this.bankAccount.id);
+        this.allLoans = await loanService.getAllByBankAccount(this.bankAccount.id);
 
-        this.creditorLoans = loans.filter(l => l.creditorBankAccount.id === this.bankAccount.id);console.log(this.creditorLoans);
-        this.debitorLoans = loans.filter(l => l.debitorBankAccount.id === this.bankAccount.id);console.log(this.debitorLoans);
+        this.creditorLoans = this.allLoans.filter(l => l.creditorBankAccount.id === this.bankAccount.id);console.log(this.creditorLoans);
+        this.debitorLoans = this.allLoans.filter(l => l.debitorBankAccount.id === this.bankAccount.id);console.log(this.debitorLoans);
 
         this.loansLoaded = true;
       } catch (error) {

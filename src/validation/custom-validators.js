@@ -1,10 +1,12 @@
 import { numberService } from '@/services/number-service';
 import { helpers } from '@vuelidate/validators';
 
+const amountRegex = /^0?,0[1-9]$|^0?,[1-9][0-9]?$|^[1-9][0-9]*$|^[1-9][0-9]*,[0-9]{1,2}$/;
+
 export const accountRoleValidator = (value) => value === 'creditor' || value === 'debitor';
 /* amount regex:
 
-    allows a single leading zero
+    allows a single leading zero with comma and 1 or 2 decimals
     prevents multiple leading zeros
 
     allows any number including zeros after a leading 1-9
@@ -12,7 +14,7 @@ export const accountRoleValidator = (value) => value === 'creditor' || value ===
     allows exavtly 2 decimal places
 
 */
-export const amountValidator = (value) => value.match(/^(0|[1-9][0-9]*)?,?[0-9]{1,2}$/);
+export const amountValidator = (value) => value.match(amountRegex);
 /* balance regex:
 
     allows negative values
@@ -28,15 +30,16 @@ export const amountValidator = (value) => value.match(/^(0|[1-9][0-9]*)?,?[0-9]{
 export const balanceValidator = (value) => value.match(/^-?(0|[1-9](\.?[0-9]{3})*|[1-9][0-9]{1,2}(\.?[0-9]{3})*),[0-9]{2}$/);
 export const bicValidator = (value) => value.match(/^[a-zA-Z]{6}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?$/);
 export const costCenterIdValidator = (value) => value > 0;
-export const dayOfMonthValidator = (value) => value <= 28;
+export const dayOfMonthValidator = (value) => value.match(/^[0-9]+$/) && parseInt(value) > 0 && parseInt(value) <= 28;
 export const freeBudgetValidator = (value) => numberService.parseFloat(value) >= 0;
 export const ibanValidator = (value) => value.match(/^[a-zA-Z]{2}[0-9]{20}$/);
-export const lifeValidator = (value) => value > 0;
+export const lifeValidator = (value) => (value === '' || value === null || value === undefined) || value > 0 && value.match(/^[0-9]+$/);
 export const monthlyInstallmentValidator = (value) => value > 0;
-export const optionalAmountValidator = (value) => (value === '' || value === null || value === undefined) || value.match(/^(0|[1-9][0-9]*)?,?[0-9]{1,2}$/);
+export const optionalAmountValidator = (value) => (value === '' || value === null || value === undefined) || value.match(amountRegex);
 
 export const rateOfInterestValidator = (value) => value > 0;
 export const targetDateValidator = (value) => (value === '' || value === null || value === undefined) || value.match(/* TODO - regex missing!!! check how's the value of a date input looks like */);
+export const zeroAmountValidator = (value) => value.match(/^(0|[1-9][0-9]*)?,?[0-9]{1,2}$/);
 
 export const costCenterValidator = (transactionType) => helpers.withParams(
     { transactionType },

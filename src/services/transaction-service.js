@@ -24,5 +24,5 @@ export const transactionService = {
       console.error(error);
       throw new Error(error);
     }
-  }
+  },
 }

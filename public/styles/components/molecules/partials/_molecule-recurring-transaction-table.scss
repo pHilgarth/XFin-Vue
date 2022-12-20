@@ -1,0 +1,27 @@
+//war für detail gedacht
+.molecule-recurring-transaction-table {
+  &__scheduled {
+    color: $color-light-gray;
+    position: relative;
+
+    &:after {
+      @include rem(height, 25px);
+      @include rem(left, -50px);
+      @include rem(width, 25px);
+      background-image: url('../public/img/scheduled.svg');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      content: '';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  &__reference {
+    color: $color-secondary;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}

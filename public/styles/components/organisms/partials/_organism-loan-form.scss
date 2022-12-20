@@ -1,27 +1,29 @@
-.organism-loan-form {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0,0,0,.5);
-  //TODO - use smart z-indices
-  z-index: 345435872034985;
+// TODO - delete this file if really not needed
 
-  &__inner {
-    @include rem(padding, 50px);
-    background-color: $color-white;
-    box-shadow: 0 0 10px rgba(0,0,0,.5);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 40%;
-  }
-
-  &__form {
-    @include flexbox();
-    @include flex-wrap(wrap);
-    @include justify-content(space-between);
-  }
-}
+//.organism-loan-form {
+//  position: fixed;
+//  top: 0;
+//  left: 0;
+//  width: 100vw;
+//  height: 100vh;
+//  background-color: rgba(0,0,0,.5);
+//  //TODO - use smart z-indices
+//  z-index: z('modal');//345435872034985;
+//
+//  &__inner {
+//    @include rem(padding, 50px);
+//    background-color: $color-white;
+//    box-shadow: 0 0 10px rgba(0,0,0,.5);
+//    position: absolute;
+//    top: 50%;
+//    left: 50%;
+//    transform: translate(-50%, -50%);
+//    width: 40%;
+//  }
+//
+//  &__form {
+//    @include flexbox();
+//    @include flex-wrap(wrap);
+//    @include justify-content(space-between);
+//  }
+//}

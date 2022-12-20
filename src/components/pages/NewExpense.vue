@@ -16,7 +16,7 @@
   import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 
   import { accountHolderService } from '@/services/account-holder-service';
-  import { bankAccountService } from '@/services/bank-account-service';
+  import { accountService } from '@/services/account-service';
   import { costCenterService } from '@/services/cost-center-service';
 
   export default {
@@ -56,7 +56,7 @@
     methods: {
       async getData() {
         try {
-          const bankAccount = bankAccountService.getSingleById(this.bankAccountId);
+          const bankAccount = accountService.getSingleById(this.bankAccountId);
           const externalParties = accountHolderService.getAllByUser(this.userId, true);
           const costCenters = costCenterService.getAll();
 

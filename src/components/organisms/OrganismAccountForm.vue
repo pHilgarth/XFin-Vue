@@ -27,7 +27,7 @@ import {
   balanceValidator,
 } from "@/validation/custom-validators";
 
-import { bankAccountService } from "@/services/bank-account-service";
+import { accountService } from "@/services/account-service";
 import { numberService } from "@/services/number-service";
 
 import AtomButton from '@/components/atoms/AtomButton';
@@ -124,7 +124,7 @@ export default {
   methods: {
     async save() {
       try {
-        const bankAccountDuplicate = await bankAccountService.getSingleByIban(this.iban);
+        const bankAccountDuplicate = await accountService.getSingleByIban(this.iban);
 
         if (!bankAccountDuplicate) {
             const account = {

@@ -31,9 +31,9 @@ export const reserveService = {
         }
     },
 
-    async getAll() {
-        return get(baseUrl);
-    },
+    // async getAll() {
+    //     return get(baseUrl);
+    // },
 
     async getAllByAccount(accountId) {
         return get(`${baseUrl}/account/${accountId}`);
@@ -45,6 +45,31 @@ export const reserveService = {
 
     async getAllByAccountAndCostCenter(accountId, costCenterId) {
         return get(`${baseUrl}/${accountId}/${costCenterId}`);
+    },
+
+    async update(reserveId, jsonPatchDocument) {
+        const url = `${baseUrl}/${reserveId}`
+
+        const postObject = {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonPatchDocument)
+        };
+
+        try {
+            return await fetch(url, postObject).then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                else if (response.status === 404) {
+                    throw new Error(`no reserve found with id ${reserveId}!`);
+                }
+            }).then(data => data);
+        } catch (error) {
+            throw new Error(error);
+        }
     }
 };
 
