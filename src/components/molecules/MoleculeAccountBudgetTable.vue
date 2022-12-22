@@ -1,23 +1,31 @@
 <template>
-  <table class="molecule-revenues-table">
+  <table class="molecule-account-budget-table">
     <thead>
       <tr>
-        <th>Datum</th>
-        <th>Quelle</th>
-        <th>Verwendungszweck</th>
-        <th>Betrag</th>
+        <th>Kostenstelle</th>
+        <th>Überschuss Vormonat</th>
+        <th>Einnahmen</th>
+        <th>Budget</th>
+        <th>Ausgaben</th>
+        <th>Saldo</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="revenue in bankAccount.revenues" :key="revenue.id">
-        <td>{{ formatDate(revenue.date) }}</td>
-        <td>{{ revenue.sourceAccountHolder }}</td>
-        <td>{{ revenue.reference }}</td>
-        <td>{{ formatCurrency(revenue.amount) }}</td>
+      <tr v-for="costCenter in costCenters" :key="costCenter.id">
+        <td>{{ costCenter.name }}</td>
+        <td>{{ formatCurrency(costCenter.balancePreviousMonth) }}</td>
+        <td>{{ formatCurrency(costCenter.revenuesSum) }}</td>
+        <td>{{ formatCurrency(costCenter.balancePreviousMonth + costCenter.revenuesSum) }}</td>
+        <td>{{ formatCurrency(costCenter.expensesSum) }}</td>
+        <td>{{ formatCurrency(costCenter.balance) }}</td>
       </tr>
       <tr class="table-row-total">
-        <td colspan="3">Summe</td>
-        <td>{{ formatCurrency(bankAccount.revenues.reduce((a, b) => a + b.amount, 0)) }}</td>
+        <td>Summen</td>
+        <td>{{ formatCurrency(costCenters.reduce((a, b) => a + b.balancePreviousMonth, 0))}}</td>
+        <td>{{ formatCurrency(costCenters.reduce((a, b) => a + b.revenuesSum, 0))}}</td>
+        <td>{{ formatCurrency(costCenters.reduce((a, b) => a + (b.balancePreviousMonth + b.revenuesSum), 0))}}</td>
+        <td>{{ formatCurrency(costCenters.reduce((a, b) => a + b.expensesSum, 0))}}</td>
+        <td>{{ formatCurrency(costCenters.reduce((a, b) => a + b.balance, 0))}}</td>
       </tr>
     </tbody>
   </table>
@@ -28,9 +36,7 @@ import { numberService } from "@/services/number-service";
 
 export default {
   props: {
-    bankAccount: {
-      type: Object,
-      required: true,
+    costCenters: { type: Array, required: true,
     },
   },
 

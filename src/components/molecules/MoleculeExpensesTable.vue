@@ -3,21 +3,23 @@
     <thead>
       <tr>
         <th>Datum</th>
-        <th>Quelle</th>
+        <th>Kostenstelle</th>
+        <th>Zahlungsempfänger</th>
         <th>Verwendungszweck</th>
         <th>Betrag</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="revenue in bankAccount.revenues" :key="revenue.id">
-        <td>{{ formatDate(revenue.date) }}</td>
-        <td>{{ revenue.sourceAccountHolder }}</td>
-        <td>{{ revenue.reference }}</td>
-        <td>{{ formatCurrency(revenue.amount) }}</td>
+      <tr v-for="expense in bankAccount.expenses" :key="expense.id">
+        <td>{{ formatDate(expense.date) }}</td>
+        <td>{{ expense.sourceCostCenterName }}</td>
+        <td>{{ expense.targetAccountHolder }}</td>
+        <td>{{ expense.reference }}</td>
+        <td>{{ formatCurrency(expense.amount) }}</td>
       </tr>
       <tr class="table-row-total">
-        <td colspan="3">Summe</td>
-        <td>{{ formatCurrency(bankAccount.revenues.reduce((a, b) => a + b.amount, 0)) }}</td>
+        <td colspan="4">Summe</td>
+        <td>{{ formatCurrency(bankAccount.expenses.reduce((a, b) => a + b.amount, 0)) }}</td>
       </tr>
     </tbody>
   </table>

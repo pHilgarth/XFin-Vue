@@ -6,11 +6,9 @@
     ));
 
     &__body {
-        overflow: hidden;
+        @include rem(max-height, 500px);
+        overflow: scroll;
         transition: max-height 1s;
-        @include rem((
-                max-height: 1000px,
-        ));
 
         &.collapsed {
             max-height: 0;

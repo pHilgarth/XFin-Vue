@@ -36,8 +36,6 @@ export default {
       let tabStates = {};
 
       for (let i = 0; i < 12; i++) {
-        //TODO - test if the short syntax works
-        //tabStates[i] = i === currentMonth ? true : false;
         tabStates[i] = i === currentMonth;
       }
 

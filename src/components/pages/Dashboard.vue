@@ -5,7 +5,7 @@
     <OrganismTransactionsDue />
 <!--    <MoleculeTransactionsDue />-->
 
-    <h3>NextSteps: <ul><li>Verknüpfung von Transaktionen zu Rücklagen testen (wiederkehrend / Sparraten)</li><li>Kontodetailansicht!</li></ul></h3>
+    <h5>NextStep: Kontodetailansicht! -> hier in der API das Model anpassen (BankAccountController.GetSingle())</h5>
   </div>
 </template>
 <script>

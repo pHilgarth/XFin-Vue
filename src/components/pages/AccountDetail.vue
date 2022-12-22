@@ -7,11 +7,20 @@
       <h3>Hier muss noch das alte OrganismCollapsible durch das neue mit Slot abgelöst werden und anschließend TransactionDetail als Modal implementiert werden</h3>
       <!-- TODO - Einnahmen stimmen hier (macbook) bei zweiter KS noch nicht, die Umbuchung ist als Einnahme aufgeführt -->
       <section>
-        <MoleculeMonthSwitch @month-switched="updateView"/>
-        <OrganismRevenues :bankAccount="bankAccount"/>
+        <MoleculeMonthSwitch @month-switched="updateView" class="mb-5"/>
+
+        <OrganismCollapsibleWithSlot title="Einnahmen">
+          <MoleculeRevenuesTable :bankAccount="bankAccount" />
+        </OrganismCollapsibleWithSlot>
+
+        <OrganismCollapsibleWithSlot title="Budget">
+          <MoleculeAccountBudgetTable :costCenters="costCenters" />
+        </OrganismCollapsibleWithSlot>
+
         <!-- TODO - not all entries are visible - the height of the collapsible is too low, the last entries are cut off -->
-        <OrganismBudget :costCenters="costCenters"/>
-        <OrganismExpenses :bankAccount="bankAccount"/>
+        <OrganismCollapsibleWithSlot title="Ausgaben">
+          <MoleculeExpensesTable :bankAccount="bankAccount" />
+        </OrganismCollapsibleWithSlot>
       </section>
     </template>
   </div>
@@ -19,17 +28,27 @@
 
 <script>
 import AtomHeadline from '@/components/atoms/AtomHeadline';
-import OrganismBudget from "@/components/organisms/OrganismBudget";
-import OrganismExpenses from "@/components/organisms/OrganismExpenses";
-import OrganismRevenues from "@/components/organisms/OrganismRevenues";
-
+import MoleculeAccountBudgetTable from '@/components/molecules/MoleculeAccountBudgetTable';
+import MoleculeExpensesTable from '@/components/molecules/MoleculeExpensesTable'
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeMonthSwitch from "@/components/molecules/MoleculeMonthSwitch";
+import MoleculeRevenuesTable from "@/components/molecules/MoleculeRevenuesTable";
+import OrganismCollapsibleWithSlot from "../organisms/OrganismCollapsibleWithSlot";
 
 import { accountService } from '@/services/account-service';
-import {costCenterService} from '@/services/cost-center-service';
+import { costCenterService } from '@/services/cost-center-service';
 
 export default {
+  components: {
+    AtomHeadline,
+    MoleculeAccountBudgetTable,
+    MoleculeExpensesTable,
+    MoleculeLoading,
+    MoleculeMonthSwitch,
+    MoleculeRevenuesTable,
+    OrganismCollapsibleWithSlot,
+  },
+
   async created() {
     try {
       await this.getData();
@@ -40,14 +59,6 @@ export default {
     }
   },
 
-  components: {
-    AtomHeadline,
-    OrganismBudget,
-    OrganismExpenses,
-    OrganismRevenues,
-    MoleculeLoading,
-    MoleculeMonthSwitch,
-  },
 
   data() {
     return {
@@ -76,10 +87,7 @@ export default {
     },
 
     async updateView(month) {
-      console.log(month);
-      //TODO - error handling api calls
-      await this.getAccount(month);
-      await this.getCostCenters(month);
+      await this.getData(month);
     }
   },
 };

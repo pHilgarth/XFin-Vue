@@ -1,5 +1,5 @@
 //TODO - introduce an 'api-service', which makes all the api calls -> i.e. getALl is always the same, just with different url
-const baseUrl = 'http://localhost:2905/api/bankAccounts';
+const baseUrl = 'http://localhost:2905/api/accounts';
 
 export const accountService = {
   accountActions: [
@@ -42,7 +42,7 @@ export const accountService = {
 
   async getSingleById(accountId, year = 0, month = -1) {
 
-    const url = `${baseUrl}/${accountId}?year=${year}&month=${++month}`
+    const url = `${baseUrl}/${accountId}/?year=${year}&month=${++month}`
 
     try {
       return await fetch(url).then((response) => {
@@ -50,7 +50,7 @@ export const accountService = {
           return response.json();
         }
         else if (response.status === 404) {
-          throw new Error(`no bankAccount found with id ${accountId}!`);
+          throw new Error(`no account found with id ${accountId}!`);
         }
       }).then(data => data);
     } catch (error) {

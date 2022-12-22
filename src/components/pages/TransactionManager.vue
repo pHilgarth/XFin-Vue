@@ -1,7 +1,7 @@
 <template>
   <div class="transaction-manager">
     <AtomHeadline tag="h1" text="Transaktion"/>
-
+<h2>Umbuchung -> Executed ist false, z.B. von 000 auf Essen+Trinken auf 11004 Essen+Trinken</h2>
     <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!"/>
 
     <template v-else>
