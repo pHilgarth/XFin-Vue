@@ -82,6 +82,7 @@
       <!-- TODO - jedes Modal: max-height 800px oder so (nochmal prüfen) und overflow-y: scroll -->
       <!-- TODO - AccountDetail: ungültige id direkt in die URL eingeben und abschicken -> kein Error, nur dauerhaft "Daten werden geladen" -->
       <!-- TODO - use just "account" everywhere instead of "bankAccount" -> don't forget backend!!! -->
+      <!-- TODO - add cash system (bargeld!) on creation of a new account the cash should be provided separately  -->
 
 
 

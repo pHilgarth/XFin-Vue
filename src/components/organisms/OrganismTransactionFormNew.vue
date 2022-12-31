@@ -430,6 +430,7 @@ export default {
           reference: this.reference,
           amount: numberService.parseFloat(this.amount),
           transactionType: this.transactionType,
+          executed: true,
         };
 
         //TODO - i need to change this, that's not good

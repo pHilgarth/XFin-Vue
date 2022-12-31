@@ -2,6 +2,7 @@
   <div class="transaction-manager">
     <AtomHeadline tag="h1" text="Transaktion"/>
 <h2>Umbuchung -> Executed ist false, z.B. von 000 auf Essen+Trinken auf 11004 Essen+Trinken</h2>
+    <h2>Umbuchung klappt noch nicht richtig -> eine kontointerne Umbuchung wird als Einnahme und als Ausgabe in der Kontodetailansicht aufgeführt</h2>
     <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!"/>
 
     <template v-else>
@@ -302,7 +303,7 @@ export default {
         if (transaction.isRecurring) {
           await recurringTransactionService.create(transaction);
         }
-console.log(transaction);
+
         await transactionService.create(transaction);
 
         this.$router.push('/');

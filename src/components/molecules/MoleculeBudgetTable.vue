@@ -62,7 +62,7 @@
       </tr>
       <tr class="molecule-budget-table__total">
         <td>Summe</td>
-        <td>{{ formatCurrency(amount) }}</td>
+        <td>{{ formatCurrency(balance) }}</td>
       </tr>
       </tbody>
     </table>
@@ -87,7 +87,7 @@ import { useVuelidate } from "@vuelidate/core";
 export default {
   props: {
     //accountId: { type: Number, required: true },
-    amount: { type: Number, required: true },
+    balance: { type: Number, required: true },
     costCenterAssets: { type: Array, required: true },
     //costCenterId: { type: Number, required: true },
     //TODO - does "required: true" makes problems here?
@@ -146,7 +146,7 @@ export default {
 
   methods: {
     calculateUnallocatedAmount() {
-      let unallocatedAmount = this.amount;
+      let unallocatedAmount = this.balance;
 
       this.costCenterAssets.forEach(c => {
         if (c.id === this.selectedCostCenterAssetId) {

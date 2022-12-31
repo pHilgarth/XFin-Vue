@@ -4,7 +4,6 @@
 
     <template v-else>
       <AtomHeadline tag="h1" :text="`Detailansicht (${bankAccount.accountNumber})`"/>
-      <h3>Hier muss noch das alte OrganismCollapsible durch das neue mit Slot abgelöst werden und anschließend TransactionDetail als Modal implementiert werden</h3>
       <!-- TODO - Einnahmen stimmen hier (macbook) bei zweiter KS noch nicht, die Umbuchung ist als Einnahme aufgeführt -->
       <section>
         <MoleculeMonthSwitch @month-switched="updateView" class="mb-5"/>

@@ -21,16 +21,15 @@
               Nicht zugewiesen
             </div>
             <div class="budget-manager__unallocated__value col-6">
-              {{ formatCurrency(costCenters.find(c => c.name === 'Nicht zugewiesen').amount) }}
+              {{ formatCurrency(costCenters.find(c => c.name === 'Nicht zugewiesen').balance) }}
             </div>
           </div>
           <OrganismCollapsibleWithSlot v-for="costCenter in costCenters.filter(c => c.name !== 'Nicht zugewiesen')" :key="costCenter.id" :title="costCenter.name">
-            <MoleculeBudgetTable :amount="costCenter.amount" :costCenterAssets="costCenter.costCenterAssets"
+            <MoleculeBudgetTable :balance="costCenter.balance" :costCenterAssets="costCenter.costCenterAssets"
                                  :reserves="costCenter.reserves" @save-cost-center-asset="saveCostCenterAsset(costCenter.id, $event)"
                                  @updateCostCenterAsset="updateCostCenterAsset($event)" />
           </OrganismCollapsibleWithSlot>
 
-          <pre>{{ costCenters }}</pre>
         </template>
 
       </template>
