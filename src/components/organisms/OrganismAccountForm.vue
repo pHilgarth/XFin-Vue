@@ -8,8 +8,10 @@
           <MoleculeInputText class="pb-5" field="bic" :hasErrors="bicErrors" v-model="bic" @blur="v$.bic.$touch()" :validation="v$.bic" label="BIC" />
           <MoleculeInputText class="pb-5" field="bank" v-model="bank" label="Bank" />
           <MoleculeInputText class="pb-5" field="description" v-model="description" label="Beschreibung" />
-          <MoleculeInputText class="pb-5" v-if="!formData.account || formData.account.isNew" field="balance" :hasErrors="balanceErrors" v-model="balance" :validation="v$.balance"
-                             label="Kontostand" @blur="v$.balance.$touch()" />
+          <MoleculeInputText class="pb-5" v-if="!formData.account || formData.account.isNew" field="balance" :hasErrors="balanceErrors" v-model="balance"
+                             :validation="v$.balance" label="Kontostand" @blur="v$.balance.$touch()" />
+          <MoleculeInputText class="pb-5" v-if="!formData.account || formData.account.isNew" field="cash" :hasErrors="v$.cash.$error" v-model="cash"
+                             :validation="v$.cash" label="Bargeldbestand" @blur="v$.cash.$touch()" />
 
           <AtomButton text="Konto speichern" :disabled="v$.$silentErrors.length > 0 || duplicate" type="primary" @click.prevent="save" />
           <AtomButton text="Abbrechen" type="cancel" @click.prevent="$emit('cancel')" />
@@ -70,6 +72,9 @@ export default {
                                 ? numberService.amountToString(this.formData.account.balance)
                                 : null,
       bank:                   this.formData.account?.bank || "",
+      cash:                   this.formData.account?.cash
+                                ? numberService.amountToString(this.formData.account.cash)
+                                : null,
       description:            this.formData.account?.description || null,
       bic:                    this.formData.account?.bic || "",
       originalIban:           this.formData.account?.iban || "",
@@ -82,6 +87,7 @@ export default {
   },
 
   computed: {
+    //TODO - this can be placed in the html directly
     balanceErrors() {
       return this.v$.balance.$error;
     },
@@ -115,6 +121,7 @@ export default {
   validations() {
     if (!this.formData.account || this.formData.account.isNew) {
       accountValidation.balance = { balanceValidator };
+      accountValidation.cash = { balanceValidator }
     }
 
     accountValidation.iban.ibanDuplicate = ibanDuplicateValidator(this.formData.ibans);
@@ -135,6 +142,7 @@ export default {
               iban: this.iban,
               accountNumber: numberService.getAccountNumber(this.iban),
               balance: numberService.parseFloat(this.balance),
+              cash: numberService.parseFloat(this.cash),
               index: this.accountIndex,
             };
 

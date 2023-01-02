@@ -11,7 +11,7 @@
         </template>
 
         <div class="organism-account-holder__accounts">
-          <AtomHeadline class="account-holder__accounts__headline" tag="h4" text="Konten:" />
+          <AtomHeadline class="account-holder__accounts__headline mb-4" tag="h4" text="Konten:" />
           <AtomButton text="&plus; Neues Konto anlegen" type="light" @click="addAccount" :tabindex="showForm ? '-1' : ''" />
 
           <div v-if="bankAccounts.length" class="organism-account-holder__account-items">
@@ -22,8 +22,15 @@
                 <AtomSpan v-else-if="account.changed" class="organism-account-holder__changed" text="GEÄNDERT" />
                 <AtomSpan class="organism-account-holder__delete" :data-index="index" text="&times;" @click="deleteAccount" />
                 <AtomSpan class="organism-account-holder__account-number" :text="account.accountNumber" />
-                <AtomSpan class="organism-account-holder__balance" :text="formatBalance(account.balance)" />
-                <AtomButton :data-index="index" text="Bearbeiten" type="light-small" @click="editAccount" />
+                <div class="organism-account-holder__balance">
+                  <AtomSpan class="col-6" text="Kontostand:" />
+                  <AtomSpan class="col-6"  :text="formatBalance(account.balance)" />
+                </div>
+                <div v-if="account.cash" class="organism-account-holder__cash">
+                  <AtomSpan class="col-6"  text="Bargeld:" />
+                  <AtomSpan class="col-6"  :text="formatBalance(account.cash)" />
+                </div>
+                <AtomButton class="organism-account-holder__edit-account" :data-index="index" text="Bearbeiten" type="light-small" @click="editAccount" />
               </div>
             </template>
           </div>
@@ -141,11 +148,11 @@ export default {
     },
 
     saveAccount(bankAccount) {
-      // if !this.accountHolder -> user is creating a new accountHolder
+      // if !this.accountHolder: user is creating a new accountHolder
       if (!this.accountHolder) {
         bankAccount.isNew = true;
 
-        //if bankAccount.index -> user edited an existing account
+        //if bankAccount.index >= 0: user edited an existing account
         if (bankAccount.index >= 0) {
           this.bankAccounts[bankAccount.index] = bankAccount;
         } else {
@@ -154,7 +161,7 @@ export default {
       
         this.showForm = false;
       }
-      //else -> user is editing an existing accountHolder
+      //else: user is editing an existing accountHolder
       else {
         const sourceAccount = this.accountHolder.bankAccounts[bankAccount.index];
 

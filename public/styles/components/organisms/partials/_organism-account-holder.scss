@@ -33,8 +33,8 @@
     align-content: center;
     justify-content: center;
     @include rem(border-radius, 5px);
-    @include rem(height, 150px);
-    @include rem(width, 150px);
+    @include rem(height, 200px);
+    @include rem(width, 250px);
     @include rem(font-size, 24px);
     @include rem(margin-right, 10px);
     @include rem(margin-bottom, 10px);
@@ -69,7 +69,27 @@
     @include rem(font-size, 20px);
   }
 
-  &__balance {
+  &__balance, &__cash {
     @include rem(font-size, 18px);
+    @include rem(padding, 10px);
+    display: flex;
+    width: 100%;
+
+    span:last-child {
+      text-align: right;
+    }
+  }
+
+  &__balance {
+    @include rem(padding-bottom, 5px);
+  }
+
+  &__cash {
+    @include rem(padding-top, 5px);
+  }
+
+  &__edit-account {
+    @include rem(bottom, 10px);
+    position: absolute;
   }
 }
