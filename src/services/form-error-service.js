@@ -42,7 +42,7 @@ export const errorService = {
         payeeCostCenter:                            'Bitte wähle eine Kostenstelle aus!',
         rateOfInterest:                             'Bitte gib einen gültigen Zinssatz an!',
         reference:                                  'Bitte gib einen Verwendungszweck ein!',
-        reference_maxLength:                        'Der Verwendungszweck darf nicht länger als 25 Zeichen sein!',
+        reference_maxLength:                        'Der Verwendungszweck darf nicht länger als 100 Zeichen sein!',
         startDate:                                  dateErrorMessage,
         targetAmount:                               amountErrorMessage,
         title_required:                             'Bitte gib einen Titel ein!',

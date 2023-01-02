@@ -74,7 +74,7 @@ export const transactionValidation = {
     payeeAccount:           { required },
     payerAccount:           { required },
     //payerCostCenter:        { payerCostCenterValidator: payerCostCenterValidator(null) },
-    reference:              { required, maxLength: maxLength(25) },
+    reference:              { required, maxLength: maxLength(100) },
     //transactionType:        { required },
 };
 
