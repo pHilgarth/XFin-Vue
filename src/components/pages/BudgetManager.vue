@@ -1,10 +1,6 @@
 <template>
   <section class="budget-manager">
     <AtomHeadline tag="h1" text="Budgetmanager" />
-    <!-- TODO - verfügbarer Betrag einer KS muss auch geplante Ausgaben berücksichtigen! Geld für geplante Ausgaben kann nicht umgebucht werden -->
-    <!-- TODO - bei offenen Änderungen wär es cool, wenn der Collapsible Header irgendwie hervorgehen würde, allerdings müsste ich die Info irgendwie ans parent übergeben (OrgansimCollapsible)-->
-    <!-- TODO - error message kann unterschiedelich sein, nicht hardcoded -->
-    <!-- TODO - Überlegung: Soll BudgetManager nach dem Speichern auf die Startseite zurück routen? Man kann die Konten aber separat speichern, daher wohl eher nicht? -->
     <MoleculeLoading v-if="!accountsLoaded" :loadingError="accountsLoadingError" errorMessage="Fehler beim Laden der Kontoinhaber!"/>
 
     <template v-else>
@@ -16,19 +12,28 @@
         <MoleculeLoading v-if="!costCentersLoaded" :loadingError="costCenterLoadingError" errorMessage="Fehler beim Laden der Kostenstellen!"/>
 
         <template v-else>
-          <div class="budget-manager__unallocated mb-4">
-            <div class="budget-manager__unallocated__name col-6">
-              Nicht zugewiesen
+          <div class="budget-manager__free-budget mb-4">
+            <div class="budget-manager__free-budget__name col-6">
+              Freies Budget
             </div>
-            <div class="budget-manager__unallocated__value col-6">
-              {{ formatCurrency(costCenters.find(c => c.name === 'Nicht zugewiesen').balance) }}
+            <div class="budget-manager__free-budget__value col-6">
+              {{ formatCurrency(freeBudget) }}
             </div>
           </div>
-          <OrganismCollapsibleWithSlot v-for="costCenter in costCenters.filter(c => c.name !== 'Nicht zugewiesen')" :key="costCenter.id" :title="costCenter.name">
-            <MoleculeBudgetTable :balance="costCenter.balance" :costCenterAssets="costCenter.costCenterAssets"
-                                 :reserves="costCenter.reserves" @save-cost-center-asset="saveCostCenterAsset(costCenter.id, $event)"
-                                 @updateCostCenterAsset="updateCostCenterAsset($event)" />
-          </OrganismCollapsibleWithSlot>
+
+          <OrganismCostCenterList
+              :costCenters="costCenters"
+              :account="this.account"
+              @reload="getCostCenters"
+              @save="save"
+              @updateFreeBudget="freeBudget = $event"
+          />
+
+<!--          <OrganismCollapsibleWithSlot v-for="costCenter in costCenters" :key="costCenter.id" :title="`${costCenter.name} ${formatCurrency(costCenter.balance)}`">-->
+<!--            <MoleculeBudgetTable :balance="costCenter.balance" :costCenterAssets="costCenter.costCenterAssets"-->
+<!--                                 :reserves="costCenter.reserves" @save-cost-center-asset="saveCostCenterAsset(costCenter.id, $event)"-->
+<!--                                 @updateCostCenterAsset="updateCostCenterAsset($event)" />-->
+<!--          </OrganismCollapsibleWithSlot>-->
 
         </template>
 
@@ -38,15 +43,15 @@
 </template>
 
 <script>
+//import AtomEditIcon from "../atoms/AtomEditIcon";
 import AtomHeadline from '@/components/atoms/AtomHeadline';
-
-import MoleculeBudgetTable from '@/components/molecules/MoleculeBudgetTable';
+//import MoleculeBudgetTable from '@/components/molecules/MoleculeBudgetTable';
+//import MoleculeCostCenterListItem from '@/components/molecules/MoleculeCostCenterListItem';
 import MoleculeInputAutoSuggest from '@/components/molecules/MoleculeInputAutoSuggest';
 //import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
-
-//import OrganismCollapsible from '@/components/organisms/OrganismCollapsible';
-import OrganismCollapsibleWithSlot from "../organisms/OrganismCollapsibleWithSlot";
+//import OrganismCollapsibleWithSlot from "../organisms/OrganismCollapsibleWithSlot";
+import OrganismCostCenterList from '@/components/organisms/OrganismCostCenterList';
 
 import { accountService } from '@/services/account-service';
 import { costCenterAssetService } from '@/services/cost-center-asset-service';
@@ -57,6 +62,10 @@ import { numberService } from '@/services/number-service';
 export default {
   async created() {
     try {
+      if (this.$cookies.get('user')) {
+        this.user = this.$cookies.get('user');
+      }
+
       await this.getAccounts();
       this.accountsLoaded = true;
     }
@@ -67,22 +76,14 @@ export default {
   },
 
   components: {
+    //AtomEditIcon,
     AtomHeadline,
-    MoleculeBudgetTable,
+    //MoleculeBudgetTable,
+    //MoleculeCostCenterListItem,
     MoleculeInputAutoSuggest,
-    //MoleculeInputSelect,
     MoleculeLoading,
-    //OrganismCollapsible,
-    OrganismCollapsibleWithSlot,
-  },
-
-  watch: {
-    async account() {
-      this.costCentersLoaded = false;
-      this.costCenterLoadingError = false;
-
-      await this.getCostCenters();
-    },
+    //OrganismCollapsibleWithSlot,
+    OrganismCostCenterList
   },
   
   data() {
@@ -94,33 +95,15 @@ export default {
       costCenters: null,
       costCentersLoaded: false,
       costCenterLoadingError: false,
+      freeBudget: null,
+      user: null,
     }
   },
 
   methods: {
-    // async showBankAccounts() {
-    //   const accountHolder = this.selectedAccountHolder;
-    //   let loadingError = false;
-    //
-    //   for (let i = 0; i < accountHolder.bankAccounts.length; i++) {
-    //     let bankAccount = accountHolder.bankAccounts[i]
-    //
-    //     const categoriesResponse = await this.getCostCenters(bankAccount);
-    //
-    //     if (categoriesResponse.error) {
-    //       loadingError = true;
-    //       this.errorMessage = 'Daten konnten nicht geladen werden. (Dev-Hint: Categories failed)';
-    //       break;
-    //     }
-    //   }
-    //
-    //   if (!loadingError) {
-    //     this.categoriesLoaded = true;
-    //   }
-    //   else {
-    //     this.categoriesLoadingError = true;
-    //   }
-    // },
+    calculateFreeBudget() {
+      return this.account.totalBalance - this.costCenters.reduce((a, b) => a + b.balance, 0);
+    },
 
     formatCurrency(value) {
       return numberService.formatCurrency(value);
@@ -128,9 +111,9 @@ export default {
 
     async getAccounts() {
       try {
-        let accounts = await accountService.getAll();
+        let accounts = await accountService.getAllByUser(this.user.id);
         accounts = accounts.filter(b => !b.external).map(
-            b => { return { id: b.id, label: `${b.accountHolderName} (${b.iban})`} });
+            b => { return { id: b.id, label: `${b.accountHolderName} (${b.iban})`, totalBalance: b.balance + b.cash } });
 
         this.accounts = accounts;
       }
@@ -138,28 +121,6 @@ export default {
         console.error(error);
         throw new Error(error);
       }
-
-
-
-
-      // const includeAccounts = true;
-      // const accountHolderResponse = await accountHolderService.getAllByUser(includeAccounts);
-      //
-      // if (accountHolderResponse.success && accountHolderResponse.data) {
-      //   this.accountHolders = accountHolderResponse.data;
-      //
-      //   this.accountHolderOptions = [{disabled: true, label: '(Kontoinhaber wählen)'}];
-      //
-      //   this.accountHolders.forEach(a => {
-      //     this.accountHolderOptions.push({
-      //       label: a.name,
-      //     });
-      //   });
-      // } else if (accountHolderResponse.success && !accountHolderResponse.data) {
-      //   this.accountHolders = [];
-      // }
-      //
-      // return accountHolderResponse;
     },
 
     async getCostCenters() {
@@ -167,7 +128,7 @@ export default {
         const year = new Date().getFullYear();
         const month = new Date().getMonth();
 
-        this.costCenters = await costCenterService.getAllByAccount(this.account.id, year, month);
+        this.costCenters = await costCenterService.getAllByUserAndAccount(this.user.id, this.account.id, year, month);
 
         this.costCentersLoaded = true;
       } catch (error) {
@@ -180,20 +141,20 @@ export default {
       this.account = this.accounts.find(b => b.id == id);
     },
 
-    async saveCostCenterAsset(costCenterId, name) {
-      try {
-        await costCenterAssetService.create({
-          name: name,
-          bankAccountId: this.account.id,
-          costCenterId: costCenterId,
-        });
-
-        await this.getCostCenters();
-      }
-      catch (error) {
-        console.error(error);
-      }
-    },
+    // async saveCostCenterAsset(costCenterId, name) {
+    //   try {
+    //     await costCenterAssetService.create({
+    //       name: name,
+    //       bankAccountId: this.account.id,
+    //       costCenterId: costCenterId,
+    //     });
+    //
+    //     await this.getCostCenters();
+    //   }
+    //   catch (error) {
+    //     console.error(error);
+    //   }
+    // },
 
     async updateCostCenterAsset(data) {
       try {
@@ -216,6 +177,16 @@ export default {
         console.error(error);
       }
     }
-  }
+  },
+
+  watch: {
+    async account() {
+      this.costCentersLoaded = false;
+      this.costCenterLoadingError = false;
+
+      await this.getCostCenters();
+      this.freeBudget = this.calculateFreeBudget();
+    },
+  },
 };
 </script>

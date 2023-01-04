@@ -1,5 +1,5 @@
 .budget-manager {
-    &__unallocated {
+    &__free-budget {
         @include rem(font-size, 20px);
         display: flex;
         width: 30%;
@@ -7,5 +7,9 @@
         &__name {
             font-weight: bold;
         }
+    }
+
+    &__cost-center-list {
+        width: 50%;
     }
 }

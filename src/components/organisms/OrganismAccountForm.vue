@@ -41,6 +41,9 @@ import { accountValidation } from "@/validation/validations";
 
 export default {
   created() {
+    if (this.$cookies.get('user')) {
+      this.user = this.$cookies.get('user');
+    }
     //if formData has an account property, the user is editing an existing account (existing in memory or in db) and I remove its iban from the
     //duplicate checklist - I need an extra variable since I cant mutate props directly
     if (this.formData.account) {
@@ -83,6 +86,7 @@ export default {
       ibans:                  this.formData.account?.ibans || [],
       duplicate:              false,
       duplicateCheckError:    false,
+      user:                   null,
     };
   },
 
@@ -131,7 +135,7 @@ export default {
   methods: {
     async save() {
       try {
-        const bankAccountDuplicate = await accountService.getSingleByIban(this.iban);
+        const bankAccountDuplicate = await accountService.getSingleByUserAndIban(this.user.id, this.iban);
 
         if (!bankAccountDuplicate) {
             const account = {

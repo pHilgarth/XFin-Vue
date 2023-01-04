@@ -50,6 +50,10 @@ export default {
 
   async created() {
     try {
+      if (this.$cookies.get('user')) {
+        this.user = this.$cookies.get('user');
+      }
+
       await this.getData();
 
       this.dataLoaded = true;
@@ -65,6 +69,7 @@ export default {
       costCenters: null,
       dataLoaded: false,
       loadingError: false,
+      user: null,
     };
   },
 
@@ -75,7 +80,7 @@ export default {
         month = month !== undefined ? month : new Date().getMonth();
 
         const bankAccount = accountService.getSingleById(this.$route.params.id, year, month);
-        const costCenters = costCenterService.getAllByAccount(this.$route.params.id, year, month);
+        const costCenters = costCenterService.getAllByUserAndAccount(this.user.id, this.$route.params.id, year, month);
 
         this.bankAccount = await bankAccount;
         this.costCenters = await costCenters;

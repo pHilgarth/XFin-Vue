@@ -25,9 +25,9 @@ export const accountService = {
     },
   ],
 
-  async getAll() {
+  async getAllByUser(userId) {
     try {
-      return await fetch(baseUrl).then((response) => {
+      return await fetch(`${baseUrl}/user/${userId}`).then((response) => {
         if (response.status === 200) {
           return response.json();
         }
@@ -41,7 +41,6 @@ export const accountService = {
   },
 
   async getSingleById(accountId, year = 0, month = -1) {
-
     const url = `${baseUrl}/${accountId}/?year=${year}&month=${++month}`
 
     try {
@@ -58,8 +57,8 @@ export const accountService = {
     }
   },
 
-  async getSingleByIban(iban) {
-    const url = `${baseUrl}/iban/${iban}`
+  async getSingleByUserAndIban(userId, iban) {
+    const url = `${baseUrl}/user/${userId}/iban/${iban}`
 
     try {
       return await fetch(url).then((response) => {

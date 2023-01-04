@@ -61,6 +61,12 @@ import { numberService } from '@/services/number-service';
 import { accountHolderValidation } from '@/validation/validations';
 
 export default {
+  created() {
+    if (this.$cookies.get('user')) {
+      this.user = this.$cookies.get('user');
+    }
+  },
+
   components: {
     AtomButton,
     AtomHeadline,
@@ -102,13 +108,13 @@ export default {
   data() {
     return {
       showForm: false,
-
       name: this.accountHolder?.name || '',
       originalName: this.accountHolder?.name || '',
       duplicatedName: false,
       bankAccounts: copyService.copyArray(this.accountHolder?.bankAccounts || []),
       formData: null,
       formHeadline: null,
+      user: null,
     };
   },
 
@@ -148,6 +154,7 @@ export default {
     },
 
     saveAccount(bankAccount) {
+      //TODO - refactoring.... this method is an if-else-hell....
       // if !this.accountHolder: user is creating a new accountHolder
       if (!this.accountHolder) {
         bankAccount.isNew = true;
@@ -165,11 +172,11 @@ export default {
       else {
         const sourceAccount = this.accountHolder.bankAccounts[bankAccount.index];
 
-        //if !sourceAccount -> user created or edited a new account, which is not stored in the db yet
+        //if !sourceAccount: user created or edited a new account, which is not stored in the db yet
         if (!sourceAccount) {
           bankAccount.isNew = true;
 
-          //if bankAccount.index -> user edited an existing account
+          //if bankAccount.index >= 0: user edited an existing account
           if (bankAccount.index >= 0) {
             this.bankAccounts[bankAccount.index] = bankAccount;
           } else {
@@ -191,7 +198,7 @@ export default {
 
       if (this.originalName !== this.name) {
         try {
-          const accountHolderDuplicate = await accountHolderService.getByName(this.name);
+          const accountHolderDuplicate = await accountHolderService.getByUserAndName(this.user.id, this.name);
 
           if (!accountHolderDuplicate) {
             save = true;

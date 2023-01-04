@@ -41,13 +41,6 @@ export const rateOfInterestValidator = (value) => value > 0;
 export const targetDateValidator = (value) => (value === '' || value === null || value === undefined) || value.match(/* TODO - regex missing!!! check how's the value of a date input looks like */);
 export const zeroAmountValidator = (value) => value.match(/^(0|[1-9][0-9]*)?,?[0-9]{1,2}$/);
 
-export const costCenterValidator = (transactionType) => helpers.withParams(
-    { transactionType },
-    (value) => {
-        return !(value === 'Nicht zugewiesen' && (transactionType === 'Darlehen' || transactionType === 'Sparrate'));
-    }
-);
-
 export const firstSelectValidator = (secondSelect) => helpers.withParams(
     { secondSelect: secondSelect },
     (value) => {

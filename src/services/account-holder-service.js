@@ -41,8 +41,8 @@ export const accountHolderService = {
     }
   },
 
-  async getByName(name) {
-    const url = `${baseUrl}/name/${name}`;
+  async getByUserAndName(userId, name) {
+    const url = `${baseUrl}/user/${userId}/name/${name}`;
 
     try {
       return await fetch(url).then((response) => {

@@ -112,7 +112,9 @@ export default {
       targetDate: this.reserve.targetDate,
       transactions: Array.from([
           this.reserve.revenues.map(r => ({ ...r, cssClass: '' }) ),
+          this.reserve.transferRevenues.map(tr => ({...tr, cssClass: ''}) ),
           this.reserve.expenses.map(e => ({ ...e, cssClass: 'negative' }) ),
+          this.reserve.transferExpenses.map(te => ({...te, cssClass: 'negative' }) ),
       ]).flat().sort((a, b) => {
         return a.date < b.date ? 1 :
             a.date === b.date ? 0 : -1;

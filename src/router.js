@@ -8,10 +8,10 @@ import Dashboard from './components/pages/Dashboard';
 import DebtManager from './components/pages/DebtManager';
 import EditAccountHolder from './components/pages/EditAccountHolder';
 import NewAccountHolder from './components/pages/NewAccountHolder';
-import NewExpense from './components/pages/NewExpense';
+//import NewExpense from './components/pages/NewExpense';
 import NewLoan from './components/pages/NewLoan';
 import NewReserve from './components/pages/NewReserve';
-import NewRevenue from './components/pages/NewRevenue';
+//import NewRevenue from './components/pages/NewRevenue';
 import OverheadsManager from './components/pages/OverheadsManager';
 import RecurringRevenues from './components/pages/RecurringRevenues';
 import ReserveManager from './components/pages/ReserveManager';
@@ -30,10 +30,10 @@ export const router = createRouter({
         { path: '/debt-manager', component: DebtManager },
         { path: '/edit-account-holder', name: 'edit-account-holder', component: EditAccountHolder, props: true },
         { path: '/new-account-holder', component: NewAccountHolder },
-        { path: '/new-expense', name: 'new-expense', component: NewExpense, props: true },
+        //{ path: '/new-expense', name: 'new-expense', component: NewExpense, props: true },
         { path: '/new-loan', component: NewLoan },
         { path: '/new-reserve/', component: NewReserve },
-        { path: '/new-revenue/:id', component: NewRevenue },
+        //{ path: '/new-revenue/:id', component: NewRevenue },
         { path: '/overheads-manager', name: 'overheads-manager', component: OverheadsManager},
         { path: '/recurring-revenues', component: RecurringRevenues },
         { path: '/reserves', component: ReserveManager },

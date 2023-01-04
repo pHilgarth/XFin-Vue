@@ -100,12 +100,20 @@ export default {
     },
 
     calculateCurrentAmount(reserve) {
-      const revenuesSum = reserve.revenues.length
+      let revenuesSum = reserve.revenues.length
           ? reserve.revenues.reduce((a, b) => a + b.amount, 0)
           : 0;
 
-      const expensesSum = reserve.expenses.length
+      revenuesSum += reserve.transferRevenues.length
+          ? reserve.transferRevenues.reduce((a, b) => a + b.amount, 0)
+          : 0;
+
+      let expensesSum = reserve.expenses.length
           ? reserve.expenses.reduce((a, b) => a + b.amount, 0)
+          : 0;
+
+      expensesSum += reserve.transferExpenses.length
+          ? reserve.transferExpenses.reduce((a, b) => a + b.amount, 0)
           : 0;
 
       reserve.currentAmount = revenuesSum - expensesSum;

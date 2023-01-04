@@ -31,7 +31,6 @@
       <!-- TODO - opening the budget manager from an accounts dropdown menu in accountview does not work -->
       <!-- TODO - xfin__form-error on budget-manager "Dieser Posten darf nicht negativ sein" -> it's not position: absolute anymore, but here it has to be -->
       <!--          TODO - i disabled position: absolute because of another component where it shouldn't be absolute -> need to find a solution here -->
-      <!-- TODO - dont show "Nicht zugewiesen" in CostCenterManager -->
       <!-- TODO - implement saving of new CostCenter -->
       <!-- TODO - implement custom select form control, so that the options aren't displayed in the default browser dropdown, which is ugly -->
       <!-- TODO - rethink the concept of dynamically rendering components by passing a config-prop to components, like in i.e. MoleculeTableBody - no one knows, what shape the config object has ... -->
@@ -83,15 +82,10 @@
       <!-- TODO - AccountDetail: ungültige id direkt in die URL eingeben und abschicken -> kein Error, nur dauerhaft "Daten werden geladen" -->
       <!-- TODO - use just "account" everywhere instead of "bankAccount" -> don't forget backend!!! -->
       <!-- TODO - add cash system (bargeld!) on creation of a new account the cash should be provided separately  -->
+      <!-- TODO - costCenters orderby Name, alphabetically, and costCenterAssets -->
 
 
 
-      <!--      <p>Kostenstelle "Nicht zugewiesen:</p>-->
-      <!--      <p>Diese Kostenstelle dient nur dazu, freies Budget zu "lagern". Einnahmen werden auf "Nicht zugewiesen" gebucht, wenn keine Kostenstelle angegeben wird. <b>TODO</b></p>-->
-      <!--      <p>Ausgaben von "Nicht zugewiesen" dürfen nicht möglich sein - allerdings gibt es die Möglichkeit, bei einer Ausgabe eine KS auszuwählen und Geld von "Nicht zugewiesen" zu verwenden (via Checkbox "Freies Budget verwenden") <b>TODO</b></p>-->
-      <!--      <p>intern wird dann Geld auf die ausgewählte KS umgebucht und schließlich damit eine Ausgabe getätigt <b>TODO</b></p>-->
-      <!--      <br />-->
-      <!--      <p>Interne Geldtransfers von Konto nach Konto werden über Einnahmen / Ausgaben verbucht - die entsprechenden Forms müssen angepasst werden, damit auch eigene Konten ausgewählt werden können <b>TODO</b></p>-->
       <!--      <p>Error Handling fehlt noch weitestgehend, einfach überall nochmal drüber gucken, wo man noch optimieren muss ( vor allem bei den api calls )</p>-->
       <!--      <p>Atom Props testen (id, class, additionalProps, etc. ... )</p>-->
       <!--      <p>scss und classes prüfen, welche brauche ich, bzw. kann ich die gesetzen classes vereinfachen, etc....</p>-->
@@ -130,11 +124,14 @@ import { accountHolderService } from "@/services/account-holder-service";
 import { numberService } from "@/services/number-service";
 
 export default {
-  inject: [ 'userId' ],
 
   async created() {
     try {
-      this.accountHolders = await accountHolderService.getAllByUser(this.userId);
+      if (this.$cookies.get('user')) {
+        this.user = this.$cookies.get('user');
+      }
+
+      this.accountHolders = await accountHolderService.getAllByUser(this.user.id);
       this.dataLoaded = true;
     } catch (error) {
       this.loadingError = true;
@@ -154,11 +151,10 @@ export default {
 
   data() {
     return {
+      accountHolders: null,
       dataLoaded: false,
       loadingError: false,
-
-      accountHolders: null,
-
+      user: null,
     };
   },
 

@@ -62,6 +62,10 @@ export default {
 
   async created() {
     try {
+      if (this.$cookies.get('user')) {
+        this.user = this.$cookies.get('user');
+      }
+
       await this.getData();
 
       this.dataLoaded = true;
@@ -88,6 +92,7 @@ export default {
       targetAmount: null,
       targetDate: null,
       reference: '',
+      user: null,
     }
   },
 
@@ -96,7 +101,8 @@ export default {
     async getData() {
       try {
         const bankAccountsResult = accountService.getAll();
-        let costCentersResult = costCenterService.getAll();
+        //TODO - does this work?
+        let costCentersResult = costCenterService.getAllByUser(this.user.id);
 
         let bankAccounts = await bankAccountsResult;
         bankAccounts = bankAccounts.filter(b => !b.external).map(
@@ -105,7 +111,7 @@ export default {
         let costCenters = await costCentersResult;
 
         this.bankAccounts = bankAccounts;
-        this.costCenters = costCenters.filter(c => c.name !== 'Nicht zugewiesen').map(c => {
+        this.costCenters = costCenters.map(c => {
           return { id: c.id, label: c.name }
         });
 

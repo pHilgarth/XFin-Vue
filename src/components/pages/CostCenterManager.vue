@@ -6,15 +6,17 @@
 
     <template v-else>
 
-
       <MoleculeCostCenterRow v-for="costCenter in costCenters" :key="costCenter.id" :costCenter="costCenter" :allowEdit="!createNew" @edit-cost-center="editCostCenter = true"
                              @cancel-edit="editCostCenter = false" @update-cost-center="updateCostCenter"/>
 
-      <MoleculeInputText v-if="createNew" class="pb-4" field="cost-center" :hasErrors="nameErrors" v-model="newCostCenter" @blur="v$.newCostCenter.$touch()" :validation="v$.newCostCenter"
-                         label="Neue Kostenstelle" />
+      <MoleculeInputText v-if="createNew" class="pb-4" field="cost-center" v-model="newCostCenter" :validation="v$.newCostCenter"
+                         :hasErrors="v$.newCostCenter.$error" @blur="v$.newCostCenter.$touch()" label="Neue Kostenstelle" />
 
-      <AtomButton class="me-3" v-if="createNew" type="primary" text="Speichern" @click="saveCostCenter" />
-      <AtomButton v-if="createNew" type="cancel" text="Abbrechen" @click="cancelCostCenterCreation"/>
+      <AtomButton class="me-3" v-if="createNew" type="primary" text="Speichern" :disabled="v$.newCostCenter.$error" @click="saveCostCenter" />
+      <AtomButton class="me-3" v-if="createNew" type="cancel" text="Abbrechen" @click="cancelCostCenterCreation"/>
+      <template v-if="duplicatedName">
+        <AtomSpan class="xfin__form__error" text="Dieser Name wird bereits verwendet!"/>
+      </template>
 
       <AtomButton v-if="!createNew" type="primary" text="Kostenstelle hinzufügen" @click="createNew = true" :disabled="editCostCenter"/>
 
@@ -28,6 +30,7 @@ import { required } from "@vuelidate/validators";
 
 import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
+import AtomSpan from '@/components/atoms/AtomSpan';
 
 import MoleculeInputText from "@/components/molecules/MoleculeInputText";
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
@@ -39,6 +42,7 @@ export default {
   components: {
     AtomButton,
     AtomHeadline,
+    AtomSpan,
     MoleculeInputText,
     MoleculeLoading,
     MoleculeCostCenterRow
@@ -46,6 +50,10 @@ export default {
 
   async created() {
     try {
+      if (this.$cookies.get('user')) {
+        this.user = this.$cookies.get('user');
+      }
+
       await this.getCostCenters()
 
       this.dataLoaded = true;
@@ -56,17 +64,13 @@ export default {
     }
   },
 
-  computed: {
-    nameErrors() {
-      return this.v$.newCostCenter.$error;
-    }
-  },
-
   watch: {
     newCostCenter() {
       if (this.createNew) {
         this.v$.newCostCenter.$touch();
       }
+
+      this.duplicatedName = false;
     },
   },
 
@@ -75,9 +79,11 @@ export default {
       costCenters: null,
       createNew: false,
       dataLoaded: false,
+      duplicatedName: false,
       editCostCenter: false,
       loadingError: false,
       newCostCenter: null,
+      user: null,
     }
   },
 
@@ -85,13 +91,13 @@ export default {
     cancelCostCenterCreation() {
       this.createNew = false;
       this.newCostCenter = '';
+      this.duplicatedName = false;
       this.v$.$reset();
     },
 
     async getCostCenters() {
       try {
-        this.costCenters = await costCenterService.getAll();
-        this.costCenters.splice(this.costCenters.findIndex(t => t.name === 'Nicht zugewiesen'), 1);
+        this.costCenters = await costCenterService.getAllByUser(this.user.id);
       }
       catch (error) {
         console.error(error);
@@ -100,13 +106,21 @@ export default {
     },
 
     async saveCostCenter() {
-      this.v$.$touch();
+      try {
+        const duplicatedCostCenter = await costCenterService.getSingleByUserAndName(this.user.id, this.newCostCenter);
 
-      if (!this.nameErrors) {
-        await costCenterService.create({ name: this.newCostCenter });
-        await this.getCostCenters();
+        if (!duplicatedCostCenter) {
+          await costCenterService.create({ name: this.newCostCenter, userId: this.user.id });
+          await this.getCostCenters();
 
-        this.cancelCostCenterCreation();
+          this.cancelCostCenterCreation();
+        }
+        else {
+          this.duplicatedName = true;
+        }
+      }
+      catch (error) {
+        console.error(error);
       }
     },
 

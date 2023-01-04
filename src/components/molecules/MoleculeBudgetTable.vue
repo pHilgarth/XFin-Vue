@@ -10,7 +10,7 @@
       </thead>
       <tbody>
       <tr>
-        <td>(Nicht zugewiesen)</td>
+        <td>Freies Budget</td>
         <td :class="unallocatedAmountClasslist">{{ unallocatedAmount }}</td>
       </tr>
       <tr v-for="costCenterAsset in costCenterAssets" :key="costCenterAsset.id">
@@ -108,8 +108,8 @@ export default {
     unallocatedAmountClasslist() {
       let classlist = '';
 
-      classlist += this.selectedCostCenterAssetId ? 'molecule-budget-table__unallocated ' : '';
-      classlist += numberService.parseFloat(this.unallocatedAmount) < 0 ? 'molecule-budget-table__unallocated--negative' : '';
+      classlist += this.selectedCostCenterAssetId ? 'molecule-budget-table__free-budget ' : '';
+      classlist += numberService.parseFloat(this.unallocatedAmount) < 0 ? 'molecule-budget-table__free-budget--negative' : '';
 
       return classlist;
     },

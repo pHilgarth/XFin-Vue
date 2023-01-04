@@ -28,9 +28,9 @@ export const costCenterService = {
         }
     },
 
-    async getAll() {
+    async getAllByUser(userId) {
         try {
-            return await fetch(baseUrl).then((response) => {
+            return await fetch(`${baseUrl}/user/${userId}`).then((response) => {
                 if (response.status === 200) {
                     return response.json();
                 }
@@ -44,41 +44,41 @@ export const costCenterService = {
     },
 
     //TODO - do i need this? I need all by account, but all by account simple?
-    async getAllSimpleByAccount(id) {
-        try {
-            return await fetch(`${baseUrl}/simple/${id}`).then((response) => {
-                if (response.status === 200) {
-                    return response.json();
-                }
-                else if (response.status === 204) {
-                    return null;
-                }
-            }).then((data) => {
-                if (data != undefined) {
-                    return {
-                        success: true,
-                        error: null,
-                        data: data,
-                    };
-                }
-                else {
-                    return {
-                        success: true,
-                        error: 'No categories found',
-                        data: null,
-                    };
-                }
-            });
-        } catch (error) {
-            return {
-                success: false,
-                error: `Error fetching categories\n${error}`,
-            };
-        }
-    },
+    // async getAllSimpleByAccount(id) {
+    //     try {
+    //         return await fetch(`${baseUrl}/simple/${id}`).then((response) => {
+    //             if (response.status === 200) {
+    //                 return response.json();
+    //             }
+    //             else if (response.status === 204) {
+    //                 return null;
+    //             }
+    //         }).then((data) => {
+    //             if (data != undefined) {
+    //                 return {
+    //                     success: true,
+    //                     error: null,
+    //                     data: data,
+    //                 };
+    //             }
+    //             else {
+    //                 return {
+    //                     success: true,
+    //                     error: 'No categories found',
+    //                     data: null,
+    //                 };
+    //             }
+    //         });
+    //     } catch (error) {
+    //         return {
+    //             success: false,
+    //             error: `Error fetching categories\n${error}`,
+    //         };
+    //     }
+    // },
 
-    async getAllByAccount(accountId, year, month) {
-        const url = `${baseUrl}/${accountId}?year=${year}&month=${++month}`
+    async getAllByUserAndAccount(userId, accountId, year, month) {
+        const url = `${baseUrl}/user/${userId}/account/${accountId}?year=${year}&month=${++month}`
 
         try {
             return await fetch(url).then((response) => {
@@ -94,9 +94,9 @@ export const costCenterService = {
         }
     },
 
-    async getSingleByName(name) {
+    async getSingleByUserAndName(userId, name) {
         try {
-            return await fetch(`${baseUrl}/name/${name}`).then((response) => {
+            return await fetch(`${baseUrl}/user/${userId}/name/${name}`).then((response) => {
                 if (response.status === 200) {
                     return response.json();
                 }

@@ -26,14 +26,16 @@
       MoleculeLoading,
     },
 
-    inject: [ 'userId' ],
-
     props: {
       bankAccountId: { type: String, required: true },
     },
 
     async created() {
       try {
+        if (this.$cookies.get('user')) {
+          this.user = this.$cookies.get('user');
+        }
+
         await this.getData();
 
         this.dataLoaded = true;
@@ -50,6 +52,7 @@
         duplicatedIban: false,
         externalParties: null,
         loadingError: false,
+        user: null,
       };
     },
 
@@ -57,8 +60,9 @@
       async getData() {
         try {
           const bankAccount = accountService.getSingleById(this.bankAccountId);
-          const externalParties = accountHolderService.getAllByUser(this.userId, true);
-          const costCenters = costCenterService.getAll();
+          const externalParties = accountHolderService.getAllByUser(this.user.id, true);
+          //TODO - does this work?
+          const costCenters = costCenterService.getAllByUser(this.user.id);
 
           this.bankAccount = await bankAccount;
           this.externalParties = await externalParties;

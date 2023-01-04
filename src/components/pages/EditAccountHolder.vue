@@ -1,7 +1,7 @@
 <template>
   <!-- TODO - implement MoleculeLoading on every component, where an API call is made -->
   <div v-if="dataLoaded" class="edit-account-holder">
-    <OrganismAccountHolder headline="Kontoinhaber bearbeiten" :accountHolder="copiedAccountHolder" @save="updateAccountHolder" />
+    <OrganismAccountHolder headline="Kontoinhaber bearbeiten" :accountHolder="copiedAccountHolder" @save="saveAccountHolder" />
   </div>
 </template>
 
@@ -9,9 +9,9 @@
 import OrganismAccountHolder              from '@/components/organisms/OrganismAccountHolder';
 
 import { accountHolderService }           from '@/services/account-holder-service';
+import { accountService }                 from '@/services/account-service';
 import { copyService }                    from '@/services/copy-service';
-import { accountService }     from '@/services/account-service';
-import { transactionService }     from "@/services/transaction-service";
+import { transactionService }             from "@/services/transaction-service";
 
 export default {
   components: {
@@ -24,6 +24,10 @@ export default {
 
   async created() {
     try {
+      if (this.$cookies.get('user')) {
+        this.user = this.$cookies.get('user');
+      }
+
       this.originalAccountHolder = await accountHolderService.getSingle(this.accountHolderId);
 
       if (this.originalAccountHolder) {
@@ -38,10 +42,10 @@ export default {
 
   data() {
     return {
-      dataLoaded: false,
-
-      originalAccountHolder: null,
       copiedAccountHolder: null,
+      dataLoaded: false,
+      originalAccountHolder: null,
+      user: null,
     };
   },
 
@@ -62,78 +66,97 @@ export default {
       return changed;
     },
 
-    async updateAccountHolder(accountHolder) {
-      let error = false;
+    async createInitializationTransactions(account) {
+      await transactionService.create({
+        targetBankAccountId: account.id,
+        dateString: new Date().toISOString(),
+        dueDateString: new Date().toISOString(),
+        amount: account.balance,
+        reference: '[Kontoinitialisierung]',
+        executed: true,
+        isCashTransaction: false,
+        transactionType: 'Revenue',
+      });
 
-      if (this.originalAccountHolder.name !== accountHolder.name) {
+      if (account.cash > 0) {
+        await transactionService.create({
+          targetBankAccountId: account.id,
+          dateString: new Date().toISOString(),
+          dueDateString: new Date().toISOString(),
+          amount: account.cash,
+          reference: '[Bargeldinitialisierung]',
+          executed: true,
+          isCashTransaction: true,
+          transactionType: 'Revenue'
+        });
+      }
+    },
+
+    async updateAccountHolder(accountHolder) {
+      try {
         const namePatch = {
           op: "replace",
           path: `/name`,
           value: accountHolder.name,
         };
 
-        try {
-          await accountHolderService.update(this.originalAccountHolder.id, [ namePatch ]);
-        } catch(error) {
-          console.error(error)
-        }
+        await accountHolderService.update(this.originalAccountHolder.id, [ namePatch ]);
       }
-
-      const accountsToSave = accountHolder.bankAccounts.filter(b => b.changed || b.isNew);
-
-      for (let i = 0; i < accountsToSave.length; i++) {
-        const account = accountsToSave[i];
-
-        if (account.isNew) {
-          //TODO - this code is duplicated in NewAccountHolder when creating the accounts
-          account.accountHolderId = accountHolder.id;
-
-          const createdBankAccount = await accountService.create(account);
-
-          if (createdBankAccount) {
-            const initializationTransaction = {
-              internalBankAccountId: createdBankAccount.id,
-              dateString: new Date().toISOString(),
-              amount: account.balance,
-              reference: '[Kontoinitialisierung]',
-            };
-            const createdInitializationTransaction = await transactionService.create(initializationTransaction);
-            if (!createdInitializationTransaction) {
-              //TODO - improve error handling - maybe remove the other records again? Or just implement a task on the API that takes care of this regularly?
-              this.error = 'Error during inizializationTransaction creation';
-              alert(this.error);
-            }
-          }
-          else {
-            //TODO - improve error handling
-            this.error = 'Error during bankAccountCreation';
-            alert(this.error);
-          }
-        }
-        else if (account.changed) {
-          const sourceAccount = this.originalAccountHolder.bankAccounts[account.index];
-
-          const jsonPatch = [];
-          
-          for (const prop of this.checkForChanges(sourceAccount, account)) {
-            jsonPatch.push({
-              op: "replace",
-              path: `/${prop}`,
-              value: account[prop],
-            });
-          }
-
-          const updateResponse = await accountService.update(account.id, jsonPatch);
-
-          if (!updateResponse.success) {
-            error = true;
-            alert(updateResponse.error);
-          }
-        }
+      catch (error) {
+        throw new Error(error);
       }
+    },
 
-      if (!error) {
+    async saveAccountHolder(accountHolder) {
+      try {
+        if (this.originalAccountHolder.name !== accountHolder.name) {
+          await this.updateAccountHolder(accountHolder);
+        }
+
+        const accountsToSave = accountHolder.bankAccounts.filter(b => b.changed || b.isNew);
+
+        await this.saveAccounts(accountHolder.id, accountsToSave);
+
         this.$router.push('/');
+      } catch(error) {
+        console.error(error);
+        alert(error + ' - show something in frontend');
+      }
+    },
+
+    async saveAccounts(accountHolderId, accounts) {
+      try {
+        for (let i = 0; i < accounts.length; i++) {
+          const account = accounts[i];
+
+          if (account.isNew) {
+            //TODO - this code is duplicated in NewAccountHolder when creating the accounts
+            account.accountHolderId = accountHolderId;
+
+            const createdBankAccount = await accountService.create(account);
+            account.id = createdBankAccount.id;
+
+            await this.createInitializationTransactions(account);
+          }
+          else if (account.changed) {
+            const sourceAccount = this.originalAccountHolder.bankAccounts[account.index];
+
+            const jsonPatch = [];
+
+            for (const prop of this.checkForChanges(sourceAccount, account)) {
+              jsonPatch.push({
+                op: "replace",
+                path: `/${prop}`,
+                value: account[prop],
+              });
+            }
+
+            await accountService.update(account.id, jsonPatch);
+          }
+        }
+      }
+      catch (error) {
+        throw new Error(error);
       }
     }
   }

@@ -79,13 +79,6 @@ export default {
     OrganismFakeLogin,
   },
 
-  provide() {
-    //TODO - implement proper login with authentication, then somehow pass the userId to everyComponent
-    return {
-      userId: 1,//this.user?.id,
-    }
-  },
-
   data() {
     return {
       selectedMenuItem: 1,

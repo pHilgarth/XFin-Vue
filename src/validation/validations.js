@@ -60,7 +60,7 @@ export const recurringTransactionValidation = {
 export const reserveValidation = {
     bankAccount:    { required },
     costCenter:     { required },
-    reference:      { required, maxLength: maxLength(30) },
+    reference:      { required, maxLength: maxLength(100) },
     targetAmount:   { optionalAmountValidator }
 };
 
@@ -71,8 +71,8 @@ export const reserveEditValidation = {
 
 export const transactionValidation = {
     amount:                 { amountValidator },
-    payeeAccount:           { required },
-    payerAccount:           { required },
+    // payeeAccount:           { required },
+    // payerAccount:           { required },
     //payerCostCenter:        { payerCostCenterValidator: payerCostCenterValidator(null) },
     reference:              { required, maxLength: maxLength(100) },
     //transactionType:        { required },

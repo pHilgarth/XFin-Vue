@@ -69,8 +69,13 @@ import { bicValidator, ibanValidator } from "@/validation/custom-validators";
 
 
 export default {
+  created() {
+    if (this.$cookies.get('user')) {
+      this.user = this.$cookies.get('user');
+    }
+  },
+
   emit: [ 'save' ],
-  inject: [ 'userId' ],
 
   components: {
     AtomButton,
@@ -162,6 +167,7 @@ export default {
       transactionTypes: copyService.copyArray(transactionTypeService.transactionTypes).filter(t => t.value !== 'reserve'),
       transactionTypeItem: null,
       transactionTypeItems: null,
+      user: null,
     }
   },
 
@@ -214,7 +220,7 @@ export default {
             }
             else {
               this.selectedExternalParty = await accountHolderService.create({
-                userId: this.userId,
+                userId: this.user.id,
                 name: this.selectedExternalParty.name,
                 external: true,
               });

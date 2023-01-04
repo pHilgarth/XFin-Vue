@@ -1,12 +1,11 @@
 <template>
-  <div class="transaction-manager">
+  <div className="transaction-manager">
     <AtomHeadline tag="h1" text="Transaktion"/>
-<h2>Umbuchung -> Executed ist false, z.B. von 000 auf Essen+Trinken auf 11004 Essen+Trinken</h2>
-    <h2>Umbuchung klappt noch nicht richtig -> eine kontointerne Umbuchung wird als Einnahme und als Ausgabe in der Kontodetailansicht aufgeführt</h2>
+
     <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!"/>
 
     <template v-else>
-      <div class="transaction-manager__transaction-direction">
+      <div className="transaction-manager__transaction-direction">
         <MoleculeInputRadioButtons :options="transactionTypes" group="transaction-type" preselectedOptionId="Revenue"
                                    @change="updateTransactionType"/>
       </div>
@@ -18,22 +17,14 @@
           :transactionType="transactionType"
           :initialPayeeAccount="payeeAccount"
           :initialPayerAccount="payerAccount"
-          :newPayeeCostCenterAsset="payeeCostCenterAsset"
           @addExternalParty="showExternalPartyForm = true"
-          @addCostCenterAsset="addCostCenterAsset"
-          @saveTransaction="saveTransaction" />
-
-      <!--      <OrganismTransactionForm :initialPayerAccount="payerAccount" :initialPayeeAccount="payeeAccount"-->
-      <!--                               :bankAccounts="bankAccounts" :costCenters="costCenters"-->
-      <!--                               @addExternalParty="showExternalPartyForm = true"/>-->
+          @saveTransaction="saveTransaction"/>
 
     </template>
 
-    <!--    <pre>{{ externalPartyToSave }}</pre>-->
-
     <div v-if="showExternalPartyForm">
       <OrganismExternalPartyModal :ibans="ibans" :names="accountHolderNames" @save="saveExternalParty"
-                                 @cancel="showExternalPartyForm = false"/>
+                                  @cancel="showExternalPartyForm = false"/>
     </div>
 
     <div v-if="showCostCenterAssetForm">
@@ -49,32 +40,32 @@ import MoleculeInputRadioButtons from '@/components/molecules/MoleculeInputRadio
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import OrganismCostCenterAssetForm from '@/components/organisms/OrganismCostCenterAssetForm';
 import OrganismExternalPartyModal from '@/components/organisms/OrganismExternalPartyModal';
-//import OrganismTransactionForm from '@/components/organisms/OrganismTransactionForm';
 import OrganismTransactionFormNew from '@/components/organisms/OrganismTransactionFormNew';
 
-import { accountHolderService } from '@/services/account-holder-service';
-import { accountService } from '@/services/account-service';
-import { costCenterService } from '@/services/cost-center-service';
-import { costCenterAssetService } from '@/services/cost-center-asset-service';
-import { loanService } from '@/services/loan-service';
-import { recurringTransactionService } from '@/services/recurring-transaction-service';
-import { transactionService } from '@/services/transaction-service';
+import {accountHolderService} from '@/services/account-holder-service';
+import {accountService} from '@/services/account-service';
+import {costCenterService} from '@/services/cost-center-service';
+import {costCenterAssetService} from '@/services/cost-center-asset-service';
+import {loanService} from '@/services/loan-service';
+import {recurringTransactionService} from '@/services/recurring-transaction-service';
+import {transactionService} from '@/services/transaction-service';
 
 export default {
-  inject: ['userId'],
-
   components: {
     AtomHeadline,
     MoleculeInputRadioButtons,
     MoleculeLoading,
     OrganismCostCenterAssetForm,
     OrganismExternalPartyModal,
-    //OrganismTransactionForm,
     OrganismTransactionFormNew,
   },
 
   async created() {
     try {
+      if (this.$cookies.get('user')) {
+        this.user = this.$cookies.get('user');
+      }
+
       await this.getData();
 
       this.dataLoaded = true;
@@ -87,9 +78,6 @@ export default {
     return {
       accountHolderNames: null,
       bankAccounts: null,
-      costCenterAssetNames: null,
-      costCenterAssetToSave: null,
-      costCenterForAsset: null,
       costCenters: null,
       dataLoaded: false,
       externalPartyToSave: null,
@@ -98,7 +86,7 @@ export default {
       payeeAccount: null,
       payeeAccounts: null,
       payeeCostCenter: null,
-      payeeCostCenterAsset: null,
+      payeeOrPayer: null,
       payerAccount: null,
       payerAccounts: null,
       payerCostCenter: null,
@@ -106,27 +94,21 @@ export default {
       showCostCenterForm: false,
       showExternalPartyForm: false,
       transactionType: 'Revenue',
-
       transactionTypes: [
         {id: 'Revenue', label: 'Einnahme'},
         {id: 'Expense', label: 'Ausgabe'},
         {id: 'Transfer', label: 'Umbuchung'}
       ],
+      user: null,
     }
   },
 
   methods: {
-    addCostCenterAsset(bankAccount, costCenter, costCenterAssetNames) {
-      this.bankAccountForCostCenterAsset = bankAccount,
-      this.costCenterForAsset = costCenter;
-      this.costCenterAssetNames = costCenterAssetNames;
-      this.showCostCenterAssetForm = true;
-    },
-
     async getData() {
       try {
         const bankAccounts = accountService.getAll();
-        const costCenters = costCenterService.getAll();
+        //TODO - does this work?
+        const costCenters = costCenterService.getAllByUser(this.user.id);
 
         const bankAccountsResult = await bankAccounts;
 
@@ -150,48 +132,16 @@ export default {
               return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
             });
 
-        // this.bankAccounts = Array.from([
-        //   this.bankAccounts.filter(b => !b.external).sort((a, b) => {
-        //     return a.accountHolderName < b.accountHolderName ? -1 :
-        //         a.accountHolderName === b.accountHolderName ? 0 : 1;
-        //   }),
-        //   this.bankAccounts.filter(b => b.external).sort((a, b) => {
-        //     return a.accountHolderName < b.accountHolderName ? -1 :
-        //         a.accountHolderName === b.accountHolderName ? 0 : 1;
-        //   })
-        // ]).flat();
-
         const costCentersResult = await costCenters;
 
-        this.costCenters = costCentersResult
-            .filter(c => c.name !== 'Nicht zugewiesen')
-            .map(p => {
-              return {id: p.id, label: p.name}
-            });
+        this.costCenters = costCentersResult.map(p => {
+          return {id: p.id, label: p.name}
+        });
 
       } catch (error) {
         console.error(error);
         throw new Error(error);
       }
-    },
-
-    saveCostCenterAsset(name) {
-      this.costCenterAssetToSave = {
-        name: name,
-        bankAccountId: this.bankAccountForCostCenterAsset.id,
-        costCenterId: this.costCenterForAsset.id,
-        amount: 0,
-      };
-
-      this.payeeCostCenterAsset = {
-        id: 'new',
-        label: name,
-        new: true,
-      };
-
-
-
-      this.showCostCenterAssetForm = false;
     },
 
     //TODO - dont save externalParty immediately in db, only save it, when it's actually used for a transaction, that is, when the user saves the transaction!
@@ -200,7 +150,7 @@ export default {
     saveExternalParty(data) {
       this.externalPartyToSave = {
         accountHolder: {
-          userId: this.userId,
+          userId: this.user.id,
           name: data.name,
           external: true
         },
@@ -254,8 +204,7 @@ export default {
 
           if (this.transactionType === 'Revenue') {
             transaction.sourceBankAccountId = createdBankAccount.id;
-          }
-          else if (this.transactionType === 'Expense') {
+          } else if (this.transactionType === 'Expense') {
             transaction.targetBankAccountId = createdBankAccount.id;
           }
         }
@@ -281,8 +230,7 @@ export default {
             //if the creditor of the selected loan is the source, it's the actual receipt of the loan amount
             //this should only happen once for every loan - multiple receipts per loan is not allowed / should not be allowed
             loan.balance = loan.amount;
-          }
-          else if (loan.creditorBankAccount.id === transaction.targetBankAccountId) {
+          } else if (loan.creditorBankAccount.id === transaction.targetBankAccountId) {
             //if the creditor of the selected loan is the target, it's a repayment and I need to calculate the repaymentAmount
             //because every repayment contains an amount just for the interest
             const repaymentAmount = loan.monthlyInstallment - (loan.balance * loan.rateOfInterest / 100 / 12);
@@ -306,7 +254,7 @@ export default {
 
         await transactionService.create(transaction);
 
-        this.$router.push('/');
+        this.$router.go();
       } catch (error) {
         console.error('Error while saving transaction!')
         console.error(error);

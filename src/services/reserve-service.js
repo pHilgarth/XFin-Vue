@@ -6,7 +6,6 @@ const baseUrl = "http://localhost:2905/api/reserves";
 
 export const reserveService = {
     async create(reserve) {
-        console.log('abcdef')
         const postObject = {
             method: 'POST',
             headers: {

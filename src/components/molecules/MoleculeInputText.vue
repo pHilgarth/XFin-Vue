@@ -25,7 +25,7 @@ export default {
   ],
 
   props: {
-    autocomplete:       { type: String, required: true, },
+    autocomplete:       { type: String, default: 'off' },
     field:              { type: String, required: true, },
     label:              { type: String },
     hasErrors:          { type: Boolean },

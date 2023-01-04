@@ -2,10 +2,16 @@
   cursor: pointer;
   position: absolute;
   transform: translateY(-50%);
-  @include rem(top, 25px);
+  //@include rem(top, 25px);
+  top: 50%;
 
   &--left {
     @include rem(left, 20px);
+  }
+
+  &--center {
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   &--right {

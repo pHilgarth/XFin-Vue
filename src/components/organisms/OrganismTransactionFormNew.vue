@@ -5,8 +5,8 @@
 
       <AtomHeadline class="organism-transaction-form__headline mb-3" tag="h4" text="Zahlungspflichtiger" />
       <div class="col-6 pb-5 pe-3">
-        <MoleculeInputAutoSuggest field="payer-account" v-model="payerAccount" label="Konto" :required="true" :items="payerAccounts"
-                                  :allowNewItems="allowNewPayer" :validation="v$.payerAccount" :hasErrors="v$.payerAccount.$error"
+        <MoleculeInputAutoSuggest field="payer-account" v-model="payerAccount" label="Konto" :required="payerRequired" :items="payerAccounts"
+                                  :allowNewItems="allowNewPayer" :validation="v$.payerAccount" :hasErrors="v$.payerAccount?.$error"
                                   @itemPicked="pickItem($event, 'payerAccount')" @addItem="$emit('addExternalParty')" @blur="onBlurPayerAccount"/>
       </div>
 
@@ -29,8 +29,8 @@
     <div class="organism-transaction-form__payee">
       <AtomHeadline class="organism-transaction-form__headline mb-3" tag="h4" text="Zahlungsempfänger" />
       <div class="col-6 pb-5 pe-3">
-        <MoleculeInputAutoSuggest field="payee-account" v-model="payeeAccount" label="Konto" :required="true" :items="payeeAccounts"
-                                  :allowNewItems="allowNewPayee" :validation="v$.payeeAccount" :hasErrors="v$.payeeAccount.$error"
+        <MoleculeInputAutoSuggest field="payee-account" v-model="payeeAccount" label="Konto" :required="payeeRequired" :items="payeeAccounts"
+                                  :allowNewItems="allowNewPayee" :validation="v$.payeeAccount" :hasErrors="v$.payeeAccount?.$error"
                                   @itemPicked="pickItem($event, 'payeeAccount')" @addItem="$emit('addExternalParty')" @blur="onBlurPayeeAccount" />
 
       </div>
@@ -44,8 +44,8 @@
                          :loadingError="payeeCostCenterAssetsLoadingError" errorMessage="Fehler beim Laden der Daten!" />
 
         <MoleculeInputAutoSuggest v-else-if="payeeCostCenterAssetsLoaded" field="payee-cost-center-asset" class="mt-5" label="Posten auf Kostenstelle"
-                                  v-model="payeeCostCenterAsset" :items="payeeCostCenterAssets" :allowNewItems="true" @itemPicked="pickItem($event, 'payeeCostCenterAsset')"
-                                  @addItem="$emit('addCostCenterAsset', payeeAccount, payeeCostCenter, payeeCostCenterAssets.map(p => p.name))" @blur="onBlurPayeeCostCenterAsset" />
+                                  v-model="payeeCostCenterAsset" :items="payeeCostCenterAssets" @itemPicked="pickItem($event, 'payeeCostCenterAsset')"
+                                  @blur="onBlurPayeeCostCenterAsset" />
 
       </div>
     </div>
@@ -60,6 +60,10 @@
       <div class="col-md-6 pb-5 ps-3">
         <MoleculeInputText field="amount" v-model="amount" label="Betrag" :required="true" :hasErrors="v$.amount.$error"
                            :validation="v$.amount" @blur="v$.amount.$touch()"/>
+
+      </div>
+      <div class="col-md-6 pb-5 ps-3">
+        <MoleculeInputCheckbox class="col-md-12 pb-3" v-model="isCashTransaction" label="Bargeld-Transaktion" />
       </div>
     </div>
 
@@ -74,7 +78,7 @@
       <AtomHeadline class="organism-transaction-form__headline mb-3" tag="h5" text="Wiederkehrende Transaktion" />
 
       <!-- TODO - see paragraph -->
-      <p style="color:red">ich muss hier noch die Möglichkeit für ein Start- und Enddatum anbieten</p>
+      <p style="color:red">ich muss hier noch die Möglichkeit für ein Start- und Enddatum anbieten, vor allem bei nicht-monatlich-wiederkehrenden Transaktionen muss hier der Startmonat auswählbar sein</p>
 
       <div class="organism-transaction-form__recurring-transaction">
         <MoleculeInputCheckbox class="col-md-12 pb-3" v-model="recurringTransaction" label="Wiederkehrende Transaktion" />
@@ -92,6 +96,8 @@
 
       </div>
     </div>
+
+    <p style="color:red">Hier noch die Möglichkeit für ein Verbuchungsdatum einbauen! (für nicht wiederkehrende Zahlungen), damit man auch noch in der Vergangenheit verbuchen kann, wenn man nicht am selben Tag verbucht, wie abgebucht wurde!</p>
 
     <AtomButton :disabled="v$.$invalid || payeeAndPayerEqual" type="primary" text="Speichern" @click.prevent="saveTransaction" />
 
@@ -130,12 +136,39 @@ export default {
     MoleculeNotice,
   },
 
+  computed: {
+    allowNewPayee() {
+      return this.transactionType === 'Expense';
+    },
+
+    allowNewPayer() {
+      return this.transactionType === 'Revenue'
+    },
+
+    payeeAndPayerEqual() {
+      if (this.payeeAccount && this.payeeCostCenter && this.payerAccount && this.payerCostCenter) {
+        return this.payeeAccount.id === this.payerAccount.id && this.payeeCostCenter.id === this.payerCostCenter.id;
+      }
+      else if (this.payeeAccount && this.payerAccount && !this.payeeCostCenter && !this.payerCostCenter) {
+        return this.payeeAccount.id === this.payerAccount.id;
+      }
+
+      return false;
+    },
+
+    payeeRequired() {
+      return this.transactionType === "Transfer" || !this.isCashTransaction || this.transactionType === "Revenue";
+    },
+
+    payerRequired() {
+      return this.transactionType === "Transfer" || !this.isCashTransaction || this.transactionType === "Expense";
+    }
+  },
+
   props: {
     bankAccounts: { type: Array, required: true },
-    costCenterAsset: { type: Object },
     costCenters: { type: Array, required: true },
     initialPayeeAccount: { type: Object },
-    newPayeeCostCenterAsset: { type: Object },
     initialPayerAccount: { type: Object },
     payeeAccounts: { type: Array, required: true},
     payerAccounts: { type: Array, required: true },
@@ -154,7 +187,8 @@ export default {
       ],
       dataLoaded: false,
       dayOfMonth: null,
-      filteredTransactionTypeItems: null,
+      fullLoans: null,
+      isCashTransaction: false,
       loadingError: false,
       loan: null,
       loans: [],
@@ -176,27 +210,6 @@ export default {
       payerReserves: null,
       recurringTransaction: false,
       reference: null,
-    }
-  },
-
-  computed: {
-    allowNewPayee() {
-      return this.transactionType === 'Exppense';
-    },
-
-    allowNewPayer() {
-      return this.transactionType === 'Revenue'
-    },
-
-    payeeAndPayerEqual() {
-      if (this.payeeAccount && this.payeeCostCenter && this.payerAccount && this.payerCostCenter) {
-        return this.payeeAccount.id === this.payerAccount.id && this.payeeCostCenter.id === this.payerCostCenter.id;
-      }
-      else if (this.payeeAccount && this.payerAccount && !this.payeeCostCenter && !this.payerCostCenter) {
-        return this.payeeAccount.id === this.payerAccount.id;
-      }
-
-      return false;
     }
   },
 
@@ -225,18 +238,12 @@ export default {
       this.payerCostCenter = this.initialPayerCostCenter;
     },
 
-    newPayeeCostCenterAsset() {
-      this.payeeCostCenterAsset = this.newPayeeCostCenterAsset;
-
-      this.payeeCostCenterAssets = Array.from([
-        this.payeeCostCenterAssets.filter(p => !p.new),
-        this.payeeCostCenterAsset
-      ]).flat();
-    },
-
     payeeAccount() {
       this.updateCostCenterAssets();
-      this.fetchLoans();
+
+      if (this.payeeAccount && this.payeeAccount.id !== 'new' && this.payerAccount && this.payerAccount.id !== 'new') {
+        this.fetchLoans();
+      }
     },
 
     payeeAccounts() {
@@ -255,7 +262,10 @@ export default {
 
     payerAccount() {
       this.updateCostCenterAssets();
-      this.fetchLoans();
+
+      if (this.payeeAccount && this.payeeAccount.id !== 'new' && this.payerAccount && this.payerAccount.id !== 'new') {
+        this.fetchLoans();
+      }
     },
 
     payerAccounts() {
@@ -362,7 +372,7 @@ export default {
         this.payeeAccount = null;
       }
 
-      this.v$.payeeAccount.$touch();
+      this.v$.payeeAccount?.$touch();
     },
 
     onBlurPayeeCostCenter(event) {
@@ -384,7 +394,7 @@ export default {
         this.payerAccount = null;
       }
 
-      this.v$.payerAccount.$touch();
+      this.v$.payerAccount?.$touch();
     },
 
     onBlurPayerCostCenter(event) {
@@ -411,8 +421,8 @@ export default {
       if (!this.v$.$error && !this.payeeAndPayerEqual) {
         //TODO - ugly... refactoring? look these ternaries....
         const newTransaction = {
-          sourceBankAccountId: this.payerAccount.id,
-          targetBankAccountId: this.payeeAccount.id,
+          sourceBankAccountId: this.payerAccount?.id,
+          targetBankAccountId: this.payeeAccount?.id,
           sourceCostCenterId: this.payerCostCenter?.id,
           sourceCostCenterAsset: this.payerCostCenterAsset?.isReserve ? null : this.payerCostCenterAsset,
           targetCostCenterId: this.payeeCostCenter?.id,
@@ -425,12 +435,15 @@ export default {
               : this.payeeCostCenterAsset?.isReserve
                   ? this.payeeCostCenterAsset
                   : null,
-          loan: this.fullLoans.find(l => l.id === this.loan?.id),
+          loan: this.fullLoans ? this.fullLoans.find(l => l.id === this.loan?.id) : null,
           loanId: this.loan?.id,
           reference: this.reference,
           amount: numberService.parseFloat(this.amount),
-          transactionType: this.transactionType,
+          transactionType: this.payeeAccount?.id === this.payerAccount?.id
+            ? "AccountTransfer"
+            : this.transactionType,
           executed: true,
+          isCashTransaction: this.isCashTransaction,
         };
 
         //TODO - i need to change this, that's not good
@@ -442,6 +455,9 @@ export default {
           newTransaction.isRecurring = true;
           newTransaction.cycle = this.cycleItem.id;
           newTransaction.dayOfMonth = this.dayOfMonth;
+          //TODO - implement option to provide start and end date
+          newTransaction.startDate = new Date().toISOString();
+          //newTransaction.endDate = this.endDate;
         }
 
         this.$emit('saveTransaction', newTransaction);
@@ -493,6 +509,17 @@ export default {
 
   validations() {
     const validation = copyService.copyObject(transactionValidation);
+
+    if (this.transactionType === "Transfer" || !this.isCashTransaction) {
+      validation.payerAccount = { required };
+      validation.payeeAccount = { required };
+    }
+    else if (this.transactionType === "Revenue") {
+      validation.payeeAccount = { required };
+    }
+    else if (this.transactionType === "Expense") {
+      validation.payerAccount = { required };
+    }
 
     if (this.recurringTransaction) {
       validation.cycleItem = { required };

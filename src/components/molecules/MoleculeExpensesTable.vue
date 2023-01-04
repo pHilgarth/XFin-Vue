@@ -7,15 +7,17 @@
         <th>Zahlungsempfänger</th>
         <th>Verwendungszweck</th>
         <th>Betrag</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
       <tr v-for="expense in bankAccount.expenses" :key="expense.id">
         <td>{{ formatDate(expense.date) }}</td>
         <td>{{ expense.sourceCostCenterName }}</td>
-        <td>{{ expense.targetAccountHolder }}</td>
+        <td>{{ expense.targetAccountHolder || '---' }}</td>
         <td>{{ expense.reference }}</td>
         <td>{{ formatCurrency(expense.amount) }}</td>
+        <td>{{ expense.isCashTransaction ? 'BAR' : ''}}</td>
       </tr>
       <tr class="table-row-total">
         <td colspan="4">Summe</td>

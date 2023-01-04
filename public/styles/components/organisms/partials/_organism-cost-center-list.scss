@@ -1,0 +1,55 @@
+.organism-cost-center-list {
+  width: 50%;
+
+  &__header {
+    @include rem(padding, 10px);
+    align-items: center;
+    border-bottom: 1px solid $color-borders;
+    display: flex;
+    position: relative;
+  }
+
+  &__state {
+    @include rem(height, 20px);
+    @include rem(left, 5px);
+    @include rem(width, 20px);
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &__bar {
+    background-color: $color-black;
+    position: absolute;
+
+    &:first-child {
+      @include rem(width, 1px);
+      height: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &:last-child {
+      @include rem(height, 1px);
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+    }
+  }
+
+  &__name {
+    @include rem(padding-left, 25px);
+  }
+
+  &__edit {
+    position: relative;
+  }
+
+  &__body {
+    &.collapsed {
+      max-height: 0;
+      overflow: scroll;
+    }
+  }
+}

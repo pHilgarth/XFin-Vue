@@ -6,14 +6,16 @@
         <th>Quelle</th>
         <th>Verwendungszweck</th>
         <th>Betrag</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
       <tr v-for="revenue in bankAccount.revenues" :key="revenue.id">
         <td>{{ formatDate(revenue.date) }}</td>
-        <td>{{ revenue.sourceAccountHolder }}</td>
+        <td>{{ revenue.sourceAccountHolder || '---' }}</td>
         <td>{{ revenue.reference }}</td>
         <td>{{ formatCurrency(revenue.amount) }}</td>
+        <td>{{ revenue.isCashTransaction ? 'BAR' : ''}}</td>
       </tr>
       <tr class="table-row-total">
         <td colspan="3">Summe</td>

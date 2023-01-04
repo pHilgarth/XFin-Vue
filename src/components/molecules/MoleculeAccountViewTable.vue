@@ -5,6 +5,8 @@
         <th>Konto</th>
         <th>Kontotyp</th>
         <th>Kontostand</th>
+        <th>Bargeld</th>
+        <th>Gesamt</th>
         <th>Aktion</th>
       </tr>
     </thead>
@@ -13,8 +15,10 @@
         <td>
           <router-link :to="`/accounts/${bankAccount.id}`">{{bankAccount.accountNumber}}</router-link>
         </td>
-        <td>{{bankAccount.description}}</td>
-        <td>{{formatCurrency(bankAccount.balance)}}</td>
+        <td>{{ bankAccount.description }}</td>
+        <td>{{ formatCurrency(bankAccount.balance) }}</td>
+        <td>{{ formatCurrency(bankAccount.cash) }}</td>
+        <td>{{ formatCurrency(bankAccount.balance + bankAccount.cash) }}</td>
         <td>
           <MoleculeActionSelect :bankAccount="bankAccount" />
         </td>

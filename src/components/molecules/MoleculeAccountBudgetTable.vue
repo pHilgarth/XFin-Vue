@@ -5,6 +5,7 @@
         <th>Kostenstelle</th>
         <th>Überschuss Vormonat</th>
         <th>Einnahmen</th>
+        <th>Umbuchungen</th>
         <th>Budget</th>
         <th>Ausgaben</th>
         <th>Saldo</th>
@@ -15,14 +16,15 @@
         <td>{{ costCenter.name }}</td>
         <td>{{ formatCurrency(costCenter.balancePreviousMonth) }}</td>
         <td>{{ formatCurrency(costCenter.revenuesSum) }}</td>
-        <td>{{ formatCurrency(costCenter.balancePreviousMonth + costCenter.revenuesSum) }}</td>
+        <td>{{ formatCurrency(costCenter.transferSum) }}</td>
+        <td>{{ formatCurrency(costCenter.balancePreviousMonth + costCenter.revenuesSum + costCenter.transferSum) }}</td>
         <td>{{ formatCurrency(costCenter.expensesSum) }}</td>
         <td>{{ formatCurrency(costCenter.balance) }}</td>
       </tr>
       <tr class="table-row-total">
         <td>Summen</td>
         <td>{{ formatCurrency(costCenters.reduce((a, b) => a + b.balancePreviousMonth, 0))}}</td>
-        <td>{{ formatCurrency(costCenters.reduce((a, b) => a + b.revenuesSum, 0))}}</td>
+        <td colspan="2">{{ formatCurrency(costCenters.reduce((a, b) => a + b.revenuesSum, 0))}}</td>
         <td>{{ formatCurrency(costCenters.reduce((a, b) => a + (b.balancePreviousMonth + b.revenuesSum), 0))}}</td>
         <td>{{ formatCurrency(costCenters.reduce((a, b) => a + b.expensesSum, 0))}}</td>
         <td>{{ formatCurrency(costCenters.reduce((a, b) => a + b.balance, 0))}}</td>

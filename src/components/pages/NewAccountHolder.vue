@@ -9,11 +9,15 @@ import OrganismAccountHolder from '@/components/organisms/OrganismAccountHolder'
 
 import { accountHolderService } from '@/services/account-holder-service';
 import { accountService } from "@/services/account-service";
-import { costCenterService} from "@/services/cost-center-service";
+//import { costCenterService} from "@/services/cost-center-service";
 import { transactionService }   from '@/services/transaction-service';
 
 export default {
-  inject: [ 'userId' ],
+  created() {
+    if (this.$cookies.get('user')) {
+      this.user = this.$cookies.get('user');
+    }
+  },
 
   components: {
     OrganismAccountHolder
@@ -21,52 +25,49 @@ export default {
 
   data() {
     return {
-      //accountHolder: null,
-      //error: null,
+      user: null,
     };
   },
 
   methods: {
     async saveAccountHolder(accountHolder) {
       try {
-        const createdAccountHolder = await accountHolderService.create({ name: accountHolder.name, userId: this.userId });
+        const createdAccountHolder = await accountHolderService.create({ name: accountHolder.name, userId: this.user.id });
 
         for (const bankAccount of accountHolder.bankAccounts) {
+          bankAccount.userId = this.user.id;
           bankAccount.accountHolderId = createdAccountHolder.id;
 
           const createdBankAccount = await accountService.create(bankAccount);
-          const unallocatedCostCenter = await costCenterService.getSingleByName('Nicht zugewiesen');
-          const cashCostCenter = await costCenterService.getSingleByName('Bargeldbestand');
 
           await transactionService.create({
             targetBankAccountId: createdBankAccount.id,
-            targetCostCenterId: unallocatedCostCenter.id,
             dateString: new Date().toISOString(),
             dueDateString: new Date().toISOString(),
             amount: bankAccount.balance,
             reference: '[Kontoinitialisierung]',
             executed: true,
+            isCashTransaction: false,
             transactionType: 'Revenue',
           });
 
           if (bankAccount.cash > 0) {
             await transactionService.create({
               targetBankAccountId: createdBankAccount.id,
-              targetCostCenterId: cashCostCenter.id,
               dateString: new Date().toISOString(),
               dueDateString: new Date().toISOString(),
               amount: bankAccount.cash,
               reference: '[Bargeldinitialisierung]',
               executed: true,
+              isCashTransaction: true,
               transactionType: 'Revenue'
             });
           }
 
-          this.$router.push('/');
+          this.$router.push('/accounts');
         }
       } catch(error) {
         console.error(error);
-        alert(error + ' - show something in frontend');
       }
     },
   }
