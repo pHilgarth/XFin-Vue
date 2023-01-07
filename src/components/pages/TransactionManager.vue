@@ -1,10 +1,12 @@
 <template>
+  <!-- TODO wtf is this className -->
   <div className="transaction-manager">
     <AtomHeadline tag="h1" text="Transaktion"/>
 
     <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!"/>
 
     <template v-else>
+      <!-- TODO wtf is this className -->
       <div className="transaction-manager__transaction-direction">
         <MoleculeInputRadioButtons :options="transactionTypes" group="transaction-type" preselectedOptionId="Revenue"
                                    @change="updateTransactionType"/>
@@ -18,7 +20,9 @@
           :initialPayeeAccount="payeeAccount"
           :initialPayerAccount="payerAccount"
           @addExternalParty="showExternalPartyForm = true"
-          @saveTransaction="saveTransaction"/>
+          @saveTransaction="saveTransaction"
+          @updatePayeeAccounts="updatePayeeAccounts"
+      />
 
     </template>
 
@@ -106,7 +110,7 @@ export default {
   methods: {
     async getData() {
       try {
-        const bankAccounts = accountService.getAll();
+        const bankAccounts = accountService.getAllByUser(this.user.id);
         //TODO - does this work?
         const costCenters = costCenterService.getAllByUser(this.user.id);
 
@@ -285,6 +289,18 @@ export default {
             }],
         );
       }
+    },
+
+    updatePayeeAccounts(payerAccountId) {
+      console.log(`payerAccountId is ${payerAccountId || 'null'}`);
+
+      this.payeeAccounts = payerAccountId
+          ? this.payeeAccounts.filter(p => p.id !== payerAccountId)
+          : this.bankAccounts
+              .filter(b => !b.external)
+              .map(p => {
+                return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
+              });
     },
 
     updateTransactionType(event) {

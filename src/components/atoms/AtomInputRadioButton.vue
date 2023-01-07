@@ -6,6 +6,8 @@
 <script>
 
 export default {
+  emits: [ 'change' ],
+
   props: {
     group: { type: String, required: true },
     id: { type: String, required: true },

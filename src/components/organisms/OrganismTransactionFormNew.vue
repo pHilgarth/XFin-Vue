@@ -1,8 +1,6 @@
 <template>
   <form class="organism-transaction-form">
     <div class="organism-transaction-form__payer">
-      <MoleculeNotice v-if="payeeAndPayerEqual" type="danger" text="Zahlungspflichtiger und Zahlungsempfänger dürfen nicht gleich sein!" />
-
       <AtomHeadline class="organism-transaction-form__headline mb-3" tag="h4" text="Zahlungspflichtiger" />
       <div class="col-6 pb-5 pe-3">
         <MoleculeInputAutoSuggest field="payer-account" v-model="payerAccount" label="Konto" :required="payerRequired" :items="payerAccounts"
@@ -99,7 +97,7 @@
 
     <p style="color:red">Hier noch die Möglichkeit für ein Verbuchungsdatum einbauen! (für nicht wiederkehrende Zahlungen), damit man auch noch in der Vergangenheit verbuchen kann, wenn man nicht am selben Tag verbucht, wie abgebucht wurde!</p>
 
-    <AtomButton :disabled="v$.$invalid || payeeAndPayerEqual" type="primary" text="Speichern" @click.prevent="saveTransaction" />
+    <AtomButton :disabled="v$.$invalid" type="primary" text="Speichern" @click.prevent="saveTransaction" />
 
   </form>
 </template>
@@ -111,7 +109,6 @@ import MoleculeInputAutoSuggest from '@/components/molecules/MoleculeInputAutoSu
 import MoleculeInputCheckbox from "../molecules/MoleculeInputCheckbox";
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 import MoleculeLoading from "@/components/molecules/MoleculeLoading";
-import MoleculeNotice from "../molecules/MoleculeNotice";
 
 import { copyService } from '@/services/copy-service';
 import { costCenterAssetService } from "@/services/cost-center-asset-service";
@@ -133,7 +130,6 @@ export default {
     MoleculeInputCheckbox,
     MoleculeInputText,
     MoleculeLoading,
-    MoleculeNotice,
   },
 
   computed: {
@@ -143,17 +139,6 @@ export default {
 
     allowNewPayer() {
       return this.transactionType === 'Revenue'
-    },
-
-    payeeAndPayerEqual() {
-      if (this.payeeAccount && this.payeeCostCenter && this.payerAccount && this.payerCostCenter) {
-        return this.payeeAccount.id === this.payerAccount.id && this.payeeCostCenter.id === this.payerCostCenter.id;
-      }
-      else if (this.payeeAccount && this.payerAccount && !this.payeeCostCenter && !this.payerCostCenter) {
-        return this.payeeAccount.id === this.payerAccount.id;
-      }
-
-      return false;
     },
 
     payeeRequired() {
@@ -166,7 +151,6 @@ export default {
   },
 
   props: {
-    bankAccounts: { type: Array, required: true },
     costCenters: { type: Array, required: true },
     initialPayeeAccount: { type: Object },
     initialPayerAccount: { type: Object },
@@ -211,97 +195,6 @@ export default {
       recurringTransaction: false,
       reference: null,
     }
-  },
-
-  watch: {
-    amount() {
-      this.v$.amount.$touch();
-    },
-
-    dayOfMonth() {
-      this.v$.dayOfMonth.$touch();
-    },
-
-    initialPayeeAccount() {
-      this.payeeAccount = this.initialPayeeAccount;
-    },
-
-    initialPayeeCostCenter() {
-      this.payeeCostCenter = this.initialPayeeCostCenter;
-    },
-
-    initialPayerAccount() {
-      this.payerAccount = this.initialPayerAccount;
-    },
-
-    initialPayerCostCenter() {
-      this.payerCostCenter = this.initialPayerCostCenter;
-    },
-
-    payeeAccount() {
-      this.updateCostCenterAssets();
-
-      if (this.payeeAccount && this.payeeAccount.id !== 'new' && this.payerAccount && this.payerAccount.id !== 'new') {
-        this.fetchLoans();
-      }
-    },
-
-    payeeAccounts() {
-      this.v$.$reset();
-    },
-
-    payeeCostCenter() {
-      this.updateCostCenterAssets();
-    },
-
-    payeeCostCenterAsset() {
-      if (this.payeeCostCenterAsset?.isReserve && this.payerCostCenterAssets) {
-        this.payerCostCenterAssets = this.payerCostCenterAssets.filter(p => !p.isReserve);
-      }
-    },
-
-    payerAccount() {
-      this.updateCostCenterAssets();
-
-      if (this.payeeAccount && this.payeeAccount.id !== 'new' && this.payerAccount && this.payerAccount.id !== 'new') {
-        this.fetchLoans();
-      }
-    },
-
-    payerAccounts() {
-      this.v$.$reset();
-    },
-
-    payerCostCenter() {
-      this.updateCostCenterAssets();
-    },
-
-    payerCostCenterAsset() {
-      if (this.payerCostCenterAsset?.isReserve && this.payeeCostCenterAssets) {
-        this.payeeCostCenterAssets = this.payeeCostCenterAssets.filter(p => !p.isReserve);
-      }
-    },
-
-    reference() {
-      this.v$.reference.$touch();
-    },
-
-    transactionType() {
-      this.v$.$reset();
-
-      this.amount = null;
-      this.cycleItem = null;
-      this.dayOfMonth = null;
-      this.loan = null;
-      this.payeeAccount = null;
-      this.payeeCostCenter = null;
-      this.payeeCostCenterAsset = null;
-      this.payerAccount = null;
-      this.payerCostCenter = null;
-      this.payerCostCenterAsset = null;
-      this.recurringTransaction = false;
-      this.reference = null;
-    },
   },
 
   methods: {
@@ -418,7 +311,7 @@ export default {
     saveTransaction() {
       this.v$.$touch();
 
-      if (!this.v$.$error && !this.payeeAndPayerEqual) {
+      if (!this.v$.$error) {
         //TODO - ugly... refactoring? look these ternaries....
         const newTransaction = {
           sourceBankAccountId: this.payerAccount?.id,
@@ -461,9 +354,6 @@ export default {
         }
 
         this.$emit('saveTransaction', newTransaction);
-      }
-      else if (this.payeeAndPayerEqual) {
-        alert('Zahlungspflichtiger und Zahlungsempfänger müssen sich unterscheiden!');
       }
     },
 
@@ -527,6 +417,99 @@ export default {
     }
 
     return validation;
+  },
+
+  watch: {
+    amount() {
+      this.v$.amount.$touch();
+    },
+
+    dayOfMonth() {
+      this.v$.dayOfMonth.$touch();
+    },
+
+    initialPayeeAccount() {
+      this.payeeAccount = this.initialPayeeAccount;
+    },
+
+    initialPayeeCostCenter() {
+      this.payeeCostCenter = this.initialPayeeCostCenter;
+    },
+
+    initialPayerAccount() {
+      this.payerAccount = this.initialPayerAccount;
+    },
+
+    initialPayerCostCenter() {
+      this.payerCostCenter = this.initialPayerCostCenter;
+    },
+
+    payeeAccount() {
+      this.updateCostCenterAssets();
+
+      if (this.payeeAccount && this.payeeAccount.id !== 'new' && this.payerAccount && this.payerAccount.id !== 'new') {
+        this.fetchLoans();
+      }
+    },
+
+    payeeAccounts() {
+      this.v$.$reset();
+    },
+
+    payeeCostCenter() {
+      this.updateCostCenterAssets();
+    },
+
+    payeeCostCenterAsset() {
+      if (this.payeeCostCenterAsset?.isReserve && this.payerCostCenterAssets) {
+        this.payerCostCenterAssets = this.payerCostCenterAssets.filter(p => !p.isReserve);
+      }
+    },
+
+    payerAccount() {
+      this.updateCostCenterAssets();
+
+      if (this.payeeAccount && this.payeeAccount.id !== 'new' && this.payerAccount && this.payerAccount.id !== 'new') {
+        this.fetchLoans();
+      }
+
+      this.$emit('updatePayeeAccounts', this.payerAccount?.id);
+    },
+
+    payerAccounts() {
+      this.v$.$reset();
+    },
+
+    payerCostCenter() {
+      this.updateCostCenterAssets();
+    },
+
+    payerCostCenterAsset() {
+      if (this.payerCostCenterAsset?.isReserve && this.payeeCostCenterAssets) {
+        this.payeeCostCenterAssets = this.payeeCostCenterAssets.filter(p => !p.isReserve);
+      }
+    },
+
+    reference() {
+      this.v$.reference.$touch();
+    },
+
+    transactionType() {
+      this.v$.$reset();
+
+      this.amount = null;
+      this.cycleItem = null;
+      this.dayOfMonth = null;
+      this.loan = null;
+      this.payeeAccount = null;
+      this.payeeCostCenter = null;
+      this.payeeCostCenterAsset = null;
+      this.payerAccount = null;
+      this.payerCostCenter = null;
+      this.payerCostCenterAsset = null;
+      this.recurringTransaction = false;
+      this.reference = null;
+    },
   },
 };
 

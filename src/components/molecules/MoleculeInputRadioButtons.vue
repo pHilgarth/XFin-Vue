@@ -12,6 +12,8 @@ export default {
     AtomInputRadioButton
   },
 
+  emits: [ 'change' ],
+
   props: {
     group: { type: String, required: true },
     options: { type: Array, required: true },
