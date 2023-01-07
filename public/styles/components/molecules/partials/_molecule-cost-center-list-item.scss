@@ -1,0 +1,56 @@
+.molecule-cost-center-list-item {
+  border: none;
+
+  &:last-child &__header, &:last-child &__body {
+    border-bottom: 1px solid $color-borders;
+  }
+
+  &__header {
+    @include rem(padding, 10px);
+    align-items: center;
+    border: 1px solid $color-borders;
+    border-bottom: none;
+    display: flex;
+  }
+
+  &__button {
+    &:not(.collapsed) svg {
+      transform: rotate(180deg);
+      transition: all .5s;
+    }
+
+    svg {
+      @include rem(margin-right, 10px);
+      @include rem(height, 20px);
+      @include rem(width, 20px);
+      transition: all .2s;
+    }
+  }
+
+  &__body {
+    background-color: $color-white-darker;
+    border: 1px solid $color-borders;
+    border-bottom: none;
+  }
+
+  &__cost-center-asset {
+    @include rem(padding, 5px 10px 5px 0);
+    display: flex;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid $color-borders;
+    }
+
+    &:last-child {
+      @include rem(padding-left, 60px);
+
+      > div:first-child {
+        padding-left: 0;
+      }
+    }
+
+    > div:first-child {
+      @include rem(padding-left, 60px);
+    }
+  }
+}

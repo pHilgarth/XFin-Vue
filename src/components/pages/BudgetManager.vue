@@ -13,21 +13,29 @@
 
         <template v-else>
           <div class="budget-manager__free-budget mb-4">
-            <div class="budget-manager__free-budget__name col-6">
+            <div class="budget-manager__free-budget__name col-8">
               Freies Budget
             </div>
-            <div class="budget-manager__free-budget__value col-6">
+            <div class="budget-manager__free-budget__value col-2 text-right">
               {{ formatCurrency(freeBudget) }}
             </div>
+            <div class="col-2"></div>
           </div>
 
           <OrganismCostCenterList
+              class="mb-4"
               :costCenters="costCenters"
               :account="this.account"
               @reload="getCostCenters"
-              @save="save"
               @updateFreeBudget="freeBudget = $event"
+              @reloadCostCenters="reloadCostCenters"
           />
+
+          <div class="budget-manager__total-budget fw-bold">
+            <div class="col-8">Gesamtes Budget</div>
+            <div class="col-2 text-right">{{ formatCurrency(account.totalBalance) }}</div>
+            <div class="col-2"></div>
+          </div>
 
 <!--          <OrganismCollapsibleWithSlot v-for="costCenter in costCenters" :key="costCenter.id" :title="`${costCenter.name} ${formatCurrency(costCenter.balance)}`">-->
 <!--            <MoleculeBudgetTable :balance="costCenter.balance" :costCenterAssets="costCenter.costCenterAssets"-->
@@ -54,7 +62,7 @@ import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import OrganismCostCenterList from '@/components/organisms/OrganismCostCenterList';
 
 import { accountService } from '@/services/account-service';
-import { costCenterAssetService } from '@/services/cost-center-asset-service';
+//import { costCenterAssetService } from '@/services/cost-center-asset-service';
 import { costCenterService } from '@/services/cost-center-service';
 
 import { numberService } from '@/services/number-service';
@@ -156,21 +164,8 @@ export default {
     //   }
     // },
 
-    async updateCostCenterAsset(data) {
+    async reloadCostCenters() {
       try {
-        const jsonPatchDocument = [];
-
-        for (const prop in data) {
-          if (prop !== 'id') {
-            jsonPatchDocument.push({
-              op: 'replace',
-              path: `/${prop}`,
-              value: data[prop],
-            });
-          }
-        }
-
-        await costCenterAssetService.update(data.id, jsonPatchDocument);
         await this.getCostCenters();
       }
       catch (error) {

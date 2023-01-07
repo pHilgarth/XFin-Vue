@@ -1,8 +1,8 @@
 .budget-manager {
-    &__free-budget {
+    &__free-budget, &__total-budget {
         @include rem(font-size, 20px);
         display: flex;
-        width: 30%;
+        width: 50%;
 
         &__name {
             font-weight: bold;

@@ -1,6 +1,8 @@
 import { createApp } from 'vue';
 import { router } from './router';
 import VueCookies from 'vue-cookies';
+import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap"
 
 import App from './App';
 
