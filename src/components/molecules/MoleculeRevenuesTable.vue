@@ -10,6 +10,11 @@
       </tr>
     </thead>
     <tbody>
+      <tr v-if="!bankAccount.revenues.length">
+        <td colspan="5">
+          <AtomParagraph class="text-center pt-2" text="Keine Einnahmen vorhanden!" />
+        </td>
+      </tr>
       <tr v-for="revenue in bankAccount.revenues" :key="revenue.id">
         <td>{{ formatDate(revenue.date) }}</td>
         <td>{{ revenue.sourceAccountHolder || '---' }}</td>
@@ -17,7 +22,7 @@
         <td>{{ formatCurrency(revenue.amount) }}</td>
         <td>{{ revenue.isCashTransaction ? 'BAR' : ''}}</td>
       </tr>
-      <tr class="table-row-total">
+      <tr v-if="bankAccount.revenues.length" class="table-row-total">
         <td colspan="3">Summe</td>
         <td>{{ formatCurrency(bankAccount.revenues.reduce((a, b) => a + b.amount, 0)) }}</td>
       </tr>
@@ -26,9 +31,15 @@
 </template>
 
 <script>
+import AtomParagraph from "@/components/atoms/AtomParagraph";
+
 import { numberService } from "@/services/number-service";
 
 export default {
+  components: {
+    AtomParagraph,
+  },
+
   props: {
     bankAccount: {
       type: Object,
