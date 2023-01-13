@@ -3,7 +3,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 import AccountDetail from './components/pages/AccountDetail';
 import AccountView from './components/pages/AccountView';
 import BudgetManager from './components/pages/BudgetManager';
-import CostCenterManager from './components/pages/CostCenterManager';
 import Dashboard from './components/pages/Dashboard';
 import DebtManager from './components/pages/DebtManager';
 import EditAccountHolder from './components/pages/EditAccountHolder';
@@ -26,7 +25,6 @@ export const router = createRouter({
         { path: '/accounts', component: AccountView },
         { path: '/accounts/:id', component: AccountDetail },
         { path: '/budget-manager', component: BudgetManager },
-        { path: '/cost-centers', component: CostCenterManager },
         { path: '/debt-manager', component: DebtManager },
         { path: '/edit-account-holder', name: 'edit-account-holder', component: EditAccountHolder, props: true },
         { path: '/new-account-holder', component: NewAccountHolder },

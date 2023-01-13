@@ -17,7 +17,7 @@
     <div v-if="user" class="xfin__body">
       <div class="xfin__navigation">
         <ul class="xfin__menu">
-          <!-- TODO - make this dynamic? -->
+          <!-- TODO - make this dynamic (the numbers in the :class) -->
           <li id="dashboard" :class="selectedMenuItem === 0 ? 'active' : ''">
             <a href="/">Dashboard</a>
           </li>
@@ -36,16 +36,13 @@
           <li id="recurring-revenues" :class="selectedMenuItem === 5 ? 'active' : ''">
             <a href="/recurring-revenues">Regelmäßige Einnahmen</a>
           </li>
-          <li id="cost-centers" :class="selectedMenuItem === 6 ? 'active' : ''">
-            <a href="/cost-centers">Kostenstellen</a>
-          </li>
-          <li id="reserves" :class="selectedMenuItem === 7 ? 'active' : ''">
+          <li id="reserves" :class="selectedMenuItem === 6 ? 'active' : ''">
             <a href="/reserves">Rücklagen</a>
           </li>
-          <li id="debt-manager" :class="selectedMenuItem === 8 ? 'active' : ''">
+          <li id="debt-manager" :class="selectedMenuItem === 7 ? 'active' : ''">
             <a href="/debt-manager">Schuldenmanager</a>
           </li>
-          <li id="design-elements" :class="selectedMenuItem === 9 ? 'active' : ''">
+          <li id="design-elements" :class="selectedMenuItem === 8 ? 'active' : ''">
             <a href="/design-elements">Design-Elemente (Dev)</a>
           </li>
         </ul>
