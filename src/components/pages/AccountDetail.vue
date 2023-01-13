@@ -13,7 +13,7 @@
         </OrganismCollapsibleWithSlot>
 
         <OrganismCollapsibleWithSlot title="Budget">
-          <MoleculeAccountBudgetTable :costCenters="costCenters" />
+          <MoleculeBudgetTable :costCenters="costCenters" :bankAccount="bankAccount" />
         </OrganismCollapsibleWithSlot>
 
         <!-- TODO - not all entries are visible - the height of the collapsible is too low, the last entries are cut off -->
@@ -27,7 +27,7 @@
 
 <script>
 import AtomHeadline from '@/components/atoms/AtomHeadline';
-import MoleculeAccountBudgetTable from '@/components/molecules/MoleculeAccountBudgetTable';
+import MoleculeBudgetTable from '@/components/molecules/MoleculeBudgetTable';
 import MoleculeExpensesTable from '@/components/molecules/MoleculeExpensesTable'
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
 import MoleculeMonthSwitch from "@/components/molecules/MoleculeMonthSwitch";
@@ -40,7 +40,7 @@ import { costCenterService } from '@/services/cost-center-service';
 export default {
   components: {
     AtomHeadline,
-    MoleculeAccountBudgetTable,
+    MoleculeBudgetTable,
     MoleculeExpensesTable,
     MoleculeLoading,
     MoleculeMonthSwitch,
