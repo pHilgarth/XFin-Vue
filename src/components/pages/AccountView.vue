@@ -4,7 +4,6 @@
 
     <h6>
       <ul>
-        <li>überall, wo Balance berechnet wird, muss die neue Property 'Executed' berücksichtigt werden (im backend)!!!!</li>
         <li>Problem beim Monatsübergang (recurringTransactions)</li>
         <li>AccountView Component muss aktualisiert werden, wenn die recurringTransactions sich aktualisieren</li>
         <li>Das Bestätigen / Verwerfen von Transactions soll animiert werden</li>
@@ -83,6 +82,17 @@
       <!-- TODO - use just "account" everywhere instead of "bankAccount" -> don't forget backend!!! -->
       <!-- TODO - add cash system (bargeld!) on creation of a new account the cash should be provided separately  -->
       <!-- TODO - costCenters orderby Name, alphabetically, and costCenterAssets -->
+      <!-- TODO - Dashboard: wenn keine Kontoinhaber verfügbar sind, entsprechende Meldung anzeigen -->
+      <!-- TODO - Dashboard: Überschrift "Heute fällige Transaktionen": irgendwie anders lösen, dass nicht nur die Überschrift dransteht, wenn keine fälligen Transaktionen verfügbar sind, vielleicht eine entsprechende Meldung ausgeben oder Überschrift ganz weglassen -->
+      <!-- TODO - Kontoinhaber erstellen / bearbeiten: negative Beträge rot anzeigen bei den Konten -->
+      <!-- TODO - Kontenübersicht: negative Beträge rot anzeigen -->
+      <!-- TODO - eventuell den ActionSelect in der Kontenübersicht rausnehmen -->
+      <!-- TODO - Kontodetailansicht: negative Beträge rot anzeigen -->
+      <!-- TODO - wenn keine Einnahmen / Ausgaben vorhanden sind, entsprechende Meldung anzeigen -->
+      <!-- TODO - Kontodetailansicht: Budget: Row für Nicht zugewiesenes Budget einfügen -->
+      <!-- TODO - Transaktion - Externen Zahlungspartner neu anlegen: IBAN + BIC optional - keine Pflichtfelder -->
+      <!-- TODO - externalParty erstellen: Name muss geprüft werden, darf nicht doppelt sein -->
+      <!-- TODO - add notices for failure or success in transaction manager (transaction successful, transaction failed, ...) -->
 
 
 
