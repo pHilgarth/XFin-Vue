@@ -97,6 +97,9 @@
 
     <p style="color:red">Hier noch die Möglichkeit für ein Verbuchungsdatum einbauen! (für nicht wiederkehrende Zahlungen), damit man auch noch in der Vergangenheit verbuchen kann, wenn man nicht am selben Tag verbucht, wie abgebucht wurde!</p>
 
+    <AtomHeadline class="organism-transaction-form__headline mb-3" tag="h5" text="Datum der Verbuchung" />
+    <Datepicker class="vuepic-datepicker pb-5 w-25" v-model="bookingDate" placeholder="Zieldatum" locale="de" :maxDate="new Date()" :enableTimePicker="false" autoApply />
+
     <AtomButton :disabled="v$.$invalid" type="primary" text="Speichern" @click.prevent="saveTransaction" />
 
   </form>
@@ -118,6 +121,10 @@ import { reserveService } from '@/services/reserve-service';
 
 import { transactionValidation } from '@/validation/validations';
 import { dayOfMonthValidator } from '@/validation/custom-validators';
+
+//third party assets
+import Datepicker from '@vuepic/vue-datepicker';
+
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
@@ -130,6 +137,7 @@ export default {
     MoleculeInputCheckbox,
     MoleculeInputText,
     MoleculeLoading,
+    Datepicker,
   },
 
   computed: {
@@ -150,18 +158,10 @@ export default {
     }
   },
 
-  props: {
-    costCenters: { type: Array, required: true },
-    initialPayeeAccount: { type: Object },
-    initialPayerAccount: { type: Object },
-    payeeAccounts: { type: Array, required: true},
-    payerAccounts: { type: Array, required: true },
-    transactionType: { type: String, required: true },
-  },
-
   data() {
     return {
       amount: null,
+      bookingDate: null,
       cycleItem: null,
       cycleItems: [
         { id: 1, label: 'monatlich' },
@@ -195,6 +195,15 @@ export default {
       recurringTransaction: false,
       reference: null,
     }
+  },
+
+  props: {
+    costCenters: { type: Array, required: true },
+    initialPayeeAccount: { type: Object },
+    initialPayerAccount: { type: Object },
+    payeeAccounts: { type: Array, required: true},
+    payerAccounts: { type: Array, required: true },
+    transactionType: { type: String, required: true },
   },
 
   methods: {
@@ -321,8 +330,8 @@ export default {
           targetCostCenterId: this.payeeCostCenter?.id,
           targetCostCenterAsset: this.payeeCostCenterAsset?.isReserve ? null : this.payeeCostCenterAsset,
           //TODO - einmalig geplante transactions einführen! (Datum auswählen, wann verbucht werden soll) Muss dann auch auf der Startseite bestätigt werden
-          dueDateString: new Date().toISOString(),
-          dateString: new Date().toISOString(),
+          dueDateString: this.bookingDate.toISOString() || new Date().toISOString(),
+          dateString: this.bookingDate.toISOString() || new Date().toISOString(),
           reserve: this.payerCostCenterAsset?.isReserve
               ? this.payerCostCenterAsset
               : this.payeeCostCenterAsset?.isReserve

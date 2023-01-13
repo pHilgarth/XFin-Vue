@@ -159,6 +159,7 @@ export default {
           external: true
         },
         bankAccount: {
+          userId: this.user.id,
           iban: data.iban,
           bic: data.bic,
           external: true
