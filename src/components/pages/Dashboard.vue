@@ -3,9 +3,6 @@
     <AtomHeadline tag="h1" text="Dashboard" />
 
     <OrganismTransactionsDue />
-<!--    <MoleculeTransactionsDue />-->
-
-    <h5>NextStep: Kontodetailansicht! -> hier in der API das Model anpassen (BankAccountController.GetSingle())</h5>
   </div>
 </template>
 <script>
