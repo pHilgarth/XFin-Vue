@@ -208,6 +208,10 @@ export default {
   },
 
   watch: {
+    costCenter() {
+      this.freeBudget = this.calculateFreeBudget();
+    },
+
     costCenterIdForAssetCreation() {
       if (this.costCenterIdForAssetCreation !== this.costCenter.id) {
         this.newCostCenterAssetAmount = null;

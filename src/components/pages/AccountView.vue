@@ -93,6 +93,7 @@
       <!-- TODO - Transaktion - Externen Zahlungspartner neu anlegen: IBAN + BIC optional - keine Pflichtfelder -->
       <!-- TODO - externalParty erstellen: Name muss geprüft werden, darf nicht doppelt sein -->
       <!-- TODO - add notices for failure or success in transaction manager (transaction successful, transaction failed, ...) -->
+      <!-- TODO -  -->
 
 
 

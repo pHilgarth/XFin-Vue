@@ -140,6 +140,7 @@ export default {
         if (!bankAccountDuplicate) {
             const account = {
               id: this.id,
+              userId: this.user.id,
               bank: this.bank,
               description: this.description,
               bic: this.bic,
