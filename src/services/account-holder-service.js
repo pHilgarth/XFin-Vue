@@ -5,6 +5,31 @@
 const baseUrl = "http://localhost:2905/api/accountHolders";
 
 export const accountHolderService = {
+  async create(accountHolder) {
+    const postObject = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(accountHolder)
+    };
+
+    try {
+      return await fetch(baseUrl, postObject).then((response) => {
+        if (response.status === 200) {
+          return response.json();
+        }
+        //TODO - is this the right statuscode to return, when something failed? See also TODO on the API Controller Action
+        else if (response.status === 404) {
+          throw new Error(`no user with id ${accountHolder.userId} found!`);
+        }
+      }).then(data => data);
+    } catch (error) {
+      console.error(error);
+      throw new Error(error);
+    }
+  },
+
   async getAllByUser(userId, external = false) {
     try {
       return await fetch(`${baseUrl}/user/${userId}?external=${external}`).then((response) => {
@@ -51,31 +76,6 @@ export const accountHolderService = {
         }
         else if (response.status === 204) {
           return null;
-        }
-      }).then(data => data);
-    } catch (error) {
-      console.error(error);
-      throw new Error(error);
-    }
-  },
-
-  async create(accountHolder) {
-    const postObject = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(accountHolder)
-    };
-
-    try {
-      return await fetch(baseUrl, postObject).then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        }
-        //TODO - is this the right statuscode to return, when something failed? See also TODO on the API Controller Action
-        else if (response.status === 404) {
-          throw new Error(`no user with id ${accountHolder.userId} found!`);
         }
       }).then(data => data);
     } catch (error) {
