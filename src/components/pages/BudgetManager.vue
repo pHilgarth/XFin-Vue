@@ -37,12 +37,6 @@
             <div class="col-2"></div>
           </div>
 
-<!--          <OrganismCollapsibleWithSlot v-for="costCenter in costCenters" :key="costCenter.id" :title="`${costCenter.name} ${formatCurrency(costCenter.balance)}`">-->
-<!--            <MoleculeBudgetTable :balance="costCenter.balance" :costCenterAssets="costCenter.costCenterAssets"-->
-<!--                                 :reserves="costCenter.reserves" @save-cost-center-asset="saveCostCenterAsset(costCenter.id, $event)"-->
-<!--                                 @updateCostCenterAsset="updateCostCenterAsset($event)" />-->
-<!--          </OrganismCollapsibleWithSlot>-->
-
         </template>
 
       </template>
