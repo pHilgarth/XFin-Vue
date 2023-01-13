@@ -330,8 +330,8 @@ export default {
           targetCostCenterId: this.payeeCostCenter?.id,
           targetCostCenterAsset: this.payeeCostCenterAsset?.isReserve ? null : this.payeeCostCenterAsset,
           //TODO - einmalig geplante transactions einführen! (Datum auswählen, wann verbucht werden soll) Muss dann auch auf der Startseite bestätigt werden
-          dueDateString: this.bookingDate.toISOString() || new Date().toISOString(),
-          dateString: this.bookingDate.toISOString() || new Date().toISOString(),
+          dueDateString: this.bookingDate?.toISOString() || new Date().toISOString(),
+          dateString: this.bookingDate?.toISOString() || new Date().toISOString(),
           reserve: this.payerCostCenterAsset?.isReserve
               ? this.payerCostCenterAsset
               : this.payeeCostCenterAsset?.isReserve
