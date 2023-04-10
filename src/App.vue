@@ -30,8 +30,8 @@
           <li id="budget-manager" :class="selectedMenuItem === 3 ? 'active' : ''">
             <a href="/budget-manager">Budgetmanager</a>
           </li>
-          <li id="overheads-manager" :class="selectedMenuItem === 4 ? 'active' : ''">
-            <a href="/overheads-manager">Fixkosten</a>
+          <li id="overheads" :class="selectedMenuItem === 4 ? 'active' : ''">
+            <a href="/overheads">Fixkosten</a>
           </li>
           <li id="recurring-revenues" :class="selectedMenuItem === 5 ? 'active' : ''">
             <a href="/recurring-revenues">Regelmäßige Einnahmen</a>
@@ -84,7 +84,7 @@ export default {
           'accounts',
           'transaction',
           'budget-manager',
-          'overheads-manager',
+          'overheads',
           'recurring-revenues',
           'cost-centers',
           'reserves',

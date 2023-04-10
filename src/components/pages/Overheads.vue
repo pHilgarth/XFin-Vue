@@ -1,5 +1,5 @@
 <template>
-  <div class="overheads-manager">
+  <div class="overheads">
     <AtomHeadline tag="h1" text="Fixkosten" />
 
     <p>Turnus bearbeiten lassen! Dann müssen die Tabellen neu geladen werden, damit die Transaktion in die jeweilige Tabelle verschoben wird!</p>
@@ -41,12 +41,15 @@
                                              @cancel="hideTransactionModal" @save="updateTransaction"/>
         </template>
       </template>
+
+      <AtomButton type="primary" text="Fixkosten anlegen" @click.prevent="$router.push('/recurring-transaction')" />
+
     </template>
   </div>
 </template>
 
 <script>
-  //import AtomButton from '@/components/atoms/AtomButton';
+  import AtomButton from '@/components/atoms/AtomButton';
   import AtomHeadline from '@/components/atoms/AtomHeadline';
   import AtomParagraph from '@/components/atoms/AtomParagraph';
 
@@ -62,7 +65,7 @@
 
   export default {
     components: {
-      //AtomButton,
+      AtomButton,
       AtomHeadline,
       AtomParagraph,
       MoleculeInputAutoSuggest,
@@ -74,6 +77,11 @@
 
     async created() {
       try {
+        //TODO - this is duplicated - maybe move it in a service?
+        if (this.$cookies.get('user')) {
+          this.user = this.$cookies.get('user');
+        }
+
         await this.getAccounts();
 
         this.accountsLoaded = true;
@@ -112,6 +120,7 @@
         selectedTransaction: null,
         semiannuallyOverheads: [],
         transactionModalActive: false,
+        user: null,
       }
     },
 
@@ -123,7 +132,7 @@
 
       async getAccounts() {
         try {
-          let accounts = await accountService.getAll();
+          let accounts = await accountService.getAllByUser(this.user.id);
           accounts = accounts.filter(b => !b.external).map(
               b => { return { id: b.id, label: `${b.accountHolderName} (${b.iban})`} });
 

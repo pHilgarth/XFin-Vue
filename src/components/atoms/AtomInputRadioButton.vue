@@ -1,6 +1,8 @@
 <template>
-  <input :id="id" type="radio" :name="group" class="atom-input-radio-button" :checked="checked" @change="$emit('change', $event)" />
-  <label :for="id">{{ label }}</label>
+  <div class="atom-input-radio-button">
+    <input :id="id" type="radio" :name="group" :checked="checked" @change="$emit('change', $event)" />
+    <label :for="id">{{ label }}</label>
+  </div>
 </template>
 
 <script>

@@ -1,8 +1,13 @@
 .organism-transaction-form {
-  &__payer, &__payee, &__details, &__recurring-transaction {
+  &__payer, &__payee, &__details {
     @include flexbox();
     @include flex-wrap(wrap);
     align-items: center;
+  }
+
+  &__transaction-type {
+    @include rem(margin-bottom, 30px);
+    display: flex;
   }
 
   &__headline {

@@ -149,7 +149,7 @@ export default {
       this.selectedTransaction = revenue;
     },
 
-    //TODO - this is duplicated in OverheadsManager - move it to a service
+    //TODO - this is duplicated in Overheads - move it to a service
     async updateTransaction(updatedValues) {
       try {
         const jsonPatchDocument = [];

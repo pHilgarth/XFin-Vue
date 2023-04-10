@@ -1,312 +1,379 @@
 <template>
   <form class="organism-transaction-form">
-    <h5>Ich mache 3 Radio-Buttons, über die man die Art der Transaktion wählen kann: Einnahme, Ausgabe, Umbuchung</h5>
-    <h5>Einnahme: nur externe Konten sind als Zahlungspflichtiger, nur interne als Zahlungsempfänger auswählbar - keine Kostenstelle beim Zahlungspflichtigen</h5>
-    <h5>Ausgabe: nur interne Konten sind als Zahlungspflichtiger, nur externe als Zahlungsempfänger auswählbar - keine Kostenstelle beim Zahlungsempfänger</h5>
-    <h5>Umbuchung: nur interne Konten sind sowohl als Zahlungspflichtiger als auch als Zahlungsempfänger auswählbar</h5>
-    <MoleculeInputRadioButtons :options="[{ id: 'revenue', label: 'Einnahme' }, { id: 'expense', label: 'Ausgabe' }, { id: 'transfer', label: 'Umbuchung' }]"
-                                group="transaction-type" />
     <div class="organism-transaction-form__payer">
-      <AtomHeadline class="organism-transaction-form__headline" tag="h5" text="Zahlungspflichtiger" />
+      <AtomHeadline class="organism-transaction-form__headline mb-3" tag="h4" text="Zahlungspflichtiger" />
       <div class="col-6 pb-5 pe-3">
-        <MoleculeInputAutoSuggest field="payer-account" v-model="payerAccount" label="Konto" :required="true" :items="payerAccounts"
-                                  :allowNewItems="true" :validation="v$.payerAccount" :hasErrors="v$.payerAccount.$error"
-                                  @itemPicked="pickItem($event, 'payerAccount')" @blur="onBlurPayerAccount"/>
-
+        <MoleculeInputAutoSuggest field="payer-account" v-model="payerAccount" label="Konto" :required="payerRequired" :items="payerAccounts"
+                                  :allowNewItems="allowNewPayer" :validation="v$.payerAccount" :hasErrors="v$.payerAccount?.$error"
+                                  @itemPicked="pickItem($event, 'payerAccount')" @addItem="$emit('addExternalParty')" @blur="onBlurPayerAccount"/>
       </div>
 
-      <div class="col-6 pb-5 ps-3">
-        <MoleculeInputAutoSuggest field="payer-cost-center" :selectedItem="payerCostCenter" label="Kostenstelle" :required="payerAccount && !payerAccount.external"
-                                  :items="payerCostCenters" :disabled="payerAccount?.external"
-                                  :validation="v$.payerCostCenter" :hasErrors="v$.payerCostCenter.$error"
-                                  @itemPicked="pickItem($event, 'payerCostCenter')" @blur="v$.payerCostCenter.$touch()"/>
-<!--        <MoleculeInputSelect class="pb-5" field="payerCostCenter" v-model="payerCostCenterId" label="Kostenstelle"-->
-<!--                             :options="payerCostCenters.map(c => { return { value: c.id, label: c.name } })" />-->
+      <div v-if="transactionType !== 'Revenue'" class="col-6 pb-5 ps-3">
+        <MoleculeInputAutoSuggest field="payer-cost-center" v-model="payerCostCenter" label="Kostenstelle" :items="payerCostCenters"
+                                  :disabled="payerAccount?.external" :validation="v$.payerCostCenter"
+                                  :hasErrors="v$.payerCostCenter?.$error" @itemPicked="pickItem($event, 'payerCostCenter')"
+                                  @blur="onBlurPayerCostCenter" />
+
+        <MoleculeLoading v-if="payerAccount && payerCostCenter && !payerCostCenterAssetsLoaded"
+                         :loadingError="payerCostCenterAssetsLoadingError" errorMessage="Fehler beim Laden der Daten!" />
+
+        <MoleculeInputAutoSuggest v-else-if="payerCostCenterAssetsLoaded" field="payer-cost-center-asset" class="mt-5" label="Posten auf Kostenstelle"
+                                  v-model="payerCostCenterAsset" :items="payerCostCenterAssets" @itemPicked="pickItem($event, 'payerCostCenterAsset')"
+                                  @blur="onBlurPayerCostCenterAsset" />
       </div>
+
     </div>
 
     <div class="organism-transaction-form__payee">
-      <AtomHeadline class="organism-transaction-form__headline" tag="h5" text="Zahlungsempfänger" />
+      <AtomHeadline class="organism-transaction-form__headline mb-3" tag="h4" text="Zahlungsempfänger" />
       <div class="col-6 pb-5 pe-3">
-        <MoleculeInputAutoSuggest field="payee-account" v-model="payeeAccount" label="Konto" :items="payeeAccounts"
-                                  :allowNewItems="true" :validation="v$.payeeAccount" :hasErrors="v$.payeeAccount.$error"
-                                  @itemPicked="pickItem($event, 'payeeAccount')" @blur="onBlurPayeeAccount" />
+        <MoleculeInputAutoSuggest field="payee-account" v-model="payeeAccount" label="Konto" :required="payeeRequired" :items="payeeAccounts"
+                                  :allowNewItems="allowNewPayee" :validation="v$.payeeAccount" :hasErrors="v$.payeeAccount?.$error"
+                                  @itemPicked="pickItem($event, 'payeeAccount')" @addItem="$emit('addExternalParty')" @blur="onBlurPayeeAccount" />
 
       </div>
 
-      <div class="col-6 pb-5 ps-3">
-        <MoleculeInputAutoSuggest field="payee-cost-center" :selectedItem="payeeCostCenter" label="Kostenstelle" :items="payeeCostCenters"
-                                  :disabled="payeeAccount?.external" @itemPicked="pickItem($event, 'payeeCostCenter')"/>
+      <div v-if="transactionType !== 'Expense'" class="col-6 pb-5 ps-3">
+        <MoleculeInputAutoSuggest field="payee-cost-center" v-model="payeeCostCenter" label="Kostenstelle" :items="payeeCostCenters"
+                                  :validation="v$.payeeCostCenter" :hasErrors="v$.payeeCostCenter?.$error"
+                                  @itemPicked="pickItem($event, 'payeeCostCenter')" @blur="onBlurPayeeCostCenter" />
+
+        <MoleculeLoading v-if="payeeAccount && payeeCostCenter && !payeeCostCenterAssetsLoaded"
+                         :loadingError="payeeCostCenterAssetsLoadingError" errorMessage="Fehler beim Laden der Daten!" />
+
+        <MoleculeInputAutoSuggest v-else-if="payeeCostCenterAssetsLoaded" field="payee-cost-center-asset" class="mt-5" label="Posten auf Kostenstelle"
+                                  v-model="payeeCostCenterAsset" :items="payeeCostCenterAssets" @itemPicked="pickItem($event, 'payeeCostCenterAsset')"
+                                  @blur="onBlurPayeeCostCenterAsset" />
+
       </div>
     </div>
 
     <div class="organism-transaction-form__details">
-      <AtomHeadline class="organism-transaction-form__headline" tag="h4" text="Details" />
-
-      <div class="col-6 pb-5 pe-3">
-        <MoleculeInputAutoSuggest field="transaction-type" v-model="transactionType" :selectedItem="transactionType" label="Transaktionstyp" :items="transactionTypes"
-                                  :validation="v$.transactionType" :hasErrors="v$.transactionType.$error"
-                                  @blur="v$.transactionType.$touch()" @itemPicked="pickItem($event, 'transactionType')" />
-      </div>
-
-      <div class="col-md-6 ps-3">
-        <MoleculeInputAutoSuggest v-if="transactionType && transactionType.id !== 'regular'" field="transaction-type" :selectedItem="transactionType" label="Transaktionstyp" :items="transactionTypes"
-                                  @itemPicked="pickItem($event, 'transactionType')" />
-      </div>
+      <AtomHeadline class="organism-transaction-form__headline mb-3" tag="h4" text="Details" />
 
       <div class="col-md-6 pb-5 pe-3">
-        <MoleculeInputText field="reference" v-model="reference" label="Verwendungszweck" />
+        <MoleculeInputText field="reference" v-model="reference" label="Verwendungszweck" :required="true" :hasErrors="v$.reference.$error"
+                           :validation="v$.reference" @blur="v$.reference.$touch()" />
       </div>
       <div class="col-md-6 pb-5 ps-3">
-          <MoleculeInputText field="amount" v-model="amount" label="Betrag" />
+        <MoleculeInputText field="amount" v-model="amount" label="Betrag" :required="true" :hasErrors="v$.amount.$error"
+                           :validation="v$.amount" @blur="v$.amount.$touch()"/>
+
+      </div>
+      <div class="col-md-6 pb-5 ps-3">
+        <MoleculeInputCheckbox class="col-md-12 pb-3" v-model="isCashTransaction" label="Bargeld-Transaktion" />
       </div>
     </div>
 
+    <div class="organism-transaction-form__options">
+      <AtomHeadline class="organism-transaction-form__headline mb-3" tag="h4" text="Zusätzliche Optionen" />
 
-    <!-- TODO - API endpoints for loan and repayments are missing, so this is commented out -->
-    <!--    <MoleculeInputSelect v-if="transactionTypeItems !== null" class="organism-transaction__transaction-type-item pb-5" field="transactionTypeItem"-->
-    <!--                         :options="transactionTypeItems.map(t => { return { value: t.id, label: t.reference }})" v-model="transactionTypeItem" label="Darlehen" />-->
+      <div class="col-md-6 pb-5">
+        <MoleculeInputAutoSuggest field="loan" label="Darlehen" noItemsLabel="" v-model="loan" :items="loans"
+                                  @itemPicked="pickItem($event, 'loan')" />
+      </div>
 
-<!--    <div class="molecule-expense-form__external-party pb-5">-->
-<!--      <MoleculeInputAutoSuggest field="counter-party" v-model="counterParty" label="Zahlungsempfänger" :items="autoSuggestDevItems"-->
-<!--                                :selectedItem="autoSuggestDevItem" :data-selected-item="autoSuggestDevItemId" @itemPicked="pickItem" />-->
+    </div>
 
-<!--      <MoleculeInputAutoSuggest field="external-party" v-model="externalParty" label="Zahlungsempfänger" :items="externalParties.map(e => e.name)"-->
-<!--                                :validation="v$.externalParty" :hasErrors="v$.externalParty?.$error"-->
-<!--                                :errorMessageParams="{ externalPartyType: 'Zahlungsempfänger' }"-->
-<!--                                @blur="onBlurExternalParty" @itemPicked="pickExternalParty" />-->
+    <div class="organism-transaction-form__date-of-booking">
+      <AtomHeadline class="organism-transaction-form__headline mb-3" tag="h5" text="Datum der Verbuchung" />
+      <Datepicker class="vuepic-datepicker pb-5 w-25" v-model="bookingDate" placeholder="Zieldatum" locale="de" :maxDate="new Date()" :enableTimePicker="false" autoApply />
+    </div>
 
-<!--      <MoleculeInputCheckbox v-if="selectedExternalParty && selectedExternalParty.bankAccount.iban == null" class="pt-3" field="include-external-party-account"-->
-<!--                             v-model="includeExternalPartyAccount" label="Bankdaten hinzufügen" />-->
+    <AtomButton :disabled="v$.$invalid" type="primary" text="Speichern" @click.prevent="saveTransaction" />
 
-<!--      <div v-if="includeExternalPartyAccount" class="molecule-expense-form__external-party-account pt-3">-->
-<!--        <MoleculeInputText class="molecule-expense-form__external-party-iban col-6" field="external-party-iban" v-model="externalPartyIban" label="IBAN" :small="true"-->
-<!--                           :hasErrors="v$.externalPartyIban.$error" :validation="v$.externalPartyIban" @blur="v$.externalPartyIban.$touch()" />-->
-
-<!--        <Teleport v-if="duplicatedIban" to=".molecule-expense-form__external-party-iban">-->
-<!--          <AtomParagraph class="xfin__form__error molecule-expense-form__iban__error" text="Diese IBAN wird bereits verwendet!"/>-->
-<!--        </Teleport>-->
-
-<!--        <MoleculeInputText class="col-5" field="external-party-bic" v-model="externalPartyBic" label="BIC" :small="true"-->
-<!--                           :hasErrors="v$.externalPartyBic.$error" :validation="v$.externalPartyBic" @blur="v$.externalPartyBic.$touch()" />-->
-<!--      </div>-->
-<!--    </div>-->
-
-<!--    <AtomButton type="primary" text="Speichern" :disabled="v$.$silentErrors.length || duplicatedIban" @click.prevent="save" />-->
   </form>
 </template>
 
 <script>
-//import AtomButton from '@/components/atoms/AtomButton';
+import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
 import MoleculeInputAutoSuggest from '@/components/molecules/MoleculeInputAutoSuggest';
-import MoleculeInputRadioButtons from '@/components/molecules/MoleculeInputRadioButtons';
-//import MoleculeInputSelect from '@/components/molecules/MoleculeInputSelect';
+import MoleculeInputCheckbox from "../molecules/MoleculeInputCheckbox";
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
+import MoleculeLoading from "@/components/molecules/MoleculeLoading";
 
 import { copyService } from '@/services/copy-service';
-import { transactionTypeService } from '@/services/transaction-type-service';
+import { costCenterAssetService } from "@/services/cost-center-asset-service";
+import { loanService } from '@/services/loan-service';
+import { numberService } from '@/services/number-service';
+import { reserveService } from '@/services/reserve-service';
 
 import { transactionValidation } from '@/validation/validations';
-//import { payerCostCenterValidator } from '@/validation/custom-validators';
+
+//third party imports
+import Datepicker from '@vuepic/vue-datepicker';
+
 import { useVuelidate } from "@vuelidate/core";
+import { required } from "@vuelidate/validators";
+
 
 export default {
   components: {
-    //AtomButton,
+    AtomButton,
     AtomHeadline,
     MoleculeInputAutoSuggest,
-    MoleculeInputRadioButtons,
-    //MoleculeInputSelect,
+    MoleculeInputCheckbox,
     MoleculeInputText,
+    MoleculeLoading,
+    Datepicker,
   },
 
-  props: {
-    bankAccounts: { type: Array, required: true },
-    costCenters: { type: Array, required: true },
-    initialPayerAccount: { type: Object },
-    initialPayeeAccount: { type: Object },
-    payerAccounts: { type: Array, required: true },
+  computed: {
+    allowNewPayee() {
+      return this.transactionType === 'Expense';
+    },
+
+    allowNewPayer() {
+      return this.transactionType === 'Revenue'
+    },
+
+    payeeRequired() {
+      return this.transactionType === "Transfer" || !this.isCashTransaction || this.transactionType === "Revenue";
+    },
+
+    payerRequired() {
+      return this.transactionType === "Transfer" || !this.isCashTransaction || this.transactionType === "Expense";
+    }
+  },
+
+  async created() {
+    try {
+      if (this.$cookies.get('user')) {
+        this.user = this.$cookies.get('user');
+      }
+
+      await this.getData();
+
+      this.dataLoaded = true;
+    } catch (error) {
+      this.loadingError = true;
+    }
   },
 
   data() {
     return {
       amount: null,
+      bookingDate: null,
       dataLoaded: false,
+      fullLoans: null,
+      isCashTransaction: false,
       loadingError: false,
+      loan: null,
+      loans: [],
       payeeAccount: this.initialPayeeAccount || null,
-      payeeCostCenter: null,
+      payeeCostCenter: this.initialPayeeCostCenter || null,
+      payeeCostCenters: copyService.copyArray(this.costCenters),
+      payeeCostCenterAsset: null,
+      payeeCostCenterAssets: null,
+      payeeCostCenterAssetsLoaded: false,
+      payeeCostCenterAssetsLoadingError: false,
+      payeeReserves: null,
       payerAccount: this.initialPayerAccount || null,
-      payerCostCenter: null,
+      payerCostCenter: this.initialPayerCostCenter || null,
+      payerCostCenters: copyService.copyArray(this.costCenters),
+      payerCostCenterAsset: null,
+      payerCostCenterAssets: null,
+      payerCostCenterAssetsLoaded: false,
+      payerCostCenterAssetsLoadingError: false,
+      payerReserves: null,
       reference: null,
-      transactionType: null,
-      transactionTypes: copyService.copyArray(transactionTypeService.transactionTypes).map(
-          t => { return { id: t.value, label: t.label } }),
-
-      payeeAccounts: copyService.copyArray(this.bankAccounts).map(
-          p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} }),
-      payeeCostCenters: copyService.copyArray(this.costCenters).map(
-          p => { return { id: p.id, label: p.name } }),
-      //payerAccounts: copyService.copyArray(this.bankAccounts).map(
-          //p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} }),
-      payerCostCenters: copyService.copyArray(this.costCenters).map(
-          p => { return { id: p.id, label: p.name}}),
+      transactionTypes: [
+        {id: 'Revenue', label: 'Einnahme'},
+        {id: 'Expense', label: 'Ausgabe'},
+        {id: 'Transfer', label: 'Umbuchung'}
+      ],
     }
   },
 
-  watch: {
-    payeeAccount() {
-      if (this.payeeAccount) {
-        this.payerAccounts = copyService.copyArray(this.bankAccounts).map(
-            p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} });
-
-        this.payerAccounts = this.payeeAccount.external
-            ? this.payerAccounts.filter(p => p.id !== this.payeeAccount.id && !p.external)
-            : this.payerAccounts.filter(p => p.id !== this.payeeAccount.id);
-
-        this.transactionTypes = this.payeeAccount.external
-          ? this.transactionTypes.filter(t => t.id !== 'reserve')
-          : copyService.copyArray(transactionTypeService.transactionTypes).map(
-                t => { return { id: t.value, label: t.label } });
-      }
-      else {
-        this.transactionTypes = copyService.copyArray(transactionTypeService.transactionTypes).map(
-            t => { return { id: t.value, label: t.label } });
-
-        this.payerAccounts = copyService.copyArray(this.bankAccounts).map(
-            p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} });
-
-        if (this.payerAccount) {
-          this.payerAccounts = this.payerAccounts.filter(p => p.id !== this.payerAccount.id);
-        }
-      }
-    },
-
-    payerAccount() {
-      if (this.payerAccount) {
-        this.payeeAccounts = copyService.copyArray(this.bankAccounts).map(
-            p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} });
-
-        this.payeeAccounts = this.payerAccount.external
-            ? this.payeeAccounts.filter(p => p.id !== this.payerAccount.id && !p.external)
-            : this.payeeAccounts.filter(p => p.id !== this.payerAccount.id);
-
-        if (this.transactionType && this.transactionType.id === 'reserve') {
-          this.payeeAccounts = this.payeeAccounts.filter(p => !p.external);
-        }
-
-        if (!this.payerAccount.external && this.payeeAccount?.external) {
-          this.transactionTypes = this.transactionTypes.filter(t => t.id !== 'reserve');
-        }
-      }
-      else {
-        this.payeeAccounts = copyService.copyArray(this.bankAccounts).map(
-            p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} });
-
-        if (this.payeeAccount) {
-          this.payeeAccounts = this.payeeAccounts.filter(p => p.id !== this.payeeAccount.id);
-        }
-
-        if (this.transactionType && this.transactionType.id === 'reserve') {
-          this.payeeAccounts = this.payeeAccounts.filter(p => !p.external);
-        }
-      }
-    },
-
-    transactionType() {
-      if (this.transactionType && this.transactionType.id === 'reserve') {
-        this.payeeAccounts = copyService.copyArray(this.bankAccounts).map(
-            p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} });
-
-        this.payeeAccounts = this.payeeAccount
-          ? this.payeeAccounts.filter(p => !p.external && p.id !== this.payeeAccount.id)
-          : this.payeeAccounts.filter(p => !p.external);
-
-        if (this.payerAccount) {
-          this.payeeAccounts = this.payeeAccounts.filter(p => p.id !== this.payerAccount.id);
-        }
-      }
-      else if (this.transactionType && this.transactionType !== 'reserve') {
-        this.payeeAccounts = copyService.copyArray(this.bankAccounts).map(
-            p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} });
-
-        if (this.payerAccount) {
-          this.payeeAccounts = this.payerAccount.external
-              ? this.payeeAccounts.filter(p => !p.external && p.id !== this.payerAccount.id)
-              : this.payeeAccounts.filter(p => p.id !== this.payerAccount.id);
-        }
-
-        if (this.payeeAccount) {
-          this.payeeAccounts = this.payeeAccounts.filter(p => p.id !== this.payeeAccount.id);
-        }
-      }
-    }
+  props: {
+    costCenters: { type: Array, required: true },
+    initialPayeeAccount: { type: Object },
+    initialPayerAccount: { type: Object },
+    payeeAccounts: { type: Array, required: true},
+    payerAccounts: { type: Array, required: true },
+    transactionType: { type: String, required: true },
   },
 
   methods: {
-    onBlurPayerAccount() {
-      this.payerAccounts = copyService.copyArray(this.bankAccounts).map(
-          p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} });
-
-      if (this.payeeAccount) {
-        this.payerAccounts = this.payeeAccount.external
-          ? this.payerAccounts.filter(p => p.id !== this.payeeAccount.id && !p.external)
-          : this.payerAccounts.filter(p => p.id !== this.payeeAccount.id);
-      }
-
-      this.v$.payerAccount.$touch();
-    },
-
-    onBlurPayeeAccount() {
-      this.payeeAccounts = copyService.copyArray(this.bankAccounts).map(
-          p => { return { id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external} });
-
-      if (this.payerAccount) {
-        this.payeeAccounts = this.payerAccount.external
-            ? this.payeeAccounts.filter(p => p.id !== this.payerAccount.id && !p.external)
-            : this.payeeAccounts.filter(p => p.id !== this.payerAccount.id);
-      }
-
-      if (this.transactionType && this.transactionType.id === 'reserve') {
-        this.payeeAccounts = this.payeeAccounts.filter(p => !p.external);
-      }
-
-      this.v$.payeeAccount.$touch();
+    async getData() {
 
     },
 
-    pickItem(id, prop) {
+    async fetchLoans() {
+      if (this.payeeAccount && this.payerAccount) {
+        try {
+          const loans = await loanService.getAllByCreditorAndDebitor(this.payerAccount.id, this.payeeAccount.id);
 
-      if (id == -1) {
-        //no items found
+          this.fullLoans = loans;
+          this.loans = loans.map(l => { return { id: l.id, label: l.reference} });
+        }
+        catch (error) {
+          console.error(error);
+        }
       }
-      else if (id == 0) {
-        //add new item
-        //TODO - in the OrganismExternalPartyModal add a note that only an external party can be created here, internal parties (accountHolders) are created somewhere else
-        this.$emit('addExternalParty');
+    },
+
+    async fetchPayeeCostCenterAssets() {
+      try {
+        const payeeCostCenterAssets = costCenterAssetService.getAllByAccountAndCostCenter(this.payeeAccount.id, this.payeeCostCenter.id);
+        const reserves = reserveService.getAllByAccountAndCostCenter(this.payeeAccount.id, this.payeeCostCenter.id);
+
+        const payeeCostCenterAssetsResult = await payeeCostCenterAssets;
+        this.payeeReserves = await reserves;
+
+        this.payeeCostCenterAssets = Array.from([
+            payeeCostCenterAssetsResult.map(p => { return { id: p.id, label: p.name, amount: p.amount }} ),
+            this.payeeReserves.map(p => { return { id: `reserve-${p.id}`, label: `${p.reference} (Rücklage)`, isReserve: true }} ),
+        ]).flat();
+
+        this.payeeCostCenterAssetsLoaded = true;
+      } catch (error) {
+        console.error(`Error fetching costCenterAssets (${error})`);
+        this.payeeCostCenterAssetsLoadingError = true;
+      }
+    },
+
+    async fetchPayerCostCenterAssets() {
+      try {
+        const payerCostCenterAssets = costCenterAssetService.getAllByAccountAndCostCenter(this.payerAccount.id, this.payerCostCenter.id);
+        const reserves = reserveService.getAllByAccountAndCostCenter(this.payerAccount.id, this.payerCostCenter.id);
+
+        const payerCostCenterAssetsResult = await payerCostCenterAssets;
+        this.payerReserves = await reserves;
+
+        this.payerCostCenterAssets = Array.from([
+          payerCostCenterAssetsResult.map(p => { return { id: p.id, label: p.name, amount: p.amount }} ),
+          this.payerReserves.map(p => { return { id: `reserve-${p.id}`, label: `${p.reference} (Rücklage)`, isReserve: true }} ),
+        ]).flat();
+
+        this.payerCostCenterAssetsLoaded = true;
+      } catch (error) {
+        console.log(`Error fetching costCenterAssets (${error})`);
+        this.payerCostCenterAssetsLoadingError = true;
+      }
+    },
+
+    onBlurPayeeAccount(event) {
+      if (this.payeeAccount?.label !== event.target.value) {
+        this.payeeAccount = null;
+      }
+
+      this.v$.payeeAccount?.$touch();
+    },
+
+    onBlurPayeeCostCenter(event) {
+      if (this.payeeCostCenter?.label !== event.target.value) {
+        this.payeeCostCenter = null;
+      }
+
+      this.v$.payeeCostCenter?.$touch();
+    },
+
+    onBlurPayeeCostCenterAsset(event) {
+      if (this.payeeCostCenterAsset?.label !== event.target.value) {
+        this.payeeCostCenterAsset = null;
+      }
+    },
+
+    onBlurPayerAccount(event) {
+      if (this.payerAccount?.label !== event.target.value) {
+        this.payerAccount = null;
+      }
+
+      this.v$.payerAccount?.$touch();
+    },
+
+    onBlurPayerCostCenter(event) {
+      if (this.payerCostCenter?.label !== event.target.value) {
+        this.payerCostCenter = null;
+      }
+
+      this.v$.payerCostCenter?.$touch();
+    },
+
+    onBlurPayerCostCenterAsset(event) {
+      if (this.payerCostCenterAsset?.label !== event.target.value) {
+        this.payerCostCenterAsset = null;
+      }
+    },
+
+    pickItem(id, property, findIn) {
+      this[property] = this[`${findIn || property + 's'}`].find(p => p.id == id);
+    },
+
+    saveTransaction() {
+      this.v$.$touch();
+
+      if (!this.v$.$error) {
+        //TODO - ugly... refactoring? look these ternaries....
+        const newTransaction = {
+          sourceBankAccountId: this.payerAccount?.id,
+          targetBankAccountId: this.payeeAccount?.id,
+          sourceCostCenterId: this.payerCostCenter?.id,
+          sourceCostCenterAsset: this.payerCostCenterAsset?.isReserve ? null : this.payerCostCenterAsset,
+          targetCostCenterId: this.payeeCostCenter?.id,
+          targetCostCenterAsset: this.payeeCostCenterAsset?.isReserve ? null : this.payeeCostCenterAsset,
+          //TODO - einmalig geplante transactions einführen! (Datum auswählen, wann verbucht werden soll) Muss dann auch auf der Startseite bestätigt werden
+          dueDateString: this.bookingDate?.toISOString() || new Date().toISOString(),
+          dateString: this.bookingDate?.toISOString() || new Date().toISOString(),
+          reserve: this.payerCostCenterAsset?.isReserve
+              ? this.payerCostCenterAsset
+              : this.payeeCostCenterAsset?.isReserve
+                  ? this.payeeCostCenterAsset
+                  : null,
+          loan: this.fullLoans ? this.fullLoans.find(l => l.id === this.loan?.id) : null,
+          loanId: this.loan?.id,
+          reference: this.reference,
+          amount: numberService.parseFloat(this.amount),
+          transactionType: this.payeeAccount?.id === this.payerAccount?.id
+            ? "AccountTransfer"
+            : this.transactionType,
+          executed: true,
+          isCashTransaction: this.isCashTransaction,
+        };
+
+        //TODO - i need to change this, that's not good
+        if (newTransaction.sourceCostCenterAsset || newTransaction.targetCostCenterAsset) {
+          newTransaction.updateCostCenterAssets = true;
+        }
+
+        this.$emit('saveTransaction', newTransaction);
+      }
+    },
+
+    updateCostCenterAssets() {
+      this.payeeCostCenterAsset = null;
+
+      if (this.transactionType === 'Expense') {
+        this.updatePayerCostCenterAssets();
+      }
+      else if (this.transactionType === 'Revenue') {
+        this.updatePayeeCostCenterAssets();
+      }
+      else if (this.transactionType === 'Transfer') {
+        this.updatePayerCostCenterAssets();
+        this.updatePayeeCostCenterAssets();
+      }
+    },
+
+    updatePayeeCostCenterAssets() {
+      if (this.payeeAccount && this.payeeCostCenter) {
+        this.fetchPayeeCostCenterAssets();
       }
       else {
-        this[prop] = this[`${prop}s`].find(p => p.id == id);
+        this.payeeCostCenterAssetsLoaded = false;
       }
     },
 
-    // pickPayerAccount(event) {
-    //   const clickedItem = event.target.textContent;
-    //
-    //   if (clickedItem === '+ Neu hinzufügen') {
-    //     this.$emit('addExternalParty');
-    //   }
-    //   else {
-    //     //event.target.id is always "suggestion-xy", where xy is the id, so I need the substring from index 11
-    //     const id = event.target.id.substring(11);
-    //     this.payerAccount = this.payerAccounts.find(p => p.id == id);
-    //   }
-    // },
-
-    // pickPayerCostCenter(event) {
-    //   const id = event.target.id.substring(11);
-    //   this.payerCostCenter = this.payerCostCenters.find(p => p.id == id);
-    // }
+    updatePayerCostCenterAssets() {
+      if (this.payerAccount && this.payerCostCenter) {
+        this.fetchPayerCostCenterAssets();
+      }
+      else {
+        this.payerCostCenterAssetsLoaded = false;
+      }
+    }
   },
 
   setup() {
@@ -318,12 +385,107 @@ export default {
   validations() {
     const validation = copyService.copyObject(transactionValidation);
 
-    if (this.payerAccount) {
-      //validation.payerCostCenter.payerCostCenterValidator = payerCostCenterValidator(this.payerAccount);
+    if (this.transactionType === "Transfer" || !this.isCashTransaction) {
+      validation.payerAccount = { required };
+      validation.payeeAccount = { required };
+    }
+    else if (this.transactionType === "Revenue") {
+      validation.payeeAccount = { required };
+    }
+    else if (this.transactionType === "Expense") {
+      validation.payerAccount = { required };
     }
 
     return validation;
-    //return transactionValidation;
+  },
+
+  watch: {
+    amount() {
+      this.v$.amount.$touch();
+    },
+
+    initialPayeeAccount() {
+      this.payeeAccount = this.initialPayeeAccount;
+    },
+
+    initialPayeeCostCenter() {
+      this.payeeCostCenter = this.initialPayeeCostCenter;
+    },
+
+    initialPayerAccount() {
+      this.payerAccount = this.initialPayerAccount;
+    },
+
+    initialPayerCostCenter() {
+      this.payerCostCenter = this.initialPayerCostCenter;
+    },
+
+    payeeAccount() {
+      this.updateCostCenterAssets();
+
+      if (this.payeeAccount && this.payeeAccount.id !== 'new' && this.payerAccount && this.payerAccount.id !== 'new') {
+        this.fetchLoans();
+      }
+    },
+
+    payeeAccounts() {
+      this.v$.$reset();
+    },
+
+    payeeCostCenter() {
+      this.updateCostCenterAssets();
+    },
+
+    payeeCostCenterAsset() {
+      if (this.payeeCostCenterAsset?.isReserve && this.payerCostCenterAssets) {
+        this.payerCostCenterAssets = this.payerCostCenterAssets.filter(p => !p.isReserve);
+      }
+    },
+
+    payerAccount() {
+      this.updateCostCenterAssets();
+
+      if (this.payeeAccount && this.payeeAccount.id !== 'new' && this.payerAccount && this.payerAccount.id !== 'new') {
+        this.fetchLoans();
+      }
+
+      this.$emit('updatePayeeAccounts', this.payerAccount?.id);
+    },
+
+    payerAccounts() {
+      this.v$.$reset();
+    },
+
+    payerCostCenter() {
+      this.updateCostCenterAssets();
+    },
+
+    payerCostCenterAsset() {
+      if (this.payerCostCenterAsset?.isReserve && this.payeeCostCenterAssets) {
+        this.payeeCostCenterAssets = this.payeeCostCenterAssets.filter(p => !p.isReserve);
+      }
+    },
+
+    reference() {
+      this.v$.reference.$touch();
+    },
+
+    transactionType() {
+      this.v$.$reset();
+
+      this.amount = null;
+      this.cycleItem = null;
+      this.dayOfMonth = null;
+      this.loan = null;
+      this.payeeAccount = null;
+      this.payeeCostCenter = null;
+      this.payeeCostCenterAsset = null;
+      this.payerAccount = null;
+      this.payerCostCenter = null;
+      this.payerCostCenterAsset = null;
+      this.recurringTransaction = false;
+      this.reference = null;
+    },
   },
 };
 

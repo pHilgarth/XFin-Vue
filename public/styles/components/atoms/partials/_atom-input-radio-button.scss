@@ -1,0 +1,9 @@
+.atom-input-radio-button {
+  &:not(:last-child) {
+    @include rem(margin-right, 20px);
+  }
+
+  input {
+    @include rem(margin-right, 5px);
+  }
+}

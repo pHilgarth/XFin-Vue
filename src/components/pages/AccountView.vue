@@ -70,7 +70,8 @@
       <!-- TODO - Transaktion - Externen Zahlungspartner neu anlegen: IBAN + BIC optional - keine Pflichtfelder -->
       <!-- TODO - externalParty erstellen: Name muss geprüft werden, darf nicht doppelt sein -->
       <!-- TODO - add notices for failure or success in transaction manager (transaction successful, transaction failed, ...) -->
-      <!-- TODO -  -->
+      <!-- TODO -  AccountDetail: wenn keine KS ausgewählt wurde bei eienr Transaktion, anstatt "Nicht zugewiesen" einfach "---" ausgeben (oder "n/a" oder ähnliches) -->
+      <!-- TODO - I have OrganismRecurringTransactionModal as well as MoleculeRecurringTransactionModal ... there should only be one -->
 
 
 

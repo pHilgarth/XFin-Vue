@@ -1,0 +1,5 @@
+.organism-recurring-transaction {
+  @include flexbox();
+  @include flex-wrap(wrap);
+  align-items: center;
+}

@@ -167,13 +167,10 @@ export default {
     minEndDate() {
       let minEndDate = this.startDate ? new Date(this.startDate) : new Date();
 
-      minEndDate.setMonth(minEndDate.getMonth() + this.recurringTransaction.cycle);
-
       //if startDate has already passed, minEndDate might as well, so I set it to today plus one cycle
-      if (minEndDate < new Date()) {
-        minEndDate = new Date();
-        minEndDate.setMonth(minEndDate.getMonth() + this.recurringTransaction.cycle);
-      }
+      minEndDate = minEndDate < new Date() ? new Date() : minEndDate;
+
+      minEndDate.setMonth(minEndDate.getMonth() + this.recurringTransaction.cycle);
 
       return minEndDate;
     },
@@ -182,7 +179,7 @@ export default {
       const maxStartDate = this.endDate ? new Date(this.endDate) : null;
 
       if (maxStartDate) {
-        maxStartDate.setMonth(maxStartDate.getMonth() - this.recurringTransaction.cycle);
+        maxStartDate.setMonth(maxStartDate.getMonth() - (this.cycleItem.id || 1));
       }
 
       return maxStartDate;

@@ -1,24 +1,20 @@
 <template>
   <!-- TODO wtf is this className -->
-  <div className="transaction-manager">
+  <div class="transaction-manager">
     <AtomHeadline tag="h1" text="Transaktion"/>
 
     <MoleculeLoading v-if="!dataLoaded" :loadingError="loadingError" errorMessage="Fehler beim Laden der Daten!"/>
 
     <template v-else>
-      <!-- TODO wtf is this className -->
-      <div className="transaction-manager__transaction-direction">
-        <MoleculeInputRadioButtons :options="transactionTypes" group="transaction-type" preselectedOptionId="Revenue"
-                                   @change="updateTransactionType"/>
-      </div>
+      <MoleculeTransactionType preselectedOptionId="Revenue" @change="updateTransactionType"/>
 
-      <OrganismTransactionFormNew
+      <OrganismTransactionForm
           :costCenters="costCenters"
           :payerAccounts="payerAccounts"
           :payeeAccounts="payeeAccounts"
-          :transactionType="transactionType"
           :initialPayeeAccount="payeeAccount"
           :initialPayerAccount="payerAccount"
+          :transactionType="transactionType"
           @addExternalParty="showExternalPartyForm = true"
           @saveTransaction="saveTransaction"
           @updatePayeeAccounts="updatePayeeAccounts"
@@ -30,38 +26,31 @@
       <OrganismExternalPartyModal :ibans="ibans" :names="accountHolderNames" @save="saveExternalParty"
                                   @cancel="showExternalPartyForm = false"/>
     </div>
-
-    <div v-if="showCostCenterAssetForm">
-      <OrganismCostCenterAssetForm :names="costCenterAssetNames" :costCenterName="costCenterForAsset.label"
-                                   @save="saveCostCenterAsset" @cancel="showCostCenterAssetForm = false"/>
-    </div>
   </div>
 </template>
 
 <script>
 import AtomHeadline from '@/components/atoms/AtomHeadline';
-import MoleculeInputRadioButtons from '@/components/molecules/MoleculeInputRadioButtons';
 import MoleculeLoading from '@/components/molecules/MoleculeLoading';
-import OrganismCostCenterAssetForm from '@/components/organisms/OrganismCostCenterAssetForm';
+import MoleculeTransactionType from "@/components/molecules/MoleculeTransactionType";
 import OrganismExternalPartyModal from '@/components/organisms/OrganismExternalPartyModal';
-import OrganismTransactionFormNew from '@/components/organisms/OrganismTransactionFormNew';
+import OrganismTransactionForm from '@/components/organisms/OrganismTransactionForm';
 
 import {accountHolderService} from '@/services/account-holder-service';
 import {accountService} from '@/services/account-service';
 import {costCenterService} from '@/services/cost-center-service';
 import {costCenterAssetService} from '@/services/cost-center-asset-service';
 import {loanService} from '@/services/loan-service';
-import {recurringTransactionService} from '@/services/recurring-transaction-service';
 import {transactionService} from '@/services/transaction-service';
+import {transactionTypeService} from "@/services/transaction-type-service";
 
 export default {
   components: {
     AtomHeadline,
-    MoleculeInputRadioButtons,
     MoleculeLoading,
-    OrganismCostCenterAssetForm,
+    MoleculeTransactionType,
     OrganismExternalPartyModal,
-    OrganismTransactionFormNew,
+    OrganismTransactionForm,
   },
 
   async created() {
@@ -98,11 +87,6 @@ export default {
       showCostCenterForm: false,
       showExternalPartyForm: false,
       transactionType: 'Revenue',
-      transactionTypes: [
-        {id: 'Revenue', label: 'Einnahme'},
-        {id: 'Expense', label: 'Ausgabe'},
-        {id: 'Transfer', label: 'Umbuchung'}
-      ],
       user: null,
     }
   },
@@ -214,11 +198,6 @@ export default {
           }
         }
 
-        if (this.costCenterAssetToSave) {
-          this.costCenterAssetToSave.amount += transaction.amount;
-          await costCenterAssetService.create(this.costCenterAssetToSave);
-        }
-
         if (transaction.updateCostCenterAssets) {
           await this.updateCostCenterAssets(transaction);
         }
@@ -251,10 +230,6 @@ export default {
                 value: loan.balance
               }],
           );
-        }
-
-        if (transaction.isRecurring) {
-          await recurringTransactionService.create(transaction);
         }
 
         await transactionService.create(transaction);
@@ -307,43 +282,9 @@ export default {
     updateTransactionType(event) {
       this.transactionType = event.target.id;
 
-      if (this.transactionType === 'Revenue') {
-        this.payerAccounts = this.bankAccounts
-            .filter(b => b.external)
-            .map(p => {
-              return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
-            });
-
-        this.payeeAccounts = this.bankAccounts
-            .filter(b => !b.external)
-            .map(p => {
-              return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
-            });
-      } else if (this.transactionType === 'Expense') {
-        this.payerAccounts = this.bankAccounts
-            .filter(b => !b.external)
-            .map(p => {
-              return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
-            });
-
-        this.payeeAccounts = this.bankAccounts
-            .filter(b => b.external)
-            .map(p => {
-              return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
-            });
-      } else if (this.transactionType === 'Transfer') {
-        this.payerAccounts = this.bankAccounts
-            .filter(b => !b.external)
-            .map(p => {
-              return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
-            });
-
-        this.payeeAccounts = this.bankAccounts
-            .filter(b => !b.external)
-            .map(p => {
-              return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
-            });
-      }
+      const filteredAccounts = transactionTypeService.filterAccounts(this.transactionType, this.bankAccounts);
+      this.payerAccounts = filteredAccounts.payerAccounts;
+      this.payeeAccounts = filteredAccounts.payeeAccounts;
     }
   }
 }

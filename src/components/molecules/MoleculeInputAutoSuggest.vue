@@ -91,7 +91,7 @@ export default {
 
   methods: {
     onBlur(event) {
-      //TODO - check if I can empty the field here, instead of doing it with v$....$touch in OrganismTransactionFormNew
+      //TODO - check if I can empty the field here, instead of doing it with v$....$touch in OrganismTransactionForm
       //TODO - because for payeeCostCenter I need to empty the field here onBlur, because there is no validation property, so $touch won't empty it!
       if (!this.hoverOnItem) {
         this.inputHasFocus = false;
@@ -144,7 +144,7 @@ export default {
       this.selectedItem = this.items.find(i => i.id == id);
 
       if (this.selectedItem) {
-        //TODO - in OrganismTransactionFormNew hat z.B. payerAccount noch die property "external: <boolean>" --- prüfen, ob das nach dem emit noch der Fall ist!
+        //TODO - in OrganismTransactionForm hat z.B. payerAccount noch die property "external: <boolean>" --- prüfen, ob das nach dem emit noch der Fall ist!
         this.$emit('update:modelValue', this.selectedItem)
 
         //TODO - when an item was picked -> should suggestions include ALL items or just the selected one (because it will be the value of the input field)
