@@ -44,6 +44,8 @@ import {loanService} from '@/services/loan-service';
 import {transactionService} from '@/services/transaction-service';
 import {transactionTypeService} from "@/services/transaction-type-service";
 
+import { useToast } from "vue-toastification";
+
 export default {
   components: {
     AtomHeadline,
@@ -79,13 +81,13 @@ export default {
       payeeAccount: null,
       payeeAccounts: null,
       payeeCostCenter: null,
-      payeeOrPayer: null,
       payerAccount: null,
       payerAccounts: null,
       payerCostCenter: null,
       showCostCenterAssetForm: false,
       showCostCenterForm: false,
       showExternalPartyForm: false,
+      toast: useToast(),
       transactionType: 'Revenue',
       user: null,
     }
@@ -234,10 +236,22 @@ export default {
 
         await transactionService.create(transaction);
 
-        this.$router.go();
+        this.toast.success('Transaktion erfolgreich!', {
+          position: "top-center",
+          timeout: 2000,
+        });
+
+        setTimeout(() => { this.$router.go();}, 2000);
+
       } catch (error) {
-        console.error('Error while saving transaction!')
-        console.error(error);
+        //console.error('Error while saving transaction!')
+        //console.error(error);
+
+        this.toast.error('Transaktion konnte nicht durchgeführt werden!', {
+          closeOnClick: true,
+          position: "top-center",
+          timeout: false,
+        });
       }
     },
 

@@ -1,6 +1,9 @@
 import { createApp } from 'vue';
 import { router } from './router';
 import VueCookies from 'vue-cookies';
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
+
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap"
 
@@ -20,4 +23,9 @@ app.component('MoleculeActionSelect', MoleculeActionSelect);
 
 app.use(router);
 app.use(VueCookies);
+app.use(Toast, {
+    transition: "Vue-Toastification__bounce",
+    maxToasts: 3,
+    newestOnTop: true
+});
 app.mount('#app');
