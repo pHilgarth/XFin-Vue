@@ -77,10 +77,10 @@
 
     <div class="organism-transaction-form__date-of-booking">
       <AtomHeadline class="organism-transaction-form__headline mb-3" tag="h5" text="Datum der Verbuchung" />
-      <Datepicker class="vuepic-datepicker pb-5 w-25" v-model="bookingDate" placeholder="Zieldatum" locale="de" :maxDate="new Date()" :enableTimePicker="false" autoApply />
+      <Datepicker class="vuepic-datepicker pb-5 w-25" v-model="bookingDate" format="dd.MM.Y" placeholder="Zieldatum" locale="de" :maxDate="new Date()" :enableTimePicker="false" autoApply />
     </div>
 
-    <AtomButton :disabled="v$.$invalid" type="primary" text="Speichern" @click.prevent="saveTransaction" />
+    <AtomButton :disabled="v$.$invalid || pendingTransaction" type="primary" text="Speichern" @click.prevent="saveTransaction" />
 
   </form>
 </template>
@@ -192,6 +192,7 @@ export default {
     initialPayerAccount: { type: Object },
     payeeAccounts: { type: Array, required: true},
     payerAccounts: { type: Array, required: true },
+    pendingTransaction: { type: Boolean },
     transactionType: { type: String, required: true },
   },
 

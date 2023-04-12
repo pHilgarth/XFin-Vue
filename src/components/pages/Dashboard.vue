@@ -5,6 +5,7 @@
 <div style="padding: 20px 40px; margin:20px; border:1px solid red;">
   <h4 class="mb-5">NextSteps:</h4>
   <ul>
+    <li>KSP in Kontodetailansicht mitaufnehmen</li>
     <li>OrganismTransactionForm wiederverwendbar machen -> wird auch benötigt um neue RecurringRevenues / RecurringExpenses zu erstellen -> die Form ist hier die gleiche, nur dass eben noch die Felder für Recurring hinzukommen<br>&nbsp;&nbsp;&nbsp;->MoleculeTransactionType ist neu, muss noch gestylt werden, dann getestet</li>
     <li>RecurringTransaction im Overheads und dann auch auf RecurringRevenues / mit Start- und Enddatum /</li>
   </ul>

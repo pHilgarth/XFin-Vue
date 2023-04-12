@@ -12,6 +12,7 @@
           :costCenters="costCenters"
           :payerAccounts="payerAccounts"
           :payeeAccounts="payeeAccounts"
+          :pendingTransaction="pendingTransaction"
           :initialPayeeAccount="payeeAccount"
           :initialPayerAccount="payerAccount"
           :transactionType="transactionType"
@@ -84,6 +85,7 @@ export default {
       payerAccount: null,
       payerAccounts: null,
       payerCostCenter: null,
+      pendingTransaction: false,
       showCostCenterAssetForm: false,
       showCostCenterForm: false,
       showExternalPartyForm: false,
@@ -185,6 +187,8 @@ export default {
     },
 
     async saveTransaction(transaction) {
+      this.pendingTransaction = true;
+
       try {
         if (this.externalPartyToSave) {
           const createdAccountHolder = await accountHolderService.create(this.externalPartyToSave.accountHolder);
@@ -241,9 +245,13 @@ export default {
           timeout: 2000,
         });
 
-        setTimeout(() => { this.$router.go();}, 2000);
+        setTimeout(() => {
+          this.pendingTransaction = false;
+          this.$router.go();
+          }, 2000);
 
       } catch (error) {
+        this.pendingTransaction = false;
         //console.error('Error while saving transaction!')
         //console.error(error);
 
