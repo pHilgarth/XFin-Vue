@@ -22,7 +22,29 @@
         <td>{{ formatCurrency(calculateFreeBalance()) }}</td>
       </tr>
       <tr v-for="costCenter in costCenters" :key="costCenter.id">
-        <td>{{ costCenter.name }}</td>
+        <td :class="costCenter.costCenterAssets.length ? 'cost-center-has-assets' : ''">
+          <span>{{ costCenter.name }}</span>
+          <div v-if="costCenter.costCenterAssets?.length" class="molecule-bugdet-table__assets">
+            <span :class="`molecule-budget-table__assets-icon ${activeCostCenterId === costCenter.id ? 'active' : ''}`" @click="toggleAssetOverlay(costCenter.id)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+              </svg>
+            </span>
+            <div :class="`molecule-budget-table__assets-overlay ${activeCostCenterId === costCenter.id ? 'active' : ''}`" :id="`assets-overlay-${costCenter.id}`">
+              <div>
+                <div class="molecule-budget-table__assets-headline"><strong>Kostenstellen-Posten</strong></div>
+                <div class="molecule-budget-table__asset-item molecule-budget-table__asset-item--free">
+                  <span class="col-9">Freies Budget</span>
+                  <span class="col-3">{{ formatCurrency(calculateFreeCostCenterBudget(costCenter)) }}</span>
+                </div>
+                <div class="molecule-budget-table__asset-item" v-for="costCenterAsset in costCenter.costCenterAssets" :key="costCenterAsset.id">
+                  <span class="col-9">{{ costCenterAsset.name }}</span>
+                  <span class="col-3">{{ formatCurrency(costCenterAsset.amount) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
         <td>{{ formatCurrency(costCenter.balancePreviousMonth) }}</td>
         <td>{{ formatCurrency(costCenter.revenuesSum) }}</td>
         <td>{{ formatCurrency(costCenter.transferSum) }}</td>
@@ -46,6 +68,12 @@
 import { numberService } from "@/services/number-service";
 
 export default {
+  data() {
+    return {
+      activeCostCenterId: null,
+    }
+  },
+
   props: {
     bankAccount: { type: Object, required: true },
     costCenters: { type: Array, required: true },
@@ -62,6 +90,10 @@ export default {
           this.calculateFreeRevenues() +
           this.calculateFreeTransfers()
       );
+    },
+
+    calculateFreeCostCenterBudget(costCenter) {
+      return costCenter.balance - costCenter.costCenterAssets.reduce((a, b) => a + b.amount, 0);
     },
 
     calculateFreeExpenses() {
@@ -88,110 +120,6 @@ export default {
       return numberService.formatDate(value);
     },
 
-    configureCollapsible() {
-      return {
-        collapsed: true,
-        title: "Einnahmen",
-        content: [
-          {
-            component: {
-              tag: "OrganismTable",
-              props: {
-                config: this.configureTable(),
-              },
-            }
-          }
-        ],
-      };
-    },
-
-    configureTable() {
-      let rows = [];
-
-      this.bankAccount.revenues.forEach((revenue) => {
-        const row = {
-          fields: [
-            {
-              content: numberService.formatDate(revenue.date),
-              props: { class: 'col-3' },
-            },
-            {
-              content: revenue.counterParty,
-              props: { class: 'col-3' },
-            },
-            {
-              content: revenue.reference,
-              props: { class: 'col-3' },
-            },
-            {
-              content: numberService.formatCurrency(revenue.amount),
-              props: { class: 'col-3 align-right' },
-            },
-          ],
-        };
-
-        rows.push(row);
-      });
-
-      if (this.bankAccount.revenues.length === 0) {
-        rows.push({
-          fields: [
-            {
-              content: "Keine Einnahmen vorhanden!",
-              props: {
-                colspan: 4,
-                class: "text-center",
-              },
-            },
-          ],
-        });
-      }
-
-      rows.push({
-        fields: [
-          {
-            content: "Einnahmen gesamt",
-            props: {
-              colspan: 3,
-            },
-          },
-          {
-            content: this.getRevenuesSum(true),
-            props: { class: 'col-3 align-right' },
-          },
-        ],
-        props: {
-          class: "total",
-        },
-      });
-
-      return {
-        tableHead: {
-          fields: [
-            {
-              content: "Datum",
-              props: { class: 'col-3' },
-            },
-            {
-              content: "Quelle",
-              props: { class: 'col-3' },
-            },
-            {
-              content: "Verwendungszweck",
-              props: { class: 'col-3' },
-            },
-            {
-              content: "Betrag",
-              props: { class: 'col-3 align-right' },
-            },
-          ],
-        },
-        tableBody: {
-          rows: rows,
-        },
-      };
-    },
-
     getRevenuesSum() {
       let revenuesTotal = 0;
 
@@ -201,6 +129,10 @@ export default {
 
       return numberService.formatCurrency(revenuesTotal);
     },
+
+    toggleAssetOverlay(costCenterId) {
+      this.activeCostCenterId = this.activeCostCenterId === costCenterId ? null : costCenterId;
+    }
   },
 };
 </script>

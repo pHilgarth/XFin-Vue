@@ -1,7 +1,6 @@
 <!-- TODO - this component is using the v-html directive - make sure it always gets trusted content! -->
 <template>
   <div class="organism-collapsible" :class="{ 'collapsed': collapsed }">
-    <MoleculeCollapsibleHeader :title="title" @state-switched="collapsed = !collapsed" />
     <MoleculeCollapsibleBody :collapsed="collapsed">
       <template v-for="(content, index) in config.content" :key="index">
         <div v-if="content.content" v-html="content.content" v-bind="content.props"></div>
@@ -12,6 +11,7 @@
     </MoleculeCollapsibleBody>
   </div>
 </template>
+
 
 <script>
 /* COMPONENT DOCS

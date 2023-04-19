@@ -8,16 +8,16 @@
       <section>
         <MoleculeMonthSwitch @month-switched="updateView" class="mb-5"/>
 
-        <OrganismCollapsibleWithSlot title="Einnahmen">
+        <OrganismCollapsibleWithSlot title="Einnahmen" accordionId="revenues">
           <MoleculeRevenuesTable :bankAccount="bankAccount" />
         </OrganismCollapsibleWithSlot>
 
-        <OrganismCollapsibleWithSlot title="Budget">
+        <OrganismCollapsibleWithSlot title="Budget" accordionId="budget">
           <MoleculeBudgetTable :costCenters="costCenters" :bankAccount="bankAccount" />
         </OrganismCollapsibleWithSlot>
 
         <!-- TODO - not all entries are visible - the height of the collapsible is too low, the last entries are cut off -->
-        <OrganismCollapsibleWithSlot title="Ausgaben">
+        <OrganismCollapsibleWithSlot title="Ausgaben" accordionId="expenses">
           <MoleculeExpensesTable :bankAccount="bankAccount" />
         </OrganismCollapsibleWithSlot>
       </section>
@@ -25,6 +25,11 @@
   </div>
 </template>
 
+<style scoped>
+.accordion-item {
+  margin-bottom: 50px;
+}
+</style>
 <script>
 import AtomHeadline from '@/components/atoms/AtomHeadline';
 import MoleculeBudgetTable from '@/components/molecules/MoleculeBudgetTable';

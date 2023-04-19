@@ -1,0 +1,66 @@
+.molecule-budget-table {
+  .cost-center-has-assets {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+
+    svg {
+      @include rem(width, 25px);
+      height: auto;
+    }
+  }
+
+  &__assets-icon {
+    cursor: pointer;
+
+    &.active svg {
+      transform: rotate(180deg);
+      transition: all .2s;
+    }
+
+    svg {
+      transition: all .2s;
+    }
+  }
+
+  &__assets-overlay {
+    @include rem(font-size, 18px);
+    background-color: $color-white;
+    bottom: 0;
+    border-top: 3px solid black;
+    box-shadow: 0 3px 6px 0 rgba(0,0,0,.5);
+    left: 0;
+    max-height: 0;
+    opacity: 0;
+    overflow-y: hidden;
+    position: absolute;
+    transform: translateY(100%);
+    transition: all .5s;
+    width: 100%;
+    z-index: 10;
+
+    &.active {
+      @include rem(max-height, 1000px);
+      opacity: 1;
+      transition: all .5s;
+    }
+
+    > div {
+      @include rem(padding, 15px 30px);
+    }
+  }
+
+  &__assets-headline {
+    @include rem(margin-bottom, 10px);
+  }
+
+  &__asset-item {
+    display: flex;
+
+    &:not(:last-child) {
+      @include rem(margin-bottom, 5px);
+      @include rem(padding-bottom, 5px);
+      border-bottom: 1px solid $color-borders;
+    }
+  }
+}

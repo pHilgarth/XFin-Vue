@@ -1,31 +1,47 @@
 .organism-collapsible {
-    box-shadow: 0 0 .5rem rgba(0, 0, 0, .5);
-    @include rem((
-        border-radius: 5px,
-        margin-bottom: 50px,
-    ));
+    box-shadow: 0 0 5px rgba(0, 0, 0, .5);
 
-    &__body {
-        @include rem(max-height, 500px);
-        overflow: scroll;
-        transition: max-height 1s;
+    @include rem(border-radius, 5px);
+    @include rem(margin-bottom, 50px);
 
-        &.collapsed {
-            max-height: 0;
-            transition: max-height 1s;
+    &__header {
+        background-color: $color-primary;
+    }
+
+    &__headline {
+        @include rem(font-size, 25px);
+        @include rem(padding, 10px);
+        color: $color-white;
+        display: inline-block;
+        text-align: left;
+        width: 100%;
+
+        &:focus, &:hover {
+            box-shadow: none;
+            text-decoration: none;
         }
     }
+    //&__body {
+    //    @include rem(max-height, 500px);
+    //    overflow: scroll;
+    //    transition: max-height 1s;
+    //
+    //    &.collapsed {
+    //        max-height: 0;
+    //        transition: max-height 1s;
+    //    }
+    //}
 }
 
-.molecule-collapsible-body {
-    overflow: scroll;
-    transition: max-height 1s;
-    @include rem((
-            max-height: 1000px,
-    ));
-
-    &.collapsed {
-        max-height: 0;
-        transition: max-height 1s;
-    }
-}
+//.molecule-collapsible-body {
+//    overflow: scroll;
+//    transition: max-height 1s;
+//    @include rem((
+//            max-height: 1000px,
+//    ));
+//
+//    &.collapsed {
+//        max-height: 0;
+//        transition: max-height 1s;
+//    }
+//}
