@@ -63,7 +63,6 @@ export default {
     bic() {
       this.bic = this.bic.toUpperCase();
       this.v$.bic.$touch();
-      this.v$.bic.$touch();
     },
     iban() {
       this.iban = this.iban.toUpperCase();
