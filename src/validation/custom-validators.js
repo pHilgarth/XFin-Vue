@@ -36,6 +36,8 @@ export const ibanValidator = (value) => value.match(/^[a-zA-Z]{2}[0-9]{20}$/);
 export const lifeValidator = (value) => (value === '' || value === null || value === undefined) || value > 0 && value.match(/^[0-9]+$/);
 export const monthlyInstallmentValidator = (value) => value > 0;
 export const optionalAmountValidator = (value) => (value === '' || value === null || value === undefined) || value.match(amountRegex);
+export const optionalBicValidator = (value) => (value === '' || value === null || value === undefined) || value.match(/^[a-zA-Z]{6}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?$/);
+export const optionalIbanValidator = (value) => (value === '' || value === null || value === undefined) ||value.match(/^[a-zA-Z]{2}[0-9]{20}$/);
 
 export const rateOfInterestValidator = (value) => value > 0;
 export const targetDateValidator = (value) => (value === '' || value === null || value === undefined) || value.match(/* TODO - regex missing!!! check how's the value of a date input looks like */);

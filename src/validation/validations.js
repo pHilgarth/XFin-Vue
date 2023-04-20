@@ -9,6 +9,8 @@ import {
     lifeValidator,
     //monthlyInstallmentValidator,
     optionalAmountValidator,
+    optionalBicValidator,
+    optionalIbanValidator,
     //payerCostCenterValidator,
     //rateOfInterestValidator,
 } from "@/validation/custom-validators";
@@ -33,8 +35,8 @@ export const costCenterAssetValidation = {
 };
 
 export const externalPartyValidation = {
-    bic:        { bicValidator },
-    iban:       { ibanValidator },
+    bic:        { optionalBicValidator },
+    iban:       { optionalIbanValidator },
     name:       { required },
 };
 
