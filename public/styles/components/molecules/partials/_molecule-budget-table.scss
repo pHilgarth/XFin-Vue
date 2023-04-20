@@ -25,7 +25,7 @@
 
   &__assets-overlay {
     @include rem(font-size, 18px);
-    background-color: $color-white;
+    background-color: $color-assets-overlay;
     bottom: 0;
     border-top: 3px solid black;
     box-shadow: 0 3px 6px 0 rgba(0,0,0,.5);

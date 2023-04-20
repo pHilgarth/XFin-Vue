@@ -4,6 +4,7 @@ $color-secondary-dark:                            #1f4989;
 $color-secondary-light:                           #3f72bf;
 
 $color-black:                                     #000000;
+$color-blue-ultralight:                           #e0edff;
 $color-gray:                                      #aaaaaa;
 $color-green:                                     #178009;
 $color-light-gray:                                #cccccc;
@@ -14,20 +15,18 @@ $color-red-light:                                 #ff7373;
 $color-white:                                     #ffffff;
 $color-white-darker:                              #efefef;
 
-$color-borders:                                   $color-light-gray;
-
+$color-assets-overlay:                            $color-blue-ultralight;
+$color-background-button-cancel:                  $color-red;
+$color-background-button-cancel-dark:             $color-red-dark;
 $color-background-button-primary:                 $color-secondary;
 $color-background-button-primary-dark:            $color-secondary-dark;
 $color-background-button-primary-disabled:        $color-light-gray;
-$color-text-button-primary:                       $color-white;
-$color-text-button-light:                         $color-secondary;
 $color-border-button-light:                       $color-secondary;
-$color-background-button-cancel:                  $color-red;
-$color-background-button-cancel-dark:             $color-red-dark;
-$color-text-button-cancel:                        $color-white;
-
+$color-borders:                                   $color-light-gray;
 $color-font-dark:                                 $color-black;
 $color-font-light:                                $color-white;
-
 $color-form-errors:                               $color-red;
 $color-form-required:                             $color-red;
+$color-text-button-primary:                       $color-white;
+$color-text-button-light:                         $color-secondary;
+$color-text-button-cancel:                        $color-white;
