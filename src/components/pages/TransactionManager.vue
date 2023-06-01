@@ -104,7 +104,7 @@ export default {
 
         const bankAccountsResult = await bankAccounts;
 
-        this.ibans = bankAccountsResult.map(p => p.iban);
+        this.ibans = bankAccountsResult.map(b => b.iban).filter(b => b !== null);
         this.accountHolderNames = bankAccountsResult.map(p => p.accountHolderName);
 
         //TODO - place this sort function into service
@@ -115,13 +115,21 @@ export default {
         this.payerAccounts = this.bankAccounts
             .filter(b => b.external)
             .map(p => {
-              return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
+              return {
+                id: p.id,
+                label: `${p.accountHolderName}${p.iban ? ' (' + p.iban + ')' : ''}`,
+                external: p.external
+              }
             });
 
         this.payeeAccounts = this.bankAccounts
             .filter(b => !b.external)
             .map(p => {
-              return {id: p.id, label: `${p.accountHolderName} (${p.iban})`, external: p.external}
+              return {
+                id: p.id,
+                label: `${p.accountHolderName}${p.iban ? ' (' + p.iban + ')' : ''}`,
+                external: p.external
+              }
             });
 
         const costCentersResult = await costCenters;
@@ -156,7 +164,7 @@ export default {
 
       const accountItem = {
         id: 'new',
-        label: `${data.name} (${data.iban})`,
+        label: `${data.name}${data.iban ? ' (' + data.iban + ')' : ''}`,
         external: true,
         new: true,
       }
@@ -265,7 +273,7 @@ export default {
 
     async updateCostCenterAssets(transaction) {
       if (transaction.sourceCostCenterAsset) {
-        const newAmount = transaction.sourceCostCenterAsset.amount -= transaction.amount;
+        const newAmount = transaction.sourceCostCenterAsset.balance -= transaction.amount;
         await costCenterAssetService.update(
             transaction.sourceCostCenterAsset.id,
             [{
@@ -277,7 +285,7 @@ export default {
       }
 
       if (transaction.targetCostCenterAsset) {
-        const newAmount = transaction.targetCostCenterAsset.amount += transaction.amount;
+        const newAmount = transaction.targetCostCenterAsset.balance += transaction.amount;
         await costCenterAssetService.update(
             transaction.targetCostCenterAsset.id,
             [{

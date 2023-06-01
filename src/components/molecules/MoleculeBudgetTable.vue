@@ -31,16 +31,31 @@
               </svg>
             </span>
             <div :class="`molecule-budget-table__assets-overlay ${activeCostCenterId === costCenter.id ? 'active' : ''}`" :id="`assets-overlay-${costCenter.id}`">
-              <div>
-                <div class="molecule-budget-table__assets-headline"><strong>Kostenstellen-Posten</strong></div>
-                <div class="molecule-budget-table__asset-item molecule-budget-table__asset-item--free">
-                  <span class="col-9">Freies Budget</span>
-                  <span class="col-3">{{ formatCurrency(calculateFreeCostCenterBudget(costCenter)) }}</span>
-                </div>
-                <div class="molecule-budget-table__asset-item" v-for="costCenterAsset in costCenter.costCenterAssets" :key="costCenterAsset.id">
-                  <span class="col-9">{{ costCenterAsset.name }}</span>
-                  <span class="col-3">{{ formatCurrency(costCenterAsset.amount) }}</span>
-                </div>
+              <div class="molecule-budget-table__assets-overlay__inner">
+                <table>
+                  <thead>
+                  <tr>
+                    <th>Posten</th>
+                    <th>Vormonat</th>
+                    <th>{{ getCurrentMonth() }}</th>
+                    <th>Summe</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td>Freies Budget</td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ formatCurrency(calculateFreeCostCenterBudget(costCenter)) }}</td>
+                  </tr>
+                  <tr v-for="costCenterAsset in costCenter.costCenterAssets" :key="costCenterAsset.id">
+                    <td>{{ costCenterAsset.name }}</td>
+                    <td>{{ formatCurrency(costCenterAsset.balancePreviousMonth) }}</td>
+                    <td>{{ formatCurrency(costCenterAsset.balance - costCenterAsset.balancePreviousMonth) }}</td>
+                    <td>{{ formatCurrency(costCenterAsset.balance) }}</td>
+                  </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -65,6 +80,7 @@
 </template>
 
 <script>
+import { monthService } from "@/services/month-service";
 import { numberService } from "@/services/number-service";
 
 export default {
@@ -93,7 +109,7 @@ export default {
     },
 
     calculateFreeCostCenterBudget(costCenter) {
-      return costCenter.balance - costCenter.costCenterAssets.reduce((a, b) => a + b.amount, 0);
+      return costCenter.balance - costCenter.costCenterAssets.reduce((a, b) => a + b.balance, 0);
     },
 
     calculateFreeExpenses() {
@@ -118,6 +134,10 @@ export default {
 
     formatDate(value) {
       return numberService.formatDate(value);
+    },
+
+    getCurrentMonth() {
+      return monthService.getMonthString(new Date().getMonth());
     },
 
     getRevenuesSum() {

@@ -2,6 +2,7 @@
   <div class="organism-cost-center-list accordion">
     <MoleculeCostCenterListItem
         v-for="costCenter in costCenters"
+        :account="account"
         :key="costCenter.id"
         :costCenter="costCenter"
         :costCenterIdForAssetCreation="costCenterIdForAssetCreation"
@@ -143,6 +144,7 @@ export default {
     async save(updatedBalance) {
       try {
         updatedBalance = numberService.parseFloat(updatedBalance);
+
         const costCenterToUpdate = this.costCenters.find(c => c.id === this.selectedCostCenterId);
         let sourceCostCenterId = null;
         let targetCostCenterId = null;

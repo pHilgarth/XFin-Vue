@@ -36,6 +36,7 @@
       </div>
       <div class="molecule-cost-center-list-item__cost-center-asset" v-for="costCenterAsset in costCenter.costCenterAssets" :key="costCenterAsset.id">
         <MoleculeCostCenterAssetItem
+            :account="account"
             :costCenterAsset="costCenterAsset"
             :selectedCostCenterAssetId="selectedCostCenterAssetId"
             @calculateFreeBudget="freeBudget = calculateFreeBudget($event)"
@@ -113,13 +114,14 @@ export default {
 
     calculateFreeBudget(updatedCostCenterAssetAmount) {
       if (updatedCostCenterAssetAmount) {
+
         let newFreeBudget = this.costCenter.balance;
         this.costCenter.costCenterAssets.forEach(c => {
           if (c.id === this.selectedCostCenterAssetId) {
             newFreeBudget -= numberService.parseFloat(updatedCostCenterAssetAmount);
           }
           else {
-            newFreeBudget -= c.amount;
+            newFreeBudget -= c.balance;
           }
         });
 
@@ -128,14 +130,14 @@ export default {
       else if (this.newCostCenterAssetAmount) {
         return (
           this.costCenter.balance -
-          this.costCenter.costCenterAssets.reduce((a, b) => a + b.amount, 0) -
+          this.costCenter.costCenterAssets.reduce((a, b) => a + b.balance, 0) -
           numberService.parseFloat(this.newCostCenterAssetAmount)
         );
       }
 
       return this.updatedCostCenterAmount
-          ? numberService.parseFloat(this.updatedCostCenterAmount) - this.costCenter.costCenterAssets.reduce((a, b) => a + b.amount, 0)
-          : this.costCenter.balance - this.costCenter.costCenterAssets.reduce((a, b) => a + b.amount, 0);
+          ? numberService.parseFloat(this.updatedCostCenterAmount) - this.costCenter.costCenterAssets.reduce((a, b) => a + b.balance, 0)
+          : this.costCenter.balance - this.costCenter.costCenterAssets.reduce((a, b) => a + b.balance, 0);
     },
 
     cancelCostCenterAmountEdit() {
@@ -173,10 +175,10 @@ export default {
     },
 
     saveNewCostCenterAsset() {
+      //TODO - create an initialization transaction for the new costCenterAsset
       this.$emit('saveNewCostCenterAsset', {
         costCenterId: this.costCenter.id,
         name: this.newCostCenterAssetName,
-        amount: numberService.parseFloat(this.newCostCenterAssetAmount),
       });
     },
 
@@ -189,6 +191,7 @@ export default {
   },
 
   props: {
+    account: { type: Object, required: true },
     costCenter: { type: Object, required: true },
     costCenterIdForAssetCreation: { type: Number },
     selectedCostCenterAssetId: { type: Number },

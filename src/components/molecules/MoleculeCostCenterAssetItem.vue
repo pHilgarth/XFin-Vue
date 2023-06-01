@@ -17,13 +17,13 @@
                          @blur="v$.updatedCostCenterAssetAmount.$touch()"
                          @update:modelValue="updatedCostCenterAssetAmount = $event"/>
     </template>
-    <span v-else class="col-2">{{ formatCurrency(costCenterAsset.amount) }}</span>
+    <span v-else class="col-2">{{ formatCurrency(costCenterAsset.balance) }}</span>
   </div>
   <div class="position-relative text-center col-2">
     <AtomEditIcon v-if="selectedCostCenterAssetId !== costCenterAsset.id" class="col-2" align="center" color="#000000"
                   @click="editCostCenterAsset"/>
     <template v-else>
-      <AtomButton type="primary-small" text="&check;" @click="updateCostCenterAmount"
+      <AtomButton type="primary-small" text="&check;" @click="updateCostCenterAssetAmount"
                   :disabled="v$.updatedCostCenterAssetAmount.$error"/>
       <AtomButton type="cancel-small" text="&times;" @click="cancelCostCenterAssetEdit"/>
     </template>
@@ -35,8 +35,10 @@ import AtomButton from '@/components/atoms/AtomButton';
 import AtomEditIcon from '@/components/atoms/AtomEditIcon';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 
-import {costCenterAssetService} from '@/services/cost-center-asset-service';
+//import {costCenterAssetService} from '@/services/cost-center-asset-service';
 import {numberService} from '@/services/number-service';
+//import {transactionService} from "@/services/transaction-service";
+import {costCenterAssetTransactionService} from "@/services/cost-center-asset-transaction-service";
 
 import {balanceValidator} from '@/validation/custom-validators';
 
@@ -78,7 +80,7 @@ export default {
       //this.cancelCostCenterAssetCreation()
       //this.selectedCostCenterAssetId = this.costCenterAsset.id;
       this.updatedCostCenterAssetName = this.costCenterAsset.name;
-      this.updatedCostCenterAssetAmount = numberService.amountToString(this.costCenterAsset.amount);
+      this.updatedCostCenterAssetAmount = numberService.amountToString(this.costCenterAsset.balance);
       this.$emit('edit', this.costCenterAsset.id);
     },
 
@@ -86,35 +88,69 @@ export default {
       return numberService.formatCurrency(value);
     },
 
-    async updateCostCenterAmount() {
-      console.log(this.updatedCostCenterAssetAmount);
-      try {
-        await costCenterAssetService.update(
-            this.costCenterAsset.id,
-            [
-              {
-                op: "replace",
-                path: "/amount",
-                value: numberService.parseFloat(this.updatedCostCenterAssetAmount),
-              },
-              {
-                op: "replace",
-                path: "/name",
-                value: this.updatedCostCenterAssetName,
-              },
-            ],
-        );
+    async updateCostCenterAssetAmount() {
+       try {
+         let sourceCostCenterAssetId = null;
+         let targetCostCenterAssetId = null;
 
-        this.updatedCostCenterAssetName = null;
-        this.updatedCostCenterAssetAmount = null;
-        this.$emit('update');
-      } catch (error) {
-        console.error(error);
-      }
+         const updatedAmount = numberService.parseFloat(this.updatedCostCenterAssetAmount);
+         const amountDifference = updatedAmount - this.costCenterAsset.balance;
+
+         if (amountDifference > 0) {
+           console.log('ok');
+           targetCostCenterAssetId = this.costCenterAsset.id
+         } else {
+           console.log('not ok');
+           sourceCostCenterAssetId = this.costCenterAsset.id
+         }
+
+         await costCenterAssetTransactionService.create({
+           sourceCostCenterAssetId,
+           targetCostCenterAssetId,
+           //recurringCostCenterAssetTransactionId,
+           dateString: new Date().toISOString(),
+           dueDateString: new Date().toISOString(),
+           amount: amountDifference < 0 ? amountDifference * -1 : amountDifference,
+           executed: true,
+         });
+      //
+      //   this.updatedCostCenterAssetName = null;
+         this.updatedCostCenterAssetAmount = null;
+         this.$emit('update');
+      //
+       } catch (error) {
+         console.error(error);
+       }
+
+      //OLD CODE!
+      // try {
+      //   await costCenterAssetService.update(
+      //       this.costCenterAsset.id,
+      //       [
+      //         {
+      //           op: "replace",
+      //           path: "/amount",
+      //           value: numberService.parseFloat(this.updatedCostCenterAssetAmount),
+      //         },
+      //         {
+      //           op: "replace",
+      //           path: "/name",
+      //           value: this.updatedCostCenterAssetName,
+      //         },
+      //       ],
+      //   );
+      //
+      //   this.updatedCostCenterAssetName = null;
+      //   this.updatedCostCenterAssetAmount = null;
+      //   this.$emit('update');
+      // } catch (error) {
+      //   console.error(error);
+      // }
     },
   },
 
   props: {
+    account: { type: Object, required: true },
     costCenterAsset: {type: Object, required: true},
     selectedCostCenterAssetId: {type: Number},
   },

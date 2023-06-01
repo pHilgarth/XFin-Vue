@@ -1,23 +1,15 @@
 <template>
   <div class="molecule-month-switch">
     <ul>
-      <li @click="setMonth(0)" :class="getTabState(0)">Januar</li>
-      <li @click="setMonth(1)" :class="getTabState(1)">Februar</li>
-      <li @click="setMonth(2)" :class="getTabState(2)">März</li>
-      <li @click="setMonth(3)" :class="getTabState(3)">April</li>
-      <li @click="setMonth(4)" :class="getTabState(4)">Mai</li>
-      <li @click="setMonth(5)" :class="getTabState(5)">Juni</li>
-      <li @click="setMonth(6)" :class="getTabState(6)">Juli</li>
-      <li @click="setMonth(7)" :class="getTabState(7)">August</li>
-      <li @click="setMonth(8)" :class="getTabState(8)">September</li>
-      <li @click="setMonth(9)" :class="getTabState(9)">Oktober</li>
-      <li @click="setMonth(10)" :class="getTabState(10)">November</li>
-      <li @click="setMonth(11)" :class="getTabState(11)">Dezember</li>
+      <li v-for="(n, i) in 12" :key="n" @click="setMonth(i)" :class="getTabState(i)">{{ getMonthString(i) }}</li>
     </ul>
   </div>
 </template>
 
 <script>
+
+import {monthService} from "@/services/month-service";
+
 export default {
   data() {
     return {
@@ -26,6 +18,10 @@ export default {
   },
 
   methods: {
+    getMonthString(index) {
+      return monthService.getMonthString(index);
+    },
+
     getTabState(month) {
       return { active: this.tabStates[month] };
     },

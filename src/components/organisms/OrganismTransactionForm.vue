@@ -327,6 +327,8 @@ export default {
           loanId: this.loan?.id,
           reference: this.reference,
           amount: numberService.parseFloat(this.amount),
+          //TODO - in TransactionForm / TransactionManager it's no longer possible to have the same account for payer and payee (no account-internal transfers)
+          //TODO - review this ternary carefully and delete it, if not needed
           transactionType: this.payeeAccount?.id === this.payerAccount?.id
             ? "AccountTransfer"
             : this.transactionType,
