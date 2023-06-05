@@ -69,7 +69,7 @@
       </tr>
       <tr class="table-row-total">
         <td>Summen</td>
-        <td>{{ formatCurrency(costCenters.reduce((a, b) => a + b.balancePreviousMonth, 0))}}</td>
+        <td>{{ formatCurrency(calculateFreeBalancePreviousMonth() + costCenters.reduce((a, b) => a + b.balancePreviousMonth, 0)) }}</td>
         <td colspan="2">{{ formatCurrency(calculateFreeRevenues() + costCenters.reduce((a, b) => a + b.revenuesSum, 0)) }}</td>
         <td>{{ formatCurrency(calculateFreeBudget() + costCenters.reduce((a, b) => a + (b.balancePreviousMonth + b.revenuesSum + b.transferSum), 0))}}</td>
         <td>{{ formatCurrency(costCenters.reduce((a, b) => a + b.expensesSum, 0))}}</td>
