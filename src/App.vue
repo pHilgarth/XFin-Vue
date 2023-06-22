@@ -24,25 +24,28 @@
           <li id="account-view" :class="selectedMenuItem === 1 ? 'active' : ''">
             <a href="/accounts">Kontenübersicht</a>
           </li>
-          <li id="transaction" :class="selectedMenuItem === 2 ? 'active' : ''">
+          <li id="account-holders" :class="selectedMenuItem === 2 ? 'active' : ''">
+            <a href="/account-holders">Kontoinhaber</a>
+          </li>
+          <li id="transaction" :class="selectedMenuItem === 3 ? 'active' : ''">
             <a href="/transaction">Transaktion</a>
           </li>
-          <li id="budget-manager" :class="selectedMenuItem === 3 ? 'active' : ''">
+          <li id="budget-manager" :class="selectedMenuItem === 4 ? 'active' : ''">
             <a href="/budget-manager">Budgetmanager</a>
           </li>
-          <li id="overheads" :class="selectedMenuItem === 4 ? 'active' : ''">
+          <li id="overheads" :class="selectedMenuItem === 5 ? 'active' : ''">
             <a href="/overheads">Fixkosten</a>
           </li>
-          <li id="recurring-revenues" :class="selectedMenuItem === 5 ? 'active' : ''">
+          <li id="recurring-revenues" :class="selectedMenuItem === 6 ? 'active' : ''">
             <a href="/recurring-revenues">Regelmäßige Einnahmen</a>
           </li>
-          <li id="reserves" :class="selectedMenuItem === 6 ? 'active' : ''">
+          <li id="reserves" :class="selectedMenuItem === 7 ? 'active' : ''">
             <a href="/reserves">Rücklagen</a>
           </li>
-          <li id="debt-manager" :class="selectedMenuItem === 7 ? 'active' : ''">
+          <li id="debt-manager" :class="selectedMenuItem === 8 ? 'active' : ''">
             <a href="/debt-manager">Schuldenmanager</a>
           </li>
-          <li id="design-elements" :class="selectedMenuItem === 8 ? 'active' : ''">
+          <li id="design-elements" :class="selectedMenuItem === 9 ? 'active' : ''">
             <a href="/design-elements">Design-Elemente (Dev)</a>
           </li>
         </ul>
@@ -82,6 +85,7 @@ export default {
       menuItems: [
           'dashboard',
           'accounts',
+          'account-holders',
           'transaction',
           'budget-manager',
           'overheads',

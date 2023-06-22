@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import AccountDetail from './components/pages/AccountDetail';
+import AccountHolders from './components/pages/AccountHolders';
 import AccountView from './components/pages/AccountView';
 import BudgetManager from './components/pages/BudgetManager';
 import Dashboard from './components/pages/Dashboard';
@@ -26,6 +27,7 @@ export const router = createRouter({
         { path: '/', component: Dashboard },
         { path: '/accounts', component: AccountView },
         { path: '/accounts/:id', component: AccountDetail },
+        { path: '/account-holders', component: AccountHolders },
         { path: '/budget-manager', component: BudgetManager },
         { path: '/debt-manager', component: DebtManager },
         { path: '/edit-account-holder', name: 'edit-account-holder', component: EditAccountHolder, props: true },
