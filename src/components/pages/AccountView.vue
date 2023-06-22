@@ -88,7 +88,7 @@
       <AtomParagraph class="pb-4" v-if="dataLoaded && accountHolders.length === 0" text="Keine Kontoinhaber gefunden!" />
 
       <div class="account-view__account-holder" v-for="accountHolder in accountHolders" :key="accountHolder.id">
-        <OrganismCollapsibleWithSlot :title="accountHolder.name">
+        <OrganismCollapsibleWithSlot :title="accountHolder.name" :accordionId="accountHolder.id">
           <MoleculeAccountViewTable :bankAccounts="accountHolder.bankAccounts" />
         </OrganismCollapsibleWithSlot>
         <AtomEditIcon :showOnHover="true" @click="$router.push({ name: 'edit-account-holder', params: { accountHolderId: accountHolder.id }})" />
