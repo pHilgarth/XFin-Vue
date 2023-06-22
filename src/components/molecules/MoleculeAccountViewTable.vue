@@ -7,7 +7,6 @@
         <th>Kontostand</th>
         <th>Bargeld</th>
         <th>Gesamt</th>
-        <th>Aktion</th>
       </tr>
     </thead>
     <tbody>
@@ -19,24 +18,15 @@
         <td>{{ formatCurrency(bankAccount.balance) }}</td>
         <td>{{ formatCurrency(bankAccount.cash) }}</td>
         <td>{{ formatCurrency(bankAccount.balance + bankAccount.cash) }}</td>
-        <td>
-          <MoleculeActionSelect :bankAccount="bankAccount" />
-        </td>
       </tr>
     </tbody>
   </table>
 </template>
 
 <script>
-import MoleculeActionSelect from '@/components/molecules/MoleculeActionSelect';
-
 import { numberService } from "@/services/number-service";
 
 export default {
-  components: {
-    MoleculeActionSelect,
-  },
-
   props: {
     bankAccounts: { type: Array, required: true },
   },
