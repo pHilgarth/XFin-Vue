@@ -72,6 +72,7 @@
       <!-- TODO -  AccountDetail: wenn keine KS ausgewählt wurde bei eienr Transaktion, anstatt "Nicht zugewiesen" einfach "---" ausgeben (oder "n/a" oder ähnliches) -->
       <!-- TODO - I have OrganismRecurringTransactionModal as well as MoleculeRecurringTransactionModal ... there should only be one -->
       <!-- TODO - its not possible to rename CostCenters or CostCenterAssets in BudgetManager -->
+      <!-- TODO - current parent menu point is not highlighted in menu when routing to a subcomponent, like AccountHolders -> AddAccountHolder -->
 
 
 
@@ -92,14 +93,11 @@
         </OrganismCollapsibleWithSlot>
         <AtomEditIcon :showOnHover="true" @click="$router.push({ name: 'edit-account-holder', params: { accountHolderId: accountHolder.id }})" />
       </div>
-
-      <AtomButton type="light" text="Kontoinhaber hinzufügen" @click.prevent="$router.push('/new-account-holder')" />
     </section>
   </div>
 </template>
 
 <script>
-import AtomButton from '@/components/atoms/AtomButton';
 import AtomHeadline from '@/components/atoms/AtomHeadline';
 import AtomEditIcon from '@/components/atoms/AtomEditIcon';
 import AtomParagraph from '@/components/atoms/AtomParagraph';
@@ -129,7 +127,6 @@ export default {
   },
 
   components: {
-    AtomButton,
     AtomHeadline,
     AtomEditIcon,
     AtomParagraph,
