@@ -1,7 +1,7 @@
 <template>
   <div class="molecule-month-switch">
     <ul>
-      <li v-for="(n, i) in 12" :key="n" @click="setMonth(i)" :class="getTabState(i)">{{ getMonthString(i) }}</li>
+      <li v-for="(n, i) in 12" :key="n" @click="setMonth(i)" :class="getTabState(i)">{{ getMonthName(i) }}</li>
     </ul>
   </div>
 </template>
@@ -18,8 +18,8 @@ export default {
   },
 
   methods: {
-    getMonthString(index) {
-      return monthService.getMonthString(index);
+    getMonthName(index) {
+      return monthService.getMonthName(index);
     },
 
     getTabState(month) {

@@ -1,5 +1,5 @@
 export const monthService = {
-    getMonthString(index) {
+    getMonthName(index) {
         switch (index) {
             case 0:
                 return 'Januar';

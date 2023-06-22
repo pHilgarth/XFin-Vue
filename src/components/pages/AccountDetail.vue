@@ -4,8 +4,9 @@
 
     <template v-else>
       <AtomHeadline tag="h1" :text="`Detailansicht (${bankAccount.accountNumber})`"/>
-      <!-- TODO - Einnahmen stimmen hier (macbook) bei zweiter KS noch nicht, die Umbuchung ist als Einnahme aufgeführt -->
+      <!-- TODO - Einnahmen stimmen hier bei zweiter KS noch nicht, die Umbuchung ist als Einnahme aufgeführt -->
       <section>
+
         <MoleculeMonthSwitch @month-switched="updateView" class="mb-5"/>
 
         <OrganismCollapsibleWithSlot title="Einnahmen" accordionId="revenues">
@@ -13,7 +14,7 @@
         </OrganismCollapsibleWithSlot>
 
         <OrganismCollapsibleWithSlot title="Budget" accordionId="budget">
-          <MoleculeBudgetTable :costCenters="costCenters" :bankAccount="bankAccount" />
+          <MoleculeBudgetTable :costCenters="costCenters" :bankAccount="bankAccount" :selectedMonth="selectedMonth" />
         </OrganismCollapsibleWithSlot>
 
         <!-- TODO - not all entries are visible - the height of the collapsible is too low, the last entries are cut off -->
@@ -26,6 +27,7 @@
 </template>
 
 <style scoped>
+/* TODO - review this, i want that in a separate file, but maybe there was a reason for it :) */
 .accordion-item {
   margin-bottom: 50px;
 }
@@ -67,13 +69,13 @@ export default {
     }
   },
 
-
   data() {
     return {
       bankAccount: null,
       costCenters: null,
       dataLoaded: false,
       loadingError: false,
+      selectedMonth: null,
       user: null,
     };
   },
@@ -89,6 +91,7 @@ export default {
 
         this.bankAccount = await bankAccount;
         this.costCenters = await costCenters;
+        this.selectedMonth = month;
       } catch (error) {
         console.error(error);
         throw new Error(error);
