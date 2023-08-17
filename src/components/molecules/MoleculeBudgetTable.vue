@@ -4,8 +4,7 @@
       <tr>
         <th>Kostenstelle</th>
         <th>Überschuss Vormonat</th>
-        <th>Einnahmen</th>
-        <th>Umbuchungen</th>
+        <th>{{ getMonthName(selectedMonth) }}</th>
         <th>Budget</th>
         <th>Ausgaben</th>
         <th>Saldo</th>
@@ -16,7 +15,6 @@
         <td>Freies Budget</td>
         <td>{{ formatCurrency(calculateFreeBalancePreviousMonth()) }}</td>
         <td>{{ formatCurrency(calculateFreeRevenues()) }}</td>
-        <td>{{ formatCurrency(calculateFreeTransfers()) }}</td>
         <td>{{ formatCurrency(calculateFreeBudget()) }}</td>
         <td>{{ formatCurrency(calculateFreeExpenses()) }}</td>
         <td>{{ formatCurrency(calculateFreeBalance()) }}</td>
@@ -37,7 +35,7 @@
                   <tr>
                     <th>Posten</th>
                     <th>Vormonat</th>
-                    <th>{{ getCurrentMonth() }}</th>
+                    <th>{{ getMonthName(selectedMonth) }}</th>
                     <th>Summe</th>
                   </tr>
                   </thead>
@@ -62,7 +60,6 @@
         </td>
         <td>{{ formatCurrency(costCenter.balancePreviousMonth) }}</td>
         <td>{{ formatCurrency(costCenter.revenuesSum) }}</td>
-        <td>{{ formatCurrency(costCenter.transferSum) }}</td>
         <td>{{ formatCurrency(costCenter.balancePreviousMonth + costCenter.revenuesSum + costCenter.transferSum) }}</td>
         <td>{{ formatCurrency(costCenter.expensesSum) }}</td>
         <td>{{ formatCurrency(costCenter.balance) }}</td>
@@ -70,7 +67,7 @@
       <tr class="table-row-total">
         <td>Summen</td>
         <td>{{ formatCurrency(calculateFreeBalancePreviousMonth() + costCenters.reduce((a, b) => a + b.balancePreviousMonth, 0)) }}</td>
-        <td colspan="2">{{ formatCurrency(calculateFreeRevenues() + costCenters.reduce((a, b) => a + b.revenuesSum, 0)) }}</td>
+        <td>{{ formatCurrency(calculateFreeRevenues() + costCenters.reduce((a, b) => a + b.revenuesSum, 0)) }}</td>
         <td>{{ formatCurrency(calculateFreeBudget() + costCenters.reduce((a, b) => a + (b.balancePreviousMonth + b.revenuesSum + b.transferSum), 0))}}</td>
         <td>{{ formatCurrency(costCenters.reduce((a, b) => a + b.expensesSum, 0))}}</td>
         <td>{{ formatCurrency(calculateFreeBalance() + costCenters.reduce((a, b) => a + b.balance, 0))}}</td>
@@ -93,6 +90,7 @@ export default {
   props: {
     bankAccount: { type: Object, required: true },
     costCenters: { type: Array, required: true },
+    selectedMonth: { type: Number, required: true },
   },
 
   methods: {
@@ -136,8 +134,8 @@ export default {
       return numberService.formatDate(value);
     },
 
-    getCurrentMonth() {
-      return monthService.getMonthString(new Date().getMonth());
+    getMonthName(month) {
+      return monthService.getMonthName(month);
     },
 
     getRevenuesSum() {
