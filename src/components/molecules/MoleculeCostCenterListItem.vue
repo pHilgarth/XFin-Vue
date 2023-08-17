@@ -37,6 +37,7 @@
       <div class="molecule-cost-center-list-item__cost-center-asset" v-for="costCenterAsset in costCenter.costCenterAssets" :key="costCenterAsset.id">
         <MoleculeCostCenterAssetItem
             :account="account"
+            :costCenter="costCenter"
             :costCenterAsset="costCenterAsset"
             :selectedCostCenterAssetId="selectedCostCenterAssetId"
             @calculateFreeBudget="freeBudget = calculateFreeBudget($event)"
@@ -114,7 +115,6 @@ export default {
 
     calculateFreeBudget(updatedCostCenterAssetAmount) {
       if (updatedCostCenterAssetAmount) {
-
         let newFreeBudget = this.costCenter.balance;
         this.costCenter.costCenterAssets.forEach(c => {
           if (c.id === this.selectedCostCenterAssetId) {
@@ -179,6 +179,7 @@ export default {
       this.$emit('saveNewCostCenterAsset', {
         costCenterId: this.costCenter.id,
         name: this.newCostCenterAssetName,
+        amount: this.newCostCenterAssetAmount,
       });
     },
 

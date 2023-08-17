@@ -35,10 +35,8 @@ import AtomButton from '@/components/atoms/AtomButton';
 import AtomEditIcon from '@/components/atoms/AtomEditIcon';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 
-//import {costCenterAssetService} from '@/services/cost-center-asset-service';
+import {budgetAllocationService} from "@/services/budget-allocation-service";
 import {numberService} from '@/services/number-service';
-//import {transactionService} from "@/services/transaction-service";
-import {costCenterAssetTransactionService} from "@/services/cost-center-asset-transaction-service";
 
 import {balanceValidator} from '@/validation/custom-validators';
 
@@ -94,27 +92,27 @@ export default {
          let targetCostCenterAssetId = null;
 
          const updatedAmount = numberService.parseFloat(this.updatedCostCenterAssetAmount);
-         const amountDifference = updatedAmount - this.costCenterAsset.balance;
+         let amountDifference = updatedAmount - this.costCenterAsset.balance;
 
          if (amountDifference > 0) {
-           console.log('ok');
            targetCostCenterAssetId = this.costCenterAsset.id
          } else {
-           console.log('not ok');
+           amountDifference *= -1;
            sourceCostCenterAssetId = this.costCenterAsset.id
          }
 
-         await costCenterAssetTransactionService.create({
+         await budgetAllocationService.create({
+           bankAccountId: this.account.id,
+           sourceCostCenterId: this.costCenter.id,
+           targetCostCenterId: this.costCenter.id,
            sourceCostCenterAssetId,
            targetCostCenterAssetId,
-           //recurringCostCenterAssetTransactionId,
+           amount: amountDifference,
            dateString: new Date().toISOString(),
            dueDateString: new Date().toISOString(),
-           amount: amountDifference < 0 ? amountDifference * -1 : amountDifference,
            executed: true,
          });
-      //
-      //   this.updatedCostCenterAssetName = null;
+         
          this.updatedCostCenterAssetAmount = null;
          this.$emit('update');
       //
@@ -151,6 +149,7 @@ export default {
 
   props: {
     account: { type: Object, required: true },
+    costCenter: { type: Object, required: true },
     costCenterAsset: {type: Object, required: true},
     selectedCostCenterAssetId: {type: Number},
   },

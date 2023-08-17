@@ -47,6 +47,7 @@ import AtomButton from '@/components/atoms/AtomButton';
 import MoleculeCostCenterListItem from '@/components/molecules/MoleculeCostCenterListItem';
 import MoleculeInputText from '@/components/molecules/MoleculeInputText';
 
+import {budgetAllocationService} from "@/services/budget-allocation-service";
 import {costCenterService} from "@/services/cost-center-service";
 import {costCenterAssetService} from "@/services/cost-center-asset-service";
 import {numberService} from "@/services/number-service";
@@ -151,27 +152,25 @@ export default {
 
         if (updatedBalance - costCenterToUpdate.balance > 0) {
           targetCostCenterId = costCenterToUpdate.id
-        } else {
+        } else if (updatedBalance - costCenterToUpdate.balance < 0) {
           sourceCostCenterId = costCenterToUpdate.id
         }
 
-        const amount = updatedBalance - costCenterToUpdate.balance;
+        if (updatedBalance - costCenterToUpdate.balance !== 0) {
+          const amount = updatedBalance - costCenterToUpdate.balance;
 
-        await transactionService.create({
-          sourceBankAccountId: this.account.id,
-          targetBankAccountId: this.account.id,
-          sourceCostCenterId,
-          targetCostCenterId,
-          amount: amount < 0 ? amount * -1 : amount,
-          dateString: new Date().toISOString(),
-          dueDateString: new Date().toISOString(),
-          transactionType: "AccountTransfer",
-          executed: true,
-          isCashTransaction: false,
-        });
+          await budgetAllocationService.create({
+            bankAccountId: this.account.id,
+            sourceCostCenterId,
+            targetCostCenterId,
+            amount: amount < 0 ? amount * -1 : amount,
+            dateString: new Date().toISOString(),
+            dueDateString: new Date().toISOString(),
+            executed: true,
+          });
+        }
 
         this.selectedCostCenterId = null;
-
         this.$emit('reload');
       } catch (error) {
         console.error(error);
@@ -204,7 +203,7 @@ export default {
             amount: costCenterAmount < 0 ? costCenterAmount * -1 : costCenterAmount,
             dateString: new Date().toISOString(),
             dueDateString: new Date().toISOString(),
-            transactionType: "AccountTransfer",
+            transactionType: "Transfer",
             executed: true,
             isCashTransaction: false,
           });
@@ -224,7 +223,17 @@ export default {
     async saveNewCostCenterAsset(costCenterAsset) {
       try {
         costCenterAsset.bankAccountId = this.account.id;
-        await costCenterAssetService.create(costCenterAsset);
+        const newCostCenterAsset = await costCenterAssetService.create(costCenterAsset);
+
+        await budgetAllocationService.create({
+          bankAccountId: costCenterAsset.bankAccountId,
+          targetCostCenterId: costCenterAsset.costCenterId,
+          targetCostCenterAssetId: newCostCenterAsset.id,
+          amount: costCenterAsset.amount,
+          dateString: new Date().toISOString(),
+          dueDateString: new Date().toISOString(),
+          executed: true,
+        });
 
         this.costCenterIdForAssetCreation = null;
 
