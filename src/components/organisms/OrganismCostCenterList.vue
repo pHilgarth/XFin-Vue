@@ -51,7 +51,6 @@ import {budgetAllocationService} from "@/services/budget-allocation-service";
 import {costCenterService} from "@/services/cost-center-service";
 import {costCenterAssetService} from "@/services/cost-center-asset-service";
 import {numberService} from "@/services/number-service";
-import {transactionService} from "@/services/transaction-service";
 
 import {balanceValidator} from "@/validation/custom-validators";
 
@@ -185,27 +184,13 @@ export default {
         });
 
         if (numberService.parseFloat(this.newCostCenterAmount) !== 0) {
-          const costCenterAmount = numberService.parseFloat(this.newCostCenterAmount);
-          let sourceCostCenterId = null;
-          let targetCostCenterId = null;
-
-          if (costCenterAmount > 0) {
-            targetCostCenterId = createdCostCenter.id
-          } else {
-            sourceCostCenterId = createdCostCenter.id
-          }
-
-          await transactionService.create({
-            sourceBankAccountId: this.account.id,
-            targetBankAccountId: this.account.id,
-            sourceCostCenterId,
-            targetCostCenterId,
-            amount: costCenterAmount < 0 ? costCenterAmount * -1 : costCenterAmount,
+          await budgetAllocationService.create({
+            bankAccountId: this.account.id,
+            targetCostCenterId: createdCostCenter.id,
+            amount: numberService.parseFloat(this.newCostCenterAmount),
             dateString: new Date().toISOString(),
             dueDateString: new Date().toISOString(),
-            transactionType: "Transfer",
             executed: true,
-            isCashTransaction: false,
           });
         }
 
@@ -227,6 +212,7 @@ export default {
 
         await budgetAllocationService.create({
           bankAccountId: costCenterAsset.bankAccountId,
+          sourceCostCenterId: costCenterAsset.costCenterId,
           targetCostCenterId: costCenterAsset.costCenterId,
           targetCostCenterAssetId: newCostCenterAsset.id,
           amount: costCenterAsset.amount,

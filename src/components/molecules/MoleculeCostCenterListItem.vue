@@ -175,11 +175,10 @@ export default {
     },
 
     saveNewCostCenterAsset() {
-      //TODO - create an initialization transaction for the new costCenterAsset
       this.$emit('saveNewCostCenterAsset', {
         costCenterId: this.costCenter.id,
         name: this.newCostCenterAssetName,
-        amount: this.newCostCenterAssetAmount,
+        amount: numberService.parseFloat(this.newCostCenterAssetAmount),
       });
     },
 
