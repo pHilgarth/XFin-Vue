@@ -91,7 +91,6 @@
         <OrganismCollapsibleWithSlot :title="accountHolder.name" :accordionId="accountHolder.id">
           <MoleculeAccountViewTable :bankAccounts="accountHolder.bankAccounts" />
         </OrganismCollapsibleWithSlot>
-        <AtomEditIcon :showOnHover="true" @click="$router.push({ name: 'edit-account-holder', params: { accountHolderId: accountHolder.id }})" />
       </div>
     </section>
   </div>
@@ -99,7 +98,6 @@
 
 <script>
 import AtomHeadline from '@/components/atoms/AtomHeadline';
-import AtomEditIcon from '@/components/atoms/AtomEditIcon';
 import AtomParagraph from '@/components/atoms/AtomParagraph';
 
 import MoleculeAccountViewTable from '@/components/molecules/MoleculeAccountViewTable';
@@ -128,7 +126,6 @@ export default {
 
   components: {
     AtomHeadline,
-    AtomEditIcon,
     AtomParagraph,
     MoleculeLoading,
     OrganismCollapsibleWithSlot,

@@ -8,7 +8,8 @@
 	}
 	@else {
 		@each $property in $properties {
-            #{$property}: rem-convert(rem, $values...);
+          #{$property}: rem-convert(px, $values...);
+          #{$property}: rem-convert(rem, $values...);
 		}
 	}
 }

@@ -1,74 +1,69 @@
 .molecule-budget-table {
   .cost-center-has-assets {
-    display: flex;
-    justify-content: space-between;
-    position: relative;
+    transition: background-color .2s;
 
-    svg {
-      @include rem(width, 25px);
-      height: auto;
+    &.assets-visible {
+      background-color: rgba($color-secondary, .1);
+    }
+    td:first-child {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+
+      svg {
+        @include rem(width, 25px);
+        height: auto;
+      }
     }
   }
 
   &__assets-icon {
     cursor: pointer;
 
-    &.active svg {
-      transform: rotate(180deg);
-      transition: all .2s;
-    }
-
     svg {
       transition: all .2s;
     }
   }
 
-  &__assets-overlay {
-    @include rem(font-size, 18px);
-    background-color: $color-assets-overlay;
-    bottom: 0;
-    border-top: 3px solid black;
-    box-shadow: 0 3px 6px 0 rgba(0,0,0,.5);
-    left: 0;
-    max-height: 0;
-    opacity: 0;
-    overflow-y: hidden;
-    position: absolute;
-    transform: translateY(100%);
-    transition: all .5s;
-    width: 100%;
-    z-index: 10;
+  &__assets-icon--active svg {
+    transform: rotate(180deg);
+    transition: all .2s;
+  }
 
-    &.active {
-      @include rem(max-height, 1000px);
-      opacity: 1;
+  &__cost-center-asset {
+    background-color: rgba($color-secondary, .1);
+    border-top: 0;
+
+    td {
+      padding: 0;
+
+      &:first-child {
+        @include rem(padding-left, 25px);
+      }
+    }
+
+    div {
+      max-height: 0;
+      overflow: hidden;
       transition: all .5s;
-    }
 
-    &__inner {
-      @include rem(padding, 15px 30px);
-    }
-
-    table {
-      margin: 0;
-
-      thead tr {
-        border: none;
-      }
-
-      th, td {
-        @include rem(font-size, 16px);
-        @include rem(padding, 10px 10px 10px 0);
-      }
-
-      th:not(:first-child), td:not(:first-child) {
-        text-align: right;
-
+      span {
+        @include rem(font-size, 18px);
+        @include rem(padding, 5px 15px);
+        display: inline-block;
       }
     }
   }
 
-  &__assets-headline {
-    @include rem(margin-bottom, 10px);
+  &__cost-center-asset--visible {
+    @include rem(border-top, 1px solid $color-borders);
+
+    &.molecule-budget-table__cost-center-asset--last {
+      @include rem(border-bottom, 2px solid $color-borders);
+    }
+
+    td div {
+      @include rem(max-height, 40px);
+    }
   }
 }
