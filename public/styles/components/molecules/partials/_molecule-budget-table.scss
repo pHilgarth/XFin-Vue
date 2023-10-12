@@ -5,6 +5,7 @@
     &.assets-visible {
       background-color: rgba($color-secondary, .1);
     }
+
     td:first-child {
       display: flex;
       justify-content: space-between;
@@ -31,8 +32,12 @@
   }
 
   &__cost-center-asset {
-    background-color: rgba($color-secondary, .1);
     border-top: 0;
+    transition: background-color .2s;
+
+    &--visible {
+      background-color: rgba($color-secondary, .1);
+    }
 
     td {
       padding: 0;

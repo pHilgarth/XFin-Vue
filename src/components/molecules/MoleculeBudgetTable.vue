@@ -23,7 +23,7 @@
         <tr :class="`${costCenter.costCenterAssets.length ? 'cost-center-has-assets' : ''} ${activeCostCenterId === costCenter.id ? 'assets-visible' : ''}`">
           <td>
             <span>{{ costCenter.name }}</span>
-            <span :class="`molecule-budget-table__assets-icon ${activeCostCenterId === costCenter.id ? 'molecule-budget-table__assets-icon--active' : ''}`"
+            <span v-if="costCenter.costCenterAssets.length" :class="`molecule-budget-table__assets-icon ${activeCostCenterId === costCenter.id ? 'molecule-budget-table__assets-icon--active' : ''}`"
                   @click="toggleAssetOverlay(costCenter.id)">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
@@ -36,8 +36,40 @@
           <td>{{ formatCurrency(costCenter.expensesSum) }}</td>
           <td>{{ formatCurrency(costCenter.balance) }}</td>
         </tr>
+        <tr v-if="costCenter.costCenterAssets.length" :class="getCostCenterAssetClassList(costCenter)">
+          <td>
+            <div>
+              <span>Freies Budget</span>
+            </div>
+          </td>
+          <td v-if="costCenter.costCenterAssets.length">
+            <div>
+              <span>{{ formatCurrency(getFreeBalancePreviousMonth(costCenter)) }}</span>
+            </div>
+          </td>
+          <td>
+            <div>
+              <span>{{ formatCurrency(getAllocationBalanceFreeBudget(costCenter)) }}</span>
+            </div>
+          </td>
+          <td>
+            <div>
+              <span>{{ formatCurrency(getFreeBudgetCurrentMonth(costCenter)) }}</span>
+            </div>
+          </td>
+          <td>
+            <div>
+              <span>{{ formatCurrency(getExpensesSumFreeBudget(costCenter)) }}</span>
+            </div>
+          </td>
+          <td>
+            <div>
+              <span>{{ formatCurrency(getFreeBudgetCurrentMonth(costCenter) - getExpensesSumFreeBudget(costCenter)) }}</span>
+            </div>
+          </td>
+        </tr>
         <tr v-for="(costCenterAsset, index) in costCenter.costCenterAssets" :key="costCenterAsset.id"
-            :class="getCostCenterAssetClassList(index, costCenter)">
+            :class="getCostCenterAssetClassList(costCenter, index)">
           <td>
             <div>
               <span>{{ costCenterAsset.name }}</span>
@@ -60,12 +92,12 @@
           </td>
           <td>
             <div>
-              <span>(Ausgaben)</span>
+              <span>{{ formatCurrency(costCenterAsset.expensesSum) }}</span>
             </div>
           </td>
           <td>
             <div>
-              <span>(Saldo)</span>
+              <span>{{ formatCurrency(costCenterAsset.balance - costCenterAsset.expensesSum) }}</span>
             </div>
           </td>
         </tr>
@@ -140,13 +172,32 @@ export default {
       return numberService.formatDate(value);
     },
 
-    getCostCenterAssetClassList(index, costCenter) {
+    getCostCenterAssetClassList(costCenter, index = -1) {
       let classList = 'molecule-budget-table__cost-center-asset';
 
       classList += `${this.activeCostCenterId === costCenter.id ? ' molecule-budget-table__cost-center-asset--visible' : ''}`;
       classList += `${index === costCenter.costCenterAssets.length - 1 ? ' molecule-budget-table__cost-center-asset--last' : ''}`
 
       return classList;
+    },
+
+    getExpensesSumFreeBudget(costCenter) {
+      //sum the expenses of every costCenterAssets in the given costCenter
+      const expensesSumCostCenterAssets = costCenter.costCenterAssets.reduce((a, b) => a + b.expensesSum, 0);
+
+      //return the difference between the costCenter expensesSum and the costCenterAsstes expensesSum
+      return costCenter.expensesSum - expensesSumCostCenterAssets;
+    },
+
+    getFreeBalancePreviousMonth(costCenter) {
+      const totalBalancePreviousMonth = costCenter.balancePreviousMonth;
+      const costCenterAssetsPortion = costCenter.costCenterAssets.reduce((a, b) => a + b.balancePreviousMonth, 0);
+
+      return totalBalancePreviousMonth - costCenterAssetsPortion;
+    },
+
+    getFreeBudgetCurrentMonth(costCenter) {
+      return this.getFreeBalancePreviousMonth(costCenter) + this.getAllocationBalanceFreeBudget(costCenter);
     },
 
     getMonthName(month) {
@@ -161,6 +212,14 @@ export default {
       });
 
       return numberService.formatCurrency(revenuesTotal);
+    },
+
+    getAllocationBalanceFreeBudget(costCenter) {
+      //sum the allocationBalanceCurrentMonth of every costCenterAsset in the given costCenter
+      const allocationSumCostCenterAssets = costCenter.costCenterAssets.reduce((a, b) => a + b.allocationBalanceCurrentMonth, 0);
+
+      //return the counterpart of the number to get the allocationBalance for the free budget
+      return allocationSumCostCenterAssets !== 0 ? allocationSumCostCenterAssets * -1 : 0;
     },
 
     toggleAssetOverlay(costCenterId) {

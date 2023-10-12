@@ -1,0 +1,26 @@
+.account-holders {
+  &__item {
+    @include rem(border, 1px solid $color-borders);
+    @include rem(border-radius, 8px);
+    @include rem(font-size, 25px);
+    @include rem(padding, 20px);
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+
+    &:not(:last-child) {
+      @include rem(margin-bottom, 20px);
+    }
+  }
+
+  &__info {
+    @include rem(font-size, 18px);
+    @include rem(margin-right, 70px);
+
+    span {
+      @include rem(margin-right, 20px);
+      display: inline-block;
+    }
+  }
+}
