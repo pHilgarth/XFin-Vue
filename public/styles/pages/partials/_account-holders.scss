@@ -3,7 +3,7 @@
     @include rem(border, 1px solid $color-borders);
     @include rem(border-radius, 8px);
     @include rem(font-size, 25px);
-    @include rem(padding, 20px);
+    @include rem(padding, 10px 20px);
     align-items: center;
     display: flex;
     justify-content: space-between;
@@ -17,10 +17,11 @@
   &__info {
     @include rem(font-size, 18px);
     @include rem(margin-right, 70px);
+    @include rem(width, 400px);
 
     span {
-      @include rem(margin-right, 20px);
       display: inline-block;
+      width: 50%;
     }
   }
 }

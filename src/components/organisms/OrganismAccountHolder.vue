@@ -26,7 +26,7 @@
                   <AtomSpan class="col-6" text="Kontostand:" />
                   <AtomSpan class="col-6"  :text="formatBalance(account.balance)" />
                 </div>
-                <div v-if="account.cash" class="organism-account-holder__cash">
+                <div class="organism-account-holder__cash">
                   <AtomSpan class="col-6"  text="Bargeld:" />
                   <AtomSpan class="col-6"  :text="formatBalance(account.cash)" />
                 </div>

@@ -71,11 +71,11 @@ export default {
       accountNumber:          this.formData.account?.accountNumber || null,
       id:                     this.formData.account?.id || null,
       accountHolderId:        this.formData.account?.accountHolderId || null,
-      balance:                this.formData.account?.balance
+      balance:                this.formData.account
                                 ? numberService.amountToString(this.formData.account.balance)
                                 : null,
       bank:                   this.formData.account?.bank || "",
-      cash:                   this.formData.account?.cash
+      cash:                   this.formData.account
                                 ? numberService.amountToString(this.formData.account.cash)
                                 : null,
       description:            this.formData.account?.description || null,

@@ -64,8 +64,10 @@ export default {
             });
           }
 
-          this.$router.push('/accounts');
         }
+
+        this.$router.push('/accounts');
+
       } catch(error) {
         console.error(error);
       }
