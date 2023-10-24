@@ -26,12 +26,6 @@
   </div>
 </template>
 
-<style scoped>
-/* TODO - review this, i want that in a separate file, but maybe there was a reason for it :) */
-.accordion-item {
-  margin-bottom: 50px;
-}
-</style>
 <script>
 import AtomHeadline from '@/components/atoms/AtomHeadline';
 import MoleculeBudgetTable from '@/components/molecules/MoleculeBudgetTable';

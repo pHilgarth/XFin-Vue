@@ -26,18 +26,15 @@
   }
 
   &__account {
+    @include rem(padding, 0 20px);
+  }
+
+  &__account-wrapper {
+    @include rem(border-radius, 5px);
+    @include rem(font-size, 24px);
+    @include rem(padding, 30px);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    align-content: center;
-    justify-content: center;
-    @include rem(border-radius, 5px);
-    @include rem(height, 200px);
-    @include rem(width, 250px);
-    @include rem(font-size, 24px);
-    @include rem(margin-right, 10px);
-    @include rem(margin-bottom, 10px);
   }
 
   &__new, &__changed {
@@ -63,33 +60,28 @@
   }
 
   &__account-number {
-    border-bottom: 1px solid $color-borders;
-    width: 80%;
-    text-align: center;
     @include rem(font-size, 20px);
-  }
-
-  &__balance, &__cash {
-    @include rem(font-size, 18px);
-    @include rem(padding, 10px);
-    display: flex;
-    width: 100%;
-
-    span:last-child {
-      text-align: right;
-    }
-  }
-
-  &__balance {
+    @include rem(margin, 0 auto 20px);
     @include rem(padding-bottom, 5px);
+    border-bottom: 1px solid $color-borders;
+    display: block;
+    text-align: center;
   }
 
-  &__cash {
-    @include rem(padding-top, 5px);
-  }
+  &__account-data {
+    @include rem(font-size, 16px);
+    @include rem(margin-bottom, 15px);
 
-  &__edit-account {
-    @include rem(bottom, 10px);
-    position: absolute;
+    tr td {
+      @include rem(padding, 10px 0);
+
+      &:first-child {
+        @include rem(padding-right, 15px);
+      }
+
+      &:last-child {
+        text-align: right;
+      }
+    }
   }
 }

@@ -137,7 +137,9 @@ export default {
       try {
         const bankAccountDuplicate = await accountService.getSingleByUserAndIban(this.user.id, this.iban);
 
-        if (!bankAccountDuplicate) {
+        //if the ids match it's not a duplicate because the delivered "duplicated" account is the very same, which
+        //the user is editing right now (without changing the iban)
+        if (!bankAccountDuplicate || bankAccountDuplicate.id === this.id) {
             const account = {
               id: this.id,
               userId: this.user.id,

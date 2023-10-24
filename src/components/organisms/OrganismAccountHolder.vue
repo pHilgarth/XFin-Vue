@@ -17,20 +17,66 @@
           <div v-if="bankAccounts.length" class="organism-account-holder__account-items">
             <!-- TODO - move this into another component? -->
             <template v-for="(account, index) in bankAccounts" :key="index">
-              <div class="organism-account-holder__account">
-                <AtomSpan v-if="account.isNew" class="organism-account-holder__new" text="NEU" />
-                <AtomSpan v-else-if="account.changed" class="organism-account-holder__changed" text="GEÄNDERT" />
-                <AtomSpan class="organism-account-holder__delete" :data-index="index" text="&times;" @click="deleteAccount" />
-                <AtomSpan class="organism-account-holder__account-number" :text="account.accountNumber" />
-                <div class="organism-account-holder__balance">
-                  <AtomSpan class="col-6" text="Kontostand:" />
-                  <AtomSpan class="col-6"  :text="formatBalance(account.balance)" />
+              <div class="organism-account-holder__account col-12 col-md-3">
+                <div class="organism-account-holder__account-wrapper">
+                  <AtomSpan v-if="account.isNew" class="organism-account-holder__new" text="NEU" />
+                  <AtomSpan v-else-if="account.changed" class="organism-account-holder__changed" text="GEÄNDERT" />
+                  <AtomSpan class="organism-account-holder__delete" :data-index="index" text="&times;" @click="deleteAccount" />
+                  <AtomSpan class="organism-account-holder__account-number" :text="account.accountNumber" />
+                  <table class="organism-account-holder__account-data">
+                    <tr class="organism-account-holder__iban">
+                      <td>
+                        <AtomSpan class="col-6" text="IBAN:" />
+                      </td>
+                      <td>
+                        <AtomSpan class="col-6" :text="account.iban" />
+                      </td>
+                    </tr>
+                    <tr class="organism-account-holder__bic">
+                      <td>
+                        <AtomSpan class="col-6" text="BIC:" />
+                      </td>
+                      <td>
+                        <AtomSpan class="col-6" :text="account.bic" />
+                      </td>
+                    </tr>
+                    <tr class="organism-account-holder__bank">
+                      <td>
+                        <AtomSpan class="col-6" text="Bank:" />
+                      </td>
+                      <td>
+                        <AtomSpan class="col-6" :text="account.bank" />
+                      </td>
+                    </tr>
+                    <tr class="organism-account-holder__description">
+                      <td>
+                        <AtomSpan class="col-6" text="Beschreibung:" />
+                      </td>
+                      <td>
+                        <AtomSpan class="col-6" :text="account.description" />
+                      </td>
+                    </tr>
+                    <tr class="organism-account-holder__balance">
+                      <td>
+                        <AtomSpan class="col-6" text="Kontostand:" />
+                      </td>
+                      <td>
+                        <AtomSpan class="col-6"  :text="formatBalance(account.balance)" />
+                      </td>
+                    </tr>
+                    <tr class="organism-account-holder__cash">
+                      <td>
+                        <AtomSpan class="col-6"  text="Bargeld:" />
+                      </td>
+                      <td>
+                        <AtomSpan class="col-6"  :text="formatBalance(account.cash)" />
+                      </td>
+                    </tr>
+                  </table>
+                  <div class="d-flex justify-content-end">
+                    <AtomButton class="organism-account-holder__edit-account" :data-index="index" text="Bearbeiten" type="light-small" @click="editAccount" />
+                  </div>
                 </div>
-                <div class="organism-account-holder__cash">
-                  <AtomSpan class="col-6"  text="Bargeld:" />
-                  <AtomSpan class="col-6"  :text="formatBalance(account.cash)" />
-                </div>
-                <AtomButton class="organism-account-holder__edit-account" :data-index="index" text="Bearbeiten" type="light-small" @click="editAccount" />
               </div>
             </template>
           </div>

@@ -117,7 +117,7 @@ export default {
 
         await this.saveAccounts(accountHolder.id, accountsToSave);
 
-        this.$router.push('/accounts');
+        this.$router.push('/account-holders');
       } catch(error) {
         console.error(error);
         alert(error + ' - show something in frontend');
