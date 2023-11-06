@@ -73,6 +73,14 @@
       <!-- TODO - I have OrganismRecurringTransactionModal as well as MoleculeRecurringTransactionModal ... there should only be one -->
       <!-- TODO - its not possible to rename CostCenters or CostCenterAssets in BudgetManager -->
       <!-- TODO - current parent menu point is not highlighted in menu when routing to a subcomponent, like AccountHolders -> AddAccountHolder -->
+      <!-- TODO - constraints on entity-properties in API must be adhered to in frontend -->
+      <!-- TODO - if backend is not available there is an unstyled ugly error in frontend, when trying to save an account on edit account holder -->
+      <!-- TODO - if an existing account is edited without actually changing fields, it's still labelled as "changed" -->
+      <!-- TODO - highlight the changed fields of bankAccounts in the cards on edit-account-holder -->
+      <!-- TODO - dont reset transactionType after saving a transaction (after saving an expense, expense should be still selected) -->
+      <!-- TODO - cash can never be negative - I need a validation for that in TransactionManager -->
+      <!-- TODO - include the accountNumber in the Revenues- and ExpensesTable for transfers, so that there is not just the accountHolderName but also which account the money went / came from -->
+      <!-- TODO - wenn url /account-holders direkt aufgerufen wird, gibt es keien Daten, aber auch keinen Fehler edit-account-holders muss mit id des account-holders aufgerufen werden -->
 
 
 
