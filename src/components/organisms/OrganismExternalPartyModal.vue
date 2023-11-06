@@ -2,7 +2,6 @@
   <div class="organism-external-party-modal">
     <div class="organism-external-party-modal__inner">
       <AtomHeadline tag="h1" text="Externen Zahlungspartner anlegen" />
-      <p>{{ ibans }}</p>
       <form>
         <MoleculeInputText class="pb-5" field="name" :hasErrors="v$.name.$error || nameDuplicate" v-model="name" @blur="v$.name.$touch()" :validation="v$.name" label="Name" />
         <AtomParagraph v-if="nameDuplicate" class="organism-external-party-modal__duplicate-account xfin__form__error" text="Dieser Name existiert bereits!" />

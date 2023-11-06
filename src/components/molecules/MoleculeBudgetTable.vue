@@ -31,8 +31,8 @@
             </span>
           </td>
           <td>{{ formatCurrency(costCenter.balancePreviousMonth) }}</td>
-          <td>{{ formatCurrency(costCenter.revenuesSum) }}</td>
-          <td>{{ formatCurrency(costCenter.balancePreviousMonth + costCenter.revenuesSum + costCenter.transferSum) }}</td>
+          <td>{{ formatCurrency(costCenter.allocationBalanceCurrentMonth) }}</td>
+          <td>{{ formatCurrency(costCenter.balancePreviousMonth + costCenter.allocationBalanceCurrentMonth) }}</td>
           <td>{{ formatCurrency(costCenter.expensesSum) }}</td>
           <td>{{ formatCurrency(costCenter.balance) }}</td>
         </tr>
@@ -82,12 +82,12 @@
           </td>
           <td>
             <div>
-              <span>{{ formatCurrency(costCenterAsset.balance - costCenterAsset.balancePreviousMonth) }}</span>
+              <span>{{ formatCurrency(costCenterAsset.allocationBalanceCurrentMonth) }}</span>
             </div>
           </td>
           <td>
             <div>
-              <span>{{ formatCurrency(costCenterAsset.balance) }}</span>
+              <span>{{ formatCurrency(costCenterAsset.balancePreviousMonth + costCenterAsset.allocationBalanceCurrentMonth) }}</span>
             </div>
           </td>
           <td>
@@ -97,7 +97,7 @@
           </td>
           <td>
             <div>
-              <span>{{ formatCurrency(costCenterAsset.balance - costCenterAsset.expensesSum) }}</span>
+              <span>{{ formatCurrency(costCenterAsset.balancePreviousMonth + costCenterAsset.allocationBalanceCurrentMonth - costCenterAsset.expensesSum) }}</span>
             </div>
           </td>
         </tr>
@@ -105,9 +105,9 @@
       <tr class="table-row-total">
         <td>Summen</td>
         <td>{{ formatCurrency(calculateFreeBalancePreviousMonth() + costCenters.reduce((a, b) => a + b.balancePreviousMonth, 0)) }}</td>
-        <td>{{ formatCurrency(calculateFreeRevenues() + costCenters.reduce((a, b) => a + b.revenuesSum, 0)) }}</td>
-        <td>{{ formatCurrency(calculateFreeBudget() + costCenters.reduce((a, b) => a + (b.balancePreviousMonth + b.revenuesSum + b.transferSum), 0))}}</td>
-        <td>{{ formatCurrency(costCenters.reduce((a, b) => a + b.expensesSum, 0))}}</td>
+        <td>{{ formatCurrency(calculateFreeRevenues() + costCenters.reduce((a, b) => a + b.allocationBalanceCurrentMonth, 0)) }}</td>
+        <td>{{ formatCurrency(calculateFreeBudget() + costCenters.reduce((a, b) => a + (b.balancePreviousMonth + b.allocationBalanceCurrentMonth), 0))}}</td>
+        <td>{{ formatCurrency(calculateFreeExpenses() + costCenters.reduce((a, b) => a + b.expensesSum, 0))}}</td>
         <td>{{ formatCurrency(calculateFreeBalance() + costCenters.reduce((a, b) => a + b.balance, 0))}}</td>
       </tr>
     </tbody>
@@ -153,7 +153,7 @@ export default {
     },
 
     calculateFreeRevenues() {
-      return this.bankAccount.revenues.reduce((a,b) => a + b.amount, 0) - this.costCenters.reduce((a,b) => a + b.revenuesSum, 0);
+      return this.bankAccount.revenues.reduce((a,b) => a + b.amount, 0) - this.costCenters.reduce((a,b) => a + b.allocationBalanceCurrentMonth, 0);
     },
 
     calculateFreeBalance() {
@@ -218,8 +218,8 @@ export default {
       //sum the allocationBalanceCurrentMonth of every costCenterAsset in the given costCenter
       const allocationSumCostCenterAssets = costCenter.costCenterAssets.reduce((a, b) => a + b.allocationBalanceCurrentMonth, 0);
 
-      //return the counterpart of the number to get the allocationBalance for the free budget
-      return allocationSumCostCenterAssets !== 0 ? allocationSumCostCenterAssets * -1 : 0;
+      //return the difference between the costCenters allocationBalance and the sum of allocations to its costCenterAssets
+      return costCenter.allocationBalanceCurrentMonth - allocationSumCostCenterAssets;
     },
 
     toggleAssetOverlay(costCenterId) {

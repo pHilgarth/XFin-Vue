@@ -117,7 +117,7 @@ export default {
             .map(p => {
               return {
                 id: p.id,
-                label: `${p.accountHolderName}${p.iban ? ' (' + p.iban + ')' : ''}`,
+                label: `${p.accountHolderName}${p.iban ? ` (${p.iban})` : ''}`,
                 external: p.external
               }
             });
@@ -127,7 +127,7 @@ export default {
             .map(p => {
               return {
                 id: p.id,
-                label: `${p.accountHolderName}${p.iban ? ' (' + p.iban + ')' : ''}`,
+                label: `${p.accountHolderName}${p.iban ? ` (${p.iban})` : ''}`,
                 external: p.external
               }
             });
@@ -298,7 +298,7 @@ export default {
     },
 
     updatePayeeAccounts(payerAccountId) {
-      console.log(`payerAccountId is ${payerAccountId || 'null'}`);
+      console.log('updating payeeAccounts!');
 
       this.payeeAccounts = payerAccountId
           ? this.payeeAccounts.filter(p => p.id !== payerAccountId)
@@ -310,6 +310,7 @@ export default {
     },
 
     updateTransactionType(event) {
+      console.log('updating transaction type!');
       this.transactionType = event.target.id;
 
       const filteredAccounts = transactionTypeService.filterAccounts(this.transactionType, this.bankAccounts);

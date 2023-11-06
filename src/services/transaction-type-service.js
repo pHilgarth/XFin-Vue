@@ -46,7 +46,10 @@ export const transactionTypeService = {
 
         for (let prop in accounts) {
             accounts[prop] = accounts[prop].map(a => {
-                return { id: a.id, label: `${a.accountHolderName} (${a.iban})`, external: a.external }
+                return {
+                    id: a.id,
+                    label: `${a.accountHolderName}${a.iban ? ` (${a.iban})` : ''}`,
+                    external: a.external }
             });
         }
 

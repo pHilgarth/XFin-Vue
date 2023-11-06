@@ -18,7 +18,7 @@
       </tr>
       <tr v-for="expense in bankAccount.expenses" :key="expense.id">
         <td>{{ formatDate(expense.date) }}</td>
-        <td>{{ expense.sourceCostCenterName }}</td>
+        <td>{{ `${expense.costCenterName ?? 'Freies Budget'}${expense.costCenterAssetName ? ` (${expense.costCenterAssetName})` : ''}` }}</td>
         <td>{{ expense.targetAccountHolder || '---' }}</td>
         <td>{{ expense.reference }}</td>
         <td>{{ formatCurrency(expense.amount) }}</td>

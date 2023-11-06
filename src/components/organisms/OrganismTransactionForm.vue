@@ -8,7 +8,7 @@
                                   @itemPicked="pickItem($event, 'payerAccount')" @addItem="$emit('addExternalParty')" @blur="onBlurPayerAccount"/>
       </div>
 
-      <div v-if="transactionType !== 'Revenue'" class="col-6 pb-5 ps-3">
+      <div v-if="transactionType === 'Expense'" class="col-6 pb-5 ps-3">
         <MoleculeInputAutoSuggest field="payer-cost-center" v-model="payerCostCenter" label="Kostenstelle" :items="payerCostCenters"
                                   :disabled="payerAccount?.external" :validation="v$.payerCostCenter"
                                   :hasErrors="v$.payerCostCenter?.$error" @itemPicked="pickItem($event, 'payerCostCenter')"
@@ -30,20 +30,6 @@
         <MoleculeInputAutoSuggest field="payee-account" v-model="payeeAccount" label="Konto" :required="payeeRequired" :items="payeeAccounts"
                                   :allowNewItems="allowNewPayee" :validation="v$.payeeAccount" :hasErrors="v$.payeeAccount?.$error"
                                   @itemPicked="pickItem($event, 'payeeAccount')" @addItem="$emit('addExternalParty')" @blur="onBlurPayeeAccount" />
-
-      </div>
-
-      <div v-if="transactionType !== 'Expense'" class="col-6 pb-5 ps-3">
-        <MoleculeInputAutoSuggest field="payee-cost-center" v-model="payeeCostCenter" label="Kostenstelle" :items="payeeCostCenters"
-                                  :validation="v$.payeeCostCenter" :hasErrors="v$.payeeCostCenter?.$error"
-                                  @itemPicked="pickItem($event, 'payeeCostCenter')" @blur="onBlurPayeeCostCenter" />
-
-        <MoleculeLoading v-if="payeeAccount && payeeCostCenter && !payeeCostCenterAssetsLoaded"
-                         :loadingError="payeeCostCenterAssetsLoadingError" errorMessage="Fehler beim Laden der Daten!" />
-
-        <MoleculeInputAutoSuggest v-else-if="payeeCostCenterAssetsLoaded" field="payee-cost-center-asset" class="mt-5" label="Posten auf Kostenstelle"
-                                  v-model="payeeCostCenterAsset" :items="payeeCostCenterAssets" @itemPicked="pickItem($event, 'payeeCostCenterAsset')"
-                                  @blur="onBlurPayeeCostCenterAsset" />
 
       </div>
     </div>
@@ -97,7 +83,6 @@ import { copyService } from '@/services/copy-service';
 import { costCenterAssetService } from "@/services/cost-center-asset-service";
 import { loanService } from '@/services/loan-service';
 import { numberService } from '@/services/number-service';
-import { reserveService } from '@/services/reserve-service';
 
 import { transactionValidation } from '@/validation/validations';
 
@@ -217,16 +202,16 @@ export default {
 
     async fetchPayeeCostCenterAssets() {
       try {
-        const payeeCostCenterAssets = costCenterAssetService.getAllByAccountAndCostCenter(this.payeeAccount.id, this.payeeCostCenter.id);
-        const reserves = reserveService.getAllByAccountAndCostCenter(this.payeeAccount.id, this.payeeCostCenter.id);
+        const payeeCostCenterAssets = await costCenterAssetService.getAllByAccountAndCostCenter(this.payeeAccount.id, this.payeeCostCenter.id);
 
-        const payeeCostCenterAssetsResult = await payeeCostCenterAssets;
-        this.payeeReserves = await reserves;
-
-        this.payeeCostCenterAssets = Array.from([
-            payeeCostCenterAssetsResult.map(p => { return { id: p.id, label: p.name, amount: p.amount }} ),
-            this.payeeReserves.map(p => { return { id: `reserve-${p.id}`, label: `${p.reference} (Rücklage)`, isReserve: true }} ),
-        ]).flat();
+        this.payeeCostCenterAssets = Array.from(payeeCostCenterAssets.map(p => {
+          console.log(p);
+          return {
+            id: p.id,
+            label: p.name + `${p.isReserve ? ' (Rücklage)' : ''}`,
+            amount: p.amount
+          }
+        })).flat();
 
         this.payeeCostCenterAssetsLoaded = true;
       } catch (error) {
@@ -237,16 +222,15 @@ export default {
 
     async fetchPayerCostCenterAssets() {
       try {
-        const payerCostCenterAssets = costCenterAssetService.getAllByAccountAndCostCenter(this.payerAccount.id, this.payerCostCenter.id);
-        const reserves = reserveService.getAllByAccountAndCostCenter(this.payerAccount.id, this.payerCostCenter.id);
+        const payerCostCenterAssets = await costCenterAssetService.getAllByAccountAndCostCenter(this.payerAccount.id, this.payerCostCenter.id);
 
-        const payerCostCenterAssetsResult = await payerCostCenterAssets;
-        this.payerReserves = await reserves;
-
-        this.payerCostCenterAssets = Array.from([
-          payerCostCenterAssetsResult.map(p => { return { id: p.id, label: p.name, amount: p.amount }} ),
-          this.payerReserves.map(p => { return { id: `reserve-${p.id}`, label: `${p.reference} (Rücklage)`, isReserve: true }} ),
-        ]).flat();
+        this.payerCostCenterAssets = Array.from(payerCostCenterAssets.map(p => {
+          return {
+            id: p.id,
+            label: `${p.name}${p.isReserve ? ' (Rücklage)' : ''}`,
+            amount: p.amount
+          }
+        })).flat();
 
         this.payerCostCenterAssetsLoaded = true;
       } catch (error) {
@@ -300,6 +284,7 @@ export default {
     },
 
     pickItem(id, property, findIn) {
+      //TODO - this is not good.... this way every property must have a pendant with an additional s at the end... that's a stupid dependency
       this[property] = this[`${findIn || property + 's'}`].find(p => p.id == id);
     },
 
@@ -311,10 +296,8 @@ export default {
         const newTransaction = {
           sourceBankAccountId: this.payerAccount?.id,
           targetBankAccountId: this.payeeAccount?.id,
-          sourceCostCenterId: this.payerCostCenter?.id,
-          sourceCostCenterAsset: this.payerCostCenterAsset?.isReserve ? null : this.payerCostCenterAsset,
-          targetCostCenterId: this.payeeCostCenter?.id,
-          targetCostCenterAsset: this.payeeCostCenterAsset?.isReserve ? null : this.payeeCostCenterAsset,
+          costCenterId: this.payerCostCenter?.id,
+          costCenterAssetId: this.payerCostCenterAsset?.id,
           //TODO - einmalig geplante transactions einführen! (Datum auswählen, wann verbucht werden soll) Muss dann auch auf der Startseite bestätigt werden
           dueDateString: this.bookingDate?.toISOString() || new Date().toISOString(),
           dateString: this.bookingDate?.toISOString() || new Date().toISOString(),
@@ -347,6 +330,7 @@ export default {
 
     updateCostCenterAssets() {
       this.payeeCostCenterAsset = null;
+      //TODO - why resetting only payeeCostCenterAsset and not payerCostCenterAsset?
 
       if (this.transactionType === 'Expense') {
         this.updatePayerCostCenterAssets();
@@ -426,9 +410,12 @@ export default {
     payeeAccount() {
       this.updateCostCenterAssets();
 
-      if (this.payeeAccount && this.payeeAccount.id !== 'new' && this.payerAccount && this.payerAccount.id !== 'new') {
-        this.fetchLoans();
-      }
+      //TODO - check if that is needed here...
+      // if (this.payeeAccount && this.payeeAccount.id !== 'new' && this.payerAccount && this.payerAccount.id !== 'new') {
+      //   this.fetchLoans();
+      // }
+
+      //TODO - on transfer I think I need to update the payerAccounts, when payeeAccount changes, so that it gets prevented to book from one account to the same account
     },
 
     payeeAccounts() {
@@ -448,11 +435,13 @@ export default {
     payerAccount() {
       this.updateCostCenterAssets();
 
-      if (this.payeeAccount && this.payeeAccount.id !== 'new' && this.payerAccount && this.payerAccount.id !== 'new') {
-        this.fetchLoans();
-      }
+      //TODO - check, if that is needed here...
+      // if (this.payeeAccount && this.payeeAccount.id !== 'new' && this.payerAccount && this.payerAccount.id !== 'new') {
+      //   this.fetchLoans();
+      // }
 
-      this.$emit('updatePayeeAccounts', this.payerAccount?.id);
+      //TODO - commented that our for now - but if transactionType == "transfer" I think I need to update the payeeAccounts, so that it gets prevented to book from one account to the same account
+      //this.$emit('updatePayeeAccounts', this.payerAccount?.id);
     },
 
     payerAccounts() {
