@@ -81,6 +81,7 @@
       <!-- TODO - cash can never be negative - I need a validation for that in TransactionManager -->
       <!-- TODO - include the accountNumber in the Revenues- and ExpensesTable for transfers, so that there is not just the accountHolderName but also which account the money went / came from -->
       <!-- TODO - wenn url /account-holders direkt aufgerufen wird, gibt es keien Daten, aber auch keinen Fehler edit-account-holders muss mit id des account-holders aufgerufen werden -->
+      <!-- TODO - current menu item -> when routing to a subcomponent, the first menu item is highlighted instead of the actual parent item (accountView > accountDetail: dashboard is highlighted instead of accountView, which is the parent) -->
 
 
 
